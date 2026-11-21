@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 591 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 592 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 591 CR · 580 done · 1 open.
+Total: 592 CR · 580 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -653,3 +653,4 @@ Total: 591 CR · 580 done · 1 open.
 | `CR-GC-985` | done | FLOW-mutate-answer ist an SCHEMA-mutate-result gebunden, traegt aber die Werkzeug-Antwort von graph_mutate |
 | `CR-GC-986` | done | SCHEMA-cli-command haengt an Fluessen, die kein CLI-Verb tragen |
 | `CR-GC-987` | done | Vertragstest-Generator prüft Wertregeln und frozen die Enum-Werteliste |
+| `CR-GC-988` | n/a | CI-Suite auf zwei parallele Jobs teilen |

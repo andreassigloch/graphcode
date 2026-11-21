@@ -4713,6 +4713,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-988",
+      "type": "CR",
+      "name": "CI-Suite auf zwei parallele Jobs teilen",
+      "description": "docs/cr/open/CR-GC-988-ci-suite-auf-zwei-parallele-jobs-teilen.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -24954,6 +24960,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-988",
+      "target": "MOD-dev-scripts",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -38054,5 +38065,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1435
+  "graphVersion": 1437
 }

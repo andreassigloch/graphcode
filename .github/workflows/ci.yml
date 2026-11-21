@@ -5,7 +5,10 @@ name: CI
 # sigloch-modules repo is no longer needed to build this repo.
 #
 # The suite runs a real on-disk Kuzu store and a real `npm pack` + foreign install —
-# no mocks — so it needs a few minutes, not seconds.
+# no mocks — so it needs a few minutes, not seconds. On 2026-11-21 three runs in a row hit the
+# 20-minute limit (suite grown from 246 to about 270 files), so the suite runs as two parallel
+# jobs, one half each (`vitest --shard=<n>/2`, CR-GC-988). Every file runs in exactly one half;
+# type-check and build run in both, because the tests import the build output.
 #
 # master + PRs only, not every branch push: with one committer the regression signal is
 # already there locally. What CI adds is the CLEAN MACHINE — no local .graphcode/, no
@@ -18,8 +21,13 @@ on:
 
 jobs:
   build-test:
+    name: build-test (${{ matrix.shard }}/2)
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,5 +47,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Test
-        run: npm test
+      - name: Test (half ${{ matrix.shard }} of 2)
+        run: npx vitest run --shard=${{ matrix.shard }}/2

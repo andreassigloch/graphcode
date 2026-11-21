@@ -681,6 +681,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-985` | done | FLOW-mutate-answer ist an SCHEMA-mutate-result gebunden, traegt aber die Werkzeug-Antwort von graph_mutate | `FUNC-graph-mutate-tool` · `FUNC-import-code-verb` |
 | `CR-GC-986` | done | SCHEMA-cli-command haengt an Fluessen, die kein CLI-Verb tragen | `FUNC-import-code-verb` · `FUNC-render-verb` |
 | `CR-GC-987` | done | Vertragstest-Generator prüft Wertregeln und frozen die Enum-Werteliste | `FUNC-erzeuge-vertragstests` · `REQ-contract-test-generation` |
+| `CR-GC-988` | n/a | CI-Suite auf zwei parallele Jobs teilen | `MOD-dev-scripts` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

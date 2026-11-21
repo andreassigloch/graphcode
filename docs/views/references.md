@@ -1734,6 +1734,7 @@
 | `CR-GC-986` | relation | `SCHEMA-render-summary` |
 | `CR-GC-987` | relation | `FUNC-erzeuge-vertragstests` |
 | `CR-GC-987` | relation | `REQ-contract-test-generation` |
+| `CR-GC-988` | relation | `MOD-dev-scripts` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
