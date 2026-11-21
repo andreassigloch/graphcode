@@ -29,7 +29,7 @@ vitest 2.1.9. `--shard` arbeitet mit `fileParallelism: false` aus `vitest.config
 
 Alle Testdateien (`find tests -name "*.test.ts"`: 267) gegen die Vereinigung beider Berichte: 0 doppelt, 0 fehlend, 0 unbekannt. Die Summe der Tests entspricht dem Volllauf von `verify:full CR-GC-987` (3444). Die Laufzeit je Teil liegt bei 47 und 57 Prozent des Volllaufs von 491 s; auf dem Runner ist der Faktor nicht gemessen.
 
-- CI-Lauf nach dem Push: **offen** (die Hauptsitzung pusht und beobachtet; der CR bleibt in `open/`, bis beide Teile grün sind und unter dem Limit liegen).
+- CI-Lauf nach dem Push: **grün** (Lauf 44930044366, Commit 3da53177, 2026-11-21). Teil 1/2: 134 Dateien, 9 min 2 s. Teil 2/2: 133 Dateien, 11 min 26 s. Summe 267 Dateien, wie lokal. Limit 20 Minuten je Teil unverändert.
 
 ---
 
