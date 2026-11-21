@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 582 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 583 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 582 CR · 571 done · 1 open.
+Total: 583 CR · 571 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -644,3 +644,4 @@ Total: 582 CR · 571 done · 1 open.
 | `CR-GC-976` | n/a | Skills: Umzug eines Altbestands — Aufnahme, Zugangsliste, Durchlauf vor dem Schnitt (se-conops, se-cdr, se-plan) |
 | `CR-GC-977` | n/a | Skills: Rückfragen im Bau — Regel statt Einzelfall, Entscheidungen durchsuchen, Stoppen nach Rang (se-cdr, se-bau) |
 | `CR-GC-978` | n/a | se-plan: Meilenstein je Use Case, darin Blätter aufwärts (ändert CR-GC-892) |
+| `CR-GC-979` | n/a | Skills se:author-req und se-bau: feste Schreibweise fuer Definition und Verweis eines Parameters; eine fehlende Angabe ist Designfreiheit, keine Annahme (Autor 2026-11-21) |

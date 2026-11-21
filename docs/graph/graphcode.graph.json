@@ -4650,6 +4650,12 @@
       "description": "docs/cr/open/CR-GC-978-se-plan-meilenstein-je-use-case-darin-bl.md"
     },
     {
+      "id": "CR-GC-979",
+      "type": "CR",
+      "name": "Skills se:author-req und se-bau: feste Schreibweise fuer Definition und Verweis eines Parameters; eine fehlende Angabe ist Designfreiheit, keine Annahme (Autor 2026-11-21)",
+      "description": "docs/cr/open/CR-GC-979-skills-se-author-req-und-se-bau-feste-sc.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -37570,5 +37576,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1390
+  "graphVersion": 1391
 }
