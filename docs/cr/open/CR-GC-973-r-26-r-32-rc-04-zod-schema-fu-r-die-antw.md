@@ -52,7 +52,8 @@ Mutanten am Schema, je zurückgenommen (`git diff` zeigt nur die Änderung diese
 - [x] R-26 von 11 auf 9, R-32 von 21 auf 19 (`rules_evaluate` grouped, graphVersion 1375). RC-04 bleibt bei 23: beide SCHEMA waren vorher ungebunden und standen nicht in der Liste; mit `realRef` und Parse im Handler kommen sie nicht hinzu (sonst 25). Sonst bewegte sich keine Regel.
 - [x] `npm run type-check` grün; Verträge grün, vorher rot gesehen (Mutanten oben).
 - [x] `verify:code` grün (96 Dateien, 847 Tests, Bindung 3/3, Rückmeldung 80 Ergebnisse, 0 zurückgenommen).
-- [ ] `verify:full CR-GC-973` und Smoke: siehe Abschnitt Ergebnis.
+- [x] `verify:full CR-GC-973` grün (253 Dateien, 2215 Tests), Schlupf 0, Link-Modus nein; Folge ohne Schlupf 6/10.
+- [x] Smoke: nach dem Build startet `node dist/cli.js status` ohne Fehler (meldet erwartet Drift: der Host hat den alten Code geladen). Den neuen Parse belegen die Tests; der Host wurde nicht neu gestartet. `graph_export` antwortet über den laufenden Host.
 
 ---
 
