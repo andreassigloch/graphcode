@@ -55,3 +55,7 @@ Die Änderung berührt vier FUNC im Kern (`FUNC-compute-steering-delta`, `FUNC-f
 - Messung RC-04 (Skript über `conformanceEvaluation` am Arbeitsbaum): fit-advisory, steering-delta, store-rebuild-notice und zug-bericht sind aus der Liste.
 - Perf: die vier Parse laufen je Zug (zwei kleine Objekte) bzw. einmal je Store-Neuaufbau; `tests/perf.*` und `verify:code` (80 Dateien, 815 Tests) grün.
 
+
+## Abschluss
+
+`verify:code` 80 Dateien, 815 Tests grün; `verify:full CR-GC-982`: 263 Dateien, 2557 Tests grün, Schlupf 0. ITEM-2026-1474: wird vom CR-Folgeschritt `cli-command` (Surface) erledigt, nicht von diesem CR.
