@@ -1,6 +1,6 @@
 ---
 name: se:top-level
-version: 13
+version: 14
 description: Cut the top level — SYS blackbox, use cases, architecture targets, then the triad (FUNC / FCHAIN + contracts / MOD + stack) at the width per level that RD-04 and RD-05 judge, recursing by blackbox decomposition until a FUNC carries a realRef
 ---
 
@@ -103,7 +103,7 @@ _Warum hier keine feste Zahl mehr steht (CR-GC-629): diese Seite nannte an zwei 
 4. **One entry node per chain.** The trigger is the entry from which every member of the chain is reached. Several actors may start the same chain only at that entry node and with the same contract (SCHEMA); who started it is then a field in the contract. A second entry node or a second contract is a second chain: start-up, shutdown, a host and a health check are separate chains, and so are an MCP tool and a CLI verb that start the same work. An actor in the middle is allowed: the approver who sees a proposal and approves it receives a `sync` flow from the chain and feeds the next member. That member splits the chain into segments; the chain stays one. FC-06 reports four cases: a chain with no trigger, triggers at different members or contracts, an actor that only delivers in advance (`[predelivery]`: the function reads the data itself, so it is no actor flow), and a flow without `sync`. A receipt (`async` hand-over, `sync` back) triggers nothing; the chain runs on. A chain counts its members per FUNC: a start-up flow on a shared function appears in every chain that contains the function.
 5. **A property is a functional REQ at the FUNC that carries it, not a chain.** "Runs without a model call" has no sequence. A chain for it lists functions that never call each other. Right: `REQ-gate-without-model-call` with `FUNC-apply-gate -satisfy->` it; a FUNC satisfies only functional REQs.
 6. **The `realRef` names the symbol on the path, not a wrapper around it.**
-7. **`sync` answers one question: does the consumer await the delivery?** Judge from the consumer's side, one value per flow. A callback, an event or a file that someone reads later is `async`.
+7. **`sync` answers one question: does the consumer await the delivery before it answers or goes on?** Judge from the consumer's side, one value per flow. The carrier does not decide — return value, callback, message, signal, pressure or force: a callback the answer waits for is `sync`, an event the receiver handles on its own is `async`. Take the value from the description the member is realized in — code, schematic, protocol, datasheet, drawing, or a REQ that demands the behaviour. If none shows it, ask the author; without an author (headless) leave the flow unmarked and FC-06 reports it. Examples per domain: `se-vorbereitung`, step 3.
 8. **One FLOW, one call site.** Note the file and symbol where the caller hands the content over. A flow whose call site you cannot name is a guess.
 
 **Over existing code, start bottom-up.** Run `se:import-code` first: it extracts one FLOW per resolved call. Group those calls into chains, then add the intent on top. A chain drawn from memory over existing code models what someone thinks the code does.

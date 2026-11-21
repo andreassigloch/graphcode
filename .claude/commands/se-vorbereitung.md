@@ -1,6 +1,6 @@
 ---
 name: se-vorbereitung
-version: 12
+version: 13
 description: Modell vor den Kettenanalysen vorbereiten — Wirkketten schließen, Gegenmaßnahmen und Constraints dem tiefsten Träger zuordnen, das Merkmal synchron/asynchron der Flüsse nachprüfen, jeden Fluss am Code prüfen. Am Abschluss der Modulstufe (Marke PDR), vor se-fmea. Schlägt Züge vor, baut nicht selbst um.
 ---
 
@@ -147,7 +147,22 @@ Die Frage je Fluss, um den Wert zu prüfen:
 
 > Wartet die Antwort des Abnehmers auf diese Lieferung?
 
-Ja heißt synchron, nein heißt asynchron (vorab geliefert). Im Code heißt Ja: der Aufrufer wartet auf den Rückgabewert. Ein Rückruf, ein Ereignis oder eine Datei, die später jemand liest, heißt Nein. Belege den Wert mit Datei und Zeile; ohne Beleg lass das Merkmal weg. Eine Ablage hat keine Sonderbehandlung: es zählt, ob der Abnehmer beim Aufruf wartet. Trägt der Fluss einen anderen Wert, ist das der Zug:
+Ja heißt synchron: Der Abnehmer wartet auf die Lieferung, bevor er antwortet oder weitermacht. Nein heißt asynchron: Er nimmt, was vorab da ist. Der Übertragungsweg entscheidet nicht; Rückgabewert, Rückruf, Nachricht, Signal, Druck und Kraft werden gleich behandelt. Eine Ablage hat keine Sonderbehandlung: es zählt, ob der Abnehmer beim Aufruf wartet.
+
+| Bereich | synchron: der Abnehmer wartet | asynchron: vorab geliefert |
+|---|---|---|
+| Software | Eine Funktion gibt einen Wert zurück, der Aufrufer rechnet damit weiter. | Ein Log wird geschrieben, der Report liest es am nächsten Tag. |
+| Software, Ereignis | Die Oberfläche zeigt das Ergebnis erst, wenn der Rückruf kommt. | Ein Ereignis geht hinaus, der Empfänger reagiert unabhängig davon. |
+| Elektrisch | Die Steuerung schaltet ein Relais und wartet auf den Rückmeldekontakt. | Ein Sensor liegt dauernd an, die Steuerung liest den aktuellen Wert. |
+| Mechanisch | Das Stellwerk meldet die Fahrstraße erst, wenn die Weiche in Endlage ist. | Eine Feder wurde vorher gespannt und löst bei Bedarf aus. |
+| Hydraulisch | Der Zylinder fährt nur, solange die Pumpe fördert. | Ein vorher geladener Speicher versorgt den Zylinder. |
+| Organisation | Die Bestellung geht erst nach der Unterschrift raus. | Ein Rundschreiben wird gelesen, wann es passt. |
+
+Belege den Wert in der Beschreibung, mit der das Glied realisiert wird: Code (Datei und Zeile), Schaltplan (Blatt und Netz), Protokoll oder Datenblatt (Abschnitt), Zeichnung (Position) oder eine REQ, die das Verhalten fordert. Fehlt jeder Beleg, frag den Autor mit der Frage oben und der Tabelle; seine Antwort ist der Beleg, und der Bericht nennt sie. Ohne Autor (headless) lass das Merkmal weg.
+
+Ein falscher Wert fällt nicht überall auf. `sync` statt `async` meldet FC-06 als Quittung oder uneinigen Auslöser, RC-12 als fehlenden Aufruf. `async` statt `sync` meldet keine Regel: das Glied fehlt im Antwortweg, und `se-laufzeit` bewertet die Kette zu kurz.
+
+Trägt der Fluss einen anderen Wert, ist das der Zug:
 
 ```
 ## Nodes

@@ -34,8 +34,8 @@ const regel4 = topLevel.split('\n').find((l) => l.startsWith('4. **One entry nod
 const stufe3Fluss = topLevel.split('\n').find((l) => l.startsWith('3. **FLOW + SCHEMA**')) ?? '';
 
 describe('se:top-level Regel 4: ein Eingangsknoten je Kette (CR-GC-873)', () => {
-  it('der Kopf traegt Version 13 (CR-GC-939, CR-GC-949, CR-GC-925)', () => {
-    expect(topLevel).toMatch(/^version: 13$/m);
+  it('der Kopf traegt Version 14 (CR-GC-939, CR-GC-949, CR-GC-925, CR-GC-968)', () => {
+    expect(topLevel).toMatch(/^version: 14$/m);
   });
 
   it('die alte Regel „One trigger per chain" ist weg', () => {
@@ -68,6 +68,34 @@ describe('`sync` wird beim Kettenschnitt gesetzt, nicht erst in se-vorbereitung 
     expect(Number(vorbereitung.match(/^version: (\d+)$/m)![1])).toBeGreaterThanOrEqual(10);
     expect(vorbereitung).toMatch(/Das Merkmal `sync` setzt der Autor beim Kettenschnitt \(`se:top-level`, Phase 3, Schritt FLOW \+ SCHEMA\)/);
     expect(vorbereitung).not.toMatch(/Flüsse als synchron oder asynchron kennzeichnen/);
+  });
+});
+
+describe('`sync` hängt am Warten, nicht am Übertragungsweg; Beleg aus jeder Beschreibung (CR-GC-968)', () => {
+  const regel7 = topLevel.split('\n').find((l) => l.startsWith('7. **`sync` answers one question')) ?? '';
+  const pruefung = vorbereitung.slice(vorbereitung.indexOf('> Wartet die Antwort des Abnehmers auf diese Lieferung?'), vorbereitung.indexOf('## 4. Flüsse am Code prüfen'));
+
+  it('kein Skill setzt einen Rückruf oder ein Ereignis pauschal auf async', () => {
+    expect(regel7).not.toMatch(/A callback, an event or a file that someone reads later is `async`/);
+    expect(pruefung).not.toMatch(/Ein Rückruf, ein Ereignis oder eine Datei, die später jemand liest, heißt Nein/);
+    expect(regel7).toMatch(/The carrier does not decide/);
+    expect(pruefung).toMatch(/Der Übertragungsweg entscheidet nicht/);
+  });
+
+  it('der Beleg kommt aus der Beschreibung der Realisierung, Code ist ein Fall davon', () => {
+    for (const quelle of ['Code (Datei und Zeile)', 'Schaltplan (Blatt und Netz)', 'Protokoll oder Datenblatt (Abschnitt)', 'Zeichnung (Position)', 'eine REQ, die das Verhalten fordert'])
+      expect(pruefung, quelle).toContain(quelle);
+  });
+
+  it('ohne Beleg fragt der Skill den Autor; ohne Autor bleibt das Merkmal leer', () => {
+    expect(pruefung).toMatch(/Fehlt jeder Beleg, frag den Autor/);
+    expect(pruefung).toMatch(/Ohne Autor \(headless\) lass das Merkmal weg/);
+    expect(regel7).toMatch(/ask the author/);
+  });
+
+  it('die Beispieltabelle zeigt Software, Elektrik, Mechanik, Hydraulik und Organisation, Rückruf in beiden Spalten', () => {
+    for (const bereich of ['Software', 'Elektrisch', 'Mechanisch', 'Hydraulisch', 'Organisation']) expect(pruefung, bereich).toMatch(new RegExp(`^\\| ${bereich}`, 'm'));
+    expect(pruefung).toMatch(/^\| Software, Ereignis \|[^\n]*Rückruf[^\n]*\|[^\n]*Ereignis/m);
   });
 });
 

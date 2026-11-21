@@ -182,7 +182,7 @@ Der Store ist nach einem Abbruch nicht lesbar oder beschaedigt. Keine Wirkkette 
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-store-recovery` | tests/store-recovery.test.ts | passed | 2026-11-20 |
+| `TEST-store-recovery` | tests/store-recovery.test.ts | passed | 2026-11-21 |
 
 ### 9. Risiko Auswertung ohne Verantwortlichen (`REQ-risk-audit-evaluation-unowned`)
 
@@ -296,7 +296,7 @@ Der automatische Export scheitert, und Dateien und Sichten bleiben auf dem alten
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-11-20 |
+| `TEST-auto-export` | tests/auto-export.test.ts | passed | 2026-11-21 |
 
 ### 15. Risiko Kante verschwindet still (`REQ-risk-edge-vanishes-silently`)
 
@@ -315,7 +315,7 @@ Eine Kante verschwindet nach einer Aenderung der Grammatik still aus dem Modell.
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-11-20 |
+| `TEST-import-rejected-traces` | tests/harness.import-rejected-traces.test.ts | passed | 2026-11-21 |
 
 ### 16. Risiko Besitzer endet bei angedockten Sitzungen (`REQ-risk-owner-ends-with-docked-sessions`)
 
@@ -353,7 +353,7 @@ Ein abgebrochenes Wiederherstellen hinterlaesst einen teilweise gefuellten Store
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-11-20 |
+| `TEST-export-graph-guard` | tests/export-graph-guard.test.ts | passed | 2026-11-21 |
 
 ### 18. Risiko Regelauswertung faellt im Gate aus (`REQ-risk-gate-rule-eval-fails`)
 

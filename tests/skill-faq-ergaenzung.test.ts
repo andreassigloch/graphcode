@@ -103,7 +103,7 @@ describe('TEST-skill-faq-ergaenzung (CR-GC-942)', () => {
   });
 
   it('Nr. 10 (CR-GC-944): ohne Beleg mit Datei und Zeile bleibt der Fluss ohne Merkmal', () => {
-    expect(vorbereitung).toMatch(/ohne Beleg lass das Merkmal weg/);
+    expect(vorbereitung).toMatch(/Ohne Autor \(headless\) lass das Merkmal weg/);
     expect(vorbereitung).toMatch(/Eine Ablage hat keine Sonderbehandlung/);
   });
 
