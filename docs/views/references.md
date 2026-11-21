@@ -1695,6 +1695,8 @@
 | `CR-GC-977` | relation | `FUNC-se-bau` |
 | `CR-GC-977` | relation | `FUNC-se-cdr` |
 | `CR-GC-978` | relation | `FUNC-se-plan` |
+| `CR-GC-980` | relation | `FUNC-erzeuge-vertragstests` |
+| `CR-GC-980` | relation | `SCHEMA-vertragstest-bericht` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

@@ -673,6 +673,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-976` | n/a | Skills: Umzug eines Altbestands — Aufnahme, Zugangsliste, Durchlauf vor dem Schnitt (se-conops, se-cdr, se-plan) | `FUNC-se-cdr` · `FUNC-se-conops` · `FUNC-se-plan` |
 | `CR-GC-977` | n/a | Skills: Rückfragen im Bau — Regel statt Einzelfall, Entscheidungen durchsuchen, Stoppen nach Rang (se-cdr, se-bau) | `FUNC-se-bau` · `FUNC-se-cdr` |
 | `CR-GC-978` | n/a | se-plan: Meilenstein je Use Case, darin Blätter aufwärts (ändert CR-GC-892) | `FUNC-se-plan` |
+| `CR-GC-980` | n/a | Vertragstest-Generator prüft nur die erste Feldebene | `FUNC-erzeuge-vertragstests` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

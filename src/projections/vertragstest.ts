@@ -4,7 +4,10 @@
  *
  * Je Schema: ein gueltiges Beispiel, das angenommen wird, und je Objektfeld die Ablehnung ohne Feld,
  * mit falschem Typ und ausserhalb eines Enums, dazu ein unbekanntes Zusatzfeld; je Union-Variante
- * dasselbe. Ein Fall kommt nur in die Datei, wenn das Original-Schema ihn so urteilt, wie der Fall es
+ * dasselbe. Die Faelle gelten auf jeder Ebene: in verschachtelten Objekten, in den Elementen einer Liste,
+ * eines Tupels und eines Records (CR-GC-980). Die Tiefe ist auf `MAX_EBENE` begrenzt, ein rekursives
+ * Schema (z.lazy) liefert sein Beispiel ohne optionale Felder; beides steht im Bericht (`begrenzt`).
+ * Ein Fall kommt nur in die Datei, wenn das Original-Schema ihn so urteilt, wie der Fall es
  * erwartet; angenommene Faelle frieren die Ausgabe ein. Das Laden der TS-Quellen des Ziel-Repos
  * gehoert dem Aufrufer (`laden`), weil es Node-Flags braucht (vertragstest-verb.ts).
  *
@@ -28,10 +31,10 @@ export const VertragstestSatzSchema = z.array(
 );
 export type VertragstestSatz = z.infer<typeof VertragstestSatzSchema>;
 
-/** Je SCHEMA: wie viele Faelle in der Datei stehen und welche verworfen wurden, oder warum keine entstand. */
+/** Je SCHEMA: wie viele Faelle in der Datei stehen, welche verworfen wurden und wo die Tiefe begrenzt war, oder warum keine entstand. */
 export const VertragstestBerichtSchema = z.array(
   z.union([
-    z.strictObject({ schema: z.string(), datei: z.string(), faelle: z.number().int().positive(), verworfen: z.array(z.string()) }),
+    z.strictObject({ schema: z.string(), datei: z.string(), faelle: z.number().int().positive(), verworfen: z.array(z.string()), begrenzt: z.array(z.string()) }),
     z.strictObject({ schema: z.string(), fehler: z.string() }),
   ]),
 );
@@ -155,15 +158,24 @@ const FORMATE: Record<string, string> = {
   url: 'https://example.org',
 };
 
-/** Ein gueltiges Beispiel; `minimal` laesst optionale Objektfelder weg. */
-export function beispiel(schema: unknown, minimal = false): unknown {
+/** Das Beispiel eines z.lazy-Schemas, das sich selbst enthaelt, hat kein Ende (CR-GC-980). */
+export class RekursionsFehler extends Error {
+  constructor() {
+    super('rekursives Schema (z.lazy): kein endliches Beispiel');
+    this.name = 'RekursionsFehler';
+  }
+}
+
+/** Ein gueltiges Beispiel; `minimal` laesst optionale Objektfelder und, wo das Schema es erlaubt, Listenelemente weg. */
+export function beispiel(schema: unknown, minimal = false, offen: readonly Zod[] = []): unknown {
   const s = schema as Zod;
   const d = def(s);
+  const rek = (x: unknown, m = minimal): unknown => beispiel(x, m, offen);
   if (minimal && d.type === 'object') {
     return Object.fromEntries(
       Object.entries(d.shape)
         .filter(([, v]) => !v.safeParse(undefined).success)
-        .map(([k, v]) => [k, beispiel(v, true)]),
+        .map(([k, v]) => [k, rek(v, true)]),
     );
   }
   switch (d.type) {
@@ -202,17 +214,17 @@ export function beispiel(schema: unknown, minimal = false): unknown {
       return 'beliebig';
     case 'array': {
       const c = checks(s);
-      const n = c.find((x) => x.check === 'length_equals')?.length ?? c.find((x) => x.check === 'min_length')?.minimum ?? 1;
-      return Array.from({ length: Math.max(n, 1) }, () => beispiel(d.element));
+      const n = c.find((x) => x.check === 'length_equals')?.length ?? c.find((x) => x.check === 'min_length')?.minimum ?? (minimal ? 0 : 1);
+      return Array.from({ length: minimal ? n : Math.max(n, 1) }, () => rek(d.element));
     }
     case 'tuple':
-      return d.items.map((x) => beispiel(x));
+      return d.items.map((x) => rek(x));
     case 'record': {
-      const k = beispiel(d.keyType);
-      return { [typeof k === 'string' ? k : 'k']: beispiel(d.valueType) };
+      const k = rek(d.keyType);
+      return { [typeof k === 'string' ? k : 'k']: rek(d.valueType) };
     }
     case 'object':
-      return Object.fromEntries(Object.entries(d.shape).map(([k, v]) => [k, beispiel(v)]));
+      return Object.fromEntries(Object.entries(d.shape).map(([k, v]) => [k, rek(v)]));
     case 'optional':
     case 'nullable':
     case 'default':
@@ -220,13 +232,15 @@ export function beispiel(schema: unknown, minimal = false): unknown {
     case 'catch':
     case 'readonly':
     case 'nonoptional':
-      return beispiel(d.innerType);
+      return rek(d.innerType);
     case 'union':
-      return beispiel(d.options[0]);
+      return rek(d.options[0]);
     case 'pipe':
-      return beispiel(d.in);
-    case 'lazy':
-      return beispiel(d.getter());
+      return rek(d.in);
+    case 'lazy': {
+      if (offen.includes(s)) throw new RekursionsFehler();
+      return beispiel(d.getter(), minimal, [...offen, s]);
+    }
     case 'date':
       return new Date('2026-01-01');
     default:
@@ -236,61 +250,149 @@ export function beispiel(schema: unknown, minimal = false): unknown {
 
 const WRAPPER = ['optional', 'nullable', 'default'];
 const kern = (s: Zod): Zod => (WRAPPER.includes(def(s).type) ? kern(def(s).innerType) : s);
+const HUELLE = [...WRAPPER, 'prefault', 'catch', 'readonly', 'nonoptional'];
 
-function objektFaelle(obj: Zod, basis: Record<string, unknown>, etikett: string): Fall[] {
-  const faelle: Fall[] = [];
-  const shape = def(obj).shape;
-  for (const k of Object.keys(shape)) {
-    const ohne = { ...basis };
-    delete ohne[k];
-    faelle.push({ name: `${etikett}lehnt ab ohne ${k}`, eingabe: ohne, erwartet: false });
-    const falsch = typeof basis[k] === 'string' ? 12345 : '__falsch__';
-    faelle.push({ name: `${etikett}lehnt ab: ${k} mit falschem Typ`, eingabe: { ...basis, [k]: falsch }, erwartet: false });
-    if (def(kern(shape[k] as Zod)).type === 'enum') {
-      faelle.push({ name: `${etikett}lehnt ab: ${k} außerhalb des Enums`, eingabe: { ...basis, [k]: '__ausserhalb__' }, erwartet: false });
-    }
+/** Tiefste Ebene, auf der der Erzeuger noch Faelle bildet; darunter steht eine Meldung im Bericht. */
+export const MAX_EBENE = 8;
+
+/** Wo der Erzeuger steht: Pfad im Beispiel, Weg zurueck zur Wurzel, Ebene, Meldungen. */
+interface Stelle {
+  pfad: string;
+  ebene: number;
+  /** Setzt einen Teilwert an diese Stelle des Beispiels und liefert die ganze Eingabe. */
+  einsetzen: (teil: unknown) => unknown;
+  /** Der Erzeuger bildet den Typfall dieser Stelle selbst; bei einem Objektfeld bildet ihn das Objekt. */
+  eigenerTypfall: boolean;
+  begrenzt: string[];
+}
+
+const falschWie = (wert: unknown): unknown => (typeof wert === 'string' ? 12345 : '__falsch__');
+const benannt = (st: Stelle, text: string): string => (st.pfad ? `${st.pfad}: ${text}` : text);
+const tiefer = (st: Stelle, pfad: string, einsetzen: (teil: unknown) => unknown, eigenerTypfall: boolean): Stelle => ({
+  ...st,
+  pfad,
+  ebene: st.ebene + 1,
+  einsetzen,
+  eigenerTypfall,
+});
+
+/** Das gueltige Beispiel einer Variante oder eines Teilschemas; ein Schema ohne endliches Beispiel meldet sich ueber `RekursionsFehler`. */
+function gueltigesBeispiel(v: Zod, st: Stelle): unknown {
+  let b: unknown;
+  try {
+    b = beispiel(v);
+  } catch (e) {
+    if (!(e instanceof RekursionsFehler)) throw e;
+    st.begrenzt.push(`${st.pfad || 'Wurzel'}: rekursives Schema (z.lazy), Beispiel ohne optionale Felder`);
+    return beispiel(v, true);
   }
-  faelle.push({ name: `${etikett}lehnt ab: unbekanntes Zusatzfeld`, eingabe: { ...basis, __zusatz__: 1 }, erwartet: false });
+  return v.safeParse(b).success ? b : beispiel(v, true);
+}
+
+/** Die Faelle zu einem Knoten des Schemas und seinem Beispielwert; jeder Fall ist die ganze Eingabe. */
+function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
+  const d = def(s);
+  if (HUELLE.includes(d.type)) return knoten(d.innerType, wert, st);
+  if (d.type === 'pipe') return knoten(d.in, wert, st);
+  if (d.type === 'lazy') return knoten(d.getter(), wert, st);
+  if (st.ebene > MAX_EBENE) {
+    st.begrenzt.push(`${st.pfad}: Tiefe ${MAX_EBENE} erreicht, darunter keine Fälle`);
+    return [];
+  }
+  const faelle: Fall[] = [];
+  if (d.type === 'union') {
+    d.options.forEach((opt, n) => {
+      const b = gueltigesBeispiel(opt, st);
+      const vp = d.options.length > 1 ? (st.pfad ? `${st.pfad} (Variante ${n + 1})` : `Variante ${n + 1}`) : st.pfad;
+      const vs: Stelle = { ...st, pfad: vp, eigenerTypfall: false };
+      faelle.push({ name: benannt(vs, 'nimmt das Beispiel an'), eingabe: st.einsetzen(b), erwartet: true });
+      faelle.push(...knoten(opt, b, { ...vs, ebene: st.ebene + 1 }));
+    });
+    return faelle;
+  }
+  if (d.type === 'object') {
+    const b = wert as Record<string, unknown>;
+    if (st.eigenerTypfall) faelle.push({ name: benannt(st, 'lehnt einen Wert ab, der kein Objekt ist'), eingabe: st.einsetzen('__falsch__'), erwartet: false });
+    for (const k of Object.keys(d.shape)) {
+      const feld = d.shape[k] as Zod;
+      if (k in b) {
+        const ohne = { ...b };
+        delete ohne[k];
+        faelle.push({ name: benannt(st, `lehnt ab ohne ${k}`), eingabe: st.einsetzen(ohne), erwartet: false });
+      }
+      faelle.push({ name: benannt(st, `lehnt ab: ${k} mit falschem Typ`), eingabe: st.einsetzen({ ...b, [k]: falschWie(b[k]) }), erwartet: false });
+      if (def(kern(feld)).type === 'enum') {
+        faelle.push({ name: benannt(st, `lehnt ab: ${k} außerhalb des Enums`), eingabe: st.einsetzen({ ...b, [k]: '__ausserhalb__' }), erwartet: false });
+      }
+      if (k in b) {
+        faelle.push(...knoten(feld, b[k], tiefer(st, st.pfad ? `${st.pfad}.${k}` : k, (t) => st.einsetzen({ ...b, [k]: t }), false)));
+      }
+    }
+    faelle.push({ name: benannt(st, 'lehnt ab: unbekanntes Zusatzfeld'), eingabe: st.einsetzen({ ...b, __zusatz__: 1 }), erwartet: false });
+    return faelle;
+  }
+  if (d.type === 'array') {
+    const a = wert as unknown[];
+    if (st.eigenerTypfall) faelle.push({ name: benannt(st, 'lehnt einen Wert ab, der keine Liste ist'), eingabe: st.einsetzen('__falsch__'), erwartet: false });
+    if (a.length > 0) {
+      const el = tiefer(st, `${st.pfad}[]`, (t) => st.einsetzen(a.map((x, i) => (i === 0 ? t : x))), true);
+      faelle.push(...knoten(d.element, a[0], el));
+    }
+    return faelle;
+  }
+  if (d.type === 'tuple') {
+    const a = wert as unknown[];
+    if (st.eigenerTypfall) faelle.push({ name: benannt(st, 'lehnt einen Wert ab, der kein Tupel ist'), eingabe: st.einsetzen('__falsch__'), erwartet: false });
+    if (a.length > 0) faelle.push({ name: benannt(st, 'lehnt ab: Tupel zu kurz'), eingabe: st.einsetzen(a.slice(0, -1)), erwartet: false });
+    d.items.forEach((item, i) => {
+      const el = tiefer(st, `${st.pfad}[${i}]`, (t) => st.einsetzen(a.map((x, j) => (j === i ? t : x))), true);
+      faelle.push(...knoten(item, a[i], el));
+    });
+    return faelle;
+  }
+  if (d.type === 'record') {
+    const r = wert as Record<string, unknown>;
+    const schluessel = Object.keys(r)[0] as string;
+    if (st.eigenerTypfall) faelle.push({ name: benannt(st, 'lehnt einen Wert ab, der kein Record ist'), eingabe: st.einsetzen('__falsch__'), erwartet: false });
+    faelle.push(...knoten(d.valueType, r[schluessel], tiefer(st, `${st.pfad}{}`, (t) => st.einsetzen({ [schluessel]: t }), true)));
+    return faelle;
+  }
+  if (['string', 'number', 'boolean'].includes(d.type) && st.eigenerTypfall) {
+    faelle.push({ name: benannt(st, 'lehnt einen Wert vom falschen Typ ab'), eingabe: st.einsetzen(falschWie(wert)), erwartet: false });
+  }
+  if (d.type === 'enum' && st.eigenerTypfall) {
+    for (const w of Object.values(d.entries)) faelle.push({ name: benannt(st, `nimmt ${String(w)} an`), eingabe: st.einsetzen(w), erwartet: true });
+    faelle.push({ name: benannt(st, 'lehnt einen Wert außerhalb ab'), eingabe: st.einsetzen('__ausserhalb__'), erwartet: false });
+  }
   return faelle;
 }
 
-/** Alle Faelle eines Schemas; aufgenommen wird nur, was das Original so urteilt. */
-export function erzeugeFaelle(schema: unknown): { aufgenommen: Fall[]; verworfen: string[] } {
+/** Alle Faelle eines Schemas; aufgenommen wird nur, was das Original so urteilt. `begrenzt` nennt Stellen, an denen die Tiefe oder ein z.lazy den Umfang beschnitt. */
+export function erzeugeFaelle(schema: unknown): { aufgenommen: Fall[]; verworfen: string[]; begrenzt: string[] } {
   const S = schema as Zod;
   const aufgenommen: Fall[] = [];
   const verworfen: string[] = [];
-  for (const f of rohFaelle(S)) {
+  const begrenzt: string[] = [];
+  for (const f of rohFaelle(S, begrenzt)) {
     const r = S.safeParse(f.eingabe);
     if (r.success === f.erwartet) aufgenommen.push(f.erwartet ? { ...f, ausgabe: r.data } : f);
     else verworfen.push(f.name);
   }
-  return { aufgenommen, verworfen };
+  return { aufgenommen, verworfen, begrenzt };
 }
 
-/** Die Faelle vor dem Urteil des Originals. Eine Liste traegt die Faelle ihres Elements, so oft wiederholt wie ihr Beispiel lang ist. */
-function rohFaelle(S: Zod): Fall[] {
-  const d = def(S);
-  if (d.type === 'array') {
-    const n = (beispiel(S) as unknown[]).length;
-    const element = rohFaelle(d.element).map((f) => ({ ...f, name: `Element: ${f.name}`, eingabe: Array.from({ length: n }, () => f.eingabe) }));
-    return [...element, { name: 'lehnt einen Wert ab, der keine Liste ist', eingabe: '__falsch__', erwartet: false }];
+/** Die Faelle vor dem Urteil des Originals: das Beispiel der Wurzel, dazu die Faelle jeder Ebene darunter. */
+function rohFaelle(S: Zod, begrenzt: string[]): Fall[] {
+  const st: Stelle = { pfad: '', ebene: 0, einsetzen: (t) => t, eigenerTypfall: true, begrenzt };
+  let offen: Zod = S;
+  while (HUELLE.includes(def(offen).type) || ['pipe', 'lazy'].includes(def(offen).type)) {
+    const d = def(offen);
+    offen = d.type === 'pipe' ? d.in : d.type === 'lazy' ? d.getter() : d.innerType;
   }
+  const b = gueltigesBeispiel(S, st);
   const faelle: Fall[] = [];
-  const varianten = d.type === 'union' ? d.options : [S];
-  varianten.forEach((v, n) => {
-    let b = beispiel(v);
-    if (!v.safeParse(b).success) b = beispiel(v, true);
-    const etikett = varianten.length > 1 ? `Variante ${n + 1}: ` : '';
-    faelle.push({ name: `${etikett}nimmt das Beispiel an`, eingabe: b, erwartet: true });
-    if (def(v).type === 'object') faelle.push(...objektFaelle(v, b as Record<string, unknown>, etikett));
-  });
-  if (['string', 'number', 'boolean'].includes(d.type)) {
-    faelle.push({ name: 'lehnt einen Wert vom falschen Typ ab', eingabe: d.type === 'string' ? 12345 : '__falsch__', erwartet: false });
-  }
-  if (d.type === 'enum') {
-    for (const w of Object.values(d.entries)) faelle.push({ name: `nimmt ${String(w)} an`, eingabe: w, erwartet: true });
-    faelle.push({ name: 'lehnt einen Wert außerhalb ab', eingabe: '__ausserhalb__', erwartet: false });
-  }
+  if (def(offen).type !== 'union') faelle.push({ name: 'nimmt das Beispiel an', eingabe: b, erwartet: true });
+  faelle.push(...knoten(S, b, st));
   return faelle;
 }
 
@@ -406,18 +508,18 @@ export async function erzeugeVertragstests(
         if (punkte.length === 0) throw new Error('keine Zeile mit Grenzwert');
         const datei = join(zielDir, `${e.id}.vertrag.md`);
         writeFileSync(datei, testVonHand(e, punkte));
-        bericht.push({ schema: e.id, datei: relative(root, datei), faelle: punkte.length, verworfen });
+        bericht.push({ schema: e.id, datei: relative(root, datei), faelle: punkte.length, verworfen, begrenzt: [] });
         continue;
       }
       const mod = await laden(join(root, e.file));
       const S = mod[e.symbol] as Zod | undefined;
       if (!S?._zod) throw new Error(S ? 'kein Zod-4-Schema' : `Symbol ${e.symbol} nicht exportiert`);
-      const { aufgenommen, verworfen } = erzeugeFaelle(S);
+      const { aufgenommen, verworfen, begrenzt } = erzeugeFaelle(S);
       if (!aufgenommen.some((f) => f.erwartet)) throw new Error('kein angenommenes Beispiel');
       const datei = join(zielDir, `${e.id}.vertrag.test.ts`);
       const imp = relative(zielDir, join(root, e.file)).replace(/\.ts$/, '.js');
       writeFileSync(datei, testDatei(e, imp.startsWith('.') ? imp : './' + imp, aufgenommen));
-      bericht.push({ schema: e.id, datei: relative(root, datei), faelle: aufgenommen.length, verworfen });
+      bericht.push({ schema: e.id, datei: relative(root, datei), faelle: aufgenommen.length, verworfen, begrenzt });
     } catch (err) {
       bericht.push({ schema: e.id, fehler: err instanceof Error ? err.message : String(err) });
     }

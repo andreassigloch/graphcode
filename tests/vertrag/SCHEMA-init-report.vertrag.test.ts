@@ -6,11 +6,65 @@ describe('Vertrag SCHEMA-init-report', () => {
   it("nimmt das Beispiel an", () => {
     expect(S.parse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]})).toEqual({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]});
   });
+  it("lehnt einen Wert ab, der kein Objekt ist", () => {
+    expect(S.safeParse("__falsch__").success).toBe(false);
+  });
   it("lehnt ab ohne result", () => {
     expect(S.safeParse({"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
   });
   it("lehnt ab: result mit falschem Typ", () => {
     expect(S.safeParse({"result":"__falsch__","installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab ohne action", () => {
+    expect(S.safeParse({"result":{"repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab: action mit falschem Typ", () => {
+    expect(S.safeParse({"result":{"action":12345,"repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab: action außerhalb des Enums", () => {
+    expect(S.safeParse({"result":{"action":"__ausserhalb__","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab ohne repoRoot", () => {
+    expect(S.safeParse({"result":{"action":"init","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab: repoRoot mit falschem Typ", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":12345,"created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab ohne created", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab: created mit falschem Typ", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":"__falsch__","updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result.created[]: lehnt einen Wert vom falschen Typ ab", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":[12345],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab ohne updated", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab: updated mit falschem Typ", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":"__falsch__","removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result.updated[]: lehnt einen Wert vom falschen Typ ab", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":[12345],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab ohne removed", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab: removed mit falschem Typ", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":"__falsch__","preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result.removed[]: lehnt einen Wert vom falschen Typ ab", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":[12345],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab ohne preserved", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result: lehnt ab: preserved mit falschem Typ", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":"__falsch__"},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
+  });
+  it("result.preserved[]: lehnt einen Wert vom falschen Typ ab", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":[12345]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
   });
   it("lehnt ab ohne installCommand", () => {
     expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installOk":true,"installError":"beispiel","agentHosts":["beispiel"]}).success).toBe(false);
@@ -35,5 +89,8 @@ describe('Vertrag SCHEMA-init-report', () => {
   });
   it("lehnt ab: agentHosts mit falschem Typ", () => {
     expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":"__falsch__"}).success).toBe(false);
+  });
+  it("agentHosts[]: lehnt einen Wert vom falschen Typ ab", () => {
+    expect(S.safeParse({"result":{"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]},"installCommand":"beispiel","installOk":true,"installError":"beispiel","agentHosts":[12345]}).success).toBe(false);
   });
 });

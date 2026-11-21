@@ -4614,7 +4614,7 @@ Verification ◀ `TEST-vertragstest-generator` (integration) · satisfy ◀ `FUN
 
 > auch in: `FUNC-block-grounding`
 
-Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, je Feld die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; nur Faelle, die das Original so urteilt. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965)
+Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, auf jeder Ebene die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; dieselben Faelle gelten in verschachtelten Objekten und in den Elementen einer Liste, eines Tupels und eines Records, je Variante einer Union; nur Faelle, die das Original so urteilt. Die Tiefe ist auf 8 Ebenen begrenzt, ein z.lazy, das sich selbst enthaelt, liefert das Beispiel ohne optionale Felder; beides steht im Bericht. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965, CR-GC-980)
 
 io ◀ `FLOW-vertragstest-satz` · io ▶ `FLOW-vertragstest-bericht` · allocate ▶ `MOD-projections`
 
@@ -11200,7 +11200,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 > auch in: `FCHAIN-contract-test-generation`
 
-Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, je Feld die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; nur Faelle, die das Original so urteilt. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965)
+Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, auf jeder Ebene die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; dieselben Faelle gelten in verschachtelten Objekten und in den Elementen einer Liste, eines Tupels und eines Records, je Variante einer Union; nur Faelle, die das Original so urteilt. Die Tiefe ist auf 8 Ebenen begrenzt, ein z.lazy, das sich selbst enthaelt, liefert das Beispiel ohne optionale Felder; beides steht im Bericht. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965, CR-GC-980)
 
 io ◀ `FLOW-vertragstest-satz` · io ▶ `FLOW-vertragstest-bericht` · allocate ▶ `MOD-projections`
 
@@ -14468,7 +14468,7 @@ schema ◀ `FLOW-verlauf-report`
 
 ###### 3.3.4.2.68  `SCHEMA-vertragstest-bericht` — VertragstestBerichtSchema
 
-Je SCHEMA die erzeugte Datei mit Zahl der Faelle und verworfenen Faellen, oder der Fehler. erzeugeVertragstests parst ihn, bevor es ihn zurueckgibt. (CR-GC-962)
+Je SCHEMA die erzeugte Datei mit Zahl der Faelle, den verworfenen Faellen und den Stellen, an denen die Tiefe oder ein z.lazy den Umfang begrenzte (begrenzt), oder der Fehler. erzeugeVertragstests parst ihn, bevor es ihn zurueckgibt. (CR-GC-962, CR-GC-980)
 
 schema ◀ `FLOW-vertragstest-bericht`
 
@@ -16174,7 +16174,7 @@ verify ▶ `SCHEMA-work-set` · testRefs: `tests/vertrag/SCHEMA-work-set.vertrag
 
 #### 3.4.201  `TEST-vertragstest-generator` — Vertragstest-Generator
 
-Unit-Tests des Erzeugers und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
+Unit-Tests des Erzeugers (je Konstrukt ein kleines Schema: verschachteltes Objekt, Liste, Tupel, Record, Union, optional, Tiefengrenze, rekursives z.lazy) und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
 
 verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · `REQ-contract-test-manual` · testRefs: `tests/vertragstest.test.ts`
 

@@ -6,6 +6,9 @@ describe('Vertrag SCHEMA-install-result', () => {
   it("nimmt das Beispiel an", () => {
     expect(S.parse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]})).toEqual({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]});
   });
+  it("lehnt einen Wert ab, der kein Objekt ist", () => {
+    expect(S.safeParse("__falsch__").success).toBe(false);
+  });
   it("lehnt ab ohne action", () => {
     expect(S.safeParse({"repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]}).success).toBe(false);
   });
@@ -27,11 +30,17 @@ describe('Vertrag SCHEMA-install-result', () => {
   it("lehnt ab: created mit falschem Typ", () => {
     expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":"__falsch__","updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]}).success).toBe(false);
   });
+  it("created[]: lehnt einen Wert vom falschen Typ ab", () => {
+    expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":[12345],"updated":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]}).success).toBe(false);
+  });
   it("lehnt ab ohne updated", () => {
     expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"removed":["beispiel"],"preserved":["beispiel"]}).success).toBe(false);
   });
   it("lehnt ab: updated mit falschem Typ", () => {
     expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":"__falsch__","removed":["beispiel"],"preserved":["beispiel"]}).success).toBe(false);
+  });
+  it("updated[]: lehnt einen Wert vom falschen Typ ab", () => {
+    expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":[12345],"removed":["beispiel"],"preserved":["beispiel"]}).success).toBe(false);
   });
   it("lehnt ab ohne removed", () => {
     expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"preserved":["beispiel"]}).success).toBe(false);
@@ -39,10 +48,16 @@ describe('Vertrag SCHEMA-install-result', () => {
   it("lehnt ab: removed mit falschem Typ", () => {
     expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":"__falsch__","preserved":["beispiel"]}).success).toBe(false);
   });
+  it("removed[]: lehnt einen Wert vom falschen Typ ab", () => {
+    expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":[12345],"preserved":["beispiel"]}).success).toBe(false);
+  });
   it("lehnt ab ohne preserved", () => {
     expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"]}).success).toBe(false);
   });
   it("lehnt ab: preserved mit falschem Typ", () => {
     expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":"__falsch__"}).success).toBe(false);
+  });
+  it("preserved[]: lehnt einen Wert vom falschen Typ ab", () => {
+    expect(S.safeParse({"action":"init","repoRoot":"beispiel","created":["beispiel"],"updated":["beispiel"],"removed":["beispiel"],"preserved":[12345]}).success).toBe(false);
   });
 });

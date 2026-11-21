@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSyn
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { z } from 'zod';
-import { beispiel, erzeugeFaelle, pruefpunkte, testDatei, testVonHand } from '../src/projections/vertragstest.js';
+import { beispiel, erzeugeFaelle, MAX_EBENE, pruefpunkte, testDatei, testVonHand } from '../src/projections/vertragstest.js';
 import { executeVertragstest, VertragstestAufrufFehler } from '../src/surface/vertragstest-verb.js';
 
 const S = z.strictObject({
@@ -55,11 +55,78 @@ describe('erzeugeFaelle', () => {
     const L = z.array(z.strictObject({ id: z.string(), art: z.enum(['a', 'b']) })).length(2);
     const { aufgenommen } = erzeugeFaelle(L);
     expect(namen(aufgenommen)).toEqual(
-      expect.arrayContaining(['Element: nimmt das Beispiel an', 'Element: lehnt ab ohne id', 'Element: lehnt ab: art außerhalb des Enums', 'lehnt einen Wert ab, der keine Liste ist']),
+      expect.arrayContaining(['nimmt das Beispiel an', '[]: lehnt ab ohne id', '[]: lehnt ab: art außerhalb des Enums', 'lehnt einen Wert ab, der keine Liste ist']),
     );
   });
   it('lehnt bei Text einen Wert vom falschen Typ ab', () => {
     expect(namen(erzeugeFaelle(z.string()).aufgenommen)).toEqual(['nimmt das Beispiel an', 'lehnt einen Wert vom falschen Typ ab']);
+  });
+});
+
+describe('erzeugeFaelle unter der ersten Feldebene (CR-GC-980)', () => {
+  const eingabe = (faelle: Array<{ name: string; eingabe: unknown }>, name: string): unknown => faelle.find((f) => f.name === name)?.eingabe;
+
+  it('prüft ein verschachteltes Objekt: Pflichtfeld, Typ, Enum, Zusatzfeld', () => {
+    const N = z.strictObject({ a: z.strictObject({ b: z.string(), c: z.enum(['x', 'y']) }) });
+    const { aufgenommen } = erzeugeFaelle(N);
+    expect(namen(aufgenommen)).toEqual(
+      expect.arrayContaining(['a: lehnt ab ohne b', 'a: lehnt ab: b mit falschem Typ', 'a: lehnt ab: c außerhalb des Enums', 'a: lehnt ab: unbekanntes Zusatzfeld']),
+    );
+    expect(eingabe(aufgenommen, 'a: lehnt ab ohne b')).toEqual({ a: { c: 'x' } });
+  });
+  it('prüft die Elemente einer Liste im Objekt und tauscht nur das erste Element', () => {
+    const L = z.strictObject({ bindings: z.array(z.strictObject({ tool: z.string(), file: z.string() })).min(2) });
+    const { aufgenommen } = erzeugeFaelle(L);
+    expect(namen(aufgenommen)).toEqual(expect.arrayContaining(['bindings[]: lehnt ab ohne tool', 'bindings[]: lehnt ab: file mit falschem Typ']));
+    const e = eingabe(aufgenommen, 'bindings[]: lehnt ab ohne tool') as { bindings: unknown[] };
+    expect(e.bindings).toEqual([{ file: 'beispiel' }, { tool: 'beispiel', file: 'beispiel' }]);
+  });
+  it('prüft die Elemente eines Tupels und lehnt ein zu kurzes ab', () => {
+    const T = z.strictObject({ t: z.tuple([z.string(), z.strictObject({ n: z.number() })]) });
+    const { aufgenommen } = erzeugeFaelle(T);
+    expect(namen(aufgenommen)).toEqual(expect.arrayContaining(['t[1]: lehnt ab ohne n', 't[0]: lehnt einen Wert vom falschen Typ ab', 't: lehnt ab: Tupel zu kurz']));
+  });
+  it('prüft den Wert eines Records', () => {
+    const R = z.strictObject({ r: z.record(z.string(), z.strictObject({ n: z.number() })) });
+    expect(namen(erzeugeFaelle(R).aufgenommen)).toEqual(expect.arrayContaining(['r{}: lehnt ab ohne n']));
+  });
+  it('prüft jede Variante einer Union im Feld und nimmt sie an', () => {
+    const U = z.strictObject({ u: z.discriminatedUnion('k', [z.strictObject({ k: z.literal(1), a: z.string() }), z.strictObject({ k: z.literal(2), b: z.number() })]) });
+    const { aufgenommen } = erzeugeFaelle(U);
+    expect(namen(aufgenommen)).toEqual(
+      expect.arrayContaining(['u (Variante 2): nimmt das Beispiel an', 'u (Variante 1): lehnt ab ohne a', 'u (Variante 2): lehnt ab ohne b']),
+    );
+    expect(eingabe(aufgenommen, 'u (Variante 2): lehnt ab ohne b')).toEqual({ u: { k: 2 } });
+  });
+  it('geht durch optional und nullable hindurch', () => {
+    const O = z.strictObject({ o: z.strictObject({ a: z.string() }).optional(), p: z.array(z.strictObject({ q: z.string() })).nullable() });
+    expect(namen(erzeugeFaelle(O).aufgenommen)).toEqual(expect.arrayContaining(['o: lehnt ab ohne a', 'p[]: lehnt ab ohne q']));
+  });
+  it('lehnt ab, was das Original annimmt, und verwirft den Fall statt ihn aufzunehmen', () => {
+    const N = z.strictObject({ a: z.object({ b: z.string() }) });
+    const { aufgenommen, verworfen } = erzeugeFaelle(N);
+    expect(namen(aufgenommen)).not.toContain('a: lehnt ab: unbekanntes Zusatzfeld');
+    expect(verworfen).toContain('a: lehnt ab: unbekanntes Zusatzfeld');
+  });
+  it('begrenzt die Tiefe und meldet es', () => {
+    let T: z.ZodType = z.strictObject({ blatt: z.string() });
+    for (let i = 0; i < MAX_EBENE + 3; i++) T = z.strictObject({ n: T });
+    const { aufgenommen, begrenzt } = erzeugeFaelle(T);
+    expect(begrenzt.length).toBe(1);
+    expect(begrenzt[0]).toMatch(/Tiefe 8 erreicht/);
+    expect(aufgenommen.some((f) => f.name.includes('lehnt ab ohne blatt'))).toBe(false);
+  });
+  it('liefert bei einem rekursiven Schema das Beispiel ohne optionale Felder und meldet es', () => {
+    type Knoten = { name: string; kinder?: Knoten[] };
+    const K: z.ZodType<Knoten> = z.strictObject({ name: z.string(), kinder: z.array(z.lazy(() => K)).optional() });
+    const { aufgenommen, begrenzt } = erzeugeFaelle(K);
+    expect(aufgenommen[0]?.eingabe).toEqual({ name: 'beispiel' });
+    expect(begrenzt).toEqual(['Wurzel: rekursives Schema (z.lazy), Beispiel ohne optionale Felder']);
+  });
+  it('wirft bei einem rekursiven Schema ohne endliches Beispiel, ohne Endlosschleife', () => {
+    type Knoten = { kinder: Knoten[] };
+    const K: z.ZodType<Knoten> = z.strictObject({ kinder: z.array(z.lazy(() => K)).min(1) });
+    expect(() => erzeugeFaelle(K)).toThrow(/rekursives Schema/);
   });
 });
 
@@ -182,7 +249,7 @@ describe('executeVertragstest (Verb gegen ein Temp-Repo)', () => {
     );
     writeFileSync(p, JSON.stringify(g));
     expect(executeVertragstest({ repoRoot: repo, ids: ['SCHEMA-bus', 'SCHEMA-leer'] })).toEqual([
-      { schema: 'SCHEMA-bus', datei: 'tests/vertrag/SCHEMA-bus.vertrag.md', faelle: 2, verworfen: ['Polarität: kein Min, kein Max und kein Kriterium'] },
+      { schema: 'SCHEMA-bus', datei: 'tests/vertrag/SCHEMA-bus.vertrag.md', faelle: 2, verworfen: ['Polarität: kein Min, kein Max und kein Kriterium'], begrenzt: [] },
       { schema: 'SCHEMA-leer', fehler: 'keine Vertragstabelle (Spalten Größe, Einheit, Min, Nenn, Max)' },
     ]);
     expect(readFileSync(join(repo, 'tests/vertrag/SCHEMA-bus.vertrag.md'), 'utf8')).toContain('# Vertragstest SCHEMA-bus');
