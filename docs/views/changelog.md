@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 582 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 582 CR · 570 done · 1 open.
+Total: 582 CR · 571 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -640,7 +640,7 @@ Total: 582 CR · 570 done · 1 open.
 | `CR-GC-972` | done | Vier Einzelbefunde im Modell: R-02 verify-lane-code, CR-R01 vier offene CR ohne Umfang, RC-11 src/index.ts, Ketten-Klassifikation R-21 FC-06 |
 | `CR-GC-973` | done | R-26, R-32, RC-04: Zod-Schema für die Antworten von graph_export und graph_test_ingest |
 | `CR-GC-974` | done | PARAM als Skill-Konvention: se:author-req, se-conops und se-bau auf einen Wortlaut (Name, Wert, Einschraenkung; fuenf Wege; Pruefort; wer entscheidet), Vorstufe zu CR-SM-419 |
-| `CR-GC-975` | n/a | R-26, R-32, RC-04: Zod-Schema für die Arbeitsmenge der Sitzung |
+| `CR-GC-975` | done | R-26, R-32, RC-04: Zod-Schema für die Arbeitsmenge der Sitzung |
 | `CR-GC-976` | n/a | Skills: Umzug eines Altbestands — Aufnahme, Zugangsliste, Durchlauf vor dem Schnitt (se-conops, se-cdr, se-plan) |
 | `CR-GC-977` | n/a | Skills: Rückfragen im Bau — Regel statt Einzelfall, Entscheidungen durchsuchen, Stoppen nach Rang (se-cdr, se-bau) |
 | `CR-GC-978` | n/a | se-plan: Meilenstein je Use Case, darin Blätter aufwärts (ändert CR-GC-892) |

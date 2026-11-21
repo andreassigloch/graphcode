@@ -4628,7 +4628,8 @@
       "id": "CR-GC-975",
       "type": "CR",
       "name": "R-26, R-32, RC-04: Zod-Schema für die Arbeitsmenge der Sitzung",
-      "description": "docs/cr/open/CR-GC-975-r-26-r-32-rc-04-zod-schema-fu-r-die-arbe.md"
+      "description": "docs/cr/done/CR-GC-975-r-26-r-32-rc-04-zod-schema-fu-r-die-arbe.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-976",
@@ -37569,5 +37570,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1389
+  "graphVersion": 1390
 }
