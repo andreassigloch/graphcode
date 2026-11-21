@@ -30,7 +30,7 @@
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-graph-delta` | src/kernel/graph-store.ts#GraphDeltaSchema | n/a |
 | `SCHEMA-grenz-befund` | src/kernel/measure/constraints.ts#GrenzBefund | n/a |
-| `SCHEMA-harness-handle` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-harness-handle` | src/kernel/harness-handle-contract.ts#HarnessHandle | n/a |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |

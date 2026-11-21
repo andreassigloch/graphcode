@@ -1744,6 +1744,13 @@
 | `CR-GC-989` | relation | `SCHEMA-cli-command` |
 | `CR-GC-989` | relation | `SCHEMA-repo-pfad` |
 | `CR-GC-989` | relation | `SCHEMA-sitzungsende` |
+| `CR-GC-990` | relation | `FUNC-erzeuge-vertragstests` |
+| `CR-GC-990` | relation | `SCHEMA-mcp-tool` |
+| `CR-GC-990` | relation | `SCHEMA-mcp-tool-registry` |
+| `CR-GC-991` | relation | `FUNC-create-harness` |
+| `CR-GC-991` | relation | `FUNC-tool-context` |
+| `CR-GC-991` | relation | `SCHEMA-harness-handle` |
+| `CR-GC-991` | relation | `SCHEMA-tool-context` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -4200,6 +4207,8 @@
 | `TEST-vertrag-init-report` | verify | `SCHEMA-init-report` |
 | `TEST-vertrag-install-result` | verify | `SCHEMA-install-result` |
 | `TEST-vertrag-markdown-text` | verify | `SCHEMA-markdown-text` |
+| `TEST-vertrag-mcp-tool` | verify | `SCHEMA-mcp-tool` |
+| `TEST-vertrag-mcp-tool-registry` | verify | `SCHEMA-mcp-tool-registry` |
 | `TEST-vertrag-metric-vector` | verify | `SCHEMA-metric-vector` |
 | `TEST-vertrag-module-metrics` | verify | `SCHEMA-module-metrics` |
 | `TEST-vertrag-mutate-answer` | verify | `SCHEMA-mutate-answer` |

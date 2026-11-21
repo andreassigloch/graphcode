@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 593 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 595 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 593 CR · 581 done · 1 open.
+Total: 595 CR · 583 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -653,5 +653,7 @@ Total: 593 CR · 581 done · 1 open.
 | `CR-GC-985` | done | FLOW-mutate-answer ist an SCHEMA-mutate-result gebunden, traegt aber die Werkzeug-Antwort von graph_mutate |
 | `CR-GC-986` | done | SCHEMA-cli-command haengt an Fluessen, die kein CLI-Verb tragen |
 | `CR-GC-987` | done | Vertragstest-Generator prüft Wertregeln und frozen die Enum-Werteliste |
-| `CR-GC-988` | n/a | CI-Suite auf zwei parallele Jobs teilen |
+| `CR-GC-988` | done | CI-Suite auf zwei parallele Jobs teilen |
 | `CR-GC-989` | done | Fluesse tragen den Vertrag, den der Code uebertraegt |
+| `CR-GC-990` | done | Verträge über Objekte mit Funktionen ohne z.custom |
+| `CR-GC-991` | n/a | Harness-Griff und Werkzeug-Kontext ohne z.custom und superRefine |

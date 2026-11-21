@@ -456,3 +456,54 @@ describe('erzeugeFaelle: Wurzel ohne Objekt (CR-GC-989)', () => {
     expect(text).toContain('toBe(false)');
   });
 });
+
+describe('erzeugeFaelle: Funktionen und offene Objekte (CR-GC-990)', () => {
+  type F = { eingabe: unknown; erwartet: boolean; name: string };
+  const F = z.looseObject({ aufruf: z.function(), name: z.string() });
+  const { aufgenommen, verworfen } = erzeugeFaelle(F);
+  const namenF = (aufgenommen as F[]).map((f) => f.name);
+
+  it('beispiel: eine Funktion, die z.function() annimmt', () => {
+    expect(typeof beispiel(z.function())).toBe('function');
+    expect(F.safeParse(beispiel(F)).success).toBe(true);
+  });
+  it('z.function() als Wurzel: eine Funktion angenommen, ein Nicht-Funktionswert abgelehnt', () => {
+    const f = erzeugeFaelle(z.function());
+    expect(f.verworfen).toEqual([]);
+    expect(f.aufgenommen.map((x) => [x.name, x.erwartet])).toEqual([
+      ['nimmt das Beispiel an', true],
+      ['lehnt einen Wert ab, der keine Funktion ist', false],
+    ]);
+  });
+  it('Objektfeld mit Funktion: Feld fehlt und falscher Typ werden abgelehnt', () => {
+    expect(namenF).toContain('lehnt ab ohne aufruf');
+    expect(namenF).toContain('lehnt ab: aufruf mit falschem Typ');
+    expect(verworfen).toEqual([]);
+  });
+  it('offenes Objekt: ein Zusatzfeld wird angenommen, nicht abgelehnt', () => {
+    expect(namenF).toContain('nimmt an: unbekanntes Zusatzfeld (offenes Objekt)');
+    expect(namenF).not.toContain('lehnt ab: unbekanntes Zusatzfeld');
+  });
+  it('strenges Objekt lehnt das Zusatzfeld weiter ab', () => {
+    const n = erzeugeFaelle(z.strictObject({ a: z.string() })).aufgenommen.map((x) => x.name);
+    expect(n).toContain('lehnt ab: unbekanntes Zusatzfeld');
+  });
+  it('die Datei schreibt die Funktion als `fn` und erwartet `expect.any(Function)` statt der Parse-Kopie', () => {
+    const t = testDatei({ id: 'SCHEMA-f', file: 'src/f.ts', symbol: 'S' }, '../../src/f.js', aufgenommen);
+    expect(t).toContain('const fn = ');
+    expect(t).toContain('S.parse({"aufruf":fn,"name":"beispiel"})).toEqual({"aufruf":expect.any(Function),"name":"beispiel"})');
+    expect(t).toContain('S.safeParse({"aufruf":"__falsch__","name":"beispiel"}).success');
+    expect(t).not.toContain('undefined');
+  });
+  it('eine Datei ohne Funktion bekommt kein `fn`', () => {
+    const t = testDatei({ id: 'SCHEMA-x', file: 'src/x.ts', symbol: 'S' }, '../src/x.js', erzeugeFaelle(S).aufgenommen);
+    expect(t).not.toContain('const fn');
+  });
+  it('eine Klasseninstanz mit Methoden am Prototyp erfüllt das Objekt mit Funktionsfeldern', () => {
+    class K { aufruf(): number { return 1; } }
+    expect(F.safeParse({ ...new K(), name: 'k' }).success).toBe(false);
+    const M = z.looseObject({ aufruf: z.function() });
+    expect(M.safeParse(new K()).success).toBe(true);
+    expect(M.safeParse({}).success).toBe(false);
+  });
+});

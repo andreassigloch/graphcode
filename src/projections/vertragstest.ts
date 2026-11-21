@@ -7,6 +7,8 @@
  * ein unbekanntes Zusatzfeld; je Union-Variante dasselbe. Die Faelle gelten auf jeder Ebene: in verschachtelten Objekten, in den Elementen einer Liste,
  * eines Tupels und eines Records (CR-GC-980). Die Tiefe ist auf `MAX_EBENE` begrenzt, ein rekursives
  * Schema (z.lazy) liefert sein Beispiel ohne optionale Felder; beides steht im Bericht (`begrenzt`).
+ * Eine Funktion (`z.function()`) ist ein Feld wie jedes andere: das Beispiel ist eine Funktion, die Datei nennt sie `fn`,
+ * ein Wert ohne Funktion wird abgelehnt (CR-GC-990). Ein offenes Objekt (`z.looseObject`) nimmt ein Zusatzfeld an.
  * Ein Fall kommt nur in die Datei, wenn das Original-Schema ihn so urteilt, wie der Fall es
  * erwartet; angenommene Faelle frieren die Ausgabe ein. Das Laden der TS-Quellen des Ziel-Repos
  * gehoert dem Aufrufer (`laden`), weil es Node-Flags braucht (vertragstest-verb.ts).
@@ -61,6 +63,8 @@ interface Def {
   getter: () => Zod;
   values: unknown[];
   entries: Record<string, unknown>;
+  /** Bei einem offenen Objekt (`z.looseObject`) ein Schema fuer unbekannte Schluessel (CR-GC-990). */
+  catchall?: Zod;
 }
 interface Check {
   check?: string;
@@ -86,6 +90,12 @@ interface Fall {
   /** Kein Parse-Fall: die Werteliste des Enums an dieser Stelle (CR-GC-987). */
   enumWerte?: { weg: Schritt[]; liste: unknown[] };
 }
+
+/**
+ * Die Funktion, die der Erzeuger als Beispiel fuer `z.function()` einsetzt (CR-GC-990). Eine Funktion
+ * ist kein JSON: `quelltext` schreibt sie als `fn` in die Testdatei.
+ */
+export const BEISPIEL_FUNKTION = function beispielFunktion(): void {};
 
 const def = (s: Zod): Def => s._zod.def;
 const checks = (s: Zod): Check[] => (def(s).checks ?? []).map((c) => c._zod.def);
@@ -254,6 +264,8 @@ export function beispiel(schema: unknown, minimal = false, offen: readonly Zod[]
     }
     case 'date':
       return new Date('2026-01-01');
+    case 'function':
+      return BEISPIEL_FUNKTION;
     default:
       throw new Error(`Typ ${d.type} nicht unterstuetzt`);
   }
@@ -479,7 +491,12 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
         faelle.push(...knoten(feld, b[k], tiefer(st, st.pfad ? `${st.pfad}.${k}` : k, (t) => st.einsetzen({ ...b, [k]: t }), false, ['shape', k])));
       }
     }
-    faelle.push({ name: benannt(st, 'lehnt ab: unbekanntes Zusatzfeld'), eingabe: st.einsetzen({ ...b, __zusatz__: 1 }), erwartet: false });
+    const offen = d.catchall !== undefined && def(d.catchall).type === 'unknown';
+    faelle.push({
+      name: benannt(st, offen ? 'nimmt an: unbekanntes Zusatzfeld (offenes Objekt)' : 'lehnt ab: unbekanntes Zusatzfeld'),
+      eingabe: st.einsetzen({ ...b, __zusatz__: 1 }),
+      erwartet: offen,
+    });
     return faelle;
   }
   if (d.type === 'array') {
@@ -509,6 +526,9 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
     faelle.push({ name: benannt(st, 'nimmt einen leeren Record an'), eingabe: st.einsetzen({}), erwartet: true });
     faelle.push(...knoten(d.valueType, r[schluessel], tiefer(st, `${st.pfad}{}`, (t) => st.einsetzen({ [schluessel]: t }), true, ['valueType'])));
     return faelle;
+  }
+  if (d.type === 'function' && st.eigenerTypfall) {
+    faelle.push({ name: benannt(st, 'lehnt einen Wert ab, der keine Funktion ist'), eingabe: st.einsetzen('__falsch__'), erwartet: false });
   }
   if (['string', 'number', 'boolean', 'void'].includes(d.type) && st.eigenerTypfall) {
     faelle.push({ name: benannt(st, 'lehnt einen Wert vom falschen Typ ab'), eingabe: st.einsetzen(falschWie(wert)), erwartet: false });
@@ -642,6 +662,21 @@ const ENUM_HELFER = [
   `  }, S as unknown as Z);`,
 ];
 
+const hatFunktion = (v: unknown): boolean =>
+  typeof v === 'function' || (typeof v === 'object' && v !== null && Object.values(v).some(hatFunktion));
+
+/**
+ * Ein Wert als Quelltext. Ohne Funktion ist das `JSON.stringify`. Eine Funktion steht in der Eingabe
+ * als `fn`; in der Erwartung als `expect.any(Function)`, denn `parse` liefert eine umhuellende Funktion,
+ * nicht dieselbe Referenz (gemessen an zod 4.4.3).
+ */
+function quelltext(v: unknown, erwartung: boolean): string {
+  if (!hatFunktion(v)) return JSON.stringify(v);
+  if (typeof v === 'function') return erwartung ? 'expect.any(Function)' : 'fn';
+  if (Array.isArray(v)) return `[${v.map((x) => quelltext(x, erwartung)).join(',')}]`;
+  return `{${Object.entries(v as object).map(([k, x]) => `${JSON.stringify(k)}:${quelltext(x, erwartung)}`).join(',')}}`;
+}
+
 /** Der Text der vitest-Datei fuer ein SCHEMA. */
 export function testDatei(eintrag: CodeVertrag, importPfad: string, faelle: Fall[]): string {
   const zeilen = [
@@ -652,11 +687,12 @@ export function testDatei(eintrag: CodeVertrag, importPfad: string, faelle: Fall
     `describe('Vertrag ${eintrag.id}', () => {`,
   ];
   if (faelle.some((f) => f.enumWerte)) zeilen.splice(4, 0, ...ENUM_HELFER, ``);
+  if (faelle.some((f) => hatFunktion(f.eingabe))) zeilen.splice(4, 0, `const fn = (): number => 1;`, ``);
   for (const f of faelle) {
     zeilen.push(`  it(${JSON.stringify(f.name)}, () => {`);
     if (f.enumWerte) zeilen.push(`    expect(Object.values(bei(${JSON.stringify(f.enumWerte.weg)})._zod.def.entries as Record<string, unknown>)).toEqual(${JSON.stringify(f.enumWerte.liste)});`);
-    else if (f.erwartet) zeilen.push(`    expect(S.parse(${JSON.stringify(f.eingabe)})).toEqual(${JSON.stringify(f.ausgabe)});`);
-    else zeilen.push(`    expect(S.safeParse(${JSON.stringify(f.eingabe)}).success).toBe(false);`);
+    else if (f.erwartet) zeilen.push(`    expect(S.parse(${quelltext(f.eingabe, false)})).toEqual(${quelltext(f.ausgabe, true)});`);
+    else zeilen.push(`    expect(S.safeParse(${quelltext(f.eingabe, false)}).success).toBe(false);`);
     zeilen.push(`  });`);
   }
   zeilen.push(`});`, ``);

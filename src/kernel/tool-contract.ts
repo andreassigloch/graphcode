@@ -16,9 +16,9 @@
  * CR-GC-547: die drei Vertraege sind **Zod-first**. Vorher standen sie nur als TS-Typen da —
  * zur Laufzeit hielt sie nichts, und R-32/RC-04 hatten recht: ein realisierter SCHEMA ohne
  * Vertrags-TEST und ohne `parse`-Stelle ist eine Behauptung. Die Vorgabe „Zod plus Test" gilt
- * auch fuer Vertraege mit Funktionsmitgliedern; `z.custom` prueft dort, was pruefbar ist —
- * dass die Funktion da und eine Funktion ist. Das faengt genau den Fehler, der an dieser
- * Grenze vorkommt: eine Fabrik, die ein Member vergisst oder falsch benennt.
+ * auch fuer Vertraege mit Funktionsmitgliedern; `z.function()` prueft dort, was pruefbar ist —
+ * dass die Funktion da und eine Funktion ist (CR-GC-990, vorher `z.custom`). Das faengt genau den
+ * Fehler, der an dieser Grenze vorkommt: eine Fabrik, die ein Member vergisst oder falsch benennt.
  *
  * KEIN paralleler Pfad: die generische TS-Sicht `MCPTool<TSchema, TOutput>` bleibt, weil ein
  * Laufzeit-Schema keine Typparameter traegt. Der Test bindet beide Seiten aneinander — er
@@ -38,17 +38,17 @@ import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
 import type { GraphCodeHarness } from './harness.js';
 import type { Arbeitsmenge } from './measure/working-set.js';
 
-/** Der Laufzeit-Vertrag eines Werkzeugs (CR-GC-547). Die generische Sicht steht darunter. */
+/**
+ * Der Laufzeit-Vertrag eines Werkzeugs (CR-GC-547). Ein Zod-Schema ist ein Objekt mit Funktionen:
+ * `inputSchema` ist ein offenes Objekt, das `safeParse` als Funktion traegt; `handler` ist eine
+ * Funktion (CR-GC-990, kein `z.custom`). Die genaue Signatur kommt aus `MCPTool` darunter, nicht
+ * aus dem Schema: ein Laufzeit-Schema traegt keine Typparameter.
+ */
 export const MCPToolSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
-  inputSchema: z.custom<ZodType>(
-    (v) => typeof (v as { safeParse?: unknown } | null)?.safeParse === 'function',
-    { message: 'inputSchema ist kein Zod-Schema' },
-  ),
-  handler: z.custom<(input: never) => Promise<unknown>>((v) => typeof v === 'function', {
-    message: 'handler fehlt oder ist keine Funktion',
-  }),
+  inputSchema: z.looseObject({ safeParse: z.function() }),
+  handler: z.function(),
 });
 
 /**

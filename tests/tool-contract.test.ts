@@ -12,11 +12,10 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { z } from 'zod/v4';
 import { KuzuAdapter } from './helpers/store.js';
 import { SE_DESCRIPTOR } from '@sigloch/graph-api-core';
 import { GraphCodeHarness } from '../src/kernel/harness.js';
-import { MCPToolSchema, MCPToolRegistrySchema } from '../src/kernel/tool-contract.js';
+import { MCPToolRegistrySchema } from '../src/kernel/tool-contract.js';
 import { ToolContext } from '../src/surface/tool-context-contract.js';
 import { bindToolsWithContext } from '../src/surface/mcp-tools.js';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
@@ -49,27 +48,6 @@ describe('TEST-tool-contract: die drei Werkzeug-Verträge halten an der echten G
     // Der Port hat bewusst KEIN eigenes Schema (das waere ein Duplikat): der Kontext, der ihn
     // erfuellt, ist `ToolContext` — und der wird hier gegen seinen echten Vertrag geparst.
     expect(() => ToolContext.parse(ctx)).not.toThrow();
-  });
-
-  it('ein Werkzeug OHNE handler fällt durch — mit dem Member im Text', () => {
-    const r = MCPToolSchema.safeParse({
-      name: 'graph_kaputt',
-      description: 'ohne Handler',
-      inputSchema: z.object({}),
-    });
-    expect(r.success).toBe(false);
-    expect(JSON.stringify(r.error?.issues)).toContain('handler');
-  });
-
-  it('ein inputSchema, das kein Zod-Schema ist, fällt durch', () => {
-    const r = MCPToolSchema.safeParse({
-      name: 'graph_kaputt',
-      description: 'Schema ist ein Objekt-Literal',
-      inputSchema: { type: 'object' },
-      handler: async () => ({}),
-    });
-    expect(r.success).toBe(false);
-    expect(JSON.stringify(r.error?.issues)).toContain('inputSchema');
   });
 
   it('ein Kontext ohne serializeToolWrite fällt durch — die OCC-Kette ist nicht optional', () => {
