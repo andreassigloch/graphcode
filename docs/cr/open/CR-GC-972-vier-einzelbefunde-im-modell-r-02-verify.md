@@ -50,8 +50,8 @@ Mutante: in `scripts/verify-code.mjs` die Zeile `if (plan) process.exit(0);` ent
 ## Akzeptanz
 
 - [x] `tests/verify-code-plan.test.ts` grün, mit Mutante rot gesehen.
-- [x] `verify:code` grün (57 Dateien, 490 Tests, darunter der neue). `verify:full CR-GC-972`: siehe Ergebnis.
-- [ ] R-02 1 → 0, CR-R01 4 → 0.
+- [x] `verify:code` grün (57 Dateien, 490 Tests, darunter der neue). `verify:full CR-GC-972` grün (249 Dateien), Schlupf 0, Link-Modus nein.
+- [x] R-02 1 → 0, CR-R01 4 → 0 (`rules_evaluate`).
 
 ---
 
