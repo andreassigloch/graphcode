@@ -1,6 +1,6 @@
 ---
 name: se:author-req
-version: 6
+version: 7
 description: Author a REQ together with its verifying TEST concept in one gated batch — the REQ-with-test invariant
 ---
 
@@ -19,7 +19,11 @@ A requirement you cannot state a verification for is not well-formed. Author eve
 
 A non-functional REQ names its value the same way: "The gate judges a batch of 50 edits within 200 ms." "A context slice of graph_impact stays below 50 % of the tokens of a grep dump of the same scope." German texts follow the same patterns: „Wenn …, dann …", „Solange …", „Falls … , dann …".
 
-**Every fixed value says what kind it is — in the sentence, next to the value** (CR-GC-759): *runtime parameter* (changeable in operation, takes effect at once, with history), *start configuration* (read at start, fixed until restart), *invariant* (not adjustable by any path) or *call value* (belongs to one call and stands in that call's contract). Whatever shapes the system's behaviour is adjustable unless the requirement says invariant. Write it into the text, not into a free attribute: the views show the text, a free attribute stays invisible to the reader. Two values of different kinds in one requirement are a sign that it is two requirements — split it, so the invariant gets its own test that it cannot be changed; keep them together only if you can say why.
+**A value with a restriction is a parameter (PARAM): name, value, restriction — in the sentence** (CR-GC-759, CR-GC-974). Example: "The search returns at most `limit` hits; `limit` ≤ 100 (call value, checked in the contract)." "`response_time` ≤ 2 s (computed, checked in a test)." State the number in exactly one requirement; every other text names the parameter, never the number. A value without a restriction is not a parameter.
+
+Say next to the value where it comes from — one of five: *runtime parameter* (set in operation, takes effect at once, with history), *start configuration* (read at start, fixed until restart), *invariant* (set in the code, not adjustable by any path), *call value* (set by the caller, belongs to one call and stands in that call's contract) or *computed* (results from other values or from a measurement; name the formula or what is measured). Say where the restriction is checked: in code, in the contract or in a test — at least one of the three.
+
+Who decides: What the requirement names is binding. Where it names no origin, whoever builds chooses one and the choice is written back into the requirement. Only the author of the requirement sets or lifts *invariant*; whatever shapes the system's behaviour is adjustable unless the requirement says invariant. Write all of this into the text, not into a free attribute: the views show the text, a free attribute stays invisible to the reader. Two values of different origin in one requirement are a sign that it is two requirements — split it, so the invariant gets its own test that it cannot be changed; keep them together only if you can say why.
 
 For each new requirement, emit ONE `graph_mutate` batch as Format-E:
 

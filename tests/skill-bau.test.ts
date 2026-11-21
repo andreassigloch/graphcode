@@ -32,7 +32,7 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
   it('die Datei se-bau.md existiert, Name und Version stehen im Kopf', () => {
     expect(existsSync(DATEI)).toBe(true);
     expect(text).toMatch(/^name: se-bau$/m);
-    expect(text).toMatch(/^version: 3$/m);
+    expect(text).toMatch(/^version: 4$/m);
     expect(text).toMatch(/^description: .{40,}$/m);
   });
 
@@ -115,7 +115,7 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
   describe('Verweise', () => {
     it('die Tabelle der Werteklassen steht im Skill', () => {
       expect(text).toMatch(/\|\s*Klasse\s*\|/);
-      for (const k of ['Laufzeit-Parameter', 'Start-Konfiguration', 'Invariante', 'Aufrufwert']) {
+      for (const k of ['Laufzeit-Parameter', 'Start-Konfiguration', 'Invariante', 'Aufrufwert', 'Berechneter Wert']) {
         expect(text.split('\n').some((z) => z.startsWith('| ') && z.includes(k)), k).toBe(true);
       }
     });

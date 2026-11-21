@@ -1,6 +1,6 @@
 ---
 name: se-bau
-version: 3
+version: 4
 description: Bau eines CR in zwei Rollen — Koordinator (Hauptsitzung) startet je CR einen Agenten, schreibt das Modell allein und schließt erst nach dem Testlauf auf der Zielumgebung; Umsetzer (Agent) baut aus dem Ausschnitt graph_context, setzt Werte nach Werteklasse, hält das Vertragspaket ein, stoppt bei jeder Lücke und nennt jede Annahme. Fester Teil jedes Bauauftrags an einen Agenten.
 ---
 
@@ -36,7 +36,7 @@ Die Hauptsitzung koordiniert und baut nichts selbst. Rufe `graph_mutate` mit `sk
    se:author-req schreibt sie als Annahme (REQ mit offenem Zielwert und TEST), und dein Abschlussbericht
    nennt jede Annahme.
 6. **Prüfe den Abschlussbericht** auf den Satz zu den Annahmen (Umsetzer Punkt 8). Eine genannte Annahme
-   ist eine Lücke und geht wie in Punkt 5 zurück.
+   ist eine Lücke und geht wie in Punkt 5 zurück. Eine gewählte Klasse schreibst du über se:author-req in die Anforderung.
 7. **Erzeuge den Vertragstest je neuem oder geändertem SCHEMA**, nachdem der CR zusammengeführt ist und
    das SCHEMA seinen `realRef` auf das Zod-Symbol trägt und exportiert ist:
    - Rufe `npx graphcode vertragstest <SCHEMA-uid …>` auf. Das Verb schreibt je SCHEMA
@@ -63,6 +63,10 @@ Du baust genau einen CR in deinem Arbeitsordner. Du fragst den Auftraggeber nich
    - Start-Konfiguration: Pflichtfeld ohne Vorgabewert; fehlt es beim Start, bricht der Start mit Pfad und Feld ab.
    - Invariante: Konstante an genau einer Stelle, dazu ein Test, der ihre Unverstellbarkeit belegt.
    - Aufrufwert: im Vertrag des Aufrufs.
+   - Berechneter Wert: als Ausdruck aus den Werten, die die Anforderung nennt, oder als Messung; keine eigene Zahl.
+   Nennt die Anforderung keine Klasse, wählst du eine der vier anderen, nie Invariante. Nennt sie nicht, wo die
+   Einschränkung geprüft wird, wählst du Code, Vertrag oder Test. Der Abschlussbericht nennt jede Wahl unter
+   „Werteklassen:“. Eine Wahl ist keine Annahme. Fehlt der Wert oder die Einschränkung selbst, gilt Punkt 5.
 3. **Nimm Felder nur aus dem Vertragspaket mit fester Version.** Braucht der Code ein neues Feld, ändert
    zuerst das SCHEMA, dann der Code. Beispiel: immo-gate 0.22.0 und 0.23.0 trugen drei Felder außerhalb des
    Vertragspakets 0.6.0 (Merkmal „extern" am Konto, Adresse des Partnerordners, Auftrag „Offene Freigaben");
@@ -83,14 +87,26 @@ Du baust genau einen CR in deinem Arbeitsordner. Du fragst den Auftraggeber nich
 
 ## Werteklassen
 
-Einstellbar ist alles, was Verhalten oder Funktion des Systems beeinflusst, außer die Anforderung sagt
-„Invariante". Die Klasse steht in der Anforderung am Wert.
+Ein Wert mit Einschränkung ist ein Parameter (PARAM): Name, Wert und Einschränkung, genannt in genau einer
+Anforderung. Die Klasse sagt, woher der Wert kommt. Einstellbar ist alles, was Verhalten oder Funktion des
+Systems beeinflusst, außer die Anforderung sagt „Invariante". Nur die Anforderung legt eine Invariante fest
+oder hebt sie auf.
 
 | Klasse | Bedeutung | Ort im Code |
 |---|---|---|
 | Laufzeit-Parameter | im Betrieb änderbar, wirkt sofort, mit Verlauf; global, in einem Einstellungs-Vertrag | geteilter veränderlicher Zustand (Rust: `Arc<RwLock<Settings>>`) |
 | Start-Konfiguration | beim Start aus einer Datei gelesen, bis zum Neustart unveränderlich | unveränderliches Struct (Rust: `&Config`), Pflichtfeld ohne Vorgabewert |
 | Invariante | auf keinem Weg verstellbar | Konstante mit Test oder ein Typ ohne die verbotene Operation |
-| Aufrufwert (keine Klasse) | gilt nur für einen Aufruf, steht im Vertrag dieses Aufrufs | Funktionsparameter |
+| Aufrufwert | gilt nur für einen Aufruf, steht im Vertrag dieses Aufrufs | Funktionsparameter |
+| Berechneter Wert | ergibt sich aus anderen Werten oder aus einer Messung | Ausdruck oder Messung, keine eigene Zahl |
 
-Herkunft der Tabelle: CR-GC-759. Dieser Skill ist die Quelle.
+Die Zahl eines Parameters steht an genau einer Stelle im Code; Code und Test lesen sie von dort.
+Die Einschränkung wird an mindestens einer Stelle geprüft:
+
+| Geprüft im | Wann | Beispiel |
+|---|---|---|
+| Vertrag | der Wert ist ein Feld eines SCHEMA | `limit` ≤ 100 als Obergrenze am Zod-Feld |
+| Code | der Wert entsteht erst in der Funktion | Rest der Laufzeit ≥ 0 vor dem nächsten Schritt |
+| Test | der Wert ist ein Ergebnis des Systems | Antwortzeit ≤ 2 s |
+
+Herkunft: CR-GC-759, CR-GC-974. Dieser Skill ist die Quelle für den Ort im Code, se:author-req für den Satz der Anforderung.

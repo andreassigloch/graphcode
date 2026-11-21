@@ -80,7 +80,7 @@
 | `SCHEMA-vertragstest-bericht` | src/projections/vertragstest.ts#VertragstestBerichtSchema | n/a |
 | `SCHEMA-vertragstest-satz` | src/projections/vertragstest.ts#VertragstestSatzSchema | n/a |
 | `SCHEMA-vitest-lauf` | src/projections/test-schlupf.ts#VitestLaufSchema | n/a |
-| `SCHEMA-work-set` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-work-set` | src/kernel/measure/working-set.ts#ArbeitsmengeSchema | n/a |
 | `SCHEMA-zug-bericht` | src/kernel/measure/zug-bericht.ts#ZugBericht | reviewed |
 
 ## Flows (producer → consumer)

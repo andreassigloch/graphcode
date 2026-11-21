@@ -1687,6 +1687,8 @@
 | `CR-GC-973` | relation | `FUNC-test-ingest` |
 | `CR-GC-973` | relation | `SCHEMA-export-answer` |
 | `CR-GC-973` | relation | `SCHEMA-test-ingest-answer` |
+| `CR-GC-975` | relation | `FUNC-tool-context` |
+| `CR-GC-975` | relation | `SCHEMA-work-set` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -4128,6 +4130,7 @@
 | `TEST-vertrag-upgrade-report` | verify | `SCHEMA-upgrade-report` |
 | `TEST-vertrag-vertragstest-bericht` | verify | `SCHEMA-vertragstest-bericht` |
 | `TEST-vertrag-vertragstest-satz` | verify | `SCHEMA-vertragstest-satz` |
+| `TEST-vertrag-work-set` | verify | `SCHEMA-work-set` |
 | `TEST-vertragstest-generator` | verify | `REQ-contract-test-cases` |
 | `TEST-vertragstest-generator` | verify | `REQ-contract-test-generation` |
 | `TEST-vertragstest-generator` | verify | `REQ-contract-test-manual` |

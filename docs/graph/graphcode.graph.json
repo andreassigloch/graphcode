@@ -4624,6 +4624,12 @@
       "description": "docs/cr/open/CR-GC-974-param-als-skill-konvention-se-author-req.md"
     },
     {
+      "id": "CR-GC-975",
+      "type": "CR",
+      "name": "R-26, R-32, RC-04: Zod-Schema für die Arbeitsmenge der Sitzung",
+      "description": "docs/cr/open/CR-GC-975-r-26-r-32-rc-04-zod-schema-fu-r-die-arbe.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6831,7 +6837,7 @@
       "id": "FLOW-work-set",
       "type": "FLOW",
       "name": "Arbeitsmenge der Sitzung",
-      "description": "Die Arbeitsmenge der Sitzung, die graph_readiness beim Werkzeug-Kontext abfragt, um Befunde auf die Arbeit der Sitzung zu schneiden. Beleg: src/projections/report.ts, arbeitsmenge. (CR-GC-849)",
+      "description": "Die Arbeitsmenge der Sitzung, die graph_readiness beim Werkzeug-Kontext abfragt, um Befunde auf die Arbeit der Sitzung zu schneiden. Beleg: src/surface/tool-context.ts, arbeitsmenge. (CR-GC-849)",
       "sync": "sync"
     },
     {
@@ -12330,7 +12336,12 @@
       "id": "SCHEMA-work-set",
       "type": "SCHEMA",
       "name": "Arbeitsmenge",
-      "description": "Die uids, die die laufende Sitzung geschrieben hat, abgeleitet aus dem Audit-Log; schneidet Befundlisten auf die Arbeit der Sitzung. Spec-only: das TS-Interface Arbeitsmenge in src/kernel/measure/working-set.ts, kein Zod-Datenvertrag."
+      "description": "Die uids, die die laufende Sitzung geschrieben hat, abgeleitet aus dem Audit-Log; schneidet Befundlisten auf die Arbeit der Sitzung. Felder: uids (sortiert, leer heisst: noch kein Schreibzug) und zuege (Zahl der angewandten Stapel). Der Werkzeug-Kontext parst sie beim Erzeugen.",
+      "realRef": {
+        "file": "src/kernel/measure/working-set.ts",
+        "symbol": "ArbeitsmengeSchema",
+        "lang": "ts"
+      }
     },
     {
       "id": "SCHEMA-zug-bericht",
@@ -15443,6 +15454,24 @@
           "tool": "vitest",
           "result": "passed",
           "ranAt": "2026-11-21T11:41:34.788Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-work-set",
+      "type": "TEST",
+      "name": "Vertragstest Arbeitsmenge",
+      "description": "Vertragstest SCHEMA-work-set: das erzeugte Beispiel und die Ablehnung je Pflichtfeld, dazu von Hand die leere Menge, negative und gebrochene Zugzahl, leere uid. (CR-GC-975)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-work-set.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit"
+        },
+        {
+          "file": "tests/vertrag/SCHEMA-work-set.elemente.test.ts",
+          "tool": "vitest",
+          "level": "unit"
         }
       ]
     },
@@ -24424,6 +24453,16 @@
     {
       "source": "CR-GC-973",
       "target": "SCHEMA-test-ingest-answer",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-975",
+      "target": "FUNC-tool-context",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-975",
+      "target": "SCHEMA-work-set",
       "type": "relation"
     },
     {
@@ -36882,6 +36921,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vertrag-work-set",
+      "target": "SCHEMA-work-set",
+      "type": "verify"
+    },
+    {
       "source": "TEST-vertragstest-generator",
       "target": "REQ-contract-test-cases",
       "type": "verify"
@@ -37472,5 +37516,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1379
+  "graphVersion": 1382
 }
