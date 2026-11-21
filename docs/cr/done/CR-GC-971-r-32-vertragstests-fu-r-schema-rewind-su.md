@@ -15,6 +15,8 @@ R-32 meldete 23 SCHEMA ohne Vertragstest (graphVersion 1358). Zwei davon liegen 
 
 Die übrigen 21 sind nicht Teil dieses CR: 9 sind `external` mit Code im Paket `@sigloch/*` (Generator löst sie nicht auf), 11 haben keinen `realRef` (R-26), 1 ist Rest der Zählung.
 
+> Korrektur (CR-GC-972, gemessen am Snapshot): Der Rest sind 10 `external` (9 mit realRef nach `packages/…`, dazu `SCHEMA-skill-text` ohne realRef) und 11 ohne realRef und ohne `external`; „1 ist Rest der Zählung“ war falsch.
+
 ## Änderung
 
 | Datei | Was |
