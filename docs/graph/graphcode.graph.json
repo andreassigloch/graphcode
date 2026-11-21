@@ -4664,6 +4664,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-981",
+      "type": "CR",
+      "name": "Vertragstest-Generator löst Verträge aus Paketen nicht auf",
+      "description": "docs/cr/open/CR-GC-981-vertragstest-generator-lo-st-vertra-ge-a.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6831,7 +6837,7 @@
       "id": "FLOW-vertragstest-satz",
       "type": "FLOW",
       "name": "Vertragstest-Satz",
-      "description": "Die SCHEMA mit ihrem Zod-Symbol vom Verb an den Erzeuger",
+      "description": "Die SCHEMA mit ihrem Zod-Symbol, im Repo oder im Paket, vom Verb an den Erzeuger",
       "sync": "sync",
       "realRef": {
         "file": "src/surface/vertragstest-verb.ts",
@@ -7369,7 +7375,7 @@
       "id": "FUNC-erzeuge-vertragstests",
       "type": "FUNC",
       "name": "erzeugeVertragstests",
-      "description": "Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, auf jeder Ebene die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; dieselben Faelle gelten in verschachtelten Objekten und in den Elementen einer Liste, eines Tupels und eines Records, je Variante einer Union; nur Faelle, die das Original so urteilt. Die Tiefe ist auf 8 Ebenen begrenzt, ein z.lazy, das sich selbst enthaelt, liefert das Beispiel ohne optionale Felder; beides steht im Bericht. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965, CR-GC-980)",
+      "description": "Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, auf jeder Ebene die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; dieselben Faelle gelten in verschachtelten Objekten und in den Elementen einer Liste, eines Tupels und eines Records, je Variante einer Union; nur Faelle, die das Original so urteilt. Die Tiefe ist auf 8 Ebenen begrenzt, ein z.lazy, das sich selbst enthaelt, liefert das Beispiel ohne optionale Felder; beides steht im Bericht. Ein external-SCHEMA loest es ueber den Paket-Import auf: den Export des installierten Pakets, dessen Verzeichnis die Datei des realRef enthaelt und der das Symbol traegt; zweideutig, fehlend oder kein Zod-Schema ist ein Eintrag mit Grund im Bericht. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965, CR-GC-980, CR-GC-981)",
       "status": "done",
       "realRef": {
         "file": "src/projections/vertragstest.ts",
@@ -8363,7 +8369,7 @@
       "id": "FUNC-vertragstest-verb",
       "type": "FUNC",
       "name": "executeVertragstest",
-      "description": "Das Verb graphcode vertragstest: liest den Satz der SCHEMA mit Zod-realRef aus dem Snapshot, startet den Erzeuger in einem Kindprozess mit transform-types und gibt den Bericht je SCHEMA aus. Exit 1, wenn ein SCHEMA keinen Test bekam; Exit 2 bei falschem Aufruf. (CR-GC-962)",
+      "description": "Das Verb graphcode vertragstest: liest den Satz der SCHEMA mit Zod-realRef aus dem Snapshot, dazu jedes external-SCHEMA mit realRef unter packages/<name>/src (mit dem Paket @sigloch/<name>), startet den Erzeuger in einem Kindprozess mit transform-types im Repo und gibt den Bericht je SCHEMA aus. Exit 1, wenn ein SCHEMA keinen Test bekam; Exit 2 bei falschem Aufruf. (CR-GC-962, CR-GC-981)",
       "status": "done",
       "realRef": {
         "file": "src/surface/vertragstest-verb.ts",
@@ -12348,7 +12354,7 @@
       "id": "SCHEMA-vertragstest-satz",
       "type": "SCHEMA",
       "name": "VertragstestSatzSchema",
-      "description": "Je SCHEMA uid, Datei und Zod-Symbol, oder uid und Vertragsdatei (.md ohne Symbol). erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962, CR-GC-965)",
+      "description": "Je SCHEMA uid, Datei und Zod-Symbol, oder uid, Datei unter packages/<name>/src, Symbol und Paket @sigloch/<name> (external), oder uid und Vertragsdatei (.md ohne Symbol). erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962, CR-GC-965, CR-GC-981)",
       "realRef": {
         "file": "src/projections/vertragstest.ts",
         "symbol": "VertragstestSatzSchema",
@@ -12551,7 +12557,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -12600,7 +12606,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -12724,14 +12730,14 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         },
         {
           "file": "tests/knowledge-binding.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -12748,7 +12754,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -12808,7 +12814,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -12868,7 +12874,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -12890,7 +12896,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -12977,7 +12983,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13018,7 +13024,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13221,7 +13227,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13239,7 +13245,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13254,7 +13260,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13285,7 +13291,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13302,7 +13308,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13347,7 +13353,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13362,7 +13368,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13446,7 +13452,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13521,7 +13527,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13536,7 +13542,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13567,7 +13573,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13751,7 +13757,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13768,7 +13774,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -13853,7 +13859,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14020,7 +14026,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14035,7 +14041,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14111,7 +14117,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14233,7 +14239,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14251,7 +14257,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14394,7 +14400,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14414,7 +14420,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14455,7 +14461,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14516,7 +14522,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14549,7 +14555,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14579,7 +14585,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14610,7 +14616,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14814,7 +14820,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -14917,7 +14923,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -15014,7 +15020,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -15241,7 +15247,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -15308,7 +15314,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -15331,6 +15337,36 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-11-21T12:23:28.171Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-function-criticality",
+      "type": "TEST",
+      "name": "Vertragstest Funktionskritikalität",
+      "description": "Vertragstest SCHEMA-function-criticality gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-function-criticality.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T12:32:42.999Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-impact-slice",
+      "type": "TEST",
+      "name": "Vertragstest Wirkungsausschnitt",
+      "description": "Vertragstest SCHEMA-impact-slice gegen das Paket @sigloch/graph-api-core: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-impact-slice.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -15380,6 +15416,51 @@
       ]
     },
     {
+      "id": "TEST-vertrag-metric-vector",
+      "type": "TEST",
+      "name": "Vertragstest Metrikvektor",
+      "description": "Vertragstest SCHEMA-metric-vector gegen das Paket @sigloch/se-engine: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-metric-vector.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T12:32:42.999Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-module-metrics",
+      "type": "TEST",
+      "name": "Vertragstest Modulkennzahlen",
+      "description": "Vertragstest SCHEMA-module-metrics gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-module-metrics.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T12:32:42.999Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-ontology-graph",
+      "type": "TEST",
+      "name": "Vertragstest Ontologie-Graph",
+      "description": "Vertragstest SCHEMA-ontology-graph gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-ontology-graph.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T12:32:42.999Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-vertrag-repo-status",
       "type": "TEST",
       "name": "Vertragstest Repo-Status",
@@ -15406,6 +15487,21 @@
           "level": "unit",
           "result": "passed",
           "ranAt": "2026-11-21T12:23:28.171Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-rule-violation",
+      "type": "TEST",
+      "name": "Vertragstest Regelverletzung",
+      "description": "Vertragstest SCHEMA-rule-violation gegen das Paket @sigloch/contracts/harness: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-rule-violation.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -15447,6 +15543,21 @@
       ]
     },
     {
+      "id": "TEST-vertrag-trajectory",
+      "type": "TEST",
+      "name": "Vertragstest Trajektorie",
+      "description": "Vertragstest SCHEMA-trajectory gegen das Paket @sigloch/learning-core/interfaces: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-trajectory.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-21T12:32:42.999Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-vertrag-upgrade-report",
       "type": "TEST",
       "name": "Vertragstest Upgrade-Bericht",
@@ -15472,7 +15583,7 @@
           "file": "tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts",
           "tool": "vitest",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -15487,7 +15598,7 @@
           "file": "tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts",
           "tool": "vitest",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -15526,7 +15637,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -15556,7 +15667,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-21T12:23:28.171Z"
+          "ranAt": "2026-11-21T12:32:42.999Z"
         }
       ]
     },
@@ -24541,6 +24652,56 @@
     {
       "source": "CR-GC-980",
       "target": "SCHEMA-vertragstest-bericht",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "FUNC-erzeuge-vertragstests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "FUNC-vertragstest-verb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "SCHEMA-function-criticality",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "SCHEMA-impact-slice",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "SCHEMA-metric-vector",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "SCHEMA-module-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "SCHEMA-rule-violation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "SCHEMA-trajectory",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-981",
+      "target": "SCHEMA-vertragstest-satz",
       "type": "relation"
     },
     {
@@ -36949,6 +37110,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vertrag-function-criticality",
+      "target": "SCHEMA-function-criticality",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-impact-slice",
+      "target": "SCHEMA-impact-slice",
+      "type": "verify"
+    },
+    {
       "source": "TEST-vertrag-init-report",
       "target": "SCHEMA-init-report",
       "type": "verify"
@@ -36964,6 +37135,21 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vertrag-metric-vector",
+      "target": "SCHEMA-metric-vector",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-module-metrics",
+      "target": "SCHEMA-module-metrics",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-ontology-graph",
+      "target": "SCHEMA-ontology-graph",
+      "type": "verify"
+    },
+    {
       "source": "TEST-vertrag-repo-status",
       "target": "SCHEMA-repo-status",
       "type": "verify"
@@ -36974,6 +37160,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vertrag-rule-violation",
+      "target": "SCHEMA-rule-violation",
+      "type": "verify"
+    },
+    {
       "source": "TEST-vertrag-test-ingest-answer",
       "target": "SCHEMA-test-ingest-answer",
       "type": "verify"
@@ -36981,6 +37172,11 @@
     {
       "source": "TEST-vertrag-test-ingest-input",
       "target": "SCHEMA-test-ingest-input",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-trajectory",
+      "target": "SCHEMA-trajectory",
       "type": "verify"
     },
     {
@@ -37594,5 +37790,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1397
+  "graphVersion": 1400
 }

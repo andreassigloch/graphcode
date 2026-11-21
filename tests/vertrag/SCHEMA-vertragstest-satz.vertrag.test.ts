@@ -34,21 +34,48 @@ describe('Vertrag SCHEMA-vertragstest-satz', () => {
     expect(S.safeParse([{"id":"beispiel","file":"beispiel","symbol":"beispiel","__zusatz__":1}]).success).toBe(false);
   });
   it("[] (Variante 2): nimmt das Beispiel an", () => {
-    expect(S.parse([{"id":"beispiel","file":".md"}])).toEqual([{"id":"beispiel","file":".md"}]);
+    expect(S.parse([{"id":"beispiel","file":"packages/a/src/a.ts","symbol":"beispiel","paket":"@sigloch/a"}])).toEqual([{"id":"beispiel","file":"packages/a/src/a.ts","symbol":"beispiel","paket":"@sigloch/a"}]);
   });
   it("[] (Variante 2): lehnt ab ohne id", () => {
-    expect(S.safeParse([{"file":".md"}]).success).toBe(false);
+    expect(S.safeParse([{"file":"packages/a/src/a.ts","symbol":"beispiel","paket":"@sigloch/a"}]).success).toBe(false);
   });
   it("[] (Variante 2): lehnt ab: id mit falschem Typ", () => {
-    expect(S.safeParse([{"id":12345,"file":".md"}]).success).toBe(false);
+    expect(S.safeParse([{"id":12345,"file":"packages/a/src/a.ts","symbol":"beispiel","paket":"@sigloch/a"}]).success).toBe(false);
   });
   it("[] (Variante 2): lehnt ab ohne file", () => {
-    expect(S.safeParse([{"id":"beispiel"}]).success).toBe(false);
+    expect(S.safeParse([{"id":"beispiel","symbol":"beispiel","paket":"@sigloch/a"}]).success).toBe(false);
   });
   it("[] (Variante 2): lehnt ab: file mit falschem Typ", () => {
-    expect(S.safeParse([{"id":"beispiel","file":12345}]).success).toBe(false);
+    expect(S.safeParse([{"id":"beispiel","file":12345,"symbol":"beispiel","paket":"@sigloch/a"}]).success).toBe(false);
+  });
+  it("[] (Variante 2): lehnt ab ohne symbol", () => {
+    expect(S.safeParse([{"id":"beispiel","file":"packages/a/src/a.ts","paket":"@sigloch/a"}]).success).toBe(false);
+  });
+  it("[] (Variante 2): lehnt ab: symbol mit falschem Typ", () => {
+    expect(S.safeParse([{"id":"beispiel","file":"packages/a/src/a.ts","symbol":12345,"paket":"@sigloch/a"}]).success).toBe(false);
+  });
+  it("[] (Variante 2): lehnt ab: paket mit falschem Typ", () => {
+    expect(S.safeParse([{"id":"beispiel","file":"packages/a/src/a.ts","symbol":"beispiel","paket":12345}]).success).toBe(false);
   });
   it("[] (Variante 2): lehnt ab: unbekanntes Zusatzfeld", () => {
+    expect(S.safeParse([{"id":"beispiel","file":"packages/a/src/a.ts","symbol":"beispiel","paket":"@sigloch/a","__zusatz__":1}]).success).toBe(false);
+  });
+  it("[] (Variante 3): nimmt das Beispiel an", () => {
+    expect(S.parse([{"id":"beispiel","file":".md"}])).toEqual([{"id":"beispiel","file":".md"}]);
+  });
+  it("[] (Variante 3): lehnt ab ohne id", () => {
+    expect(S.safeParse([{"file":".md"}]).success).toBe(false);
+  });
+  it("[] (Variante 3): lehnt ab: id mit falschem Typ", () => {
+    expect(S.safeParse([{"id":12345,"file":".md"}]).success).toBe(false);
+  });
+  it("[] (Variante 3): lehnt ab ohne file", () => {
+    expect(S.safeParse([{"id":"beispiel"}]).success).toBe(false);
+  });
+  it("[] (Variante 3): lehnt ab: file mit falschem Typ", () => {
+    expect(S.safeParse([{"id":"beispiel","file":12345}]).success).toBe(false);
+  });
+  it("[] (Variante 3): lehnt ab: unbekanntes Zusatzfeld", () => {
     expect(S.safeParse([{"id":"beispiel","file":".md","__zusatz__":1}]).success).toBe(false);
   });
 });

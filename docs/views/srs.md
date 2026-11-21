@@ -4598,7 +4598,7 @@ Verification ◀ `TEST-cli-args` (integration) · satisfy ◀ `FUNC-cli-dispatch
 
 > auch in: `FUNC-block-bedienung`
 
-Das Verb graphcode vertragstest: liest den Satz der SCHEMA mit Zod-realRef aus dem Snapshot, startet den Erzeuger in einem Kindprozess mit transform-types und gibt den Bericht je SCHEMA aus. Exit 1, wenn ein SCHEMA keinen Test bekam; Exit 2 bei falschem Aufruf. (CR-GC-962)
+Das Verb graphcode vertragstest: liest den Satz der SCHEMA mit Zod-realRef aus dem Snapshot, dazu jedes external-SCHEMA mit realRef unter packages/<name>/src (mit dem Paket @sigloch/<name>), startet den Erzeuger in einem Kindprozess mit transform-types im Repo und gibt den Bericht je SCHEMA aus. Exit 1, wenn ein SCHEMA keinen Test bekam; Exit 2 bei falschem Aufruf. (CR-GC-962, CR-GC-981)
 
 io ◀ `FLOW-cli-command` · `FLOW-vertragstest-bericht` · io ▶ `FLOW-vertragstest-satz` · allocate ▶ `MOD-surface`
 
@@ -4614,7 +4614,7 @@ Verification ◀ `TEST-vertragstest-generator` (integration) · satisfy ◀ `FUN
 
 > auch in: `FUNC-block-grounding`
 
-Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, auf jeder Ebene die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; dieselben Faelle gelten in verschachtelten Objekten und in den Elementen einer Liste, eines Tupels und eines Records, je Variante einer Union; nur Faelle, die das Original so urteilt. Die Tiefe ist auf 8 Ebenen begrenzt, ein z.lazy, das sich selbst enthaelt, liefert das Beispiel ohne optionale Felder; beides steht im Bericht. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965, CR-GC-980)
+Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, auf jeder Ebene die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; dieselben Faelle gelten in verschachtelten Objekten und in den Elementen einer Liste, eines Tupels und eines Records, je Variante einer Union; nur Faelle, die das Original so urteilt. Die Tiefe ist auf 8 Ebenen begrenzt, ein z.lazy, das sich selbst enthaelt, liefert das Beispiel ohne optionale Felder; beides steht im Bericht. Ein external-SCHEMA loest es ueber den Paket-Import auf: den Export des installierten Pakets, dessen Verzeichnis die Datei des realRef enthaelt und der das Symbol traegt; zweideutig, fehlend oder kein Zod-Schema ist ein Eintrag mit Grund im Bericht. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965, CR-GC-980, CR-GC-981)
 
 io ◀ `FLOW-vertragstest-satz` · io ▶ `FLOW-vertragstest-bericht` · allocate ▶ `MOD-projections`
 
@@ -9834,7 +9834,7 @@ Verification ◀ `TEST-verify-model-set` (unit) · satisfy ◀ `FUNC-verify-lane
 
 > auch in: `FCHAIN-contract-test-generation`
 
-Das Verb graphcode vertragstest: liest den Satz der SCHEMA mit Zod-realRef aus dem Snapshot, startet den Erzeuger in einem Kindprozess mit transform-types und gibt den Bericht je SCHEMA aus. Exit 1, wenn ein SCHEMA keinen Test bekam; Exit 2 bei falschem Aufruf. (CR-GC-962)
+Das Verb graphcode vertragstest: liest den Satz der SCHEMA mit Zod-realRef aus dem Snapshot, dazu jedes external-SCHEMA mit realRef unter packages/<name>/src (mit dem Paket @sigloch/<name>), startet den Erzeuger in einem Kindprozess mit transform-types im Repo und gibt den Bericht je SCHEMA aus. Exit 1, wenn ein SCHEMA keinen Test bekam; Exit 2 bei falschem Aufruf. (CR-GC-962, CR-GC-981)
 
 io ◀ `FLOW-cli-command` · `FLOW-vertragstest-bericht` · io ▶ `FLOW-vertragstest-satz` · allocate ▶ `MOD-surface`
 
@@ -11200,7 +11200,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 > auch in: `FCHAIN-contract-test-generation`
 
-Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, auf jeder Ebene die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; dieselben Faelle gelten in verschachtelten Objekten und in den Elementen einer Liste, eines Tupels und eines Records, je Variante einer Union; nur Faelle, die das Original so urteilt. Die Tiefe ist auf 8 Ebenen begrenzt, ein z.lazy, das sich selbst enthaelt, liefert das Beispiel ohne optionale Felder; beides steht im Bericht. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965, CR-GC-980)
+Erzeugt je SCHEMA aus dem Zod-Schema selbst einen Vertragstest: ein angenommenes Beispiel mit eingefrorener Ausgabe, auf jeder Ebene die Ablehnung ohne Feld, mit falschem Typ und ausserhalb eines Enums, dazu ein Zusatzfeld; dieselben Faelle gelten in verschachtelten Objekten und in den Elementen einer Liste, eines Tupels und eines Records, je Variante einer Union; nur Faelle, die das Original so urteilt. Die Tiefe ist auf 8 Ebenen begrenzt, ein z.lazy, das sich selbst enthaelt, liefert das Beispiel ohne optionale Felder; beides steht im Bericht. Ein external-SCHEMA loest es ueber den Paket-Import auf: den Export des installierten Pakets, dessen Verzeichnis die Datei des realRef enthaelt und der das Symbol traegt; zweideutig, fehlend oder kein Zod-Schema ist ein Eintrag mit Grund im Bericht. Fuer ein SCHEMA mit Vertragsdatei schreibt es den Test von Hand mit einem Pruefpunkt je Grenzwertzeile. (CR-GC-962, CR-GC-965, CR-GC-980, CR-GC-981)
 
 io ◀ `FLOW-vertragstest-satz` · io ▶ `FLOW-vertragstest-bericht` · allocate ▶ `MOD-projections`
 
@@ -14002,7 +14002,7 @@ io ◀ `FUNC-erzeuge-vertragstests` · io ▶ `FUNC-vertragstest-verb` · schema
 
 ###### 3.3.4.1.251  `FLOW-vertragstest-satz` — Vertragstest-Satz
 
-Die SCHEMA mit ihrem Zod-Symbol vom Verb an den Erzeuger
+Die SCHEMA mit ihrem Zod-Symbol, im Repo oder im Paket, vom Verb an den Erzeuger
 
 io ◀ `FUNC-vertragstest-verb` · io ▶ `FUNC-erzeuge-vertragstests` · schema ▶ `SCHEMA-vertragstest-satz`
 
@@ -14474,7 +14474,7 @@ schema ◀ `FLOW-vertragstest-bericht`
 
 ###### 3.3.4.2.69  `SCHEMA-vertragstest-satz` — VertragstestSatzSchema
 
-Je SCHEMA uid, Datei und Zod-Symbol, oder uid und Vertragsdatei (.md ohne Symbol). erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962, CR-GC-965)
+Je SCHEMA uid, Datei und Zod-Symbol, oder uid, Datei unter packages/<name>/src, Symbol und Paket @sigloch/<name> (external), oder uid und Vertragsdatei (.md ohne Symbol). erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962, CR-GC-965, CR-GC-981)
 
 schema ◀ `FLOW-vertragstest-satz`
 
@@ -16106,127 +16106,169 @@ Vertragstest SCHEMA-export-answer, erzeugt aus dem Zod-Schema: gültiges Beispie
 
 verify ▶ `SCHEMA-export-answer` · testRefs: `tests/vertrag/SCHEMA-export-answer.vertrag.test.ts`, `tests/vertrag/SCHEMA-export-answer.elemente.test.ts`
 
-#### 3.4.190  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
+#### 3.4.190  `TEST-vertrag-function-criticality` — Vertragstest Funktionskritikalität
+
+Vertragstest SCHEMA-function-criticality gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
+
+verify ▶ `SCHEMA-function-criticality` · testRefs: `tests/vertrag/SCHEMA-function-criticality.vertrag.test.ts`
+
+#### 3.4.191  `TEST-vertrag-impact-slice` — Vertragstest Wirkungsausschnitt
+
+Vertragstest SCHEMA-impact-slice gegen das Paket @sigloch/graph-api-core: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
+
+verify ▶ `SCHEMA-impact-slice` · testRefs: `tests/vertrag/SCHEMA-impact-slice.vertrag.test.ts`
+
+#### 3.4.192  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
 
 Vertragstest SCHEMA-init-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-init-report` · testRefs: `tests/vertrag/SCHEMA-init-report.vertrag.test.ts`
 
-#### 3.4.191  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
+#### 3.4.193  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
 
 Vertragstest SCHEMA-install-result, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-install-result` · testRefs: `tests/vertrag/SCHEMA-install-result.vertrag.test.ts`
 
-#### 3.4.192  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
+#### 3.4.194  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
 
 Vertragstest SCHEMA-markdown-text, erzeugt aus dem Zod-Schema: Text angenommen, Nicht-Text abgelehnt. (CR-GC-959)
 
 verify ▶ `SCHEMA-markdown-text` · testRefs: `tests/vertrag/SCHEMA-markdown-text.vertrag.test.ts`
 
-#### 3.4.193  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
+#### 3.4.195  `TEST-vertrag-metric-vector` — Vertragstest Metrikvektor
+
+Vertragstest SCHEMA-metric-vector gegen das Paket @sigloch/se-engine: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
+
+verify ▶ `SCHEMA-metric-vector` · testRefs: `tests/vertrag/SCHEMA-metric-vector.vertrag.test.ts`
+
+#### 3.4.196  `TEST-vertrag-module-metrics` — Vertragstest Modulkennzahlen
+
+Vertragstest SCHEMA-module-metrics gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
+
+verify ▶ `SCHEMA-module-metrics` · testRefs: `tests/vertrag/SCHEMA-module-metrics.vertrag.test.ts`
+
+#### 3.4.197  `TEST-vertrag-ontology-graph` — Vertragstest Ontologie-Graph
+
+Vertragstest SCHEMA-ontology-graph gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
+
+verify ▶ `SCHEMA-ontology-graph` · testRefs: `tests/vertrag/SCHEMA-ontology-graph.vertrag.test.ts`
+
+#### 3.4.198  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
 
 Vertragstest SCHEMA-repo-status, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-repo-status` · testRefs: `tests/vertrag/SCHEMA-repo-status.vertrag.test.ts`
 
-#### 3.4.194  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
+#### 3.4.199  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
 
 Vertragstest SCHEMA-rewind-summary, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-971)
 
 verify ▶ `SCHEMA-rewind-summary` · testRefs: `tests/vertrag/SCHEMA-rewind-summary.vertrag.test.ts`
 
-#### 3.4.195  `TEST-vertrag-test-ingest-answer` — Vertragstest Antwort graph_test_ingest
+#### 3.4.200  `TEST-vertrag-rule-violation` — Vertragstest Regelverletzung
+
+Vertragstest SCHEMA-rule-violation gegen das Paket @sigloch/contracts/harness: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
+
+verify ▶ `SCHEMA-rule-violation` · testRefs: `tests/vertrag/SCHEMA-rule-violation.vertrag.test.ts`
+
+#### 3.4.201  `TEST-vertrag-test-ingest-answer` — Vertragstest Antwort graph_test_ingest
 
 Vertragstest SCHEMA-test-ingest-answer, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-973)
 
 verify ▶ `SCHEMA-test-ingest-answer` · testRefs: `tests/vertrag/SCHEMA-test-ingest-answer.vertrag.test.ts`, `tests/vertrag/SCHEMA-test-ingest-answer.elemente.test.ts`
 
-#### 3.4.196  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
+#### 3.4.202  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
 
 Vertragstest SCHEMA-test-ingest-input, von Hand geschrieben (zwei refine, der Generator nimmt es nicht): jede angenommene Variante, Ablehnung bei keinem Feld, bei report und results zugleich und bei falschem Typ. (CR-GC-971)
 
 verify ▶ `SCHEMA-test-ingest-input` · testRefs: `tests/vertrag/SCHEMA-test-ingest-input.vertrag.test.ts`
 
-#### 3.4.197  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
+#### 3.4.203  `TEST-vertrag-trajectory` — Vertragstest Trajektorie
+
+Vertragstest SCHEMA-trajectory gegen das Paket @sigloch/learning-core/interfaces: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
+
+verify ▶ `SCHEMA-trajectory` · testRefs: `tests/vertrag/SCHEMA-trajectory.vertrag.test.ts`
+
+#### 3.4.204  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
 
 Vertragstest SCHEMA-upgrade-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-upgrade-report` · testRefs: `tests/vertrag/SCHEMA-upgrade-report.vertrag.test.ts`
 
-#### 3.4.198  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
+#### 3.4.205  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
 
 Erzeugter Vertragstest SCHEMA-vertragstest-bericht
 
 verify ▶ `SCHEMA-vertragstest-bericht` · testRefs: `tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts`
 
-#### 3.4.199  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
+#### 3.4.206  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
 
 Erzeugter Vertragstest SCHEMA-vertragstest-satz
 
 verify ▶ `SCHEMA-vertragstest-satz` · testRefs: `tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts`
 
-#### 3.4.200  `TEST-vertrag-work-set` — Vertragstest Arbeitsmenge
+#### 3.4.207  `TEST-vertrag-work-set` — Vertragstest Arbeitsmenge
 
 Vertragstest SCHEMA-work-set: das erzeugte Beispiel und die Ablehnung je Pflichtfeld, dazu von Hand die leere Menge, negative und gebrochene Zugzahl, leere uid. (CR-GC-975)
 
 verify ▶ `SCHEMA-work-set` · testRefs: `tests/vertrag/SCHEMA-work-set.vertrag.test.ts`, `tests/vertrag/SCHEMA-work-set.elemente.test.ts`
 
-#### 3.4.201  `TEST-vertragstest-generator` — Vertragstest-Generator
+#### 3.4.208  `TEST-vertragstest-generator` — Vertragstest-Generator
 
 Unit-Tests des Erzeugers (je Konstrukt ein kleines Schema: verschachteltes Objekt, Liste, Tupel, Record, Union, optional, Tiefengrenze, rekursives z.lazy) und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
 
 verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · `REQ-contract-test-manual` · testRefs: `tests/vertragstest.test.ts`
 
-#### 3.4.202  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.209  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.203  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.210  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.204  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.211  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.205  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.212  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.206  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.213  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.207  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.214  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.208  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.215  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.209  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.216  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.210  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.217  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 

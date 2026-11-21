@@ -11,6 +11,10 @@
  * erwartet; angenommene Faelle frieren die Ausgabe ein. Das Laden der TS-Quellen des Ziel-Repos
  * gehoert dem Aufrufer (`laden`), weil es Node-Flags braucht (vertragstest-verb.ts).
  *
+ * Ein SCHEMA mit `external: true` und `realRef` nach `packages/<name>/src/…` liegt als npm-Paket
+ * `@sigloch/<name>` vor (CR-GC-981): `loeseAuf` waehlt den Export des installierten Pakets, dessen
+ * Verzeichnis die Datei des realRef enthaelt, und der Test importiert aus dem Paketnamen.
+ *
  * Ein SCHEMA mit Vertragsdatei (`realRef {file}` auf `.md` ohne Symbol, Entscheidung CR-GC-961 F3d)
  * bekommt den Test von Hand (CR-GC-965): Die Tabelle traegt Größe, Einheit, Min, Nenn, Max, optional
  * Messpunkt, Quelle und Kriterium (CR-GC-966); je Zeile mit Grenzwert oder Kriterium entsteht ein
@@ -18,14 +22,15 @@
  *
  * @author andreas@siglochconsulting
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join, posix, relative } from 'node:path';
 import { z } from 'zod';
 
-/** Ein SCHEMA des Modells mit seinem Zod-Symbol im Code oder mit seiner Vertragsdatei (`.md`, ohne Symbol). */
+/** Ein SCHEMA des Modells mit seinem Zod-Symbol im Code, im Paket (`paket`) oder mit seiner Vertragsdatei (`.md`, ohne Symbol). */
 export const VertragstestSatzSchema = z.array(
   z.union([
     z.strictObject({ id: z.string().min(1), file: z.string().min(1), symbol: z.string().min(1) }),
+    z.strictObject({ id: z.string().min(1), file: z.string().regex(/^packages\/[a-z0-9-]+\/src\/.+\.ts$/), symbol: z.string().min(1), paket: z.string().regex(/^@sigloch\/[a-z0-9-]+$/) }),
     z.strictObject({ id: z.string().min(1), file: z.string().regex(/\.md$/) }),
   ]),
 );
@@ -487,16 +492,66 @@ export function testDatei(eintrag: CodeVertrag, importPfad: string, faelle: Fall
   return zeilen.join('\n');
 }
 
+type PaketVertrag = Extract<VertragstestSatz[number], { paket: string }>;
+
+/** Ziel eines Eintrags in `exports`: Text, oder die Bedingung `default`/`import`. */
+const exportZiel = (v: unknown): string | undefined => {
+  if (typeof v === 'string') return v;
+  const o = v as { default?: unknown; import?: unknown } | null;
+  const z = o?.default ?? o?.import;
+  return typeof z === 'string' ? z : undefined;
+};
+
+/**
+ * Der Paket-Spezifikator eines external-SCHEMA. Aus `packages/<name>/src/<pfad>.ts` wird `dist/<pfad>.js`;
+ * in Frage kommen die Exports des installierten Pakets, deren Zielverzeichnis dieses Verzeichnis enthaelt,
+ * davon die mit dem laengsten. Genau einer von ihnen muss das Symbol tragen; sonst Fehler mit der Liste.
+ * Kein Fallback auf einen anderen Export.
+ */
+async function loeseAuf(
+  e: PaketVertrag,
+  root: string,
+  laden: (ziel: string) => Promise<Record<string, unknown>>,
+): Promise<{ spezifikator: string; modul: Record<string, unknown> }> {
+  const manifest = join(root, 'node_modules', e.paket, 'package.json');
+  if (!existsSync(manifest)) throw new Error(`Paket ${e.paket} nicht installiert (${relative(root, manifest)} fehlt)`);
+  const pj = JSON.parse(readFileSync(manifest, 'utf8')) as { exports?: unknown };
+  const exportsMap: Record<string, unknown> = typeof pj.exports === 'string' ? { '.': pj.exports } : ((pj.exports ?? {}) as Record<string, unknown>);
+  const dist = 'dist/' + e.file.replace(/^packages\/[^/]+\/src\//, '').replace(/\.ts$/, '.js');
+  const dir = (z: string): string => posix.dirname(posix.normalize(z));
+  const zuordnung = Object.entries(exportsMap)
+    .map(([k, v]) => ({ k, ziel: exportZiel(v) }))
+    .filter((x): x is { k: string; ziel: string } => x.ziel !== undefined && (dir(x.ziel) === '.' ? false : (dir(dist) + '/').startsWith(dir(x.ziel) + '/')));
+  const tiefste = Math.max(-1, ...zuordnung.map((x) => dir(x.ziel).length));
+  const kandidaten = zuordnung.filter((x) => dir(x.ziel).length === tiefste).map((x) => (x.k === '.' ? e.paket : e.paket + x.k.slice(1)));
+  if (kandidaten.length === 0) throw new Error(`Kein Export von ${e.paket} deckt ${dist} ab (exports: ${Object.keys(exportsMap).join(', ') || 'keine'})`);
+  const treffer: Array<{ spezifikator: string; modul: Record<string, unknown> }> = [];
+  const nichtLadbar: string[] = [];
+  for (const spezifikator of kandidaten) {
+    try {
+      const modul = await laden(spezifikator);
+      if (e.symbol in modul) treffer.push({ spezifikator, modul });
+    } catch (err) {
+      nichtLadbar.push(`${spezifikator}: ${err instanceof Error ? err.message.split('\n')[0] : String(err)}`);
+    }
+  }
+  if (treffer.length > 1) throw new Error(`Symbol ${e.symbol} steht in mehreren Exports von ${e.paket}: ${treffer.map((t) => t.spezifikator).join(', ')}`);
+  if (treffer.length === 0) {
+    throw new Error(`Symbol ${e.symbol} steht in keinem Export von ${e.paket} (geprüft: ${kandidaten.join(', ')}): Symbol ist kein Zod-Schema, vermutlich nur ein TS-Typ${nichtLadbar.length > 0 ? `; nicht ladbar: ${nichtLadbar.join('; ')}` : ''}`);
+  }
+  return treffer[0] as { spezifikator: string; modul: Record<string, unknown> };
+}
+
 /**
  * Schreibt je SCHEMA `<id>.vertrag.test.ts` nach `zielDir`, fuer eine Vertragsdatei den Test von Hand
- * `<id>.vertrag.md` (CR-GC-965). `laden(absPfad)` liefert das Modul mit
- * dem Zod-Symbol. Ein Fehler je SCHEMA bricht den Lauf nicht ab; er steht im Bericht.
+ * `<id>.vertrag.md` (CR-GC-965). `laden(ziel)` liefert das Modul mit dem Zod-Symbol; `ziel` ist ein
+ * absoluter Pfad oder der Spezifikator eines Pakets (CR-GC-981). Ein Fehler je SCHEMA bricht den Lauf nicht ab; er steht im Bericht.
  */
 export async function erzeugeVertragstests(
   satz: VertragstestSatz,
   root: string,
   zielDir: string,
-  laden: (absPfad: string) => Promise<Record<string, unknown>>,
+  laden: (ziel: string) => Promise<Record<string, unknown>>,
 ): Promise<VertragstestBericht> {
   VertragstestSatzSchema.parse(satz);
   mkdirSync(zielDir, { recursive: true });
@@ -511,14 +566,18 @@ export async function erzeugeVertragstests(
         bericht.push({ schema: e.id, datei: relative(root, datei), faelle: punkte.length, verworfen, begrenzt: [] });
         continue;
       }
-      const mod = await laden(join(root, e.file));
+      const aufgeloest = 'paket' in e ? await loeseAuf(e, root, laden) : undefined;
+      const mod = aufgeloest ? aufgeloest.modul : await laden(join(root, e.file));
       const S = mod[e.symbol] as Zod | undefined;
-      if (!S?._zod) throw new Error(S ? 'kein Zod-4-Schema' : `Symbol ${e.symbol} nicht exportiert`);
+      if (!S?._zod) {
+        throw new Error(aufgeloest ? `Symbol ${e.symbol} aus ${aufgeloest.spezifikator}: Symbol ist kein Zod-Schema` : S ? 'kein Zod-4-Schema' : `Symbol ${e.symbol} nicht exportiert`);
+      }
       const { aufgenommen, verworfen, begrenzt } = erzeugeFaelle(S);
       if (!aufgenommen.some((f) => f.erwartet)) throw new Error('kein angenommenes Beispiel');
       const datei = join(zielDir, `${e.id}.vertrag.test.ts`);
       const imp = relative(zielDir, join(root, e.file)).replace(/\.ts$/, '.js');
-      writeFileSync(datei, testDatei(e, imp.startsWith('.') ? imp : './' + imp, aufgenommen));
+      const importPfad = aufgeloest ? aufgeloest.spezifikator : imp.startsWith('.') ? imp : './' + imp;
+      writeFileSync(datei, testDatei(e, importPfad, aufgenommen));
       bericht.push({ schema: e.id, datei: relative(root, datei), faelle: aufgenommen.length, verworfen, begrenzt });
     } catch (err) {
       bericht.push({ schema: e.id, fehler: err instanceof Error ? err.message : String(err) });

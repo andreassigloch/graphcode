@@ -260,3 +260,88 @@ describe('executeVertragstest (Verb gegen ein Temp-Repo)', () => {
     expect(() => executeVertragstest({ repoRoot: repo, ids: ['SCHEMA-ohne'] })).toThrow(VertragstestAufrufFehler);
   });
 });
+
+describe('executeVertragstest löst external-SCHEMA über den Paket-Import auf (CR-GC-981)', () => {
+  let repo: string;
+  const graph = (): string => join(repo, 'docs/graph', `${repo.split('/').pop()}.graph.json`);
+  const paket = (dir: string, name: string, exportsMap: Record<string, string>, dateien: Record<string, string>): void => {
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, 'package.json'), JSON.stringify({ name, version: '1.0.0', type: 'module', exports: exportsMap }));
+    for (const [pfad, text] of Object.entries(dateien)) {
+      mkdirSync(join(dir, pfad, '..'), { recursive: true });
+      writeFileSync(join(dir, pfad), text);
+    }
+  };
+  const zodText = (symbol: string): string => `import { z } from 'zod';\nexport const ${symbol} = z.strictObject({ name: z.string(), art: z.enum(['x', 'y']) });\n`;
+  const ext = (id: string, name: string, pfad: string, symbol: string) => ({
+    id,
+    type: 'SCHEMA',
+    external: true,
+    realRef: { file: `packages/${name}/src/${pfad}`, symbol },
+  });
+
+  beforeAll(() => {
+    repo = mkdtempSync(join(tmpdir(), 'gc-vertragstest-paket-'));
+    mkdirSync(join(repo, 'node_modules/@sigloch'), { recursive: true });
+    symlinkSync(resolve('node_modules/zod'), join(repo, 'node_modules/zod'));
+    // Registry-Modus: ein Paket als Verzeichnis in node_modules.
+    paket(
+      join(repo, 'node_modules/@sigloch/demo'),
+      '@sigloch/demo',
+      { '.': './dist/index.js', './se': './dist/se/index.js', './b': './dist/b.js' },
+      {
+        'dist/index.js': "export { Gemeinsam } from './b.js';\nexport const Wurzel = (await import('zod')).z.string();\n",
+        'dist/b.js': zodText('Gemeinsam'),
+        'dist/se/index.js': zodText('Eigen') + 'export const KeinZod = 7;\n',
+      },
+    );
+    // Link-Modus: das Paket liegt als Arbeitskopie ausserhalb, node_modules zeigt per Symlink darauf.
+    paket(join(repo, 'arbeitskopie/verlinkt'), '@sigloch/verlinkt', { '.': './dist/index.js' }, { 'dist/index.js': zodText('Verlinkt') });
+    symlinkSync(join(repo, 'arbeitskopie/verlinkt'), join(repo, 'node_modules/@sigloch/verlinkt'));
+    mkdirSync(join(repo, 'docs/graph'), { recursive: true });
+    const elements = [
+      ext('SCHEMA-eigen', 'demo', 'se/eigen.ts', 'Eigen'),
+      ext('SCHEMA-wurzel', 'demo', 'index.ts', 'Wurzel'),
+      ext('SCHEMA-gemeinsam', 'demo', 'b.ts', 'Gemeinsam'),
+      ext('SCHEMA-nur-typ', 'demo', 'se/typ.ts', 'NurTyp'),
+      ext('SCHEMA-kein-zod', 'demo', 'se/eigen.ts', 'KeinZod'),
+      ext('SCHEMA-fehlt', 'fehlt', 'x.ts', 'X'),
+      ext('SCHEMA-verlinkt', 'verlinkt', 'index.ts', 'Verlinkt'),
+      { id: 'SCHEMA-lokal-ohne-paket', type: 'SCHEMA', realRef: { file: 'packages/demo/src/se/eigen.ts', symbol: 'Eigen' } },
+    ];
+    writeFileSync(graph(), JSON.stringify({ elements, traces: [] }));
+  });
+  afterAll(() => rmSync(repo, { recursive: true, force: true }));
+
+  const lauf = () => executeVertragstest({ repoRoot: repo });
+  const je = (id: string) => lauf().find((b) => b.schema === id);
+
+  it('findet den Export, dessen Verzeichnis die Datei des realRef enthält, und importiert aus dem Paketnamen', () => {
+    expect(je('SCHEMA-eigen')).toMatchObject({ datei: 'tests/vertrag/SCHEMA-eigen.vertrag.test.ts' });
+    const text = readFileSync(join(repo, 'tests/vertrag/SCHEMA-eigen.vertrag.test.ts'), 'utf8');
+    expect(text).toContain("import { Eigen as S } from '@sigloch/demo/se';");
+    expect(text).toContain('lehnt ab: art außerhalb des Enums');
+  });
+  it('löst auch ein Paket auf, das nur als Symlink auf eine Arbeitskopie in node_modules liegt (Link-Modus)', () => {
+    expect(je('SCHEMA-verlinkt')).toMatchObject({ datei: 'tests/vertrag/SCHEMA-verlinkt.vertrag.test.ts' });
+    expect(readFileSync(join(repo, 'tests/vertrag/SCHEMA-verlinkt.vertrag.test.ts'), 'utf8')).toContain("from '@sigloch/verlinkt';");
+  });
+  it('nennt bei einem Symbol in zwei Exports derselben Ebene beide, statt einen zu wählen', () => {
+    expect(je('SCHEMA-gemeinsam')).toEqual({ schema: 'SCHEMA-gemeinsam', fehler: 'Symbol Gemeinsam steht in mehreren Exports von @sigloch/demo: @sigloch/demo, @sigloch/demo/b' });
+  });
+  it('meldet ein Symbol, das kein Export trägt, als kein Zod-Schema', () => {
+    expect(je('SCHEMA-nur-typ')).toEqual({
+      schema: 'SCHEMA-nur-typ',
+      fehler: 'Symbol NurTyp steht in keinem Export von @sigloch/demo (geprüft: @sigloch/demo/se): Symbol ist kein Zod-Schema, vermutlich nur ein TS-Typ',
+    });
+  });
+  it('meldet einen Export, der kein Zod-Schema ist', () => {
+    expect(je('SCHEMA-kein-zod')).toEqual({ schema: 'SCHEMA-kein-zod', fehler: 'Symbol KeinZod aus @sigloch/demo/se: Symbol ist kein Zod-Schema' });
+  });
+  it('meldet ein nicht installiertes Paket mit Grund, ohne die übrigen abzubrechen', () => {
+    expect(je('SCHEMA-fehlt')).toEqual({ schema: 'SCHEMA-fehlt', fehler: 'Paket @sigloch/fehlt nicht installiert (node_modules/@sigloch/fehlt/package.json fehlt)' });
+  });
+  it('nimmt ein SCHEMA mit packages-Pfad, aber ohne external, nicht in den Satz', () => {
+    expect(lauf().map((b) => b.schema)).not.toContain('SCHEMA-lokal-ohne-paket');
+  });
+});

@@ -5,8 +5,9 @@
  * (`erzeugeVertragstests`), je SCHEMA mit Vertragsdatei (`realRef` auf `.md` ohne Symbol) den Test
  * von Hand (CR-GC-965). Der Satz kommt aus dem committeten Snapshot `docs/graph/*.graph.json`;
  * das Verb oeffnet keinen Store und kollidiert deshalb nicht mit einem laufenden Host. Ohne uids
- * nimmt es jedes SCHEMA, dessen `realRef`-Datei im Repo liegt — ein Schema aus einem Paket gehoert
- * dem Paket, das es deklariert.
+ * nimmt es jedes SCHEMA, dessen `realRef`-Datei im Repo liegt, und jedes `external`-SCHEMA mit
+ * `realRef` nach `packages/<name>/src/…`: den Test dafuer erzeugt der Import aus dem Paket
+ * `@sigloch/<name>` (CR-GC-981); ist es nicht aufloesbar, nennt der Bericht den Grund.
  *
  * Die TS-Quellen des Repos laedt ein Kindprozess mit `--experimental-transform-types` und einem
  * Lade-Hook `.js → .ts`: Node 22 ohne Flag kann nur Typen streichen und scheitert an
@@ -39,7 +40,14 @@ export class VertragstestAufrufFehler extends Error {
 interface SnapshotElement {
   id: string;
   type: string;
+  external?: boolean;
   realRef?: { file?: string; symbol?: string };
+}
+
+/** `@sigloch/<name>` fuer ein external-SCHEMA mit `realRef` unter `packages/<name>/src/`, sonst undefined. */
+function paketVon(e: SnapshotElement): string | undefined {
+  const name = e.external ? /^packages\/([a-z0-9-]+)\/src\/.+\.ts$/.exec(e.realRef?.file ?? '')?.[1] : undefined;
+  return name ? `@sigloch/${name}` : undefined;
 }
 
 /** Der Satz aus dem Snapshot: die genannten uids, sonst jedes SCHEMA mit `realRef` im Repo. */
@@ -53,10 +61,12 @@ export function vertragstestSatz(repoRoot: string, ids: readonly string[]): Vert
   const elements = (JSON.parse(readFileSync(pfad, 'utf8')) as { elements: SnapshotElement[] }).elements;
   const satz = elements
     .filter((e) => e.type === 'SCHEMA' && e.realRef?.file && (e.realRef.symbol || e.realRef.file.endsWith('.md')))
-    .filter((e) => (ids.length > 0 ? ids.includes(e.id) : existsSync(join(repoRoot, e.realRef?.file as string))))
+    .filter((e) => (ids.length > 0 ? ids.includes(e.id) : paketVon(e) !== undefined || existsSync(join(repoRoot, e.realRef?.file as string))))
     .map((e) => {
       const { file, symbol } = e.realRef as { file: string; symbol?: string };
-      return symbol ? { id: e.id, file, symbol } : { id: e.id, file };
+      const paket = paketVon(e);
+      if (!symbol) return { id: e.id, file };
+      return paket ? { id: e.id, file, symbol, paket } : { id: e.id, file, symbol };
     });
   const fehlend = ids.filter((i) => !satz.some((s) => s.id === i));
   if (fehlend.length > 0) throw new VertragstestAufrufFehler(`kein SCHEMA mit realRef: ${fehlend.join(', ')}`);
@@ -72,7 +82,7 @@ register('data:text/javascript,' + encodeURIComponent(hook));
 const [erzeuger, auftrag] = process.argv.slice(1);
 const { satz, root, ziel } = JSON.parse(auftrag);
 const { erzeugeVertragstests } = await import(erzeuger);
-const bericht = await erzeugeVertragstests(satz, root, ziel, (p) => import(pathToFileURL(p).href));
+const bericht = await erzeugeVertragstests(satz, root, ziel, (z) => import(z.startsWith('/') ? pathToFileURL(z).href : z));
 process.stdout.write(JSON.stringify(bericht));
 `;
 
