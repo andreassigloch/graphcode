@@ -4448,7 +4448,8 @@
       "id": "CR-GC-969",
       "type": "CR",
       "name": "CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat",
-      "description": "docs/cr/open/CR-GC-969-ci-seit-2026-10-01-rot-live-feed-test-li.md"
+      "description": "docs/cr/done/CR-GC-969-ci-seit-2026-10-01-rot-live-feed-test-li.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37083,5 +37084,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1354
+  "graphVersion": 1355
 }

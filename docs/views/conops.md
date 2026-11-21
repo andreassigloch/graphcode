@@ -661,7 +661,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-965` | done | Vertragstest von Hand aus der Vertragsdatei erzeugen (Folge 2 aus CR-GC-961) | `FUNC-erzeuge-vertragstests` · `FUNC-se-bau` · `REQ-contract-test-manual` |
 | `CR-GC-966` | done | Vertragsdatei: Spalte Kriterium fuer Bedingungen ohne Grenzwert | `FUNC-erzeuge-vertragstests` · `FUNC-se-bau` · `REQ-contract-test-manual` |
 | `CR-GC-968` | done | Skills: sync allgemein, Beleg aus jeder Beschreibung der Realisierung, Rückfrage | `FUNC-se-top-level` · `FUNC-se-vorbereitung` |
-| `CR-GC-969` | n/a | CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat | `FUNC-block-live-dashboard` · `MOD-dev-scripts` |
+| `CR-GC-969` | done | CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat | `FUNC-block-live-dashboard` · `MOD-dev-scripts` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen
