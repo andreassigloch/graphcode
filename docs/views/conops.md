@@ -535,6 +535,10 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-805` | done | Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion | `FUNC-claim-store-lock` · `FUNC-create-harness` · `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · `FUNC-graph-store` · `FUNC-held-back-traces` · `FUNC-host-socket` · `FUNC-own-kuzu-host` · `FUNC-seed-from-json` · `REQ-docked-session-reelects-once` · `REQ-export-refuses-until-held-back-repaired` · `REQ-first-session-claims-store-lock` · `REQ-further-session-docks-via-socket` · `REQ-harness-factory-returns-one-owner` · `REQ-held-back-edge-does-not-abort-load` · `REQ-held-back-edges-derived-every-call` · `REQ-held-back-edges-in-readiness` · `REQ-host-holds-only-kuzu-handle` |
 | `CR-GC-806` | done | Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft | `REQ-code-quality` · `UC-intent-to-code` · `UC-live-graph-view` |
 | `CR-GC-807` | done | Impact-Check: UCs code-quality, reduced-llm, deterministic-steering lesen sich als Anforderungen an den Kern-UC - Herabstufen zu REQ pruefen | `REQ-code-quality` · `REQ-reduced-llm` · `UC-deterministic-steering` |
+| `CR-GC-808` | n/a | Ein-Schreiber-Modus: Gate lehnt Schreibzugriffe nicht erlaubter Clients ab | `FUNC-load-config` · `FUNC-mutate` |
+| `CR-GC-810` | n/a | viewer_show: Agent setzt Ansicht, Fokus und Vorschau-Overlay im Viewer | `FUNC-bind-tools` · `FUNC-gve-supervise` |
+| `CR-GC-811` | n/a | OCC je Element statt je Graph (Voraussetzung fuer ITEM-2026-958, Mehr-Schreiber spaeter) | `FUNC-tool-context` |
+| `CR-GC-812` | n/a | Offline vorberechnete REQ-Vorschlaege gegen Review-Latenz | `FUNC-tool-context` |
 | `CR-GC-813` | done | Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code | `FUNC-agent-loop` · `FUNC-graph-mutate-tool` · `FUNC-host-socket` · `FUNC-rules-tool` · `REQ-agent-loop-executes-skill` |
 | `CR-GC-814` | done | Modell: Recall falsch verdrahtet (seedFromJson an GraphStore statt applyReseed), sieben Wirkketten ohne Ausloeser | `FUNC-apply-reseed` · `FUNC-compute-steering-delta` · `FUNC-gve-supervise` · `FUNC-held-back-traces` · `FUNC-merge-nodes` · `FUNC-seed-from-json` |
 | `CR-GC-815` | done | Akteure nach Kanal statt nach Rolle geschnitten: Auftraggeber und Regelhalter | `FUNC-agent-loop` · `FUNC-mutate` |
@@ -663,6 +667,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-968` | done | Skills: sync allgemein, Beleg aus jeder Beschreibung der Realisierung, Rückfrage | `FUNC-se-top-level` · `FUNC-se-vorbereitung` |
 | `CR-GC-969` | done | CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat | `FUNC-block-live-dashboard` · `MOD-dev-scripts` |
 | `CR-GC-970` | done | RC-07: 141 CR-Knoten tragen nicht den Status des Ordners done (CRs vor BOK-CR-080); Status und Pfad einmalig spiegeln | `FUNC-check-code-conformance` |
+| `CR-GC-972` | n/a | Vier Einzelbefunde im Modell: R-02 verify-lane-code, CR-R01 vier offene CR ohne Umfang, RC-11 src/index.ts, Ketten-Klassifikation R-21 FC-06 | `FUNC-verify-lane-code` · `REQ-verify-code-plan-nennt-spur` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

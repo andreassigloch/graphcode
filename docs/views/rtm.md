@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 302 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 303 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 66 REQ
@@ -78,7 +78,7 @@
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-werkzeuge-wirken-im-repo` | `TEST-mcp-stdio-server` · `TEST-werkzeug-eingang-geparst` | — | — |
 
-### funktional (SWE.1 · HWE.1) — 203 REQ
+### funktional (SWE.1 · HWE.1) — 204 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -274,6 +274,7 @@
 | `REQ-update-behaelt-store` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-update-traegt-policy-ein` | `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
 | `REQ-upgrade-entfernt-fremde-skills` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
+| `REQ-verify-code-plan-nennt-spur` | `TEST-verify-code-plan` | `FUNC-verify-lane-code` | `MOD-dev-scripts` |
 | `REQ-versioned-broadcast` | `TEST-live-view` | — | — |
 | `REQ-viewer-owned-by-repo` | `TEST-gve-autostart` · `TEST-gve-supervision` | — | — |
 | `REQ-viewer-ueberlebt-host` | `TEST-gve-supervision` · `TEST-host-ende-sichtbar` | `FUNC-gve-supervise` | `MOD-surface` |
@@ -357,7 +358,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 222 REQ
+### Entwurf (SWE.3 · HWE.2) — 223 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -574,6 +575,7 @@
 | `REQ-update-behaelt-store` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-update-traegt-policy-ein` | `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
 | `REQ-upgrade-entfernt-fremde-skills` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
+| `REQ-verify-code-plan-nennt-spur` | `TEST-verify-code-plan` | `FUNC-verify-lane-code` | `MOD-dev-scripts` |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-viewer-ueberlebt-host` | `TEST-gve-supervision` · `TEST-host-ende-sichtbar` | `FUNC-gve-supervise` | `MOD-surface` |
 | `REQ-violations-nennt-suggest` | `TEST-umbau-ausloeser` | `FUNC-rules-tool` | `MOD-projections` |

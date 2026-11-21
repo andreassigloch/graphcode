@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 302 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 303 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -2409,6 +2409,14 @@ Verification ◀ `TEST-lane-reports-change` (integration) · satisfy ◀ `FUNC-a
 Die npm-Spur verify:code: plant die Code-Spur, faehrt vitest auf der Auswahl oder der vollen Suite und meldet das Ergebnis ueber graph_test_ingest zurueck (meldeZurueck). Beleg: scripts/verify-code.mjs.
 
 io ◀ `FLOW-cli-invocation` · `FLOW-code-lane-plan` · `FLOW-lauf-urteil` · `FLOW-meldung` · io ▶ `FLOW-lane-output` · `FLOW-plan-request` · `FLOW-test-run-report-code` · `FLOW-vitest-lauf-code` · allocate ▶ `MOD-dev-scripts`
+
+###### `REQ-verify-code-plan-nennt-spur` — verify:code im Planmodus nennt Spur und Kommando
+
+Wenn FLOW-cli-invocation `verify:code --plan` mit einer geänderten Quelldatei trägt, nennt FUNC-verify-lane-code auf FLOW-lane-output die Spur und das vitest-Kommando, das ein echter Lauf fahren würde (genau die Testdateien der Auswahl bei einer Quelldatei mit Knoten, die volle Suite ohne Dateiargument bei einer Quelldatei ohne Knoten), und endet mit Exit 0, ohne vitest zu starten.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-verify-code-plan` (integration) · satisfy ◀ `FUNC-verify-lane-code` · allocate ▶ `MOD-dev-scripts`
 
 ###### 3.3.1.3.4.3  `FUNC-plan-code-lane` — Code-Spur planen
 
@@ -6260,6 +6268,14 @@ Die npm-Spur verify:code: plant die Code-Spur, faehrt vitest auf der Auswahl ode
 
 io ◀ `FLOW-cli-invocation` · `FLOW-code-lane-plan` · `FLOW-lauf-urteil` · `FLOW-meldung` · io ▶ `FLOW-lane-output` · `FLOW-plan-request` · `FLOW-test-run-report-code` · `FLOW-vitest-lauf-code` · allocate ▶ `MOD-dev-scripts`
 
+###### `REQ-verify-code-plan-nennt-spur` — verify:code im Planmodus nennt Spur und Kommando
+
+Wenn FLOW-cli-invocation `verify:code --plan` mit einer geänderten Quelldatei trägt, nennt FUNC-verify-lane-code auf FLOW-lane-output die Spur und das vitest-Kommando, das ein echter Lauf fahren würde (genau die Testdateien der Auswahl bei einer Quelldatei mit Knoten, die volle Suite ohne Dateiargument bei einer Quelldatei ohne Knoten), und endet mit Exit 0, ohne vitest zu starten.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-verify-code-plan` (integration) · satisfy ◀ `FUNC-verify-lane-code` · allocate ▶ `MOD-dev-scripts`
+
 ###### 3.3.1.5.13.3  `FUNC-plan-code-lane` — Code-Spur planen
 
 > auch in: `FCHAIN-verify-lane-full` · `FUNC-block-bedienung`
@@ -9773,6 +9789,14 @@ Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integratio
 Die npm-Spur verify:code: plant die Code-Spur, faehrt vitest auf der Auswahl oder der vollen Suite und meldet das Ergebnis ueber graph_test_ingest zurueck (meldeZurueck). Beleg: scripts/verify-code.mjs.
 
 io ◀ `FLOW-cli-invocation` · `FLOW-code-lane-plan` · `FLOW-lauf-urteil` · `FLOW-meldung` · io ▶ `FLOW-lane-output` · `FLOW-plan-request` · `FLOW-test-run-report-code` · `FLOW-vitest-lauf-code` · allocate ▶ `MOD-dev-scripts`
+
+###### `REQ-verify-code-plan-nennt-spur` — verify:code im Planmodus nennt Spur und Kommando
+
+Wenn FLOW-cli-invocation `verify:code --plan` mit einer geänderten Quelldatei trägt, nennt FUNC-verify-lane-code auf FLOW-lane-output die Spur und das vitest-Kommando, das ein echter Lauf fahren würde (genau die Testdateien der Auswahl bei einer Quelldatei mit Knoten, die volle Suite ohne Dateiargument bei einer Quelldatei ohne Knoten), und endet mit Exit 0, ohne vitest zu starten.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-verify-code-plan` (integration) · satisfy ◀ `FUNC-verify-lane-code` · allocate ▶ `MOD-dev-scripts`
 
 ###### 3.3.1.10.1.1.16  `FUNC-verify-lane-full` — npm run verify:full
 
@@ -16064,127 +16088,133 @@ Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. E
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · `REQ-update-traegt-policy-ein` · `REQ-upgrade-entfernt-fremde-skills` · testRefs: `tests/upgrade.test.ts`, `tests/config-nachziehen.test.ts`
 
-#### 3.4.187  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
+#### 3.4.187  `TEST-verify-code-plan` — verify:code --plan fährt nichts
+
+Startet scripts/verify-code.mjs als Prozess mit --plan: eine gebundene Quelldatei ergibt Spur CODE und ein Kommando mit den Testdateien der Auswahl, eine Quelldatei ohne Knoten ergibt Spur VOLL und das Kommando ohne Dateiargument; beide enden mit Exit 0 innerhalb von 20 s, ohne Rückmeldung und ohne vitest-Bericht. (CR-GC-972)
+
+verify ▶ `REQ-verify-code-plan-nennt-spur` · testRefs: `tests/verify-code-plan.test.ts`
+
+#### 3.4.188  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
 
 Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.
 
 verify ▶ `REQ-model-lane-fixed-set` · `REQ-testspur-passt-zum-diff` · testRefs: `tests/verify-model.completeness.test.ts`
 
-#### 3.4.188  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
+#### 3.4.189  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
 
 Vertragstest SCHEMA-init-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-init-report` · testRefs: `tests/vertrag/SCHEMA-init-report.vertrag.test.ts`
 
-#### 3.4.189  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
+#### 3.4.190  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
 
 Vertragstest SCHEMA-install-result, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-install-result` · testRefs: `tests/vertrag/SCHEMA-install-result.vertrag.test.ts`
 
-#### 3.4.190  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
+#### 3.4.191  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
 
 Vertragstest SCHEMA-markdown-text, erzeugt aus dem Zod-Schema: Text angenommen, Nicht-Text abgelehnt. (CR-GC-959)
 
 verify ▶ `SCHEMA-markdown-text` · testRefs: `tests/vertrag/SCHEMA-markdown-text.vertrag.test.ts`
 
-#### 3.4.191  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
+#### 3.4.192  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
 
 Vertragstest SCHEMA-repo-status, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-repo-status` · testRefs: `tests/vertrag/SCHEMA-repo-status.vertrag.test.ts`
 
-#### 3.4.192  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
+#### 3.4.193  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
 
 Vertragstest SCHEMA-rewind-summary, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-971)
 
 verify ▶ `SCHEMA-rewind-summary` · testRefs: `tests/vertrag/SCHEMA-rewind-summary.vertrag.test.ts`
 
-#### 3.4.193  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
+#### 3.4.194  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
 
 Vertragstest SCHEMA-test-ingest-input, von Hand geschrieben (zwei refine, der Generator nimmt es nicht): jede angenommene Variante, Ablehnung bei keinem Feld, bei report und results zugleich und bei falschem Typ. (CR-GC-971)
 
 verify ▶ `SCHEMA-test-ingest-input` · testRefs: `tests/vertrag/SCHEMA-test-ingest-input.vertrag.test.ts`
 
-#### 3.4.194  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
+#### 3.4.195  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
 
 Vertragstest SCHEMA-upgrade-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-upgrade-report` · testRefs: `tests/vertrag/SCHEMA-upgrade-report.vertrag.test.ts`
 
-#### 3.4.195  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
+#### 3.4.196  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
 
 Erzeugter Vertragstest SCHEMA-vertragstest-bericht
 
 verify ▶ `SCHEMA-vertragstest-bericht` · testRefs: `tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts`
 
-#### 3.4.196  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
+#### 3.4.197  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
 
 Erzeugter Vertragstest SCHEMA-vertragstest-satz
 
 verify ▶ `SCHEMA-vertragstest-satz` · testRefs: `tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts`
 
-#### 3.4.197  `TEST-vertragstest-generator` — Vertragstest-Generator
+#### 3.4.198  `TEST-vertragstest-generator` — Vertragstest-Generator
 
 Unit-Tests des Erzeugers und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
 
 verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · `REQ-contract-test-manual` · testRefs: `tests/vertragstest.test.ts`
 
-#### 3.4.198  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.199  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.199  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.200  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.200  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.201  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.201  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.202  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.202  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.203  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.203  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.204  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.204  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.205  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.205  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.206  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.206  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.207  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 302 REQ · 302 verified · 0 without a verifying TEST (R-01).
+Traceability: 303 REQ · 303 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 

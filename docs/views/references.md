@@ -1136,6 +1136,13 @@
 | `CR-GC-807` | relation | `REQ-code-quality` |
 | `CR-GC-807` | relation | `REQ-reduced-llm` |
 | `CR-GC-807` | relation | `UC-deterministic-steering` |
+| `CR-GC-808` | relation | `FUNC-load-config` |
+| `CR-GC-808` | relation | `FUNC-mutate` |
+| `CR-GC-810` | relation | `FUNC-bind-tools` |
+| `CR-GC-810` | relation | `FUNC-gve-supervise` |
+| `CR-GC-811` | relation | `FUNC-tool-context` |
+| `CR-GC-811` | relation | `SCHEMA-tool-context` |
+| `CR-GC-812` | relation | `FUNC-tool-context` |
 | `CR-GC-813` | relation | `FUNC-agent-loop` |
 | `CR-GC-813` | relation | `FUNC-graph-mutate-tool` |
 | `CR-GC-813` | relation | `FUNC-host-socket` |
@@ -1674,6 +1681,8 @@
 | `CR-GC-970` | relation | `FUNC-check-code-conformance` |
 | `CR-GC-971` | relation | `SCHEMA-rewind-summary` |
 | `CR-GC-971` | relation | `SCHEMA-test-ingest-input` |
+| `CR-GC-972` | relation | `FUNC-verify-lane-code` |
+| `CR-GC-972` | relation | `REQ-verify-code-plan-nennt-spur` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -3330,6 +3339,7 @@
 | `FUNC-verify-lane-code` | io | `FLOW-plan-request` |
 | `FUNC-verify-lane-code` | io | `FLOW-test-run-report-code` |
 | `FUNC-verify-lane-code` | io | `FLOW-vitest-lauf-code` |
+| `FUNC-verify-lane-code` | satisfy | `REQ-verify-code-plan-nennt-spur` |
 | `FUNC-verify-lane-full` | allocate | `MOD-dev-scripts` |
 | `FUNC-verify-lane-full` | io | `FLOW-lane-output-full` |
 | `FUNC-verify-lane-full` | io | `FLOW-plan-request-full` |
@@ -3579,6 +3589,7 @@
 | `REQ-test-runnable-binding` | compose | `REQ-tests-aufloesen` |
 | `REQ-testspur-passt-zum-diff` | compose | `REQ-model-lane-fixed-set` |
 | `REQ-testspur-passt-zum-diff` | compose | `REQ-selective-code-lane` |
+| `REQ-testspur-passt-zum-diff` | compose | `REQ-verify-code-plan-nennt-spur` |
 | `REQ-token-efficiency` | compose | `REQ-benchmark-harness` |
 | `REQ-token-efficiency` | compose | `REQ-precise-context` |
 | `REQ-umbau-haelt-vorhersage` | compose | `REQ-applied-suggestion-moves-target` |
@@ -4099,6 +4110,7 @@
 | `TEST-upgrade` | verify | `REQ-repo-update` |
 | `TEST-upgrade` | verify | `REQ-update-traegt-policy-ein` |
 | `TEST-upgrade` | verify | `REQ-upgrade-entfernt-fremde-skills` |
+| `TEST-verify-code-plan` | verify | `REQ-verify-code-plan-nennt-spur` |
 | `TEST-verify-model-set` | verify | `REQ-model-lane-fixed-set` |
 | `TEST-verify-model-set` | verify | `REQ-testspur-passt-zum-diff` |
 | `TEST-vertrag-init-report` | verify | `SCHEMA-init-report` |
