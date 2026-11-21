@@ -4695,7 +4695,8 @@
       "id": "CR-GC-985",
       "type": "CR",
       "name": "FLOW-mutate-answer ist an SCHEMA-mutate-result gebunden, traegt aber die Werkzeug-Antwort von graph_mutate",
-      "description": "docs/cr/open/CR-GC-985-flow-mutate-answer-ist-an-schema-mutate-.md"
+      "description": "docs/cr/done/CR-GC-985-flow-mutate-answer-ist-an-schema-mutate-.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37970,5 +37971,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1423
+  "graphVersion": 1424
 }
