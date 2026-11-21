@@ -1723,6 +1723,10 @@
 | `CR-GC-984` | relation | `FUNC-emit-update-event` |
 | `CR-GC-984` | relation | `SCHEMA-cli-command` |
 | `CR-GC-984` | relation | `SCHEMA-update-event` |
+| `CR-GC-985` | relation | `FUNC-graph-mutate-tool` |
+| `CR-GC-985` | relation | `FUNC-import-code-verb` |
+| `CR-GC-985` | relation | `SCHEMA-mutate-answer` |
+| `CR-GC-985` | relation | `SCHEMA-mutate-result` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2441,11 +2445,11 @@
 | `FLOW-module-metrics` | io | `FUNC-graph-metrics` |
 | `FLOW-module-metrics` | relation | `SCHEMA-module-metrics` |
 | `FLOW-mutate-answer` | io | `FUNC-agent-loop` |
-| `FLOW-mutate-answer` | relation | `SCHEMA-mutate-result` |
+| `FLOW-mutate-answer` | relation | `SCHEMA-mutate-answer` |
 | `FLOW-mutate-answer-host-socket` | io | `FUNC-host-socket` |
-| `FLOW-mutate-answer-host-socket` | relation | `SCHEMA-mutate-result` |
+| `FLOW-mutate-answer-host-socket` | relation | `SCHEMA-mutate-answer` |
 | `FLOW-mutate-answer-import-code-verb` | io | `FUNC-import-code-verb` |
-| `FLOW-mutate-answer-import-code-verb` | relation | `SCHEMA-mutate-result` |
+| `FLOW-mutate-answer-import-code-verb` | relation | `SCHEMA-mutate-answer` |
 | `FLOW-mutate-cmd-decode` | io | `FUNC-graph-mutate-tool` |
 | `FLOW-mutate-cmd-decode` | relation | `SCHEMA-mutate-command` |
 | `FLOW-mutate-cmd-graph-suggest` | io | `FUNC-mutate` |
@@ -2702,7 +2706,7 @@
 | `FLOW-vitest-lauf-full` | io | `FUNC-lauf-urteil` |
 | `FLOW-vitest-lauf-full` | relation | `SCHEMA-vitest-lauf` |
 | `FLOW-vorschlag` | io | `FUNC-graph-mutate-tool` |
-| `FLOW-vorschlag` | relation | `SCHEMA-mutate-result` |
+| `FLOW-vorschlag` | relation | `SCHEMA-mutate-answer` |
 | `FLOW-work-set` | io | `FUNC-graph-readiness` |
 | `FLOW-work-set` | relation | `SCHEMA-work-set` |
 | `FLOW-write-slot` | io | `FUNC-tool-context` |
@@ -4161,6 +4165,7 @@
 | `TEST-vertrag-markdown-text` | verify | `SCHEMA-markdown-text` |
 | `TEST-vertrag-metric-vector` | verify | `SCHEMA-metric-vector` |
 | `TEST-vertrag-module-metrics` | verify | `SCHEMA-module-metrics` |
+| `TEST-vertrag-mutate-answer` | verify | `SCHEMA-mutate-answer` |
 | `TEST-vertrag-ontology-graph` | verify | `SCHEMA-ontology-graph` |
 | `TEST-vertrag-repo-status` | verify | `SCHEMA-repo-status` |
 | `TEST-vertrag-rewind-summary` | verify | `SCHEMA-rewind-summary` |

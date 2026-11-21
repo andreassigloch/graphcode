@@ -538,9 +538,16 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // sein Erzeuger unter Grounding kamen, mit zwei Vertraegen ueber die Grenze surface/projections (Steuerwert
       // am Start 9,252 -> 9,752): zwei Zuege statt drei. Betrieb nimmt graph_readiness nicht mehr auf. Weiter
       // derselbe Befund (ITEM-2026-798).
+      // CR-GC-985 (graphVersion 1420) — NEU GEMESSEN, nachdem die Antwort von graph_mutate ihren eigenen Vertrag
+      // SCHEMA-mutate-answer bekam (ein Vertrag mehr an der Grenze surface/agent-surface, CR-01 10 -> 11; vor dem CR
+      // lief dieselbe Messung auf dem Stand davor mit zwei Zuegen): vier Zuege statt zwei. Bedienung nimmt
+      // Test-Ingest auf, Abfrage nimmt Ruestzeug, Stand-Verlauf und serve-stdio auf. Weiter derselbe Befund —
+      // Bloecke werden umgehaengt, keiner ist fachlich begruendet (ITEM-2026-798). Der Steuerwert am Start ist nicht neu notiert.
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
-        'FUNC-block-abfrage -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
-        'FUNC-block-grounding -compose-> FUNC-block-bedienung (retire FUNC-block-bedienung)',
+        'FUNC-block-bedienung -compose-> FUNC-test-ingest (retire FUNC-test-ingest)',
+        'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
+        'FUNC-block-abfrage -compose-> FUNC-stand-verlauf',
+        'FUNC-block-abfrage -compose-> FUNC-serve-stdio (retire FUNC-serve-stdio)',
       ]);
       expect(
         rest
@@ -597,9 +604,11 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-962 (graphVersion 1318) — NEU GEMESSEN: nach den zwei Zuegen steht R-04 @ MOD-projections vorn, wie
       // nach CR-GC-918. Die Vertraege SCHEMA-vertragstest-satz und SCHEMA-vertragstest-bericht kamen an die Grenze
       // von projections (30 -> 32).
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-projections — bitte neu messen').toEqual({
-        ruleId: 'R-04',
-        elementId: 'MOD-projections',
+      // CR-GC-985 (graphVersion 1420) — NEU GEMESSEN: nach den vier Zuegen steht BW-02 @ FUNC-block-grounding vorn,
+      // wie nach CR-GC-913. Der Vertrag SCHEMA-mutate-answer kam an die Grenzen von surface und agent-surface.
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
+        ruleId: 'BW-02',
+        elementId: 'FUNC-block-grounding',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

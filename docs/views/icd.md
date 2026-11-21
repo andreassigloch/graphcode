@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 72 SCHEMA · 261 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 73 SCHEMA · 261 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -47,6 +47,7 @@
 | `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
 | `SCHEMA-metrics-answer` | src/projections/metrics.ts#GraphMetricsAnswerSchema | reviewed |
 | `SCHEMA-module-metrics` | packages/contracts/src/se/metric-rules.ts#ModuleMetrics | reviewed |
+| `SCHEMA-mutate-answer` | src/surface/mutate-answer.ts#GraphMutateAnswerSchema | n/a |
 | `SCHEMA-mutate-command` | packages/contracts/src/harness/index.ts#MutateCommandSchema | reviewed |
 | `SCHEMA-mutate-result` | packages/contracts/src/harness/index.ts#MutateResultSchema | reviewed |
 | `SCHEMA-ontology-graph` | packages/contracts/src/se/ontology.ts#OntologyGraph | reviewed |

@@ -50,7 +50,8 @@
  * @author andreas@siglochconsulting
  */
 import { existsSync } from 'node:fs';
-import type { RuleViolation } from '@sigloch/contracts/harness';
+import { z } from 'zod/v4';
+import { RuleViolationSchema, type RuleViolation } from '@sigloch/contracts/harness';
 import type { Graph } from '@sigloch/graph-api-core';
 import {
   ALL_RULE_DEFS,
@@ -331,16 +332,21 @@ export function stripViolationContext<V extends { context?: unknown }>(violation
 /** Der Platzhalter, der in `message`/`fixHint` an der Stelle der elementId steht. */
 export const ELEMENT_PLACEHOLDER = '{el}';
 
-/** Ein Befund je (Regel, Meldungsmuster) statt je Element — die Elemente als Liste. */
-export interface GroupedViolation {
-  ruleId: string;
-  severity: RuleViolation['severity'];
+/**
+ * Ein Befund je (Regel, Meldungsmuster) statt je Element — die Elemente als Liste. Zod, nicht `interface`:
+ * die gefaltete Liste steht in der Antwort von `graph_mutate` (SCHEMA-mutate-answer). Die Schwere ist die
+ * von contracts, nicht nachgebaut.
+ */
+export const GroupedViolationSchema = z.strictObject({
+  ruleId: z.string(),
+  severity: RuleViolationSchema.shape.severity,
   /** Meldung mit `{el}` an der Stelle der elementId — je Eintrag in `elements` einmal einzusetzen. */
-  message: string;
-  fixHint?: string;
+  message: z.string(),
+  fixHint: z.string().optional(),
   /** Die betroffenen Elemente, in Fundreihenfolge. Leer, wenn der Befund kein Element nennt. */
-  elements: string[];
-}
+  elements: z.array(z.string()),
+});
+export type GroupedViolation = z.infer<typeof GroupedViolationSchema>;
 
 /**
  * Befunde nach Regel und Meldungsmuster falten (CR-GC-570).

@@ -30,9 +30,10 @@ import {
   type GateViolation,
   type MutateTransportResult,
 } from '@sigloch/graphify';
-import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
+import type { MutateCommand } from '@sigloch/contracts/harness';
 import { commandsToFormatE, type Graph } from '@sigloch/graph-api-core';
 import { createHarness } from './create-harness.js';
+import { GraphMutateAnswerSchema } from './mutate-answer.js';
 import { bindToolsToHarness } from './mcp-tools.js';
 import { deriveMemberName } from './mcp-server.js';
 import { exportGraphJson } from '../projections/exporter.js';
@@ -290,17 +291,22 @@ export function reseedTransport(
     // ITEM-2026-604: graph_mutate nimmt nur Format-E. Den Typ der geloeschten Knoten kennt der
     // Bestand (`prev`), den der angelegten der Batch selbst.
     const typ = new Map(prev.nodes.map((n) => [n.uid, n.type]));
-    const res = (await registry['graph_mutate'].handler({
-      formatE: commandsToFormatE(batch as MutateCommand[], (uid) => typ.get(uid)),
-      consumerId: 'import-code',
-    })) as MutateResult;
+    // CR-GC-985: je Element (`full`), denn graphify liest die elementId; die gefaltete Liste (summary, der Default)
+    // trägt sie nicht. Die Antwort wird gegen ihren Vertrag gelesen, nicht gecastet.
+    const res = GraphMutateAnswerSchema.parse(
+      await registry['graph_mutate'].handler({
+        formatE: commandsToFormatE(batch as MutateCommand[], (uid) => typ.get(uid)),
+        consumerId: 'import-code',
+        violations: 'full',
+      }),
+    );
     return {
       success: res.success,
       tier: res.tier,
       violations: res.violations.map((v) => ({
         ruleId: v.ruleId,
         severity: v.severity,
-        elementId: v.elementId ?? '',
+        elementId: 'elementId' in v ? (v.elementId ?? '') : '',
         message: v.message,
         ...(v.fixHint !== undefined ? { fixHint: v.fixHint } : {}),
       })),

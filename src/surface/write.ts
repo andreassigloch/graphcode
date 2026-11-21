@@ -15,8 +15,9 @@ import type { MutateCommand, MutateResult, RuleViolation } from '@sigloch/contra
 import { GraphVersionSchema } from '@sigloch/contracts/harness';
 import { readBranchLog, replayBranchLog, type MergeReport } from '../kernel/merge.js';
 import type { MCPTool, MCPToolRegistry } from '../kernel/tool-contract.js';
-import { computeSteeringDelta, takeSteeringSnapshot, type SteeringDelta } from '../kernel/measure/steering-snapshot.js';
+import { computeSteeringDelta, takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 import { stripViolationContext, groupViolationsByRule, type GroupedViolation } from '../kernel/evaluation.js';
+import { GraphMutateAnswerSchema, type BindingReport, type GraphMutateAnswer } from './mutate-answer.js';
 import { steerAdvisoryIsSilent, type FitAdvisory, type SteerAdvisory } from '../kernel/measure/fit-advisory.js';
 import { workOrderIsSilent, type WorkOrder } from '../kernel/measure/work-order.js';
 import { mitBericht } from '../kernel/measure/zug-bericht.js';
@@ -222,16 +223,6 @@ const GraphReseedInputSchema = z.object({
     .describe('Committed graph JSON path relative to repoRoot (default docs/graph/<systemId>.graph.json).'),
 });
 
-/** Was ein Batch an den Code-Verweisen (R-19/R-20/R-26) bewegt hat — CR-GC-685. */
-export interface BindingReport {
-  /** Welche fehlenden Code-Verweise dieser Batch geschlossen hat. */
-  resolved: string[];
-  /** Welche er aufgerissen hat — normalerweise leer. */
-  introduced: string[];
-  /** Wie viele Verweise im Modell noch offen sind — die Zahl, nicht die Liste. */
-  openRefs: number;
-}
-
 // -------------------------------------------------------------------------
 // Binding
 // -------------------------------------------------------------------------
@@ -293,20 +284,7 @@ export function bindWriteTools(ctx: ToolContext) {
   // WRITE tools — gate symmetry (L2): delegate to harness.mutate(), no bypass
   // -------------------------------------------------------------------------
 
-  const graph_mutate: MCPTool<
-    typeof GraphMutateInputSchema,
-    // `violations` folgt der Eingabe: `summary` (Default) faltet je Regel und Meldungsmuster
-    // (`elements`), `full` liefert ein Eintrag je Element (`elementId`) — CR-GC-570, CR-GC-871.
-    Omit<MutateResult, 'violations'> & {
-      violations: MutateResult['violations'] | GroupedViolation[];
-      graphVersion: number;
-      occWarning?: string;
-      nameWarning?: string;
-      steeringDelta?: SteeringDelta;
-      vorschlag?: string;
-      refs?: BindingReport;
-    }
-  > = {
+  const graph_mutate: MCPTool<typeof GraphMutateInputSchema, GraphMutateAnswer> = {
     name: 'graph_mutate',
     description:
       'The ONE write path: apply a `formatE` block through the Apply-Gate. It carries adds, ' +
@@ -318,7 +296,7 @@ export function bindWriteTools(ctx: ToolContext) {
     // Die Eingabe kommt geparst aus dem Register (CR-GC-866); ein Schema-Fehler endet dort,
     // vor dem Gate — ueber MCP wie beim direkten Aufruf.
     async handler(input) {
-      return serializeToolWrite(async () => {
+      const answer = await serializeToolWrite(async () => {
         // CR-GC-943: der genannte Skill muss eine Skill-Datei des Repos sein — sonst waere er wieder ein
         // freies Etikett. Die Ablehnung steht im Log, ohne Skill: der Name ist ja keiner.
         const skill = input.skill === undefined ? undefined : skillNames(harness.getRepoRoot()).get(input.skill);
@@ -417,6 +395,10 @@ export function bindWriteTools(ctx: ToolContext) {
           ...vorschlag,
         };
       });
+      // CR-GC-985: die Antwort quert die Grenze zum Agenten — der Erzeuger prueft sie (RC-04). Zurueck geht das
+      // Original, keine geparste Kopie; ein Bruch wirft, statt als gueltige Antwort durchzugehen.
+      GraphMutateAnswerSchema.parse(answer);
+      return answer;
     },
   };
 
