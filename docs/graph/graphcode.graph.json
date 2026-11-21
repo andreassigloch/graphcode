@@ -4709,7 +4709,8 @@
       "id": "CR-GC-987",
       "type": "CR",
       "name": "Vertragstest-Generator prüft Wertregeln und frozen die Enum-Werteliste",
-      "description": "docs/cr/open/CR-GC-987-vertragstest-generator-pru-ft-wertregeln.md"
+      "description": "docs/cr/done/CR-GC-987-vertragstest-generator-pru-ft-wertregeln.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -38053,5 +38054,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1434
+  "graphVersion": 1435
 }
