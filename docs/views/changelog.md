@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 579 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 579 CR · 569 done · 1 open.
+Total: 579 CR · 570 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -639,5 +639,5 @@ Total: 579 CR · 569 done · 1 open.
 | `CR-GC-971` | done | R-32: Vertragstests für SCHEMA-rewind-summary und SCHEMA-test-ingest-input fehlen |
 | `CR-GC-972` | done | Vier Einzelbefunde im Modell: R-02 verify-lane-code, CR-R01 vier offene CR ohne Umfang, RC-11 src/index.ts, Ketten-Klassifikation R-21 FC-06 |
 | `CR-GC-973` | done | R-26, R-32, RC-04: Zod-Schema für die Antworten von graph_export und graph_test_ingest |
-| `CR-GC-974` | n/a | PARAM als Skill-Konvention: se:author-req, se-conops und se-bau auf einen Wortlaut (Name, Wert, Einschraenkung; fuenf Wege; Pruefort; wer entscheidet), Vorstufe zu CR-SM-419 |
+| `CR-GC-974` | done | PARAM als Skill-Konvention: se:author-req, se-conops und se-bau auf einen Wortlaut (Name, Wert, Einschraenkung; fuenf Wege; Pruefort; wer entscheidet), Vorstufe zu CR-SM-419 |
 | `CR-GC-975` | n/a | R-26, R-32, RC-04: Zod-Schema für die Arbeitsmenge der Sitzung |

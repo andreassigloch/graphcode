@@ -4621,7 +4621,8 @@
       "id": "CR-GC-974",
       "type": "CR",
       "name": "PARAM als Skill-Konvention: se:author-req, se-conops und se-bau auf einen Wortlaut (Name, Wert, Einschraenkung; fuenf Wege; Pruefort; wer entscheidet), Vorstufe zu CR-SM-419",
-      "description": "docs/cr/open/CR-GC-974-param-als-skill-konvention-se-author-req.md"
+      "description": "docs/cr/done/CR-GC-974-param-als-skill-konvention-se-author-req.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-975",
@@ -37516,5 +37517,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1382
+  "graphVersion": 1383
 }
