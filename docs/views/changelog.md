@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 574 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 574 CR · 565 done · 1 open.
+Total: 574 CR · 566 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -635,4 +635,4 @@ Total: 574 CR · 565 done · 1 open.
 | `CR-GC-967` | done | Regelzahlen nach CR-SM-442: Artikel 03 und 04, Bildseite und Kanarienvogel auf 68 Regeln und Ontologie 14.0.0 |
 | `CR-GC-968` | done | Skills: sync allgemein, Beleg aus jeder Beschreibung der Realisierung, Rückfrage |
 | `CR-GC-969` | done | CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat |
-| `CR-GC-970` | n/a | RC-07: 141 CR-Knoten tragen nicht den Status des Ordners done (CRs vor BOK-CR-080); Status und Pfad einmalig spiegeln |
+| `CR-GC-970` | done | RC-07: 141 CR-Knoten tragen nicht den Status des Ordners done (CRs vor BOK-CR-080); Status und Pfad einmalig spiegeln |

@@ -4593,7 +4593,8 @@
       "id": "CR-GC-970",
       "type": "CR",
       "name": "RC-07: 141 CR-Knoten tragen nicht den Status des Ordners done (CRs vor BOK-CR-080); Status und Pfad einmalig spiegeln",
-      "description": "docs/cr/open/CR-GC-970-rc-07-141-cr-knoten-tragen-nicht-den-sta.md"
+      "description": "docs/cr/done/CR-GC-970-rc-07-141-cr-knoten-tragen-nicht-den-sta.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -37233,5 +37234,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1358
+  "graphVersion": 1359
 }
