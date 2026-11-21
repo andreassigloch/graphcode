@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 573 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 574 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 573 CR · 424 done · 4 open.
+Total: 574 CR · 565 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -336,7 +336,7 @@ Total: 573 CR · 424 done · 4 open.
 | `CR-GC-664` | done | Executor: fast jede Runde beginnt mit graph_elements {type:UC} — die Fund-Liste zeigt keine UC-Uebersicht |
 | `CR-GC-665` | done | Perf-Spike misst Modellzusammensetzung statt Engine — fester Eingang wird aus dem lebenden Modell geschnitten |
 | `CR-GC-666` | done | graph_mutate dryRun wirft auf Altbestand: Vorher-SteeringSnapshot parst den Ausgangsgraphen (CR-GC-646) - Probelauf einer Migration unmoeglich |
-| `CR-GC-667` | open | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen |
+| `CR-GC-667` | done | Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen |
 | `CR-GC-668` | done | Regel-Matrix zeigt Erfueller x kinds, Smeagol prueft Wertebereiche |
 | `CR-GC-669` | done | Migrationswerkzeug REQ-kinds auf zwei Werte |
 | `CR-GC-670` | done | graphcode-Eigenmodell auf zwei REQ-kinds migrieren |
@@ -349,8 +349,8 @@ Total: 573 CR · 424 done · 4 open.
 | `CR-GC-676` | done | Mess-Artefakte aufräumen: abgeschlossene Spikes, Recorder, tote Rigs und Alt-Ergebnisse löschen |
 | `CR-GC-677` | done | Mess-Artefakte: Recorder kennzahlen/zugverlauf und erledigte Spikes löschen |
 | `CR-GC-678` | done | Mess-Artefakte: tote Rigs und Greenfield-Altergebnisse löschen |
-| `CR-GC-679` | open | Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID |
-| `CR-GC-680` | open | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie |
+| `CR-GC-679` | done | Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID |
+| `CR-GC-680` | done | Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie |
 | `CR-GC-681` | open | Neue Artikelserie über Konzept, Aufbau und Stand — aus Leitlinie und stand.md |
 | `CR-GC-682` | done | Executor-Inventar als Mess-Schalter: Befund-Kontext, voller ID-Index, Compose-Faltung |
 | `CR-GC-683` | done | Konformanz-Extraktor sieht nur <repo>/src und relative Imports - im Monorepo sigloch-modules 0 Import-Endpunkte, RC-05 und RC-09 dort blind |
@@ -369,29 +369,29 @@ Total: 573 CR · 424 done · 4 open.
 | `CR-GC-695` | done | computePhaseReadiness: nicht anwendbare Regel nicht als erfuellt zaehlen (ruleApplies, CR-SM-372) + Nachzuege FC-05/R-16 |
 | `CR-GC-696` | done | Nachzug Lokal-Modus: rote Spikes und Tests nach Ontologie-Major und Operatoren |
 | `CR-GC-697` | done | FCHAIN-skill-report: FUNC-test/-test-ui ohne REQ (R-21) - REQ Red-First mit Test |
-| `CR-GC-698` | n/a | messen.mjs des Code-Tests misst die Setup-Saat statt des Laufergebnisses: es liest docs/graph/<laufname>.graph.json, waehrend der Export unter dem Mitgliedsnamen <package.name>.graph.json landet — fuer gefuehrt-2 meldete es 0 Prozent Bindung, tatsaechlich sind es 4 von 4 (100 Prozent) |
-| `CR-GC-699` | n/a | CI rot: tests/rig-measured.test.ts (CR-GC-496) stat .graphcode/kuzu ENOENT auf dem Runner — Test setzt lokalen Store voraus (Clean-Machine-Klasse) |
-| `CR-GC-700` | n/a | Der Subagent-Kanal ist ungemessen: ein einziger Agent/Explore-Aufruf lieferte im Lauf vom 2026-09-23 32.054 Zeichen = 18 Prozent aller Werkzeugantworten, und weder steuerung.mjs noch die Antwort-Diaet-CRs kennen ihn |
-| `CR-GC-701` | n/a | Die Auftrags-Pruefliste misst Wortlaut gegen die strukturierte Projektdefinition und ist damit zwischen strukturiertem und prosaischem Lauf nicht vergleichbar: 42/42 vs 1/42 bei mehr Elementen |
-| `CR-GC-702` | n/a | arch-Phase fordert 2 alternative Zerlegungen, bei candidates=1 landen beide: decompose-n-altM-Kaskade |
-| `CR-GC-703` | n/a | Executor-Prompt-Vorbilder lecken als Inhalt: REQ-login-* in 9 von 9 Laeufen eines Auftrags ohne Login |
-| `CR-GC-704` | n/a | qwen3-coder instanziiert das Platzhalter-Vorbild von UC-02 nicht: S2 gcrun-333..335 (nach CR-GC-703) uebernimmt FLOW/SCHEMA/FUNC-beispiel-* woertlich 4-8x je Lauf, Preflight blockt jedes Mal, die Runden verfallen; Kandidat: Skelett-uids aus dem UC des Funds vorbelegen, Modell schreibt nur Texte |
-| `CR-GC-705` | n/a | Executor: FC-04 ohne Klausel — S2 gcrun-336..338 stagnieren je Lauf ~16 von 40 Runden an FC-04/R-16/AF-04, arch nie erreicht; Ausgang FUNC->FLOW->ACTOR fehlt in allen Laeufen. Klausel mit Skelett-uids aus dem Bestand |
-| `CR-GC-706` | n/a | graph_mutate: commands-Parameter entfernen (67 Dateien, Konsumenten zuerst) |
-| `CR-GC-707` | n/a | Executor: Stillstand an AF-01..04 (Analyse-Stempel conops/trade/irr) — S2 gcrun-339..341 je Lauf mehrere 3-Runden-Stillstaende, der Executor kann die Analyse-Skills nicht fahren; Klausel oder gezieltes Zurueckstellen |
-| `CR-GC-708` | n/a | S2-Standardmessung: Zug-Analyse je Runde (Fokus→Zug→Gate→Fundänderung) und Regel-Pareto je Zugtyp als KVP-Instrument |
-| `CR-GC-709` | n/a | Kennzahlverlauf je S2-Runde mitschreiben (docs/messung/verlauf.md), damit jede Änderung am Executor ihre Wirkung belegt |
-| `CR-GC-710` | n/a | Paket-Werkzeug: Kontext um einen Anker (Faltung + nummerierter Auftragsausschnitt), Vorschlagsrahmen aus TRACE_PATTERNS, Abnahmestand je Anker |
-| `CR-GC-711` | n/a | Planer statt Befund-Schleife: Paket-Warteschlange je Ebene, k=2 Reparaturrunden, Fremdbefunde an den Besitzer; T-SYS mit Auftragszuordnung |
-| `CR-GC-712` | n/a | T-UC als Paket: Block-Zug je UC (REQ/TEST/FCHAIN/FUNC/FLOW), SCHEMA als markierter Stub statt Schablonentext; top-level in T-SYS/T-UC schneiden |
-| `CR-GC-713` | n/a | T-EBENE: Ebenenabschluss mit Architekturreview (Breite, Geschwister-Dubletten, Rand, Modul je Kind) und ebenenbeschraenkter Fokus |
-| `CR-GC-714` | n/a | D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck |
+| `CR-GC-698` | done | messen.mjs des Code-Tests misst die Setup-Saat statt des Laufergebnisses: es liest docs/graph/<laufname>.graph.json, waehrend der Export unter dem Mitgliedsnamen <package.name>.graph.json landet — fuer gefuehrt-2 meldete es 0 Prozent Bindung, tatsaechlich sind es 4 von 4 (100 Prozent) |
+| `CR-GC-699` | done | CI rot: tests/rig-measured.test.ts (CR-GC-496) stat .graphcode/kuzu ENOENT auf dem Runner — Test setzt lokalen Store voraus (Clean-Machine-Klasse) |
+| `CR-GC-700` | done | Der Subagent-Kanal ist ungemessen: ein einziger Agent/Explore-Aufruf lieferte im Lauf vom 2026-09-23 32.054 Zeichen = 18 Prozent aller Werkzeugantworten, und weder steuerung.mjs noch die Antwort-Diaet-CRs kennen ihn |
+| `CR-GC-701` | done | Die Auftrags-Pruefliste misst Wortlaut gegen die strukturierte Projektdefinition und ist damit zwischen strukturiertem und prosaischem Lauf nicht vergleichbar: 42/42 vs 1/42 bei mehr Elementen |
+| `CR-GC-702` | done | arch-Phase fordert 2 alternative Zerlegungen, bei candidates=1 landen beide: decompose-n-altM-Kaskade |
+| `CR-GC-703` | done | Executor-Prompt-Vorbilder lecken als Inhalt: REQ-login-* in 9 von 9 Laeufen eines Auftrags ohne Login |
+| `CR-GC-704` | done | qwen3-coder instanziiert das Platzhalter-Vorbild von UC-02 nicht: S2 gcrun-333..335 (nach CR-GC-703) uebernimmt FLOW/SCHEMA/FUNC-beispiel-* woertlich 4-8x je Lauf, Preflight blockt jedes Mal, die Runden verfallen; Kandidat: Skelett-uids aus dem UC des Funds vorbelegen, Modell schreibt nur Texte |
+| `CR-GC-705` | done | Executor: FC-04 ohne Klausel — S2 gcrun-336..338 stagnieren je Lauf ~16 von 40 Runden an FC-04/R-16/AF-04, arch nie erreicht; Ausgang FUNC->FLOW->ACTOR fehlt in allen Laeufen. Klausel mit Skelett-uids aus dem Bestand |
+| `CR-GC-706` | done | graph_mutate: commands-Parameter entfernen (67 Dateien, Konsumenten zuerst) |
+| `CR-GC-707` | done | Executor: Stillstand an AF-01..04 (Analyse-Stempel conops/trade/irr) — S2 gcrun-339..341 je Lauf mehrere 3-Runden-Stillstaende, der Executor kann die Analyse-Skills nicht fahren; Klausel oder gezieltes Zurueckstellen |
+| `CR-GC-708` | done | S2-Standardmessung: Zug-Analyse je Runde (Fokus→Zug→Gate→Fundänderung) und Regel-Pareto je Zugtyp als KVP-Instrument |
+| `CR-GC-709` | done | Kennzahlverlauf je S2-Runde mitschreiben (docs/messung/verlauf.md), damit jede Änderung am Executor ihre Wirkung belegt |
+| `CR-GC-710` | done | Paket-Werkzeug: Kontext um einen Anker (Faltung + nummerierter Auftragsausschnitt), Vorschlagsrahmen aus TRACE_PATTERNS, Abnahmestand je Anker |
+| `CR-GC-711` | done | Planer statt Befund-Schleife: Paket-Warteschlange je Ebene, k=2 Reparaturrunden, Fremdbefunde an den Besitzer; T-SYS mit Auftragszuordnung |
+| `CR-GC-712` | done | T-UC als Paket: Block-Zug je UC (REQ/TEST/FCHAIN/FUNC/FLOW), SCHEMA als markierter Stub statt Schablonentext; top-level in T-SYS/T-UC schneiden |
+| `CR-GC-713` | done | T-EBENE: Ebenenabschluss mit Architekturreview (Breite, Geschwister-Dubletten, Rand, Modul je Kind) und ebenenbeschraenkter Fokus |
+| `CR-GC-714` | done | D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck |
 | `CR-GC-715` | done | Nutzer-Simulator: EIN Testtreiber fuer das interaktive Rig — Enter auf jeden vorschlag |
-| `CR-GC-716` | n/a | steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210) |
-| `CR-GC-717` | n/a | rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD |
-| `CR-GC-718` | n/a | Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox |
-| `CR-GC-719` | n/a | Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718) |
-| `CR-GC-720` | n/a | Schlupf in CR-GC-719: CODE-Spur ignoriert eine Modell-Aenderung im selben Diff (docs/graph) — 3 Tests des Modell-Satzes lagen ausserhalb der Auswahl; und schlupfFreieFolge zaehlt je CR nur die juengste Zeile, ein Nachlauf verdeckt den Schlupf |
+| `CR-GC-716` | done | steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210) |
+| `CR-GC-717` | done | rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD |
+| `CR-GC-718` | done | Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox |
+| `CR-GC-719` | done | Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718) |
+| `CR-GC-720` | done | Schlupf in CR-GC-719: CODE-Spur ignoriert eine Modell-Aenderung im selben Diff (docs/graph) — 3 Tests des Modell-Satzes lagen ausserhalb der Auswahl; und schlupfFreieFolge zaehlt je CR nur die juengste Zeile, ein Nachlauf verdeckt den Schlupf |
 | `CR-GC-721` | done | Fehlleitende Hinweise an das Modell (local-1): AF-01..05 fix_hint und Task-Prompt generate.ts nennen den Stempel als Handlung statt der Analysearbeit; Artefakt-id implplan/assumption-review weicht vom Task-Namen plan/irr ab (Fehlaufruf task implplan); die im Prompt genannten se-Skills liegen nur als .claude/commands vor, OpenCode findet sie nicht (liest .opencode/skills/<name>/SKILL.md, geprueft mit opencode debug skill 1.18.33). Hinweise nennen Task, Skill und ersten Arbeitsschritt als Vorbild; Skills zusaetzlich fuer OpenCode ausliefern. Erzwingung (684/685) bleibt eigener Schritt |
 | `CR-GC-722` | done | MCP-Werkzeugflaeche verkleinern: 23 Tools = 32.029 Zeichen tools/list, die OpenCode je Anfrage laedt (fester Sockel lokal ca. 21.500 Tokens). Gemessen 2026-08-29..09-30: Claude Code 2.745 Aufrufe, OpenCode/qwen 196. (1) Service-Operationen aus der MCP-Liste in CLI-Verben: graph_merge (0 Aufrufe, kein Aufrufer, kein Skill), graph_reseed (1), audit_trail (1), audit_stats (0) = -5.204 Zeichen. (2) Spike Zusammenfuehrung: rules_evaluate + rules_get_violations sind ein Werkzeug mit Umfang-Parameter (gleiche Form, nur Arbeitsmenge vs. Modell); graph_expand Tiefe 1 liefert dieselben Kanten wie graph_get_edges(uid) und wurde 4x gerufen; graph_get_node bleibt (einziger Prosa-Kanal, meistgerufenes Tool in OpenCode 68/196); graph_help/graph_authoring_guide und graph_test_report/ingest nicht deckungsgleich. (3) Werkzeugprofil am MCP-Server nach Vorbild Executor-toolset authoring: Kern 10 Tools = 15.411 Zeichen (48 %). (4) Texte: graph_mutate 4.685 Zeichen (formatE-Sprachdoku 2.441), detail-Parameter 1.400 Zeichen doppelt, Default full in 98 von 100 Aufrufen ueberschrieben. Offen: Token-Zahl ist geschaetzt, A/B mit opencode gegen qwen fehlt |
 | `CR-GC-723` | done | Werkzeugprofil je LLM-Art am MCP-Server: Variable GRAPHCODE_LLM=local/cloud (Scaffold schreibt local in opencode.json, cloud in .mcp.json). local = graph_delegate + Leser graph_elements, graph_get_node, graph_context, Leser-Beschreibung auf den ersten Satz; kein graph_mutate (ein Schreibweg: der Executor im Host). cloud = volle Liste. Entscheid Autor 2026-10-01, Messung in ITEM-2026-687 (Liste heute 32.029 Zeichen, OpenCode laedt sie je Anfrage). Abnahme: A/B-Lauf OpenCode gegen qwen |
@@ -426,57 +426,57 @@ Total: 573 CR · 424 done · 4 open.
 | `CR-GC-752` | done | Bauplan ohne Stempel - offene Auftraege sind das Ergebnis |
 | `CR-GC-753` | done | Nachzug Regelkatalog 40 - die neun Entscheidungen zur Regelmatrix |
 | `CR-GC-754` | done | Nachzug Regelkatalog 41 - Analysen hinterlassen keinen Bauauftrag |
-| `CR-GC-755` | n/a | Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43 |
-| `CR-GC-756` | n/a | Sicht Variantenvergleich streichen |
-| `CR-GC-757` | n/a | Stufe statt Dimension - Befunde zaehlen statt Prozent |
-| `CR-GC-758` | n/a | Rang ohne Gesamt-Delta, Stufen im Bericht wie die Marken, lesender Schritt |
-| `CR-GC-759` | n/a | Werteklassen Laufzeit-Parameter, Start-Konfiguration, Invariante als Allgemeinvorgabe prüfen |
-| `CR-GC-760` | n/a | Testvorgehen als Allgemeinvorgabe prüfen: Abnahme je Use Case, Smoke-Test, Risiko-Tests, Prüfaufbau |
-| `CR-GC-761` | n/a | Sicht cr-list streichen — die Änderungsliste (changelog) ersetzt sie |
-| `CR-GC-762` | n/a | Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen |
-| `CR-GC-763` | n/a | Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen |
-| `CR-GC-764` | n/a | Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte) |
-| `CR-GC-765` | n/a | Leitlinie und Verweise nach dem Split auf graphanalyze umstellen |
-| `CR-GC-766` | n/a | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) |
-| `CR-GC-767` | n/a | Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics |
-| `CR-GC-768` | n/a | 17 von 21 Wirkketten nicht bewertbar: Saecke, lose Glieder, fehlende Glieder |
-| `CR-GC-769` | n/a | Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet |
-| `CR-GC-770` | n/a | Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt |
-| `CR-GC-771` | n/a | Kandidatenvergleich im Dialog: mehrere Entwuerfe per Trockenlauf vergleichen, auch fuer Frontier |
-| `CR-GC-772` | n/a | Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt |
-| `CR-GC-773` | n/a | Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche |
-| `CR-GC-774` | n/a | FMEA-Skill nimmt die Orte der Kettenkennzahlen als Eingang; Reichweite einer Funktion geht in die Bewertung |
-| `CR-GC-775` | n/a | Executor im Host auslagern: Zugaenge entfernen (graph_delegate, graphcode run, Schalter, Config-Abschnitt) |
-| `CR-GC-776` | n/a | Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen |
-| `CR-GC-777` | n/a | Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen) |
-| `CR-GC-778` | n/a | Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht |
+| `CR-GC-755` | done | Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43 |
+| `CR-GC-756` | done | Sicht Variantenvergleich streichen |
+| `CR-GC-757` | done | Stufe statt Dimension - Befunde zaehlen statt Prozent |
+| `CR-GC-758` | done | Rang ohne Gesamt-Delta, Stufen im Bericht wie die Marken, lesender Schritt |
+| `CR-GC-759` | done | Werteklassen Laufzeit-Parameter, Start-Konfiguration, Invariante als Allgemeinvorgabe prüfen |
+| `CR-GC-760` | done | Testvorgehen als Allgemeinvorgabe prüfen: Abnahme je Use Case, Smoke-Test, Risiko-Tests, Prüfaufbau |
+| `CR-GC-761` | done | Sicht cr-list streichen — die Änderungsliste (changelog) ersetzt sie |
+| `CR-GC-762` | done | Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen |
+| `CR-GC-763` | done | Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen |
+| `CR-GC-764` | done | Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte) |
+| `CR-GC-765` | done | Leitlinie und Verweise nach dem Split auf graphanalyze umstellen |
+| `CR-GC-766` | done | Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge) |
+| `CR-GC-767` | done | Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics |
+| `CR-GC-768` | done | 17 von 21 Wirkketten nicht bewertbar: Saecke, lose Glieder, fehlende Glieder |
+| `CR-GC-769` | done | Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet |
+| `CR-GC-770` | done | Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt |
+| `CR-GC-771` | done | Kandidatenvergleich im Dialog: mehrere Entwuerfe per Trockenlauf vergleichen, auch fuer Frontier |
+| `CR-GC-772` | done | Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt |
+| `CR-GC-773` | done | Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche |
+| `CR-GC-774` | done | FMEA-Skill nimmt die Orte der Kettenkennzahlen als Eingang; Reichweite einer Funktion geht in die Bewertung |
+| `CR-GC-775` | done | Executor im Host auslagern: Zugaenge entfernen (graph_delegate, graphcode run, Schalter, Config-Abschnitt) |
+| `CR-GC-776` | done | Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen |
+| `CR-GC-777` | done | Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen) |
+| `CR-GC-778` | done | Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht |
 | `CR-GC-779` | done | FMEA der Kenngroessen-Steuerungsschleife |
 | `CR-GC-780` | done | Entwurfsregel am geteilten Glied |
 | `CR-GC-781` | done | Konzept Fassung 3: Schluss aus den Spikes und Leitfaden der Optimierung |
-| `CR-GC-782` | n/a | se-fmea Version 9: Umfang, Flaeche, Tieferlegen |
-| `CR-GC-783` | n/a | Skill Laufzeitanalyse einer Wirkkette |
-| `CR-GC-784` | n/a | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen |
-| `CR-GC-785` | n/a | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse |
-| `CR-GC-786` | n/a | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) |
-| `CR-GC-787` | n/a | graph_metrics reicht Betrachtungsumfang und Risikotraeger durch |
+| `CR-GC-782` | done | se-fmea Version 9: Umfang, Flaeche, Tieferlegen |
+| `CR-GC-783` | done | Skill Laufzeitanalyse einer Wirkkette |
+| `CR-GC-784` | done | Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen |
+| `CR-GC-785` | done | se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse |
+| `CR-GC-786` | done | graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer) |
+| `CR-GC-787` | done | graph_metrics reicht Betrachtungsumfang und Risikotraeger durch |
 | `CR-GC-788` | done | Modell: Block FUNC-goal-steerer erfuellt eine Anforderung |
 | `CR-GC-789` | done | Merkmal sync an den Fluessen des Selbstmodells |
-| `CR-GC-790` | n/a | Trockenlauf zeigt die Kennzahlen danach nicht: Gesamt-Impact vor der Wahl nur halb |
-| `CR-GC-791` | n/a | Nachbarskills se:optimize und se-vorbereitung auf den Antwortweg nachziehen |
-| `CR-GC-792` | n/a | Antwortweg lesbar machen: Gate-Urteil trennen, Store und Sperre als Glied |
-| `CR-GC-793` | n/a | Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten |
-| `CR-GC-794` | n/a | Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger |
-| `CR-GC-795` | n/a | FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9) |
-| `CR-GC-796` | n/a | Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9) |
-| `CR-GC-797` | n/a | Vorbereitung ganzes Modell: Ketten schliessen vor der FMEA aller Ketten |
-| `CR-GC-798` | n/a | FMEA aller Wirkketten des Modells (se-fmea v9) |
-| `CR-GC-799` | n/a | Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change) |
-| `CR-GC-800` | n/a | Spur CODE und Volllauf melden Aenderung und Lauf an graph_test_ingest zurueck (offen aus CR-GC-799) |
-| `CR-GC-801` | n/a | Sicht fmea.md ist ein Risikoregister: ohne Kette, Traeger, Prioritaet, Nachweis und Massnahmenstand |
-| `CR-GC-802` | n/a | FMEA-Nachtrag: die zwoelf bewerteten Fehlerarten als Risiken ins Modell |
-| `CR-GC-803` | n/a | Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen) |
-| `CR-GC-804` | n/a | Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion) |
-| `CR-GC-805` | n/a | Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion |
+| `CR-GC-790` | done | Trockenlauf zeigt die Kennzahlen danach nicht: Gesamt-Impact vor der Wahl nur halb |
+| `CR-GC-791` | done | Nachbarskills se:optimize und se-vorbereitung auf den Antwortweg nachziehen |
+| `CR-GC-792` | done | Antwortweg lesbar machen: Gate-Urteil trennen, Store und Sperre als Glied |
+| `CR-GC-793` | done | Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten |
+| `CR-GC-794` | done | Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger |
+| `CR-GC-795` | done | FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9) |
+| `CR-GC-796` | done | Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9) |
+| `CR-GC-797` | done | Vorbereitung ganzes Modell: Ketten schliessen vor der FMEA aller Ketten |
+| `CR-GC-798` | done | FMEA aller Wirkketten des Modells (se-fmea v9) |
+| `CR-GC-799` | done | Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change) |
+| `CR-GC-800` | done | Spur CODE und Volllauf melden Aenderung und Lauf an graph_test_ingest zurueck (offen aus CR-GC-799) |
+| `CR-GC-801` | done | Sicht fmea.md ist ein Risikoregister: ohne Kette, Traeger, Prioritaet, Nachweis und Massnahmenstand |
+| `CR-GC-802` | done | FMEA-Nachtrag: die zwoelf bewerteten Fehlerarten als Risiken ins Modell |
+| `CR-GC-803` | done | Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen) |
+| `CR-GC-804` | done | Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion) |
+| `CR-GC-805` | done | Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion |
 | `CR-GC-806` | done | Kern-UC fehlt: Entwickler (Mensch oder KI) bringt ein System von der Absicht bis zum realisierten Code; Sub-UCs Spec-Erstellung und Code-Erstellung (inkl. Test), optional verknuepft |
 | `CR-GC-807` | done | Impact-Check: UCs code-quality, reduced-llm, deterministic-steering lesen sich als Anforderungen an den Kern-UC - Herabstufen zu REQ pruefen |
 | `CR-GC-808` | n/a | Ein-Schreiber-Modus: Gate lehnt Schreibzugriffe nicht erlaubter Clients ab |
@@ -484,88 +484,88 @@ Total: 573 CR · 424 done · 4 open.
 | `CR-GC-810` | n/a | viewer_show: Agent setzt Ansicht, Fokus und Vorschau-Overlay im Viewer |
 | `CR-GC-811` | n/a | OCC je Element statt je Graph (Voraussetzung fuer ITEM-2026-958, Mehr-Schreiber spaeter) |
 | `CR-GC-812` | n/a | Offline vorberechnete REQ-Vorschlaege gegen Review-Latenz |
-| `CR-GC-813` | n/a | Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code |
-| `CR-GC-814` | n/a | Modell: Recall falsch verdrahtet (seedFromJson an GraphStore statt applyReseed), sieben Wirkketten ohne Ausloeser |
-| `CR-GC-815` | n/a | Akteure nach Kanal statt nach Rolle geschnitten: Auftraggeber und Regelhalter |
-| `CR-GC-816` | n/a | Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk |
-| `CR-GC-817` | n/a | Dashboard bekommt Kennzahlen als drei Fluesse statt der einen graph_metrics-Antwort |
-| `CR-GC-818` | n/a | MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08) |
-| `CR-GC-819` | n/a | Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette |
-| `CR-GC-820` | n/a | CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md |
-| `CR-GC-821` | n/a | graph_metrics-Antwort ohne pruefbaren Vertrag |
-| `CR-GC-822` | n/a | Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell |
-| `CR-GC-823` | n/a | Actor-Flows aus kernel ohne surface: gate-verdict (apply), graph-state (GraphStore), export-pending (setExportPending) erreichen den Auftraggeber im Code nur ueber surface |
-| `CR-GC-824` | n/a | Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum |
-| `CR-GC-825` | n/a | FUNC-decode von loop nach kernel: einzige Grounding-FUNC in loop, Geschwister import/reseed/merge liegen in kernel; Linie loop-surface 2 -> 1 Flow |
-| `CR-GC-826` | n/a | FCHAIN-apply-gate: Host-Socket, StoreLock, SessionLifecycle gehoeren nicht in den Ablauf einer Aenderung |
-| `CR-GC-827` | n/a | Regelpruefung liest den Kandidaten von mutate, nicht den Store |
-| `CR-GC-828` | n/a | graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht |
-| `CR-GC-829` | n/a | FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec |
-| `CR-GC-830` | n/a | FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht |
-| `CR-GC-831` | n/a | Schema-Migration: Store-Neuaufbau ist still, migrateSchema gibt es nicht |
-| `CR-GC-832` | n/a | Schreibweg im Modell umgeht das graph_mutate-Werkzeug; Ketten modelfree-gate und interface-escalation sind Eigenschaften, kein Ablauf |
-| `CR-GC-833` | n/a | Leseweg und Fuehrung im Modell umgehen die MCP-Werkzeuge; graph_generate ohne FUNC; Learning-Engine nicht gebaut |
-| `CR-GC-834` | n/a | Start, Sitzungsende und Store-Oeffnen im Modell: repo-lifecycle mischt fuenf Ablaeufe, Startmeldung haengt am GraphStore in 18 Ketten |
-| `CR-GC-835` | n/a | Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC |
-| `CR-GC-836` | n/a | Test-Ketten im Modell: graph_tests, graph_test_ingest und die npm-Spuren verify:code/verify:full in zwei Ketten vermischt; Skripte ohne FUNC |
-| `CR-GC-837` | n/a | Skill-, Dashboard- und HTTP-Host-Ketten im Modell: graph_help ohne FUNC, Dashboard ohne Ausloeser, serveHost/ownKuzu/health ohne Kette |
-| `CR-GC-838` | n/a | Zehn Pre/Post-REQ-Paare: Vorbedingung ist der Eingangsfluss, Nachbedingung die Anforderung; zusammenlegen, an die tragende FUNC haengen, Text an den Test |
-| `CR-GC-839` | n/a | Altbestand CR-Knoten (Dateizeiger veraltet, kein Umfang) und Skripte ohne MOD |
-| `CR-GC-840` | n/a | bootstrap() ohne Aufrufer: zweiter Schreibweg am Werkzeug vorbei (kein Audit, keine Trajektorie); loeschen, Kaltstart ueber graph_mutate |
-| `CR-GC-841` | n/a | Modellierregeln aus dem Modell-Code-Abgleich in die Skills |
-| `CR-GC-842` | n/a | Arch-Spike gehoert in die Modell-Spur |
-| `CR-GC-843` | n/a | Fluss gegen Aufruf pruefen: Abgleich Modell und Code |
-| `CR-GC-844` | n/a | whitebox-messung: CR aus der Commit-Nachricht statt aus commitRef |
-| `CR-GC-845` | n/a | conformanceViolations loeschen: nur ein Test ruft es, conformanceEvaluation ist der Pfad |
-| `CR-GC-846` | n/a | RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts) |
-| `CR-GC-847` | n/a | graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped |
-| `CR-GC-848` | n/a | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag |
-| `CR-GC-849` | n/a | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) |
-| `CR-GC-850` | n/a | contracts 12.7.0 nachziehen: Mindestversion, Testpins fuer RC-11..13 und R-35, FC-02 aus Tests und Skills |
-| `CR-GC-851` | n/a | Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle |
-| `CR-GC-852` | n/a | Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints |
-| `CR-GC-853` | n/a | Constraints Teil 3: Rueckbau Zielprofil |
-| `CR-GC-854` | n/a | verify:full schreibt rot 0, obwohl vitest ohne Bericht endet |
-| `CR-GC-855` | n/a | se:import-doc fragt die verify-Zuordnung ab (graphify CR-GF-144 Schritt 4) |
-| `CR-GC-856` | n/a | import-code verliert Handkanten nach graphify-uid-Wechsel (CR-GF-132), Duplikate ohne origin |
-| `CR-GC-857` | n/a | se-vorbereitung Abschnitt 2: Constraints herunterdeklinieren mit constraintCarriers (contracts 12.8.0) |
-| `CR-GC-858` | n/a | graphify 0.6 einziehen: Range, import-code-verb-Test auf lesbare uids |
-| `CR-GC-859` | n/a | se:import-doc: LLM-Modell nur aus LLM_MODEL, kein Modellname im Skill |
-| `CR-GC-860` | n/a | se:import-doc meldet Gate-Verstoesse leer: liest v.elementId, graph_mutate liefert im Format summary elements[] und {el} |
-| `CR-GC-861` | n/a | Constraints Teil 3b: Rueckbau Zielprofil-Vertrag — weights/values aus TargetProfileSchema, Loader ohne Zielkonflikte, graph_metrics ohne fit.target, Profildateien, Skill-Abschnitte 1/2/4 (Folge von CR-GC-853) |
-| `CR-GC-862` | n/a | Skill-Texte nach Option A (CR-GC-853): se:optimize belegt verletzt mit steerAdvisory statt fitAdvisory/regressions, se:generate ohne fitAdvisory |
+| `CR-GC-813` | done | Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code |
+| `CR-GC-814` | done | Modell: Recall falsch verdrahtet (seedFromJson an GraphStore statt applyReseed), sieben Wirkketten ohne Ausloeser |
+| `CR-GC-815` | done | Akteure nach Kanal statt nach Rolle geschnitten: Auftraggeber und Regelhalter |
+| `CR-GC-816` | done | Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk |
+| `CR-GC-817` | done | Dashboard bekommt Kennzahlen als drei Fluesse statt der einen graph_metrics-Antwort |
+| `CR-GC-818` | done | MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08) |
+| `CR-GC-819` | done | Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette |
+| `CR-GC-820` | done | CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md |
+| `CR-GC-821` | done | graph_metrics-Antwort ohne pruefbaren Vertrag |
+| `CR-GC-822` | done | Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell |
+| `CR-GC-823` | done | Actor-Flows aus kernel ohne surface: gate-verdict (apply), graph-state (GraphStore), export-pending (setExportPending) erreichen den Auftraggeber im Code nur ueber surface |
+| `CR-GC-824` | done | Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum |
+| `CR-GC-825` | done | FUNC-decode von loop nach kernel: einzige Grounding-FUNC in loop, Geschwister import/reseed/merge liegen in kernel; Linie loop-surface 2 -> 1 Flow |
+| `CR-GC-826` | done | FCHAIN-apply-gate: Host-Socket, StoreLock, SessionLifecycle gehoeren nicht in den Ablauf einer Aenderung |
+| `CR-GC-827` | done | Regelpruefung liest den Kandidaten von mutate, nicht den Store |
+| `CR-GC-828` | done | graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht |
+| `CR-GC-829` | done | FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec |
+| `CR-GC-830` | done | FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht |
+| `CR-GC-831` | done | Schema-Migration: Store-Neuaufbau ist still, migrateSchema gibt es nicht |
+| `CR-GC-832` | done | Schreibweg im Modell umgeht das graph_mutate-Werkzeug; Ketten modelfree-gate und interface-escalation sind Eigenschaften, kein Ablauf |
+| `CR-GC-833` | done | Leseweg und Fuehrung im Modell umgehen die MCP-Werkzeuge; graph_generate ohne FUNC; Learning-Engine nicht gebaut |
+| `CR-GC-834` | done | Start, Sitzungsende und Store-Oeffnen im Modell: repo-lifecycle mischt fuenf Ablaeufe, Startmeldung haengt am GraphStore in 18 Ketten |
+| `CR-GC-835` | done | Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC |
+| `CR-GC-836` | done | Test-Ketten im Modell: graph_tests, graph_test_ingest und die npm-Spuren verify:code/verify:full in zwei Ketten vermischt; Skripte ohne FUNC |
+| `CR-GC-837` | done | Skill-, Dashboard- und HTTP-Host-Ketten im Modell: graph_help ohne FUNC, Dashboard ohne Ausloeser, serveHost/ownKuzu/health ohne Kette |
+| `CR-GC-838` | done | Zehn Pre/Post-REQ-Paare: Vorbedingung ist der Eingangsfluss, Nachbedingung die Anforderung; zusammenlegen, an die tragende FUNC haengen, Text an den Test |
+| `CR-GC-839` | done | Altbestand CR-Knoten (Dateizeiger veraltet, kein Umfang) und Skripte ohne MOD |
+| `CR-GC-840` | done | bootstrap() ohne Aufrufer: zweiter Schreibweg am Werkzeug vorbei (kein Audit, keine Trajektorie); loeschen, Kaltstart ueber graph_mutate |
+| `CR-GC-841` | done | Modellierregeln aus dem Modell-Code-Abgleich in die Skills |
+| `CR-GC-842` | done | Arch-Spike gehoert in die Modell-Spur |
+| `CR-GC-843` | done | Fluss gegen Aufruf pruefen: Abgleich Modell und Code |
+| `CR-GC-844` | done | whitebox-messung: CR aus der Commit-Nachricht statt aus commitRef |
+| `CR-GC-845` | done | conformanceViolations loeschen: nur ein Test ruft es, conformanceEvaluation ist der Pfad |
+| `CR-GC-846` | done | RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts) |
+| `CR-GC-847` | done | graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped |
+| `CR-GC-848` | done | Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag |
+| `CR-GC-849` | done | Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau) |
+| `CR-GC-850` | done | contracts 12.7.0 nachziehen: Mindestversion, Testpins fuer RC-11..13 und R-35, FC-02 aus Tests und Skills |
+| `CR-GC-851` | done | Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle |
+| `CR-GC-852` | done | Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints |
+| `CR-GC-853` | done | Constraints Teil 3: Rueckbau Zielprofil |
+| `CR-GC-854` | done | verify:full schreibt rot 0, obwohl vitest ohne Bericht endet |
+| `CR-GC-855` | done | se:import-doc fragt die verify-Zuordnung ab (graphify CR-GF-144 Schritt 4) |
+| `CR-GC-856` | done | import-code verliert Handkanten nach graphify-uid-Wechsel (CR-GF-132), Duplikate ohne origin |
+| `CR-GC-857` | done | se-vorbereitung Abschnitt 2: Constraints herunterdeklinieren mit constraintCarriers (contracts 12.8.0) |
+| `CR-GC-858` | done | graphify 0.6 einziehen: Range, import-code-verb-Test auf lesbare uids |
+| `CR-GC-859` | done | se:import-doc: LLM-Modell nur aus LLM_MODEL, kein Modellname im Skill |
+| `CR-GC-860` | done | se:import-doc meldet Gate-Verstoesse leer: liest v.elementId, graph_mutate liefert im Format summary elements[] und {el} |
+| `CR-GC-861` | done | Constraints Teil 3b: Rueckbau Zielprofil-Vertrag — weights/values aus TargetProfileSchema, Loader ohne Zielkonflikte, graph_metrics ohne fit.target, Profildateien, Skill-Abschnitte 1/2/4 (Folge von CR-GC-853) |
+| `CR-GC-862` | done | Skill-Texte nach Option A (CR-GC-853): se:optimize belegt verletzt mit steerAdvisory statt fitAdvisory/regressions, se:generate ohne fitAdvisory |
 | `CR-GC-863` | done | Skills fuehren Hardware-Systeme falsch: Teile des eigenen Produkts (Servo, Netzteil, Sensor) landen als ACTOR, und der MOD-Schnitt hat keine Regel fuer Domaenen (Mechanik/Elektronik/Software) — Befund sirail CR-028/029 |
 | `CR-GC-864` | done | se:constraints: Plattform-Regeln statt Einzelfälle, Erweiterbarkeit fehlt, Lauf vor dem ersten Schnitt |
-| `CR-GC-865` | n/a | Host-Ende fuer den Client sichtbar |
-| `CR-GC-866` | n/a | Werkzeug-Eingabe einmal im Register parsen |
-| `CR-GC-867` | n/a | Werkzeug-Register typisieren: MCPTool traegt sein Schema |
-| `CR-GC-868` | n/a | Register beim Binden typisieren |
-| `CR-GC-869` | n/a | tsc-Fehler in tests/ beheben, Teil 1 |
-| `CR-GC-870` | n/a | tsc-Fehler in tests/ beheben, Teil 2 |
-| `CR-GC-871` | n/a | tsc-Fehler in tests/ beheben, Teil 3 |
-| `CR-GC-872` | n/a | type-check prueft tests/ mit |
-| `CR-GC-873` | n/a | ConOps Ausgelöst von/Beteiligt, se:top-level Regel 4 und sync beim Kettenschnitt |
-| `CR-GC-874` | n/a | FC-06 am eigenen Modell richten: ein Einsprung für MCP und CLI, Vorab-Lieferung als Datei |
-| `CR-GC-875` | n/a | Skills zur Akteur-Lehre nachziehen |
-| `CR-GC-876` | n/a | se-view-Skills entfernen: paralleler Pfad zu auto-export docs/views (fmea rendert von Hand) |
+| `CR-GC-865` | done | Host-Ende fuer den Client sichtbar |
+| `CR-GC-866` | done | Werkzeug-Eingabe einmal im Register parsen |
+| `CR-GC-867` | done | Werkzeug-Register typisieren: MCPTool traegt sein Schema |
+| `CR-GC-868` | done | Register beim Binden typisieren |
+| `CR-GC-869` | done | tsc-Fehler in tests/ beheben, Teil 1 |
+| `CR-GC-870` | done | tsc-Fehler in tests/ beheben, Teil 2 |
+| `CR-GC-871` | done | tsc-Fehler in tests/ beheben, Teil 3 |
+| `CR-GC-872` | done | type-check prueft tests/ mit |
+| `CR-GC-873` | done | ConOps Ausgelöst von/Beteiligt, se:top-level Regel 4 und sync beim Kettenschnitt |
+| `CR-GC-874` | done | FC-06 am eigenen Modell richten: ein Einsprung für MCP und CLI, Vorab-Lieferung als Datei |
+| `CR-GC-875` | done | Skills zur Akteur-Lehre nachziehen |
+| `CR-GC-876` | done | se-view-Skills entfernen: paralleler Pfad zu auto-export docs/views (fmea rendert von Hand) |
 | `CR-GC-877` | done | Skill se:import-code in eigene Kette |
 | `CR-GC-878` | done | se-view-Verweise in Skill-Texten und Quell-Kommentaren nachziehen (Folge von CR-GC-876) |
 | `CR-GC-879` | done | scaffold update/remove entfernen se-Dateien, die das Paket nicht mehr ausliefert (se-view, trade aus CR-GC-756) |
-| `CR-GC-880` | n/a | Antwortweg: Ausnahme Nachbarkette (CR-SM-423) in Hilfetext, se-vorbereitung und se-laufzeit nachziehen |
+| `CR-GC-880` | done | Antwortweg: Ausnahme Nachbarkette (CR-SM-423) in Hilfetext, se-vorbereitung und se-laufzeit nachziehen |
 | `CR-GC-881` | done | UC- und FCHAIN-Namen benennen das Beduerfnis |
-| `CR-GC-888` | n/a | Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen |
-| `CR-GC-889` | n/a | README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg |
-| `CR-GC-890` | n/a | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch |
-| `CR-GC-891` | n/a | Private Beispielgraphen und ihre Testfaelle nach graphanalyze (Folge von CR-GC-888) |
-| `CR-GC-892` | n/a | se-plan: Integrationsbaum aus dem Modell, Testkonzept vollständig vor dem Schnitt |
-| `CR-GC-893` | n/a | testconcept: Elternfunktionen, Validierung am UC, Zeile ohne Lage |
+| `CR-GC-888` | done | Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen |
+| `CR-GC-889` | done | README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg |
+| `CR-GC-890` | done | Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch |
+| `CR-GC-891` | done | Private Beispielgraphen und ihre Testfaelle nach graphanalyze (Folge von CR-GC-888) |
+| `CR-GC-892` | done | se-plan: Integrationsbaum aus dem Modell, Testkonzept vollständig vor dem Schnitt |
+| `CR-GC-893` | done | testconcept: Elternfunktionen, Validierung am UC, Zeile ohne Lage |
 | `CR-GC-894` | done | se-irr: Annahmen über fremde Datenquellen mit Zählabfrage belegen |
 | `CR-GC-895` | done | se-conops/se-plan: Zugangsliste aus dem Modell, Stufe 0 mit Prüfskript vor dem Bau |
 | `CR-GC-896` | done | se-plan: Gruppen unabhängiger CRs berechnen und als Subagenten starten |
 | `CR-GC-897` | done | Sitzungsbeginn: Einstieg über CR und graph_context statt ganzes Modell |
 | `CR-GC-898` | done | Züge sparen: Aufrufe bündeln, Skript statt Kette, se-retro misst Einzelaufrufe |
 | `CR-GC-899` | done | Modell befragen statt nur schreiben: graph_tests vor jedem Testlauf, se-retro misst Fragen zu Schreibzügen |
-| `CR-GC-900` | n/a | graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt |
+| `CR-GC-900` | done | graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt |
 | `CR-GC-901` | done | testRefs per Commit-Hook binden: Testdatei nennt TEST-uid im Kopf, FUNC-commit-check bindet oder meldet (aus BOK-CR-080 Punkt 3) |
 | `CR-GC-902` | done | init prueft nicht, ob Claude Code oder OpenCode installiert ist; ohne Agent-Programm laufen die naechsten Schritte ins Leere |
 | `CR-GC-903` | done | Viewer ist Nachbarsystem: MOD-dashboard aus dem System nehmen, fuenf Anforderungen neu zuordnen |
@@ -635,3 +635,4 @@ Total: 573 CR · 424 done · 4 open.
 | `CR-GC-967` | done | Regelzahlen nach CR-SM-442: Artikel 03 und 04, Bildseite und Kanarienvogel auf 68 Regeln und Ontologie 14.0.0 |
 | `CR-GC-968` | done | Skills: sync allgemein, Beleg aus jeder Beschreibung der Realisierung, Rückfrage |
 | `CR-GC-969` | done | CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat |
+| `CR-GC-970` | n/a | RC-07: 141 CR-Knoten tragen nicht den Status des Ordners done (CRs vor BOK-CR-080); Status und Pfad einmalig spiegeln |

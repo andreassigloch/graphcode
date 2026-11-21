@@ -2407,7 +2407,7 @@
       "type": "CR",
       "name": "Executor: Fragekanal — offene Punkte als Format-E-Fragezeile (manuell: anhalten, headless: Annahme) statt erfundener Zahlen",
       "description": "docs/cr/open/CR-GC-667-executor-fragekanal-offene-punkte-als-fo.md",
-      "status": "open"
+      "status": "done"
     },
     {
       "id": "CR-GC-668",
@@ -2510,14 +2510,14 @@
       "type": "CR",
       "name": "Standard-Auswertung: npm run messung schreibt docs/messung/stand.md je Test-ID",
       "description": "docs/cr/done/CR-GC-679-standard-auswertung-npm-run-messung-schr.md",
-      "status": "open"
+      "status": "done"
     },
     {
       "id": "CR-GC-680",
       "type": "CR",
       "name": "Mess-Doku konsolidieren: KPI.md, MESSGROESSEN.md, Abschlussbericht, analysecase gegen die Leitlinie",
       "description": "docs/cr/done/CR-GC-680-mess-doku-konsolidieren-kpi-md-messgroes.md",
-      "status": "open"
+      "status": "done"
     },
     {
       "id": "CR-GC-681",
@@ -2666,103 +2666,120 @@
       "id": "CR-GC-698",
       "type": "CR",
       "name": "messen.mjs des Code-Tests misst die Setup-Saat statt des Laufergebnisses: es liest docs/graph/<laufname>.graph.json, waehrend der Export unter dem Mitgliedsnamen <package.name>.graph.json landet — fuer gefuehrt-2 meldete es 0 Prozent Bindung, tatsaechlich sind es 4 von 4 (100 Prozent)",
-      "description": "docs/cr/done/CR-GC-698-messen-mjs-des-code-tests-misst-die-setu.md"
+      "description": "docs/cr/done/CR-GC-698-messen-mjs-des-code-tests-misst-die-setu.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-699",
       "type": "CR",
       "name": "CI rot: tests/rig-measured.test.ts (CR-GC-496) stat .graphcode/kuzu ENOENT auf dem Runner — Test setzt lokalen Store voraus (Clean-Machine-Klasse)",
-      "description": "docs/cr/done/CR-GC-699-ci-rot-tests-rig-measured-test-ts-cr-gc-.md"
+      "description": "docs/cr/done/CR-GC-699-ci-rot-tests-rig-measured-test-ts-cr-gc-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-700",
       "type": "CR",
       "name": "Der Subagent-Kanal ist ungemessen: ein einziger Agent/Explore-Aufruf lieferte im Lauf vom 2026-09-23 32.054 Zeichen = 18 Prozent aller Werkzeugantworten, und weder steuerung.mjs noch die Antwort-Diaet-CRs kennen ihn",
-      "description": "docs/cr/done/CR-GC-700-der-subagent-kanal-ist-ungemessen-ein-ei.md"
+      "description": "docs/cr/done/CR-GC-700-der-subagent-kanal-ist-ungemessen-ein-ei.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-701",
       "type": "CR",
       "name": "Die Auftrags-Pruefliste misst Wortlaut gegen die strukturierte Projektdefinition und ist damit zwischen strukturiertem und prosaischem Lauf nicht vergleichbar: 42/42 vs 1/42 bei mehr Elementen",
-      "description": "docs/cr/done/CR-GC-701-die-auftrags-pruefliste-misst-wortlaut-g.md"
+      "description": "docs/cr/done/CR-GC-701-die-auftrags-pruefliste-misst-wortlaut-g.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-702",
       "type": "CR",
       "name": "arch-Phase fordert 2 alternative Zerlegungen, bei candidates=1 landen beide: decompose-n-altM-Kaskade",
-      "description": "docs/cr/done/CR-GC-702-arch-phase-fordert-2-alternative-zerlegu.md"
+      "description": "docs/cr/done/CR-GC-702-arch-phase-fordert-2-alternative-zerlegu.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-703",
       "type": "CR",
       "name": "Executor-Prompt-Vorbilder lecken als Inhalt: REQ-login-* in 9 von 9 Laeufen eines Auftrags ohne Login",
-      "description": "docs/cr/done/CR-GC-703-executor-prompt-vorbilder-lecken-als-inh.md"
+      "description": "docs/cr/done/CR-GC-703-executor-prompt-vorbilder-lecken-als-inh.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-704",
       "type": "CR",
       "name": "qwen3-coder instanziiert das Platzhalter-Vorbild von UC-02 nicht: S2 gcrun-333..335 (nach CR-GC-703) uebernimmt FLOW/SCHEMA/FUNC-beispiel-* woertlich 4-8x je Lauf, Preflight blockt jedes Mal, die Runden verfallen; Kandidat: Skelett-uids aus dem UC des Funds vorbelegen, Modell schreibt nur Texte",
-      "description": "docs/cr/done/CR-GC-704-qwen3-coder-instanziiert-das-platzhalter.md"
+      "description": "docs/cr/done/CR-GC-704-qwen3-coder-instanziiert-das-platzhalter.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-705",
       "type": "CR",
       "name": "Executor: FC-04 ohne Klausel — S2 gcrun-336..338 stagnieren je Lauf ~16 von 40 Runden an FC-04/R-16/AF-04, arch nie erreicht; Ausgang FUNC->FLOW->ACTOR fehlt in allen Laeufen. Klausel mit Skelett-uids aus dem Bestand",
-      "description": "docs/cr/done/CR-GC-705-executor-fc-04-ohne-klausel-s2-gcrun-336.md"
+      "description": "docs/cr/done/CR-GC-705-executor-fc-04-ohne-klausel-s2-gcrun-336.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-706",
       "type": "CR",
       "name": "graph_mutate: commands-Parameter entfernen (67 Dateien, Konsumenten zuerst)",
-      "description": "docs/cr/done/CR-GC-706-graph-mutate-commands-parameter-entferne.md"
+      "description": "docs/cr/done/CR-GC-706-graph-mutate-commands-parameter-entferne.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-707",
       "type": "CR",
       "name": "Executor: Stillstand an AF-01..04 (Analyse-Stempel conops/trade/irr) — S2 gcrun-339..341 je Lauf mehrere 3-Runden-Stillstaende, der Executor kann die Analyse-Skills nicht fahren; Klausel oder gezieltes Zurueckstellen",
-      "description": "docs/cr/done/CR-GC-707-executor-stillstand-an-af-01-04-analyse-.md"
+      "description": "docs/cr/done/CR-GC-707-executor-stillstand-an-af-01-04-analyse-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-708",
       "type": "CR",
       "name": "S2-Standardmessung: Zug-Analyse je Runde (Fokus→Zug→Gate→Fundänderung) und Regel-Pareto je Zugtyp als KVP-Instrument",
-      "description": "docs/cr/done/CR-GC-708-s2-standardmessung-zug-analyse-je-runde-.md"
+      "description": "docs/cr/done/CR-GC-708-s2-standardmessung-zug-analyse-je-runde-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-709",
       "type": "CR",
       "name": "Kennzahlverlauf je S2-Runde mitschreiben (docs/messung/verlauf.md), damit jede Änderung am Executor ihre Wirkung belegt",
-      "description": "docs/cr/done/CR-GC-709-kennzahlverlauf-je-s2-runde-mitschreiben.md"
+      "description": "docs/cr/done/CR-GC-709-kennzahlverlauf-je-s2-runde-mitschreiben.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-710",
       "type": "CR",
       "name": "Paket-Werkzeug: Kontext um einen Anker (Faltung + nummerierter Auftragsausschnitt), Vorschlagsrahmen aus TRACE_PATTERNS, Abnahmestand je Anker",
-      "description": "docs/cr/open/CR-GC-710-paket-werkzeug-kontext-um-einen-anker-fa.md"
+      "description": "docs/cr/open/CR-GC-710-paket-werkzeug-kontext-um-einen-anker-fa.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-711",
       "type": "CR",
       "name": "Planer statt Befund-Schleife: Paket-Warteschlange je Ebene, k=2 Reparaturrunden, Fremdbefunde an den Besitzer; T-SYS mit Auftragszuordnung",
-      "description": "docs/cr/open/CR-GC-711-planer-statt-befund-schleife-paket-warte.md"
+      "description": "docs/cr/open/CR-GC-711-planer-statt-befund-schleife-paket-warte.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-712",
       "type": "CR",
       "name": "T-UC als Paket: Block-Zug je UC (REQ/TEST/FCHAIN/FUNC/FLOW), SCHEMA als markierter Stub statt Schablonentext; top-level in T-SYS/T-UC schneiden",
-      "description": "docs/cr/open/CR-GC-712-t-uc-als-paket-block-zug-je-uc-req-test-.md"
+      "description": "docs/cr/open/CR-GC-712-t-uc-als-paket-block-zug-je-uc-req-test-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-713",
       "type": "CR",
       "name": "T-EBENE: Ebenenabschluss mit Architekturreview (Breite, Geschwister-Dubletten, Rand, Modul je Kind) und ebenenbeschraenkter Fokus",
-      "description": "docs/cr/open/CR-GC-713-t-ebene-ebenenabschluss-mit-architekturr.md"
+      "description": "docs/cr/open/CR-GC-713-t-ebene-ebenenabschluss-mit-architekturr.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-714",
       "type": "CR",
       "name": "D2-Delegation: Client gibt Modellarbeit ueber MCP an den Executor im Host-Prozess (ein Schreiber), Fragen des Executors gehen an den Client zurueck",
-      "description": "docs/cr/done/CR-GC-714-d2-delegation-client-gibt-modellarbeit-u.md"
+      "description": "docs/cr/done/CR-GC-714-d2-delegation-client-gibt-modellarbeit-u.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-715",
@@ -2776,31 +2793,36 @@
       "id": "CR-GC-716",
       "type": "CR",
       "name": "steuerung.mjs auf Claude-Code-Sitzungs-Transcripts: Navigation zaehlt Schreib-/Commit-Zeilen und fremdes src/contracts (:153/:175), befolgt-Fenster leer wenn jede Mutation next traegt (:84), Endstand mischt letztes generate mit Endzustand (:210)",
-      "description": "docs/cr/done/CR-GC-716-steuerung-mjs-auf-claude-code-sitzungs-t.md"
+      "description": "docs/cr/done/CR-GC-716-steuerung-mjs-auf-claude-code-sitzungs-t.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-717",
       "type": "CR",
       "name": "rig/code-test/messen.mjs: kongruenz oeffnet createHarness auf dem echten Repo (Live-Store, :144) statt openMeasured; architektur kopiert *.test.ts mit (:103) — jede Testdatei wird ein MOD",
-      "description": "docs/cr/done/CR-GC-717-rig-code-test-messen-mjs-kongruenz-oeffn.md"
+      "description": "docs/cr/done/CR-GC-717-rig-code-test-messen-mjs-kongruenz-oeffn.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-718",
       "type": "CR",
       "name": "Volllauf je CR an Messung binden: verify:full protokolliert je CR, ob ein roter Test ausserhalb der Graph-Auswahl lag (Schlupf); nach 10 CRs ohne Schlupf entfaellt der Volllauf je CR (CI + Publish bleiben). Zusage: Blackbox- und Schnittstellentests 100 % gebunden, Unit-Tests innerhalb kennt die Blackbox",
-      "description": "docs/cr/done/CR-GC-718-volllauf-je-cr-an-messung-binden-verify-.md"
+      "description": "docs/cr/done/CR-GC-718-volllauf-je-cr-an-messung-binden-verify-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-719",
       "type": "CR",
       "name": "Zusage Blackbox-/Schnittstellentests 100 % gebunden ist verfehlt: Blackbox 82/95 (13 TESTs ohne testRefs, u. a. TEST-cache, TEST-no-direct-graph-write, TEST-interface-schema), realisierte Vertraege mit gebundenem TEST 9/42 (verify:full CR-GC-718)",
-      "description": "docs/cr/done/CR-GC-719-zusage-blackbox-schnittstellentests-100-.md"
+      "description": "docs/cr/done/CR-GC-719-zusage-blackbox-schnittstellentests-100-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-720",
       "type": "CR",
       "name": "Schlupf in CR-GC-719: CODE-Spur ignoriert eine Modell-Aenderung im selben Diff (docs/graph) — 3 Tests des Modell-Satzes lagen ausserhalb der Auswahl; und schlupfFreieFolge zaehlt je CR nur die juengste Zeile, ein Nachlauf verdeckt den Schlupf",
-      "description": "docs/cr/done/CR-GC-720-schlupf-in-cr-gc-719-code-spur-ignoriert.md"
+      "description": "docs/cr/done/CR-GC-720-schlupf-in-cr-gc-719-code-spur-ignoriert.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-721",
@@ -3078,145 +3100,169 @@
       "id": "CR-GC-755",
       "type": "CR",
       "name": "Entscheidung ist ein erledigter Auftrag - Skills und Nachzug Regelkatalog 43",
-      "description": "docs/cr/done/CR-GC-755-entscheidung-ist-ein-erledigter-auftrag-.md"
+      "description": "docs/cr/done/CR-GC-755-entscheidung-ist-ein-erledigter-auftrag-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-756",
       "type": "CR",
       "name": "Sicht Variantenvergleich streichen",
-      "description": "docs/cr/done/CR-GC-756-sicht-variantenvergleich-streichen.md"
+      "description": "docs/cr/done/CR-GC-756-sicht-variantenvergleich-streichen.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-757",
       "type": "CR",
       "name": "Stufe statt Dimension - Befunde zaehlen statt Prozent",
-      "description": "docs/cr/done/CR-GC-757-stufe-statt-dimension-befunde-zaehlen-st.md"
+      "description": "docs/cr/done/CR-GC-757-stufe-statt-dimension-befunde-zaehlen-st.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-758",
       "type": "CR",
       "name": "Rang ohne Gesamt-Delta, Stufen im Bericht wie die Marken, lesender Schritt",
-      "description": "docs/cr/done/CR-GC-758-rang-ohne-gesamt-delta-stufen-im-bericht.md"
+      "description": "docs/cr/done/CR-GC-758-rang-ohne-gesamt-delta-stufen-im-bericht.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-759",
       "type": "CR",
       "name": "Werteklassen Laufzeit-Parameter, Start-Konfiguration, Invariante als Allgemeinvorgabe prüfen",
-      "description": "docs/cr/done/CR-GC-759-werteklassen-laufzeit-parameter-start-ko.md"
+      "description": "docs/cr/done/CR-GC-759-werteklassen-laufzeit-parameter-start-ko.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-760",
       "type": "CR",
       "name": "Testvorgehen als Allgemeinvorgabe prüfen: Abnahme je Use Case, Smoke-Test, Risiko-Tests, Prüfaufbau",
-      "description": "docs/cr/done/CR-GC-760-testvorgehen-als-allgemeinvorgabe-pru-fe.md"
+      "description": "docs/cr/done/CR-GC-760-testvorgehen-als-allgemeinvorgabe-pru-fe.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-761",
       "type": "CR",
       "name": "Sicht cr-list streichen — die Änderungsliste (changelog) ersetzt sie",
-      "description": "docs/cr/open/CR-GC-761-sicht-cr-list-streichen-die-a-nderungsli.md"
+      "description": "docs/cr/open/CR-GC-761-sicht-cr-list-streichen-die-a-nderungsli.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-762",
       "type": "CR",
       "name": "Teststufen und Anforderungsebenen nach Automotive SPICE benennen (Software und Hardware), Modul-Stufe ergaenzen",
-      "description": "docs/cr/done/CR-GC-762-teststufen-und-anforderungsebenen-nach-a.md"
+      "description": "docs/cr/done/CR-GC-762-teststufen-und-anforderungsebenen-nach-a.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-763",
       "type": "CR",
       "name": "Kandidatenwahl: Gate-Einstufung hinter die Zahl angelegter Elemente stellen",
-      "description": "docs/cr/done/CR-GC-763-kandidatenwahl-gate-einstufung-hinter-di.md"
+      "description": "docs/cr/done/CR-GC-763-kandidatenwahl-gate-einstufung-hinter-di.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-764",
       "type": "CR",
       "name": "Rig und Auswertung aus graphcode entfernen (Split nach graphanalyze, zweite Haelfte)",
-      "description": "docs/cr/done/CR-GC-764-rig-und-auswertung-aus-graphcode-entfern.md"
+      "description": "docs/cr/done/CR-GC-764-rig-und-auswertung-aus-graphcode-entfern.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-765",
       "type": "CR",
       "name": "Leitlinie und Verweise nach dem Split auf graphanalyze umstellen",
-      "description": "docs/cr/done/CR-GC-765-leitlinie-und-verweise-nach-dem-split-au.md"
+      "description": "docs/cr/done/CR-GC-765-leitlinie-und-verweise-nach-dem-split-au.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-766",
       "type": "CR",
       "name": "Marken, Bericht und Viewer zaehlen wie der Schritt (eine Regelmenge)",
-      "description": "docs/cr/done/CR-GC-766-marken-bericht-und-viewer-zaehlen-wie-de.md"
+      "description": "docs/cr/done/CR-GC-766-marken-bericht-und-viewer-zaehlen-wie-de.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-767",
       "type": "CR",
       "name": "Kettenbewertung Stufe 1: Kettenkennzahlen und Bewertbarkeitsquote als Messwerk in graph_metrics",
-      "description": "docs/cr/done/CR-GC-767-kettenbewertung-stufe-1-kettenkennzahlen.md"
+      "description": "docs/cr/done/CR-GC-767-kettenbewertung-stufe-1-kettenkennzahlen.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-768",
       "type": "CR",
       "name": "17 von 21 Wirkketten nicht bewertbar: Saecke, lose Glieder, fehlende Glieder",
-      "description": "docs/cr/done/CR-GC-768-17-von-21-wirkketten-nicht-bewertbar-sae.md"
+      "description": "docs/cr/done/CR-GC-768-17-von-21-wirkketten-nicht-bewertbar-sae.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-769",
       "type": "CR",
       "name": "Scaffold stellt OpenCode auf den eingefrorenen Executor-Weg; Executor-Pfad ist nirgends als geparkt gekennzeichnet",
-      "description": "docs/cr/done/CR-GC-769-scaffold-stellt-opencode-auf-den-eingefr.md"
+      "description": "docs/cr/done/CR-GC-769-scaffold-stellt-opencode-auf-den-eingefr.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-770",
       "type": "CR",
       "name": "Steuerungsschleife im Modell: schliesst nicht, Vorschlag fehlt, mit geparktem Executor vermischt",
-      "description": "docs/cr/done/CR-GC-770-steuerungsschleife-im-modell-schliesst-n.md"
+      "description": "docs/cr/done/CR-GC-770-steuerungsschleife-im-modell-schliesst-n.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-771",
       "type": "CR",
       "name": "Kandidatenvergleich im Dialog: mehrere Entwuerfe per Trockenlauf vergleichen, auch fuer Frontier",
-      "description": "docs/cr/open/CR-GC-771-kandidatenvergleich-im-dialog-mehrere-en.md"
+      "description": "docs/cr/open/CR-GC-771-kandidatenvergleich-im-dialog-mehrere-en.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-772",
       "type": "CR",
       "name": "Executor-Schalter in die Repo-Konfiguration, GRAPHCODE_CLIENT_LLM entfaellt",
-      "description": "docs/cr/done/CR-GC-772-executor-schalter-in-die-repo-konfigurat.md"
+      "description": "docs/cr/done/CR-GC-772-executor-schalter-in-die-repo-konfigurat.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-773",
       "type": "CR",
       "name": "Drei Helfer der Executor-Kette ohne eigenen Vertrag: Faltung, Fund-Kontext, Dublettensuche",
-      "description": "docs/cr/done/CR-GC-773-drei-helfer-der-executor-kette-ohne-eige.md"
+      "description": "docs/cr/done/CR-GC-773-drei-helfer-der-executor-kette-ohne-eige.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-774",
       "type": "CR",
       "name": "FMEA-Skill nimmt die Orte der Kettenkennzahlen als Eingang; Reichweite einer Funktion geht in die Bewertung",
-      "description": "docs/cr/done/CR-GC-774-fmea-skill-nimmt-die-orte-der-kettenkenn.md"
+      "description": "docs/cr/done/CR-GC-774-fmea-skill-nimmt-die-orte-der-kettenkenn.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-775",
       "type": "CR",
       "name": "Executor im Host auslagern: Zugaenge entfernen (graph_delegate, graphcode run, Schalter, Config-Abschnitt)",
-      "description": "docs/cr/done/CR-GC-775-executor-im-host-auslagern-zugaenge-entf.md"
+      "description": "docs/cr/done/CR-GC-775-executor-im-host-auslagern-zugaenge-entf.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-776",
       "type": "CR",
       "name": "Executor im Host auslagern: toten Code, Tests und Modellknoten loeschen",
-      "description": "docs/cr/done/CR-GC-776-executor-im-host-auslagern-toten-code-te.md"
+      "description": "docs/cr/done/CR-GC-776-executor-im-host-auslagern-toten-code-te.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-777",
       "type": "CR",
       "name": "Zweiter Ring nach der Executor-Auslagerung: verwaiste Zweige und Exporte (Treiber-Zweig in generate/suggest, Stempel in task-artifact, Kanal-Attribut treiber, Beispielgraphen)",
-      "description": "docs/cr/done/CR-GC-777-zweiter-ring-nach-der-executor-auslageru.md"
+      "description": "docs/cr/done/CR-GC-777-zweiter-ring-nach-der-executor-auslageru.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-778",
       "type": "CR",
       "name": "Gate entlasten: Architekturmass, Steuerwert und Dateiliste aus dem Gate in die Schreibschicht",
-      "description": "docs/cr/done/CR-GC-778-gate-entlasten-architekturmass-steuerwer.md"
+      "description": "docs/cr/done/CR-GC-778-gate-entlasten-architekturmass-steuerwer.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-779",
@@ -3244,37 +3290,43 @@
       "id": "CR-GC-782",
       "type": "CR",
       "name": "se-fmea Version 9: Umfang, Flaeche, Tieferlegen",
-      "description": "docs/cr/done/CR-GC-782-se-fmea-version-9-umfang-flaeche-tieferl.md"
+      "description": "docs/cr/done/CR-GC-782-se-fmea-version-9-umfang-flaeche-tieferl.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-783",
       "type": "CR",
       "name": "Skill Laufzeitanalyse einer Wirkkette",
-      "description": "docs/cr/done/CR-GC-783-skill-laufzeitanalyse-einer-wirkkette.md"
+      "description": "docs/cr/done/CR-GC-783-skill-laufzeitanalyse-einer-wirkkette.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-784",
       "type": "CR",
       "name": "Skill Modellvorbereitung: Ketten schliessen, Anforderungen zuordnen, Fluesse kennzeichnen",
-      "description": "docs/cr/done/CR-GC-784-skill-modellvorbereitung-ketten-schliess.md"
+      "description": "docs/cr/done/CR-GC-784-skill-modellvorbereitung-ketten-schliess.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-785",
       "type": "CR",
       "name": "se:optimize Version 3: ein Optimierer fuer Vorschlaege aus jeder Analyse",
-      "description": "docs/cr/done/CR-GC-785-se-optimize-version-3-ein-optimierer-fue.md"
+      "description": "docs/cr/done/CR-GC-785-se-optimize-version-3-ein-optimierer-fue.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-786",
       "type": "CR",
       "name": "graph_readiness bricht an Anforderungen mit Art-Werten vor contracts 10 ab (siconizer)",
-      "description": "docs/cr/done/CR-GC-786-graph-readiness-bricht-an-anforderungen-.md"
+      "description": "docs/cr/done/CR-GC-786-graph-readiness-bricht-an-anforderungen-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-787",
       "type": "CR",
       "name": "graph_metrics reicht Betrachtungsumfang und Risikotraeger durch",
-      "description": "docs/cr/done/CR-GC-787-graph-metrics-reicht-betrachtungsumfang-.md"
+      "description": "docs/cr/done/CR-GC-787-graph-metrics-reicht-betrachtungsumfang-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-788",
@@ -3294,97 +3346,113 @@
       "id": "CR-GC-790",
       "type": "CR",
       "name": "Trockenlauf zeigt die Kennzahlen danach nicht: Gesamt-Impact vor der Wahl nur halb",
-      "description": "docs/cr/done/CR-GC-790-trockenlauf-zeigt-die-kennzahlen-danach-.md"
+      "description": "docs/cr/done/CR-GC-790-trockenlauf-zeigt-die-kennzahlen-danach-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-791",
       "type": "CR",
       "name": "Nachbarskills se:optimize und se-vorbereitung auf den Antwortweg nachziehen",
-      "description": "docs/cr/done/CR-GC-791-nachbarskills-se-optimize-und-se-vorbere.md"
+      "description": "docs/cr/done/CR-GC-791-nachbarskills-se-optimize-und-se-vorbere.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-792",
       "type": "CR",
       "name": "Antwortweg lesbar machen: Gate-Urteil trennen, Store und Sperre als Glied",
-      "description": "docs/cr/done/CR-GC-792-antwortweg-lesbar-machen-gate-urteil-tre.md"
+      "description": "docs/cr/done/CR-GC-792-antwortweg-lesbar-machen-gate-urteil-tre.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-793",
       "type": "CR",
       "name": "Start-Lieferungen tragen sync: Sperre faelschlich Glied in 16 Ketten",
-      "description": "docs/cr/done/CR-GC-793-start-lieferungen-tragen-sync-sperre-fae.md"
+      "description": "docs/cr/done/CR-GC-793-start-lieferungen-tragen-sync-sperre-fae.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-794",
       "type": "CR",
       "name": "Gegenmassnahme Store-Recovery haengt am Modul statt am Traeger",
-      "description": "docs/cr/done/CR-GC-794-gegenmassnahme-store-recovery-haengt-am-.md"
+      "description": "docs/cr/done/CR-GC-794-gegenmassnahme-store-recovery-haengt-am-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-795",
       "type": "CR",
       "name": "FMEA der Steuerungsschleife, zweiter Lauf (se-fmea v9)",
-      "description": "docs/cr/done/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md"
+      "description": "docs/cr/done/CR-GC-795-fmea-der-steuerungsschleife-zweiter-lauf.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-796",
       "type": "CR",
       "name": "Store: beschaedigte Datei wird beim Oeffnen nicht neu aufgebaut (REQ-store-recovery, S 9)",
-      "description": "docs/cr/open/CR-GC-796-store-beschaedigte-datei-wird-beim-oeffn.md"
+      "description": "docs/cr/open/CR-GC-796-store-beschaedigte-datei-wird-beim-oeffn.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-797",
       "type": "CR",
       "name": "Vorbereitung ganzes Modell: Ketten schliessen vor der FMEA aller Ketten",
-      "description": "docs/cr/done/CR-GC-797-vorbereitung-ganzes-modell-ketten-schlie.md"
+      "description": "docs/cr/done/CR-GC-797-vorbereitung-ganzes-modell-ketten-schlie.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-798",
       "type": "CR",
       "name": "FMEA aller Wirkketten des Modells (se-fmea v9)",
-      "description": "docs/cr/done/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md"
+      "description": "docs/cr/done/CR-GC-798-fmea-aller-wirkketten-des-modells-se-fme.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-799",
       "type": "CR",
       "name": "Testergebnis wird bei Aenderung nicht zurueckgenommen (FMEA FM-11, REQ-test-result-withdrawn-on-change)",
-      "description": "docs/cr/done/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md"
+      "description": "docs/cr/done/CR-GC-799-testergebnis-wird-bei-aenderung-nicht-zu.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-800",
       "type": "CR",
       "name": "Spur CODE und Volllauf melden Aenderung und Lauf an graph_test_ingest zurueck (offen aus CR-GC-799)",
-      "description": "docs/cr/done/CR-GC-800-spur-code-und-volllauf-melden-aenderung-.md"
+      "description": "docs/cr/done/CR-GC-800-spur-code-und-volllauf-melden-aenderung-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-801",
       "type": "CR",
       "name": "Sicht fmea.md ist ein Risikoregister: ohne Kette, Traeger, Prioritaet, Nachweis und Massnahmenstand",
-      "description": "docs/cr/done/CR-GC-801-sicht-fmea-md-ist-ein-risikoregister-ohn.md"
+      "description": "docs/cr/done/CR-GC-801-sicht-fmea-md-ist-ein-risikoregister-ohn.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-802",
       "type": "CR",
       "name": "FMEA-Nachtrag: die zwoelf bewerteten Fehlerarten als Risiken ins Modell",
-      "description": "docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md"
+      "description": "docs/cr/done/CR-GC-802-fmea-nachtrag-die-zwoelf-bewerteten-fehl.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-803",
       "type": "CR",
       "name": "Vorbereitung nach FMEA-Nachtrag: Gegenmassnahmen an Modul oder Kette tieferlegen, Zusagen mit mehreren Erfuellern zerlegen (Flaeche 30 Funktionen)",
-      "description": "docs/cr/done/CR-GC-803-vorbereitung-nach-fmea-nachtrag-gegenmas.md"
+      "description": "docs/cr/done/CR-GC-803-vorbereitung-nach-fmea-nachtrag-gegenmas.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-804",
       "type": "CR",
       "name": "Constraints als Anforderung mit Test — die projektlokale Regelfläche (Konzept, Diskussion)",
-      "description": "docs/cr/open/CR-GC-804-constraints-als-anforderung-mit-test.md"
+      "description": "docs/cr/open/CR-GC-804-constraints-als-anforderung-mit-test.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-805",
       "type": "CR",
       "name": "Zwei Zusagen mit mehreren Erfuellern zerlegen; Neuwahlversuch als eigene Funktion",
-      "description": "docs/cr/done/CR-GC-805-zwei-zusagen-mit-mehreren-erfuellern-zer.md"
+      "description": "docs/cr/done/CR-GC-805-zwei-zusagen-mit-mehreren-erfuellern-zer.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-806",
@@ -3438,301 +3506,351 @@
       "id": "CR-GC-813",
       "type": "CR",
       "name": "Modell zeigt Veranlasser statt Aufrufer: Skills und Fluss-Familien an mutate/export ohne Gegenstueck im Code",
-      "description": "docs/cr/done/CR-GC-813-modell-zeigt-veranlasser-statt-aufrufer-.md"
+      "description": "docs/cr/done/CR-GC-813-modell-zeigt-veranlasser-statt-aufrufer-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-814",
       "type": "CR",
       "name": "Modell: Recall falsch verdrahtet (seedFromJson an GraphStore statt applyReseed), sieben Wirkketten ohne Ausloeser",
-      "description": "docs/cr/done/CR-GC-814-modell-recall-falsch-verdrahtet-seedfrom.md"
+      "description": "docs/cr/done/CR-GC-814-modell-recall-falsch-verdrahtet-seedfrom.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-815",
       "type": "CR",
       "name": "Akteure nach Kanal statt nach Rolle geschnitten: Auftraggeber und Regelhalter",
-      "description": "docs/cr/done/CR-GC-815-akteure-nach-kanal-statt-nach-rolle-gesc.md"
+      "description": "docs/cr/done/CR-GC-815-akteure-nach-kanal-statt-nach-rolle-gesc.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-816",
       "type": "CR",
       "name": "Block-Umverteilung nach CR-GC-813: graph_export ins Speicherwerk",
-      "description": "docs/cr/done/CR-GC-816-block-umverteilung-nach-cr-gc-813-graph-.md"
+      "description": "docs/cr/done/CR-GC-816-block-umverteilung-nach-cr-gc-813-graph-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-817",
       "type": "CR",
       "name": "Dashboard bekommt Kennzahlen als drei Fluesse statt der einen graph_metrics-Antwort",
-      "description": "docs/cr/done/CR-GC-817-dashboard-bekommt-kennzahlen-als-drei-fl.md"
+      "description": "docs/cr/done/CR-GC-817-dashboard-bekommt-kennzahlen-als-drei-fl.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-818",
       "type": "CR",
       "name": "MergeReport (src/kernel/merge.ts:48) als Zod-Schema, damit SCHEMA-branch-merge-report gebunden werden kann (RC-08)",
-      "description": "docs/cr/done/CR-GC-818-mergereport-src-kernel-merge-ts-48-als-z.md"
+      "description": "docs/cr/done/CR-GC-818-mergereport-src-kernel-merge-ts-48-als-z.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-819",
       "type": "CR",
       "name": "Uebergaben ohne Kette (R-21): ownKuzu bekommt den Harness von createHarness, nicht die Sperre; export->Datei->seed ohne eigene Kette",
-      "description": "docs/cr/done/CR-GC-819-uebergaben-ohne-kette-r-21-ownkuzu-bekom.md"
+      "description": "docs/cr/done/CR-GC-819-uebergaben-ohne-kette-r-21-ownkuzu-bekom.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-820",
       "type": "CR",
       "name": "CR-Regel für Graph-Repos fehlt seit Kürzung der globalen CLAUDE.md — gehört in GRAPHCODE.md",
-      "description": "docs/cr/done/CR-GC-820-cr-regel-fu-r-graph-repos-fehlt-seit-ku-.md"
+      "description": "docs/cr/done/CR-GC-820-cr-regel-fu-r-graph-repos-fehlt-seit-ku-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-821",
       "type": "CR",
       "name": "graph_metrics-Antwort ohne pruefbaren Vertrag",
-      "description": "docs/cr/done/CR-GC-821-graph-metrics-antwort-ohne-pruefbaren-ve.md"
+      "description": "docs/cr/done/CR-GC-821-graph-metrics-antwort-ohne-pruefbaren-ve.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-822",
       "type": "CR",
       "name": "Dashboard-Wege rules_evaluate und graph_suggest ueber host.sock fehlen im Modell",
-      "description": "docs/cr/done/CR-GC-822-dashboard-wege-rules-evaluate-und-graph-.md"
+      "description": "docs/cr/done/CR-GC-822-dashboard-wege-rules-evaluate-und-graph-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-823",
       "type": "CR",
       "name": "Actor-Flows aus kernel ohne surface: gate-verdict (apply), graph-state (GraphStore), export-pending (setExportPending) erreichen den Auftraggeber im Code nur ueber surface",
-      "description": "docs/cr/done/CR-GC-823-actor-flows-aus-kernel-ohne-surface-gate.md"
+      "description": "docs/cr/done/CR-GC-823-actor-flows-aus-kernel-ohne-surface-gate.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-824",
       "type": "CR",
       "name": "Optimierungs-Skill fuer die oberste Modulebene: Fragen zu Linienstaerke, Fremdkoerper je Modul, Ein-/Ausgangscluster, Gegenprobe im FUNC-Baum",
-      "description": "docs/cr/done/CR-GC-824-optimierungs-skill-fuer-die-oberste-modu.md"
+      "description": "docs/cr/done/CR-GC-824-optimierungs-skill-fuer-die-oberste-modu.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-825",
       "type": "CR",
       "name": "FUNC-decode von loop nach kernel: einzige Grounding-FUNC in loop, Geschwister import/reseed/merge liegen in kernel; Linie loop-surface 2 -> 1 Flow",
-      "description": "docs/cr/done/CR-GC-825-func-decode-von-loop-nach-kernel-einzige.md"
+      "description": "docs/cr/done/CR-GC-825-func-decode-von-loop-nach-kernel-einzige.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-826",
       "type": "CR",
       "name": "FCHAIN-apply-gate: Host-Socket, StoreLock, SessionLifecycle gehoeren nicht in den Ablauf einer Aenderung",
-      "description": "docs/cr/done/CR-GC-826-fchain-apply-gate-host-socket-storelock-.md"
+      "description": "docs/cr/done/CR-GC-826-fchain-apply-gate-host-socket-storelock-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-827",
       "type": "CR",
       "name": "Regelpruefung liest den Kandidaten von mutate, nicht den Store",
-      "description": "docs/cr/done/CR-GC-827-regelpruefung-liest-den-kandidaten-von-m.md"
+      "description": "docs/cr/done/CR-GC-827-regelpruefung-liest-den-kandidaten-von-m.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-828",
       "type": "CR",
       "name": "graph_mutate liest Regelbefunde vor und nach dem Gate (respondsTo), Modell kennt den Empfaenger nicht",
-      "description": "docs/cr/done/CR-GC-828-graph-mutate-liest-regelbefunde-vor-und-.md"
+      "description": "docs/cr/done/CR-GC-828-graph-mutate-liest-regelbefunde-vor-und-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-829",
       "type": "CR",
       "name": "FCHAIN-codec-roundtrip ist keine Kette mehr; Rundlauf ist funktionale Anforderung an den Codec",
-      "description": "docs/cr/done/CR-GC-829-fchain-codec-roundtrip-ist-keine-kette-m.md"
+      "description": "docs/cr/done/CR-GC-829-fchain-codec-roundtrip-ist-keine-kette-m.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-830",
       "type": "CR",
       "name": "FCHAIN-generation-states mischt graph_generate und graph_suggest; Fluss generationStep->graph_suggest gibt es nicht",
-      "description": "docs/cr/done/CR-GC-830-fchain-generation-states-mischt-graph-ge.md"
+      "description": "docs/cr/done/CR-GC-830-fchain-generation-states-mischt-graph-ge.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-831",
       "type": "CR",
       "name": "Schema-Migration: Store-Neuaufbau ist still, migrateSchema gibt es nicht",
-      "description": "docs/cr/done/CR-GC-831-schema-migration-store-neuaufbau-ist-sti.md"
+      "description": "docs/cr/done/CR-GC-831-schema-migration-store-neuaufbau-ist-sti.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-832",
       "type": "CR",
       "name": "Schreibweg im Modell umgeht das graph_mutate-Werkzeug; Ketten modelfree-gate und interface-escalation sind Eigenschaften, kein Ablauf",
-      "description": "docs/cr/done/CR-GC-832-schreibweg-im-modell-umgeht-das-graph-mu.md"
+      "description": "docs/cr/done/CR-GC-832-schreibweg-im-modell-umgeht-das-graph-mu.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-833",
       "type": "CR",
       "name": "Leseweg und Fuehrung im Modell umgehen die MCP-Werkzeuge; graph_generate ohne FUNC; Learning-Engine nicht gebaut",
-      "description": "docs/cr/done/CR-GC-833-leseweg-und-fuehrung-im-modell-umgehen-d.md"
+      "description": "docs/cr/done/CR-GC-833-leseweg-und-fuehrung-im-modell-umgehen-d.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-834",
       "type": "CR",
       "name": "Start, Sitzungsende und Store-Oeffnen im Modell: repo-lifecycle mischt fuenf Ablaeufe, Startmeldung haengt am GraphStore in 18 Ketten",
-      "description": "docs/cr/done/CR-GC-834-start-sitzungsende-und-store-oeffnen-im-.md"
+      "description": "docs/cr/done/CR-GC-834-start-sitzungsende-und-store-oeffnen-im-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-835",
       "type": "CR",
       "name": "Export, Import und Snapshot-Ketten im Modell: Marker, Auto-Export und Markdown laufen am Code vorbei; graph_reseed ohne FUNC",
-      "description": "docs/cr/done/CR-GC-835-export-import-und-snapshot-ketten-im-mod.md"
+      "description": "docs/cr/done/CR-GC-835-export-import-und-snapshot-ketten-im-mod.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-836",
       "type": "CR",
       "name": "Test-Ketten im Modell: graph_tests, graph_test_ingest und die npm-Spuren verify:code/verify:full in zwei Ketten vermischt; Skripte ohne FUNC",
-      "description": "docs/cr/done/CR-GC-836-test-ketten-im-modell-graph-tests-graph-.md"
+      "description": "docs/cr/done/CR-GC-836-test-ketten-im-modell-graph-tests-graph-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-837",
       "type": "CR",
       "name": "Skill-, Dashboard- und HTTP-Host-Ketten im Modell: graph_help ohne FUNC, Dashboard ohne Ausloeser, serveHost/ownKuzu/health ohne Kette",
-      "description": "docs/cr/done/CR-GC-837-skill-dashboard-und-http-host-ketten-im-.md"
+      "description": "docs/cr/done/CR-GC-837-skill-dashboard-und-http-host-ketten-im-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-838",
       "type": "CR",
       "name": "Zehn Pre/Post-REQ-Paare: Vorbedingung ist der Eingangsfluss, Nachbedingung die Anforderung; zusammenlegen, an die tragende FUNC haengen, Text an den Test",
-      "description": "docs/cr/done/CR-GC-838-zehn-pre-post-req-paare-vorbedingung-ist.md"
+      "description": "docs/cr/done/CR-GC-838-zehn-pre-post-req-paare-vorbedingung-ist.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-839",
       "type": "CR",
       "name": "Altbestand CR-Knoten (Dateizeiger veraltet, kein Umfang) und Skripte ohne MOD",
-      "description": "docs/cr/open/CR-GC-839-altbestand-cr-knoten-dateizeiger-veralte.md"
+      "description": "docs/cr/open/CR-GC-839-altbestand-cr-knoten-dateizeiger-veralte.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-840",
       "type": "CR",
       "name": "bootstrap() ohne Aufrufer: zweiter Schreibweg am Werkzeug vorbei (kein Audit, keine Trajektorie); loeschen, Kaltstart ueber graph_mutate",
-      "description": "docs/cr/open/CR-GC-840-bootstrap-ohne-aufrufer-zweiter-schreibw.md"
+      "description": "docs/cr/open/CR-GC-840-bootstrap-ohne-aufrufer-zweiter-schreibw.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-841",
       "type": "CR",
       "name": "Modellierregeln aus dem Modell-Code-Abgleich in die Skills",
-      "description": "docs/cr/open/CR-GC-841-modellierregeln-aus-dem-modell-code-abgl.md"
+      "description": "docs/cr/open/CR-GC-841-modellierregeln-aus-dem-modell-code-abgl.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-842",
       "type": "CR",
       "name": "Arch-Spike gehoert in die Modell-Spur",
-      "description": "docs/cr/open/CR-GC-842-arch-spike-gehoert-in-die-modell-spur.md"
+      "description": "docs/cr/open/CR-GC-842-arch-spike-gehoert-in-die-modell-spur.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-843",
       "type": "CR",
       "name": "Fluss gegen Aufruf pruefen: Abgleich Modell und Code",
-      "description": "docs/cr/open/CR-GC-843-fluss-gegen-aufruf-pruefen-abgleich-mode.md"
+      "description": "docs/cr/open/CR-GC-843-fluss-gegen-aufruf-pruefen-abgleich-mode.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-844",
       "type": "CR",
       "name": "whitebox-messung: CR aus der Commit-Nachricht statt aus commitRef",
-      "description": "docs/cr/open/CR-GC-844-whitebox-messung-cr-aus-der-commit-nachr.md"
+      "description": "docs/cr/open/CR-GC-844-whitebox-messung-cr-aus-der-commit-nachr.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-845",
       "type": "CR",
       "name": "conformanceViolations loeschen: nur ein Test ruft es, conformanceEvaluation ist der Pfad",
-      "description": "docs/cr/open/CR-GC-845-conformanceviolations-loeschen-nur-ein-t.md"
+      "description": "docs/cr/open/CR-GC-845-conformanceviolations-loeschen-nur-ein-t.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-846",
       "type": "CR",
       "name": "RC-Regel: synchroner Fluss braucht einen Aufruf im Code (Warnung, sprachneutrale Aufrufkanten in CodeFacts)",
-      "description": "docs/cr/open/CR-GC-846-rc-regel-synchroner-fluss-braucht-einen-.md"
+      "description": "docs/cr/open/CR-GC-846-rc-regel-synchroner-fluss-braucht-einen-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-847",
       "type": "CR",
       "name": "graph_help nur Erklaerung: Betriebsart ohne token streichen, se:help liest rules_get_violations grouped",
-      "description": "docs/cr/done/CR-GC-847-graph-help-nur-erklaerung-betriebsart-oh.md"
+      "description": "docs/cr/done/CR-GC-847-graph-help-nur-erklaerung-betriebsart-oh.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-848",
       "type": "CR",
       "name": "Commit-Pruefung: Fluss gegen Aufruf, Aufruf ohne Fluss und realRef fuer geaenderte Dateien; Code-Stand im Audit-Eintrag",
-      "description": "docs/cr/done/CR-GC-848-commit-pruefung-fluss-gegen-aufruf-aufru.md"
+      "description": "docs/cr/done/CR-GC-848-commit-pruefung-fluss-gegen-aufruf-aufru.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-849",
       "type": "CR",
       "name": "Modell: 36 Aufrufe zwischen verankerten FUNCs ohne Fluss nachziehen (Daten und Aufbau)",
-      "description": "docs/cr/open/CR-GC-849-modell-36-aufrufe-zwischen-verankerten-f.md"
+      "description": "docs/cr/open/CR-GC-849-modell-36-aufrufe-zwischen-verankerten-f.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-850",
       "type": "CR",
       "name": "contracts 12.7.0 nachziehen: Mindestversion, Testpins fuer RC-11..13 und R-35, FC-02 aus Tests und Skills",
-      "description": "docs/cr/open/CR-GC-850-contracts-12-7-0-nachziehen-mindestversi.md"
+      "description": "docs/cr/open/CR-GC-850-contracts-12-7-0-nachziehen-mindestversi.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-851",
       "type": "CR",
       "name": "Constraints Teil 1: erster Constraint am eigenen Modell mit Snapshot-Test und Positivkontrolle",
-      "description": "docs/cr/open/CR-GC-851-constraints-teil-1-erster-constraint-am-.md"
+      "description": "docs/cr/open/CR-GC-851-constraints-teil-1-erster-constraint-am-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-852",
       "type": "CR",
       "name": "Constraints Teil 2: Skill se-constraints und se-vorbereitung Abschnitt 2 fuer Constraints",
-      "description": "docs/cr/open/CR-GC-852-constraints-teil-2-skill-se-constraints-.md"
+      "description": "docs/cr/open/CR-GC-852-constraints-teil-2-skill-se-constraints-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-853",
       "type": "CR",
       "name": "Constraints Teil 3: Rueckbau Zielprofil",
-      "description": "docs/cr/open/CR-GC-853-constraints-teil-3-rueckbau-zielprofil.md"
+      "description": "docs/cr/open/CR-GC-853-constraints-teil-3-rueckbau-zielprofil.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-854",
       "type": "CR",
       "name": "verify:full schreibt rot 0, obwohl vitest ohne Bericht endet",
-      "description": "docs/cr/open/CR-GC-854-verify-full-schreibt-rot-0-obwohl-vitest.md"
+      "description": "docs/cr/open/CR-GC-854-verify-full-schreibt-rot-0-obwohl-vitest.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-855",
       "type": "CR",
       "name": "se:import-doc fragt die verify-Zuordnung ab (graphify CR-GF-144 Schritt 4)",
-      "description": "docs/cr/open/CR-GC-855-se-import-doc-fragt-die-verify-zuordnung.md"
+      "description": "docs/cr/open/CR-GC-855-se-import-doc-fragt-die-verify-zuordnung.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-856",
       "type": "CR",
       "name": "import-code verliert Handkanten nach graphify-uid-Wechsel (CR-GF-132), Duplikate ohne origin",
-      "description": "docs/cr/open/CR-GC-856-import-code-verliert-handkanten-nach-gra.md"
+      "description": "docs/cr/open/CR-GC-856-import-code-verliert-handkanten-nach-gra.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-857",
       "type": "CR",
       "name": "se-vorbereitung Abschnitt 2: Constraints herunterdeklinieren mit constraintCarriers (contracts 12.8.0)",
-      "description": "docs/cr/open/CR-GC-857-se-vorbereitung-abschnitt-2-constraints-.md"
+      "description": "docs/cr/open/CR-GC-857-se-vorbereitung-abschnitt-2-constraints-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-858",
       "type": "CR",
       "name": "graphify 0.6 einziehen: Range, import-code-verb-Test auf lesbare uids",
-      "description": "docs/cr/open/CR-GC-858-graphify-0-6-einziehen-range-import-code.md"
+      "description": "docs/cr/open/CR-GC-858-graphify-0-6-einziehen-range-import-code.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-859",
       "type": "CR",
       "name": "se:import-doc: LLM-Modell nur aus LLM_MODEL, kein Modellname im Skill",
-      "description": "docs/cr/open/CR-GC-859-se-import-doc-llm-modell-nur-aus-llm-mod.md"
+      "description": "docs/cr/open/CR-GC-859-se-import-doc-llm-modell-nur-aus-llm-mod.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-860",
       "type": "CR",
       "name": "se:import-doc meldet Gate-Verstoesse leer: liest v.elementId, graph_mutate liefert im Format summary elements[] und {el}",
-      "description": "docs/cr/open/CR-GC-860-se-import-doc-meldet-gate-verstoesse-lee.md"
+      "description": "docs/cr/open/CR-GC-860-se-import-doc-meldet-gate-verstoesse-lee.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-861",
       "type": "CR",
       "name": "Constraints Teil 3b: Rueckbau Zielprofil-Vertrag — weights/values aus TargetProfileSchema, Loader ohne Zielkonflikte, graph_metrics ohne fit.target, Profildateien, Skill-Abschnitte 1/2/4 (Folge von CR-GC-853)",
-      "description": "docs/cr/open/CR-GC-861-constraints-teil-3b-rueckbau-zielprofil-.md"
+      "description": "docs/cr/open/CR-GC-861-constraints-teil-3b-rueckbau-zielprofil-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-862",
       "type": "CR",
       "name": "Skill-Texte nach Option A (CR-GC-853): se:optimize belegt verletzt mit steerAdvisory statt fitAdvisory/regressions, se:generate ohne fitAdvisory",
-      "description": "docs/cr/open/CR-GC-862-skill-texte-nach-option-a-cr-gc-853-se-o.md"
+      "description": "docs/cr/open/CR-GC-862-skill-texte-nach-option-a-cr-gc-853-se-o.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-863",
@@ -3754,73 +3872,85 @@
       "id": "CR-GC-865",
       "type": "CR",
       "name": "Host-Ende fuer den Client sichtbar",
-      "description": "docs/cr/open/CR-GC-865-host-ohne-owner-lock-laesst-aufrufe-haen.md"
+      "description": "docs/cr/open/CR-GC-865-host-ohne-owner-lock-laesst-aufrufe-haen.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-866",
       "type": "CR",
       "name": "Werkzeug-Eingabe einmal im Register parsen",
-      "description": "docs/cr/open/CR-GC-866-type-check-prueft-tests-nicht-tote-typen.md"
+      "description": "docs/cr/open/CR-GC-866-type-check-prueft-tests-nicht-tote-typen.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-867",
       "type": "CR",
       "name": "Werkzeug-Register typisieren: MCPTool traegt sein Schema",
-      "description": "docs/cr/open/CR-GC-867-werkzeug-register-typisieren-mcptool-tra.md"
+      "description": "docs/cr/open/CR-GC-867-werkzeug-register-typisieren-mcptool-tra.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-868",
       "type": "CR",
       "name": "Register beim Binden typisieren",
-      "description": "docs/cr/open/CR-GC-868-register-beim-binden-typisieren.md"
+      "description": "docs/cr/open/CR-GC-868-register-beim-binden-typisieren.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-869",
       "type": "CR",
       "name": "tsc-Fehler in tests/ beheben, Teil 1",
-      "description": "docs/cr/open/CR-GC-869-tsc-fehler-in-tests-beheben-teil-1.md"
+      "description": "docs/cr/open/CR-GC-869-tsc-fehler-in-tests-beheben-teil-1.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-870",
       "type": "CR",
       "name": "tsc-Fehler in tests/ beheben, Teil 2",
-      "description": "docs/cr/open/CR-GC-870-tsc-fehler-in-tests-beheben-teil-2.md"
+      "description": "docs/cr/open/CR-GC-870-tsc-fehler-in-tests-beheben-teil-2.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-871",
       "type": "CR",
       "name": "tsc-Fehler in tests/ beheben, Teil 3",
-      "description": "docs/cr/open/CR-GC-871-tsc-fehler-in-tests-beheben-teil-3.md"
+      "description": "docs/cr/open/CR-GC-871-tsc-fehler-in-tests-beheben-teil-3.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-872",
       "type": "CR",
       "name": "type-check prueft tests/ mit",
-      "description": "docs/cr/open/CR-GC-872-type-check-prueft-tests-mit.md"
+      "description": "docs/cr/open/CR-GC-872-type-check-prueft-tests-mit.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-873",
       "type": "CR",
       "name": "ConOps Ausgelöst von/Beteiligt, se:top-level Regel 4 und sync beim Kettenschnitt",
-      "description": "docs/cr/open/CR-GC-873-conops-ausgelo-st-von-beteiligt-se-top-l.md"
+      "description": "docs/cr/open/CR-GC-873-conops-ausgelo-st-von-beteiligt-se-top-l.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-874",
       "type": "CR",
       "name": "FC-06 am eigenen Modell richten: ein Einsprung für MCP und CLI, Vorab-Lieferung als Datei",
-      "description": "docs/cr/open/CR-GC-874-fc-06-am-eigenen-modell-richten-ein-eins.md"
+      "description": "docs/cr/open/CR-GC-874-fc-06-am-eigenen-modell-richten-ein-eins.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-875",
       "type": "CR",
       "name": "Skills zur Akteur-Lehre nachziehen",
-      "description": "docs/cr/open/CR-GC-875-skills-zur-akteur-lehre-nachziehen.md"
+      "description": "docs/cr/open/CR-GC-875-skills-zur-akteur-lehre-nachziehen.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-876",
       "type": "CR",
       "name": "se-view-Skills entfernen: paralleler Pfad zu auto-export docs/views (fmea rendert von Hand)",
-      "description": "docs/cr/open/CR-GC-876-se-view-skills-entfernen-paralleler-pfad.md"
+      "description": "docs/cr/open/CR-GC-876-se-view-skills-entfernen-paralleler-pfad.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-877",
@@ -3850,7 +3980,8 @@
       "id": "CR-GC-880",
       "type": "CR",
       "name": "Antwortweg: Ausnahme Nachbarkette (CR-SM-423) in Hilfetext, se-vorbereitung und se-laufzeit nachziehen",
-      "description": "docs/cr/open/CR-GC-880-antwortweg-ausnahme-nachbarkette-cr-sm-4.md"
+      "description": "docs/cr/open/CR-GC-880-antwortweg-ausnahme-nachbarkette-cr-sm-4.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-881",
@@ -3864,37 +3995,43 @@
       "id": "CR-GC-888",
       "type": "CR",
       "name": "Oeffentliches Repo traegt interne Doku: Leitlinie, Konzepte, Arbeitsstaende, private Beispielgraphen",
-      "description": "docs/cr/open/CR-GC-888-oeffentliches-repo-traegt-interne-doku-l.md"
+      "description": "docs/cr/open/CR-GC-888-oeffentliches-repo-traegt-interne-doku-l.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-889",
       "type": "CR",
       "name": "README fuehrt Entwickler nicht zum ersten Erfolg: Befehle und Interna vor Nutzen und Einstieg",
-      "description": "docs/cr/open/CR-GC-889-readme-fuehrt-entwickler-nicht-zum-erste.md"
+      "description": "docs/cr/open/CR-GC-889-readme-fuehrt-entwickler-nicht-zum-erste.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-890",
       "type": "CR",
       "name": "Artikel 03/05/07/08 beschreiben den entfernten Executor, Artikel 02 ist deutsch",
-      "description": "docs/cr/open/CR-GC-890-artikel-03-05-07-08-beschreiben-den-entf.md"
+      "description": "docs/cr/open/CR-GC-890-artikel-03-05-07-08-beschreiben-den-entf.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-891",
       "type": "CR",
       "name": "Private Beispielgraphen und ihre Testfaelle nach graphanalyze (Folge von CR-GC-888)",
-      "description": "docs/cr/open/CR-GC-891-private-beispielgraphen-und-ihre-testfae.md"
+      "description": "docs/cr/open/CR-GC-891-private-beispielgraphen-und-ihre-testfae.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-892",
       "type": "CR",
       "name": "se-plan: Integrationsbaum aus dem Modell, Testkonzept vollständig vor dem Schnitt",
-      "description": "docs/cr/open/CR-GC-892-se-plan-integrationsbaum-aus-dem-modell-.md"
+      "description": "docs/cr/open/CR-GC-892-se-plan-integrationsbaum-aus-dem-modell-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-893",
       "type": "CR",
       "name": "testconcept: Elternfunktionen, Validierung am UC, Zeile ohne Lage",
-      "description": "docs/cr/open/CR-GC-893-testconcept-elternfunktionen-validierung.md"
+      "description": "docs/cr/open/CR-GC-893-testconcept-elternfunktionen-validierung.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-894",
@@ -3948,7 +4085,8 @@
       "id": "CR-GC-900",
       "type": "CR",
       "name": "graphcode init gibt nur JSON aus und installiert die Abhaengigkeit nicht; der Host startet erst nach npm install, das Terminal nennt keinen naechsten Schritt",
-      "description": "docs/cr/open/CR-GC-900-graphcode-init-gibt-nur-json-aus-und-ins.md"
+      "description": "docs/cr/open/CR-GC-900-graphcode-init-gibt-nur-json-aus-und-ins.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-901",
@@ -4450,6 +4588,12 @@
       "name": "CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat",
       "description": "docs/cr/done/CR-GC-969-ci-seit-2026-10-01-rot-live-feed-test-li.md",
       "status": "done"
+    },
+    {
+      "id": "CR-GC-970",
+      "type": "CR",
+      "name": "RC-07: 141 CR-Knoten tragen nicht den Status des Ordners done (CRs vor BOK-CR-080); Status und Pfad einmalig spiegeln",
+      "description": "docs/cr/open/CR-GC-970-rc-07-141-cr-knoten-tragen-nicht-den-sta.md"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -24074,6 +24218,11 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-970",
+      "target": "FUNC-check-code-conformance",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -37084,5 +37233,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1355
+  "graphVersion": 1358
 }

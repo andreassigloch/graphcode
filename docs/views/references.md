@@ -1671,6 +1671,7 @@
 | `CR-GC-968` | relation | `FUNC-se-vorbereitung` |
 | `CR-GC-969` | relation | `FUNC-block-live-dashboard` |
 | `CR-GC-969` | relation | `MOD-dev-scripts` |
+| `CR-GC-970` | relation | `FUNC-check-code-conformance` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
