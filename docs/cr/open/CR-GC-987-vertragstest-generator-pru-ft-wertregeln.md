@@ -78,7 +78,11 @@ Nicht gebaut, Entscheidung des Autors steht aus. Der Generator müsste je Objekt
 - [x] Rot-zuerst: Unit-Tests auf dem alten Generator 15 rot.
 - [x] Mutanten: 12 von 12 Wertregeln, 17 von 17 Strukturen, Enum erweitert 2 von 2.
 - [x] Erzeugte Dateien grün gegen das Original; Handdateien gelöscht.
-- [ ] `verify:code`, `rules_evaluate`, Smoke: siehe Abschnitt Abschluss.
+- [x] `npm run type-check` und `npm run build` grün.
+- [x] `verify:code` grün: 77 Dateien, 1843 Tests, Bindung 1/1, Rückmeldung 61 Ergebnisse, 0 zurückgenommen.
+- [x] `verify:full CR-GC-987` grün: 267 Dateien, 3444 Tests in 491 s, Schlupf 0 (zwölf CODE-CR ohne Schlupf in Folge), Rückmeldung 205 Ergebnisse.
+- [x] Regeln (`rules_evaluate` grouped, nach dem CR): R-26 8, R-32 11, RC-04 15 — wie in CR-GC-986 (der CR ändert kein SCHEMA und keinen FLOW); VR-01 (Info) nennt `TEST-vertrag-mutate-answer`: der Eintrag `tests/mcp.mutate-answer.test.ts` trägt kein Ergebnis, bis der nächste Lauf ihn meldet.
+- [x] Smoke: `node dist/cli.js vertragstest` ohne uids läuft durch und nennt je SCHEMA Ergebnis oder Grund (22 Ergebnisse, ein Grund: `SCHEMA-test-ingest-input`, „kein angenommenes Beispiel“, Handdatei wegen zweier `refine`). Der Lauf erzeugt auch 39 Dateien für SCHEMA ohne Vertragstest-Datei im Repo; sie gehören nicht zu diesem CR und wurden nicht behalten.
 
 ---
 
