@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 572 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 573 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 572 CR · 423 done · 4 open.
+Total: 573 CR · 423 done · 4 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -634,3 +634,4 @@ Total: 572 CR · 423 done · 4 open.
 | `CR-GC-966` | done | Vertragsdatei: Spalte Kriterium fuer Bedingungen ohne Grenzwert |
 | `CR-GC-967` | done | Regelzahlen nach CR-SM-442: Artikel 03 und 04, Bildseite und Kanarienvogel auf 68 Regeln und Ontologie 14.0.0 |
 | `CR-GC-968` | done | Skills: sync allgemein, Beleg aus jeder Beschreibung der Realisierung, Rückfrage |
+| `CR-GC-969` | n/a | CI seit 2026-10-01 rot: live-feed.test liest das Nachbar-Repo graph-view-edit, whitebox-messung.test braucht Git-Historie, die der flache Checkout der CI nicht hat |

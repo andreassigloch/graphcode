@@ -1669,6 +1669,8 @@
 | `CR-GC-966` | relation | `REQ-contract-test-manual` |
 | `CR-GC-968` | relation | `FUNC-se-top-level` |
 | `CR-GC-968` | relation | `FUNC-se-vorbereitung` |
+| `CR-GC-969` | relation | `FUNC-block-live-dashboard` |
+| `CR-GC-969` | relation | `MOD-dev-scripts` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

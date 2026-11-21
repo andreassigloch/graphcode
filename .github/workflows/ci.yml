@@ -22,6 +22,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          # whitebox-messung.test liest Jobs aus der Git-Historie; der flache Checkout hat keine (CR-GC-969).
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:

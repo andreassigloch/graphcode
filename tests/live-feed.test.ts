@@ -127,7 +127,8 @@ describe('Live-Feed', () => {
 });
 
 describe('Rundreise über die Modelle der Familie', () => {
-  for (const file of ['docs/graph/graphcode.graph.json', '../graph-view-edit/docs/graph/graph-view-edit.graph.json']) {
+  // Zweites Modell ist eine eingecheckte Fixture: ein Test liest kein Nachbar-Repo (CR-GC-969).
+  for (const file of ['docs/graph/graphcode.graph.json', 'tests/fixtures/todo-local-v9.graph.json']) {
     it(`${file}: Format-E verliert nur, was keinen Leser hat`, () => {
       const graph = fromOntologyGraph(JSON.parse(readFileSync(file, 'utf8')));
       const back = formatEToExportedGraph(graphToFormatE(graph));
