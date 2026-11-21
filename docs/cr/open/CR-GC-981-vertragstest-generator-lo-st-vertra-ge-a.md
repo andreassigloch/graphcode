@@ -68,6 +68,7 @@ Der Lauf ohne uids erzeugt über die 7 hinaus Dateien für weitere SCHEMA (die e
 - [x] 7 erzeugte Vertragstests gegen die installierten Pakete grün (171 Fälle); Mutante am Paket: 3 von 4 rot, die Enum-Weitung nicht (Grenze des Verfahrens, oben).
 - [x] `SCHEMA-vertragstest-satz` im Modell und sein Vertragstest (25 Fälle) nachgezogen.
 - [x] `verify:code` grün (68 Dateien, 814 Tests).
+- [x] `verify:full CR-GC-981` grün (262 Dateien, rot 0), Schlupf 0, Link-Modus nein; Folge ohne Schlupf 9/10.
 - [x] Smoke: `node dist/cli.js vertragstest` ohne uids läuft durch und nennt je SCHEMA Ergebnis oder Grund (`completeness`, `readiness-report`: „kein Zod-Schema“); `node dist/cli.js status` startet.
 
 ---
