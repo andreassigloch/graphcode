@@ -4737,7 +4737,8 @@
       "id": "CR-GC-991",
       "type": "CR",
       "name": "Harness-Griff und Werkzeug-Kontext ohne z.custom und superRefine",
-      "description": "docs/cr/open/CR-GC-991-harness-griff-und-werkzeug-kontext-ohne-.md"
+      "description": "docs/cr/done/CR-GC-991-harness-griff-und-werkzeug-kontext-ohne-.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -38519,5 +38520,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1455
+  "graphVersion": 1456
 }

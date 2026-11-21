@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 595 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 595 CR · 583 done · 1 open.
+Total: 595 CR · 584 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -656,4 +656,4 @@ Total: 595 CR · 583 done · 1 open.
 | `CR-GC-988` | done | CI-Suite auf zwei parallele Jobs teilen |
 | `CR-GC-989` | done | Fluesse tragen den Vertrag, den der Code uebertraegt |
 | `CR-GC-990` | done | Verträge über Objekte mit Funktionen ohne z.custom |
-| `CR-GC-991` | n/a | Harness-Griff und Werkzeug-Kontext ohne z.custom und superRefine |
+| `CR-GC-991` | done | Harness-Griff und Werkzeug-Kontext ohne z.custom und superRefine |
