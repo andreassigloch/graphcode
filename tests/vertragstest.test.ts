@@ -218,6 +218,17 @@ describe('erzeugeFaelle: Wertregeln (CR-GC-987)', () => {
     const e = f.find((x) => x.enumWerte);
     expect(e?.enumWerte).toEqual({ weg: [['shape', 'art'], ['innerType']], liste: ['a', 'b'] });
   });
+  it('Literal als Art-Feld einer Variante: friert die Werte ein und lehnt einen Fremdwert ab (CR-GC-992)', () => {
+    const U = z.discriminatedUnion('art', [z.strictObject({ art: z.literal('a'), x: z.string() }), z.strictObject({ art: z.literal('b') })]);
+    const f = erzeugeFaelle(U).aufgenommen;
+    expect(f.filter((x) => x.enumWerte).map((x) => x.enumWerte)).toEqual([
+      { weg: [['options', 0], ['shape', 'art']], liste: ['a'], feld: 'values' },
+      { weg: [['options', 1], ['shape', 'art']], liste: ['b'], feld: 'values' },
+    ]);
+    expect(namen(f)).toEqual(expect.arrayContaining(['Variante 1: lehnt ab: art außerhalb des Enums']));
+    const text = testDatei({ id: 'SCHEMA-x', file: 'x.ts', symbol: 'S' }, './x.js', f);
+    expect(text).toContain('_zod.def.values');
+  });
   it('die erzeugte Datei bestätigt die Werteliste und lässt sich gegen ein um einen Wert erweitertes Enum rot sehen', async () => {
     const E = z.strictObject({ art: z.enum(['a', 'b']) });
     const text = testDatei({ id: 'SCHEMA-x', file: 'x.ts', symbol: 'S' }, './x.js', erzeugeFaelle(E).aufgenommen);

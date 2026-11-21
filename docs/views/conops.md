@@ -685,6 +685,10 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-989` | done | Fluesse tragen den Vertrag, den der Code uebertraegt | `FUNC-cli-dispatch` · `FUNC-erzeuge-vertragstests` · `FUNC-gve-supervise` · `FUNC-serve-stdio` · `FUNC-session-shutdown` |
 | `CR-GC-990` | done | Verträge über Objekte mit Funktionen ohne z.custom | `FUNC-erzeuge-vertragstests` |
 | `CR-GC-991` | done | Harness-Griff und Werkzeug-Kontext ohne z.custom und superRefine | `FUNC-create-harness` · `FUNC-tool-context` |
+| `CR-GC-992` | n/a | graph_test_ingest: Eingabe in drei Varianten, ohne refine | `FUNC-aenderung-melden` · `FUNC-test-ingest` |
+| `CR-GC-993` | n/a | se-bau Schritt 7: Vertrag ohne z.custom, refine, superRefine; bricht das Verb ab, ändert der Umsetzer den Vertrag | `FUNC-se-bau` |
+| `CR-GC-994` | done | Vertragstest-Generator: Werteliste eines z.literal einfrieren (Art-Feld einer Variante) | `FUNC-erzeuge-vertragstests` |
+| `CR-GC-995` | n/a | tools/list: Platz schaffen für die neue Eingabe von graph_test_ingest (Texte von audit_trail und graph_elements kürzen) | `FUNC-audit-trail` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

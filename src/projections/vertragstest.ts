@@ -88,7 +88,7 @@ interface Fall {
   erwartet: boolean;
   ausgabe?: unknown;
   /** Kein Parse-Fall: die Werteliste des Enums an dieser Stelle (CR-GC-987). */
-  enumWerte?: { weg: Schritt[]; liste: unknown[] };
+  enumWerte?: { weg: Schritt[]; liste: unknown[]; feld?: 'values' };
 }
 
 /**
@@ -484,7 +484,7 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
         faelle.push({ name: benannt(st, darfFehlen ? `nimmt an ohne ${k} (optional)` : `lehnt ab ohne ${k}`), eingabe: st.einsetzen(ohne), erwartet: darfFehlen });
       }
       faelle.push({ name: benannt(st, `lehnt ab: ${k} mit falschem Typ`), eingabe: st.einsetzen({ ...b, [k]: falschWie(b[k]) }), erwartet: false });
-      if (def(kern(feld)).type === 'enum') {
+      if (['enum', 'literal'].includes(def(kern(feld)).type)) {
         faelle.push({ name: benannt(st, `lehnt ab: ${k} außerhalb des Enums`), eingabe: st.einsetzen({ ...b, [k]: '__ausserhalb__' }), erwartet: false });
       }
       if (k in b) {
@@ -540,6 +540,10 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
       for (const w of Object.values(d.entries)) faelle.push({ name: benannt(st, `nimmt ${String(w)} an`), eingabe: st.einsetzen(w), erwartet: true });
       faelle.push({ name: benannt(st, 'lehnt einen Wert außerhalb ab'), eingabe: st.einsetzen('__ausserhalb__'), erwartet: false });
     }
+  }
+  if (d.type === 'literal') {
+    // Wie beim Enum: ein Wert mehr im Literal (`z.literal(['a', 'b'])`) laesst sich durch keinen Parse-Fall fassen.
+    faelle.push({ name: benannt(st, 'Werteliste unverändert'), eingabe: null, erwartet: true, enumWerte: { weg: st.weg, liste: [...d.values], feld: 'values' } });
   }
   if (d.type === 'string') faelle.push(...textFaelle(s, st));
   if (d.type === 'number') faelle.push(...zahlFaelle(s, wert, st));
@@ -690,7 +694,7 @@ export function testDatei(eintrag: CodeVertrag, importPfad: string, faelle: Fall
   if (faelle.some((f) => hatFunktion(f.eingabe))) zeilen.splice(4, 0, `const fn = (): number => 1;`, ``);
   for (const f of faelle) {
     zeilen.push(`  it(${JSON.stringify(f.name)}, () => {`);
-    if (f.enumWerte) zeilen.push(`    expect(Object.values(bei(${JSON.stringify(f.enumWerte.weg)})._zod.def.entries as Record<string, unknown>)).toEqual(${JSON.stringify(f.enumWerte.liste)});`);
+    if (f.enumWerte) zeilen.push(`    expect(Object.values(bei(${JSON.stringify(f.enumWerte.weg)})._zod.def.${f.enumWerte.feld ?? 'entries'} as Record<string, unknown>)).toEqual(${JSON.stringify(f.enumWerte.liste)});`);
     else if (f.erwartet) zeilen.push(`    expect(S.parse(${quelltext(f.eingabe, false)})).toEqual(${quelltext(f.ausgabe, true)});`);
     else zeilen.push(`    expect(S.safeParse(${quelltext(f.eingabe, false)}).success).toBe(false);`);
     zeilen.push(`  });`);
