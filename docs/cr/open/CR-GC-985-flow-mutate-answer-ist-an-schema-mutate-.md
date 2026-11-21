@@ -63,7 +63,7 @@ Mutanten, je zurückgenommen (die geprüften Dateien: Vertrag erzeugt, Hand, Wer
 - [x] `npm run type-check` und `npm run build` grün.
 - [x] `verify:code` grün: 77 Dateien, 1047 Tests, Bindung 4/4, Rückmeldung 60 Ergebnisse, 0 zurückgenommen. Der erste Lauf war rot an zwei Tests: RC-08 (`GraphMutateAnswerSchema` stand als `X.omit().extend()` auf einem importierten Schema, der Erkenner liest nur `z.…` oder ein Zod-Const derselben Datei: auf `z.object({...Schema.shape})` umgestellt) und der Spike `tests/arch.optimization-dry-run.spike.test.ts` (festgeschriebene Messung der Autopilot-Züge; ohne diesen CR im Worktree von HEAD grün, mit dem neuen Vertrag an der Grenze zwei Züge mehr und anderer Engpass: neu gemessen und mit Datum und Ursache nachgezogen, wie die Einträge davor; die Aussage „kein Zug fachlich begründet“ bleibt).
 - [x] Smoke: `node dist/cli.js status` startet; `graph_mutate` über den Host (alter Code im laufenden Host, nicht neu gestartet) antwortet; den neuen Parse belegen die Tests.
-- [ ] `verify:full CR-GC-985` (folgt, Ergebnis unten).
+- [x] `verify:full CR-GC-985` grün: 269 Dateien, 2902 Tests (darunter `tests/perf.*`, unverändert), rot 0, Schlupf 0, Link-Modus nein; 11 CODE-CR in Folge ohne Schlupf. Damit nimmt keine Datei der Suite einen gültigen Fall der Antwort von graph_mutate nicht an: der Erzeuger parst jede Antwort der 2902 Tests, ein Bruch hätte den Aufruf geworfen.
 
 ---
 
