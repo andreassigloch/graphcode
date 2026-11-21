@@ -670,6 +670,9 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-972` | done | Vier Einzelbefunde im Modell: R-02 verify-lane-code, CR-R01 vier offene CR ohne Umfang, RC-11 src/index.ts, Ketten-Klassifikation R-21 FC-06 | `FUNC-verify-lane-code` · `REQ-verify-code-plan-nennt-spur` |
 | `CR-GC-973` | done | R-26, R-32, RC-04: Zod-Schema für die Antworten von graph_export und graph_test_ingest | `FUNC-graph-export-snapshot` · `FUNC-test-ingest` |
 | `CR-GC-975` | n/a | R-26, R-32, RC-04: Zod-Schema für die Arbeitsmenge der Sitzung | `FUNC-tool-context` |
+| `CR-GC-976` | n/a | Skills: Umzug eines Altbestands — Aufnahme, Zugangsliste, Durchlauf vor dem Schnitt (se-conops, se-cdr, se-plan) | `FUNC-se-cdr` · `FUNC-se-conops` · `FUNC-se-plan` |
+| `CR-GC-977` | n/a | Skills: Rückfragen im Bau — Regel statt Einzelfall, Entscheidungen durchsuchen, Stoppen nach Rang (se-cdr, se-bau) | `FUNC-se-bau` · `FUNC-se-cdr` |
+| `CR-GC-978` | n/a | se-plan: Meilenstein je Use Case, darin Blätter aufwärts (ändert CR-GC-892) | `FUNC-se-plan` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

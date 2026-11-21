@@ -8,7 +8,7 @@
 
 ## Befund
 
-Entscheidung des Autors vom 2026-11-21 (FAQ `bindungsregeln-ab-realisierung`, Punkt 2): Das Zod-Schema eines Datenvertrags ist Teil der Spezifikation und wird geschrieben und gebunden. Sechs SCHEMA haben im Code schon einen TS-Typ, aber kein Zod-Schema und keinen `realRef`. Sie gehen in zwei CR nach Modul: dieser CR (projections) nimmt zwei, CR-GC-974 (loop, kernel) zwei weitere. `SCHEMA-steering-channel` und `SCHEMA-audit-record` bleiben aus, Gründe im Bericht von CR-GC-974.
+Entscheidung des Autors vom 2026-11-21 (FAQ `bindungsregeln-ab-realisierung`, Punkt 2): Das Zod-Schema eines Datenvertrags ist Teil der Spezifikation und wird geschrieben und gebunden. Sechs SCHEMA haben im Code schon einen TS-Typ, aber kein Zod-Schema und keinen `realRef`. Sie gehen in zwei CR nach Modul: dieser CR (projections) nimmt zwei, CR-GC-975 (kernel) eines (die Nummer 974 ging an einen anderen CR). `SCHEMA-suggest-answer`, `SCHEMA-steering-channel` und `SCHEMA-audit-record` bleiben aus, Gründe und Varianten stehen in CR-GC-975.
 
 Stand graphVersion 1371: R-26 11, R-32 21, RC-04 23.
 

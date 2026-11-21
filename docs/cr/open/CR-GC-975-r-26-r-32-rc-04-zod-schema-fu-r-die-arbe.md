@@ -41,9 +41,11 @@ Stand graphVersion 1375: R-26 9, R-32 19, RC-04 23.
 
 ## Akzeptanz
 
-- [x] R-26 von 9 auf 8, R-32 von 19 auf 18, RC-04 nach Messung unten.
+- [x] R-26 von 9 auf 8, R-32 von 19 auf 18, RC-04 bleibt 23 (`rules_evaluate` grouped, graphVersion 1382); sonst bewegte sich keine Regel.
 - [x] `npm run type-check` grün; Verträge grün, vorher rot gesehen.
-- [x] `verify:code` und `verify:full CR-GC-975`: siehe Messung unten.
+- [x] `verify:code` grün (71 Dateien, 621 Tests). `verify:full CR-GC-975` grün (255 Dateien, rot 0), Schlupf 0, Link-Modus nein.
+- [x] R-26 und R-32 gemessen (oben); RC-04 unverändert, weil das SCHEMA vorher ungebunden war und jetzt gebunden und geparst ist.
+- [x] Smoke: `node dist/cli.js status` ohne Fehler; `graph_export` antwortet über den laufenden Host (alter Code, Host nicht neu gestartet; das Verhalten des neuen Codes belegen die Tests).
 
 ---
 

@@ -1689,6 +1689,12 @@
 | `CR-GC-973` | relation | `SCHEMA-test-ingest-answer` |
 | `CR-GC-975` | relation | `FUNC-tool-context` |
 | `CR-GC-975` | relation | `SCHEMA-work-set` |
+| `CR-GC-976` | relation | `FUNC-se-cdr` |
+| `CR-GC-976` | relation | `FUNC-se-conops` |
+| `CR-GC-976` | relation | `FUNC-se-plan` |
+| `CR-GC-977` | relation | `FUNC-se-bau` |
+| `CR-GC-977` | relation | `FUNC-se-cdr` |
+| `CR-GC-978` | relation | `FUNC-se-plan` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
