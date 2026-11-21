@@ -26,8 +26,8 @@
  *
  * `ToolPort` bekommt bewusst KEIN eigenes Schema. Ein erster Anlauf hat eins gebaut und war
  * sofort ein Duplikat: `tool-context-contract.ts` prueft `harness`, `auditLog` und die
- * Funktions-Member laengst (`ToolContext.parse` in `createToolContext`), und `_portCheck`
- * erzwingt beim Kompilieren, dass der Kontext den Port erfuellt. Zwei Schemata fuer eine
+ * Funktions-Member laengst (`ToolContext.parse` in `createToolContext`), und `interface
+ * ToolContext extends ToolPort` erzwingt beim Kompilieren, dass der Kontext den Port erfuellt. Zwei Schemata fuer eine
  * Teilmenge waeren genau der parallele Pfad, den dieser Zug beseitigen soll.
  *
  * @author andreas@siglochconsulting

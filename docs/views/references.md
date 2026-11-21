@@ -3891,6 +3891,7 @@
 | `TEST-gve-supervision` | verify | `REQ-viewer-owned-by-repo` |
 | `TEST-gve-supervision` | verify | `REQ-viewer-ueberlebt-host` |
 | `TEST-gve-supervision` | verify | `SCHEMA-session-registry` |
+| `TEST-harness-handle` | verify | `SCHEMA-harness-handle` |
 | `TEST-help-content-coverage` | verify | `REQ-readiness-transparent` |
 | `TEST-help-projection` | verify | `REQ-readiness-transparent` |
 | `TEST-help-tool` | verify | `REQ-hilfe-erklaert-token` |
@@ -4185,6 +4186,7 @@
 | `TEST-token-efficiency` | verify | `REQ-benchmark-harness` |
 | `TEST-token-efficiency` | verify | `REQ-precise-context` |
 | `TEST-token-efficiency` | verify | `REQ-token-efficiency` |
+| `TEST-tool-context` | verify | `SCHEMA-tool-context` |
 | `TEST-tool-contract` | verify | `SCHEMA-mcp-tool` |
 | `TEST-tool-contract` | verify | `SCHEMA-mcp-tool-registry` |
 | `TEST-tool-contract` | verify | `SCHEMA-tool-context` |
@@ -4202,6 +4204,7 @@
 | `TEST-vertrag-aufruf-ohne-daten` | verify | `SCHEMA-aufruf-ohne-daten` |
 | `TEST-vertrag-export-answer` | verify | `SCHEMA-export-answer` |
 | `TEST-vertrag-function-criticality` | verify | `SCHEMA-function-criticality` |
+| `TEST-vertrag-harness-handle` | verify | `SCHEMA-harness-handle` |
 | `TEST-vertrag-impact-slice` | verify | `SCHEMA-impact-slice` |
 | `TEST-vertrag-import-summary` | verify | `SCHEMA-import-summary` |
 | `TEST-vertrag-init-report` | verify | `SCHEMA-init-report` |
@@ -4221,6 +4224,7 @@
 | `TEST-vertrag-sitzungsende` | verify | `SCHEMA-sitzungsende` |
 | `TEST-vertrag-test-ingest-answer` | verify | `SCHEMA-test-ingest-answer` |
 | `TEST-vertrag-test-ingest-input` | verify | `SCHEMA-test-ingest-input` |
+| `TEST-vertrag-tool-context` | verify | `SCHEMA-tool-context` |
 | `TEST-vertrag-trajectory` | verify | `SCHEMA-trajectory` |
 | `TEST-vertrag-upgrade-report` | verify | `SCHEMA-upgrade-report` |
 | `TEST-vertrag-vertragstest-bericht` | verify | `SCHEMA-vertragstest-bericht` |

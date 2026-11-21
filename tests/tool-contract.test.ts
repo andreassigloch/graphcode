@@ -49,15 +49,4 @@ describe('TEST-tool-contract: die drei Werkzeug-Verträge halten an der echten G
     // erfuellt, ist `ToolContext` — und der wird hier gegen seinen echten Vertrag geparst.
     expect(() => ToolContext.parse(ctx)).not.toThrow();
   });
-
-  it('ein Kontext ohne serializeToolWrite fällt durch — die OCC-Kette ist nicht optional', () => {
-    const r = ToolContext.safeParse({
-      harness: {},
-      auditLog: { record: () => {}, query: () => [] },
-      graphVersion: () => 1,
-      recordAudit: async () => {},
-    });
-    expect(r.success).toBe(false);
-    expect(JSON.stringify(r.error?.issues)).toContain('serializeToolWrite');
-  });
 });

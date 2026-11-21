@@ -14226,7 +14226,7 @@ schema ◀ `FLOW-grenz-befund`
 
 ###### 3.3.4.2.21  `SCHEMA-harness-handle` — Harness-Griff
 
-Der Zugang zum Substrat: Store, Regelwerk und Apply-Gate hinter einer Schnittstelle. Zod-Vertrag der Form: jedes öffentliche Mitglied von GraphCodeHarness ist eine Funktion; der Griff ist ein Objekt. Geparst in createHarness.
+Der Zugang zum Substrat: Store, Regelwerk und Apply-Gate hinter einer Schnittstelle. Zod-Vertrag der Form: jedes öffentliche Mitglied von GraphCodeHarness ist eine Funktion (z.function); der Griff ist ein offenes Objekt. Geparst in createHarness, zurück geht das Original.
 
 schema ◀ `FLOW-auto-export-register` · `FLOW-bind-request` · `FLOW-bind-request-import-code` · `FLOW-bind-request-proxy` · `FLOW-context-request` · `FLOW-export-flush` · `FLOW-harness-handle` · `FLOW-harness-handle-host` · `FLOW-lifecycle-create` · `FLOW-store-build` · `FLOW-store-close` · `FLOW-store-close-cli` · `FLOW-store-close-render` · `FLOW-store-close-rewind` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-render` · `FLOW-store-open-rewind`
 
@@ -14510,7 +14510,7 @@ schema ◀ `FLOW-test-selection`
 
 ###### 3.3.4.2.69  `SCHEMA-tool-context` — Werkzeug-Kontext
 
-Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Graphversion, Sitzung, Aufrufer. Zod-Vertrag der Form: Träger und Funktionen, geparst in createToolContext; ToolPort ist die segregierte Sicht darauf.
+Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Graphversion, Sitzung, Aufrufer. Zod-Vertrag der Form: Träger und Funktionen, geparst in createToolContext, zurück geht das Original. Die genauen Signaturen stehen an der Schnittstelle ToolContext, die ToolPort erweitert.
 
 schema ◀ `FLOW-read-bind` · `FLOW-tool-context`
 
@@ -15404,991 +15404,1015 @@ Abnahme der Datei tests/gve-supervision.test.ts: der Viewer gehoert dem Repo. Ge
 
 verify ▶ `REQ-graceful-degradation` · `REQ-sitzungen-tragen-ein` · `REQ-umfrage-bemerkt-tod` · `REQ-viewer-owned-by-repo` · `REQ-viewer-ueberlebt-host` · `SCHEMA-session-registry` · testRefs: `tests/gve-supervision.test.ts`
 
-#### 3.4.61  `TEST-help-content-coverage` — Hilfe deckt jedes lebende Token
+#### 3.4.61  `TEST-harness-handle` — Zugriffe des Harness-Griffs
+
+Zugriffe des Harness-Griffs an der echten Klasse: Repo-Wurzel, Store-Verzeichnis, Scope, Fokus-Schwelle; createHarness gibt das Original zurück; halb gebauter Griff wird abgewiesen. (CR-GC-991)
+
+verify ▶ `SCHEMA-harness-handle` · testRefs: `tests/harness-handle.test.ts`
+
+#### 3.4.62  `TEST-help-content-coverage` — Hilfe deckt jedes lebende Token
 
 Abnahme der Datei tests/help-content.test.ts: die verfasste Plain- und SE-Ebene deckt jedes im Dashboard lebende Token, geprueft gegen die Registries statt gegen eine Handzaehlung. Eine neue Regel oder ein neues Artefakt faellt nur auf, wenn ihr Hilfe-Eintrag fehlt.
 
 verify ▶ `REQ-readiness-transparent` · testRefs: `tests/help-content.test.ts`
 
-#### 3.4.62  `TEST-help-projection` — Hilfe ist reine Projektion
+#### 3.4.63  `TEST-help-projection` — Hilfe ist reine Projektion
 
 Abnahme der Datei tests/help.test.ts: die Hilfe rechnet ohne Datenbank. Jeder Eintrag traegt alle drei Ebenen, die Regel-Hilfe deckt die lebenden V3_RULES, und die kontextuelle Hilfe rankt Regel- und Erstellungs-Blocker gemeinsam, Fehler zuerst.
 
 verify ▶ `REQ-readiness-transparent` · testRefs: `tests/help.test.ts`
 
-#### 3.4.63  `TEST-help-tool` — graph_help ueber MCP
+#### 3.4.64  `TEST-help-tool` — graph_help ueber MCP
 
 Abnahme der Datei tests/mcp.help.test.ts: graph_help erreicht die Hilfe-Datenschicht ueber MCP. Realer Disk-Kuzu auf einem Temp-Repo, ein Graph der eine Warnung ausloest; mit token kommt der HelpEntry, ohne token lehnt das strenge Schema den Aufruf ab und nennt rules_get_violations (CR-GC-847).
 
 verify ▶ `REQ-hilfe-erklaert-token` · `REQ-mcp-tool-registry` · `REQ-readiness-transparent` · testRefs: `tests/mcp.help.test.ts`
 
-#### 3.4.64  `TEST-hooks` — Hook-Extension-Points-Test
+#### 3.4.65  `TEST-hooks` — Hook-Extension-Points-Test
 
 registerHook + runPreCommitHooks/runPostApplyHooks/scheduleNightlyBatch; pre-commit-Hook blockt eine Mutation; preCommitTimeout (default 5000ms) greift; Execution-Order deterministisch. (CR-GC-102)
 
 verify ▶ `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · testRefs: `tests/hooks.extension-points.test.ts`
 
-#### 3.4.65  `TEST-host-ende-sichtbar` — Host-Ende sichtbar trotz weiterlaufendem Viewer
+#### 3.4.66  `TEST-host-ende-sichtbar` — Host-Ende sichtbar trotz weiterlaufendem Viewer
 
 Echte Prozesse: Host mit Stand-in-Viewer, eine zweite Sitzung haelt den Viewer; nach SIGTERM sieht der Client close in hoechstens 5 s.
 
 verify ▶ `REQ-host-end-visible` · `REQ-host-ende-sichtbar-client` · `REQ-viewer-ueberlebt-host` · testRefs: `tests/host-ende-sichtbar.test.ts`
 
-#### 3.4.66  `TEST-host-shim` — Ein Schreibkanal ueber zwei Prozesse
+#### 3.4.67  `TEST-host-shim` — Ein Schreibkanal ueber zwei Prozesse
 
 Abnahme der Datei tests/host-shim.test.ts: die Zwei-Prozess-Topologie auf Socket-Ebene, ein echter Host mit Store und ein echter Proxy-Registry-Client. Der Verlierer der Wahl bedient dieselbe Oberflaeche ueber stdio, ohne einen zweiten Schreibkanal zu oeffnen.
 
 verify ▶ `REQ-docked-session-reelects-once` · `REQ-further-session-docks-via-socket` · `REQ-host-holds-only-kuzu-handle` · `REQ-proxy-reicht-an-host` · `REQ-risk-owner-ends-with-docked-sessions` · `REQ-single-kuzu-owner` · `REQ-single-write-door` · testRefs: `tests/host-shim.test.ts`
 
-#### 3.4.67  `TEST-impact-subgraph` — graph_impact Subgraph-Test
+#### 3.4.68  `TEST-impact-subgraph` — graph_impact Subgraph-Test
 
 graph_impact liefert nur den betroffenen Subgraphen (kein Full-Dump). (FCHAIN-agent-query)
 
 verify ▶ `REQ-post-agent-query` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-subgraph-slicing` · testRefs: `tests/mcp.impact.test.ts`
 
-#### 3.4.68  `TEST-import-code-umbenennung` — Abnahme der candidateId-Umbenennung
+#### 3.4.69  `TEST-import-code-umbenennung` — Abnahme der candidateId-Umbenennung
 
 Abnahme der Datei tests/import-code-umbenennung.test.ts: ein Bestand mit alten uids und einer Handkante SYS -compose-> MOD auf echtem Disk-Kuzu, dann die Lieferung mit neuen uids und candidateId; erwartet Kante erhalten, kein alter Knoten, kein Duplikat, mit und ohne origin-Stempel. (CR-GC-856)
 
 verify ▶ `REQ-import-code-renames-by-candidate` · testRefs: `tests/import-code-umbenennung.test.ts`, `tests/import-code-befund-element.test.ts`
 
-#### 3.4.69  `TEST-import-code-verb` — Abnahme des import-code-Verbs
+#### 3.4.70  `TEST-import-code-verb` — Abnahme des import-code-Verbs
 
 Abnahme der Datei tests/import-code-verb.test.ts: graphcode import-code faehrt den deterministischen Code-Import mit Reseed-Semantik ueber denselben executeImportCode-Pfad wie die CLI. Realer Disk-Store, echte Fixture-Dateien, die Dateisuche laeuft mit.
 
 verify ▶ `REQ-model-exchange-post` · `REQ-model-exchange-pre` · `REQ-no-extraction` · `REQ-post-import` · `REQ-reseed-sichert-vorher` · testRefs: `tests/import-code-verb.test.ts`
 
-#### 3.4.70  `TEST-import-doc-modell` — Import-doc nennt kein Modell
+#### 3.4.71  `TEST-import-doc-modell` — Import-doc nennt kein Modell
 
 Prueft den Skill-Text von se:import-doc auf Modellnamen und auf LMStudioClient ohne model und faehrt das Skript der Stufe 2 ohne LLM_MODEL: Abbruch mit Meldung, kein Store. (CR-GC-859)
 
 verify ▶ `REQ-llm-modell-aus-konfiguration` · testRefs: `tests/skill-import-doc-modell.test.ts`
 
-#### 3.4.71  `TEST-import-invariant` — REQ-mit-Test-Invariante auf dem Import-Pfad
+#### 3.4.72  `TEST-import-invariant` — REQ-mit-Test-Invariante auf dem Import-Pfad
 
 Abnahme der Datei tests/harness.import-invariant.test.ts: der Massen-Import meldet jede REQ ohne verifizierenden TEST und verweigert bei entsprechender Option den Import ganz. Der Bypass am Gate vorbei ist damit nie stumm, so waren die historischen unverifizierten REQ hereingekommen.
 
 verify ▶ `REQ-bootstrap-through-gate` · `REQ-import-meldet-unbewiesene-req` · `REQ-modellaustausch` · testRefs: `tests/harness.import-invariant.test.ts`
 
-#### 3.4.72  `TEST-import-rejected-traces` — Seed mit musterfremder Kante
+#### 3.4.73  `TEST-import-rejected-traces` — Seed mit musterfremder Kante
 
 Abnahme der Datei tests/harness.import-rejected-traces.test.ts: der Seed laedt einen Graphen mit ACTOR -io-> UC, haelt die Kante zurueck und nennt sie; graph_readiness fuehrt sie auch nach Neustart; graph_export verweigert mit Kante und Reparaturweg, bis delete-edge durchs Werkzeug sie annimmt; das Gate blockt dieselbe Kante als neue (R-18).
 
 verify ▶ `REQ-export-refuses-until-held-back-repaired` · `REQ-held-back-edge-does-not-abort-load` · `REQ-held-back-edges-derived-every-call` · `REQ-held-back-edges-in-readiness` · `REQ-risk-edge-vanishes-silently` · `REQ-seed-prueft-kanten` · `SCHEMA-rejected-trace` · testRefs: `tests/harness.import-rejected-traces.test.ts`
 
-#### 3.4.73  `TEST-import-sys-anchor` — Genau ein SYS-Anker nach jedem Import
+#### 3.4.74  `TEST-import-sys-anchor` — Genau ein SYS-Anker nach jedem Import
 
 Abnahme der Datei tests/harness.import-sys-anchor.test.ts: jeder Import-Pfad hinterlaesst genau einen SYS-Knoten. An ihm haengen die Analyse-Frische-Stempel und die graphweiten Regeln, ein zweiter oder fehlender Anker macht sie unauswertbar.
 
 verify ▶ `REQ-graph-integrity` · testRefs: `tests/harness.import-sys-anchor.test.ts`
 
-#### 3.4.74  `TEST-init-verb` — init-Verb-Test
+#### 3.4.75  `TEST-init-verb` — init-Verb-Test
 
 init installiert die Abhaengigkeit im Repo, nennt nach Erfolg die vier naechsten Schritte, meldet eine fehlgeschlagene Installation mit dem Befehl und folgt der Lockdatei.
 
 verify ▶ `REQ-init-agent-host` · `REQ-init-legt-an` · `REQ-init-nennt-schritte` · `REQ-repo-install` · testRefs: `tests/init-verb.test.ts`
 
-#### 3.4.75  `TEST-inject-graph-slice` — Task-Start-Scheibe im Agentenkontext
+#### 3.4.76  `TEST-inject-graph-slice` — Task-Start-Scheibe im Agentenkontext
 
 Abnahme der Datei tests/hooks.inject-graph-slice.test.ts: der Bridge-Endpunkt liefert die Kontext-Scheibe zu einer uid, und der UserPromptSubmit-Hook schiebt sie in den Agentenkontext. Realer Disk-Kuzu, realer HTTP-Aufruf, echte Ground truth statt Stichprobe.
 
 verify ▶ `REQ-precise-context` · `REQ-subgraph-slicing` · testRefs: `tests/hooks.inject-graph-slice.test.ts`
 
-#### 3.4.76  `TEST-intent-anchors-internal` — Intentions-Anker bleiben Interna
+#### 3.4.77  `TEST-intent-anchors-internal` — Intentions-Anker bleiben Interna
 
 Abnahme der Datei tests/intent-anchors-internal.test.ts: die Anker sind ein Steuerungs-Interna und werden dem Menschen nicht zur Bestaetigung vorgelegt. Der Begriff ist unserer, nicht seiner; eine Rueckfrage danach verlangt Vokabular, das der Gegenueber nicht hat.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/intent-anchors-internal.test.ts`
 
-#### 3.4.77  `TEST-intent-anchors-wortart` — Intentions-Anker nur aus Substantiven
+#### 3.4.78  `TEST-intent-anchors-wortart` — Intentions-Anker nur aus Substantiven
 
 Aus einem deutschen Auftrag werden Intentions-Anker nur aus Substantiven und Eigennamen gebildet; Verben, Funktionswoerter und Pfadsplitter erscheinen nicht als fehlende Konzepte, ein englischer Text bleibt der Kontrast.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/intent-anchors.wortart.test.ts`
 
-#### 3.4.78  `TEST-interface-change-names-dependents` — Schnittstellenaenderung nennt die Abhaengigen
+#### 3.4.79  `TEST-interface-change-names-dependents` — Schnittstellenaenderung nennt die Abhaengigen
 
 Prueft, dass die Antwort auf eine angenommene Aenderung an einem FLOW die abhaengigen Funktionen und Tests nennt.
 
 verify ▶ `REQ-interface-change-names-dependents`
 
-#### 3.4.79  `TEST-interface-escalation` — Interface-Eskalations-Test
+#### 3.4.80  `TEST-interface-escalation` — Interface-Eskalations-Test
 
 Direkter FLOW-Mutationsversuch eines Realisierungs-Agenten wird abgelehnt; nur der Eskalationspfad (CR an Facilitating-Agent → graph_impact → Gate) ändert ein Interface. (FCHAIN-interface-escalation)
 
 verify ▶ `REQ-interface-change-escalation` · `REQ-risk-interface-change-unescalated`
 
-#### 3.4.80  `TEST-lane-reports-change` — Die Spur meldet Aenderung und Lauf zurueck
+#### 3.4.81  `TEST-lane-reports-change` — Die Spur meldet Aenderung und Lauf zurueck
 
 Abnahme der Datei tests/aenderungsmeldung.test.ts: geaenderte Quell- und Testdateien werden auf Knoten abgebildet, und die Meldung ueber MCP-stdio an einen echten Host nimmt das Ergebnis des betroffenen Tests zurueck und schreibt das frische des Laufs.
 
 verify ▶ `REQ-lane-reports-change` · `REQ-planmodus-meldet-nichts` · `REQ-risk-stale-test-result` · `REQ-spur-meldet-zurueck` · testRefs: `tests/aenderungsmeldung.test.ts`
 
-#### 3.4.81  `TEST-laufzeit-reads-answer-path` — Laufzeit-Skill liest den Antwortweg statt zu rechnen
+#### 3.4.82  `TEST-laufzeit-reads-answer-path` — Laufzeit-Skill liest den Antwortweg statt zu rechnen
 
 Der Skill-Text nennt die Felder des Antwortwegs, die chainMetrics an der bewertbaren Zeile liefert und die Hilfe zu graph_metrics erklaert, und keine Rechenvorschrift. Am Probemodell nachgerechnet: der Weg ist ohne Merkmal und bei synchronem Warten auf eine Funktion ausserhalb der Kette verhindert, und nach dem Vorverlagern verlaesst das speisende Glied den Weg. Der Text traegt keinen Zug, der das Merkmal setzt, und die feste Form des Vorschlags.
 
 verify ▶ `REQ-laufzeit-reads-answer-path` · testRefs: `tests/skill-laufzeit-antwortweg.test.ts`
 
-#### 3.4.82  `TEST-learning-emit` — Learning-Emission-Test
+#### 3.4.83  `TEST-learning-emit` — Learning-Emission-Test
 
 post-apply schreibt Trajectory/Outcome append-only, Format stabil. (FUNC-emit-trajectory)
 
 verify ▶ `REQ-post-emit-trajectory` · `REQ-trajectory-emit` · testRefs: `tests/hooks.learning-emit.test.ts`
 
-#### 3.4.83  `TEST-list-elements-filter` — Elemente-Scheibe nach Typ und Suche
+#### 3.4.84  `TEST-list-elements-filter` — Elemente-Scheibe nach Typ und Suche
 
 Echter Kuzu-Store: listElements liefert bei type nur diesen Typ, bei search nur Treffer in uid, name oder description ohne Beachtung der Groß- und Kleinschreibung, ohne Filter alle Knoten.
 
 verify ▶ `REQ-elemente-nach-typ-und-suche` · testRefs: `tests/list-elements.search.test.ts`
 
-#### 3.4.84  `TEST-live-event-contract` — Live-Event-Contract-Test
+#### 3.4.85  `TEST-live-event-contract` — Live-Event-Contract-Test
 
 LiveUpdateEvent/UpdateDomain sind als Zod-Schema in @sigloch/contracts publiziert und werden von Dashboard und Bridge importiert (kein Fork). (REQ-live-event-in-contracts)
 
 verify ▶ `REQ-live-event-in-contracts` · `SCHEMA-update-event` · testRefs: `tests/contract.live-event.test.ts`
 
-#### 3.4.85  `TEST-live-view` — Live-Update-Event-Test
+#### 3.4.86  `TEST-live-view` — Live-Update-Event-Test
 
 Jede Mutation emittiert genau ein Live-Update-Event (korrekte domains); Dashboard ohne Reload. (FUNC-emit-update-event)
 
 verify ▶ `REQ-mutation-emits-event` · `REQ-post-emit-update-event` · `REQ-versioned-broadcast` · testRefs: `tests/hooks.live-view.test.ts`
 
-#### 3.4.86  `TEST-loop-convergence-monitor` — Entdeckung meldet Pendeln Plateau Rueckschritt
+#### 3.4.87  `TEST-loop-convergence-monitor` — Entdeckung meldet Pendeln Plateau Rueckschritt
 
 Ein Protokoll mit Pendeln, eines mit Plateau und eines mit steigender Befundzahl werden je gemeldet. Ein konvergierender Verlauf bleibt stumm.
 
 verify ▶ `REQ-loop-convergence-monitor` · `REQ-risk-loop-degradation`
 
-#### 3.4.87  `TEST-loop-round-log` — Rundenprotokoll ueberlebt den Neustart
+#### 3.4.88  `TEST-loop-round-log` — Rundenprotokoll ueberlebt den Neustart
 
 Nach zwei Runden mit einem Neustart des Hosts dazwischen stehen beide Runden im Protokoll, mit Fokus, Vorschlag, Zug und Abbruchgrund.
 
 verify ▶ `REQ-loop-round-log` · `REQ-risk-loop-oscillation`
 
-#### 3.4.88  `TEST-mcp-export` — MCP-Export-Test
+#### 3.4.89  `TEST-mcp-export` — MCP-Export-Test
 
 graph_export serialisiert den live In-Memory-Graphen via exportGraphJson/exportMarkdown und schreibt docs/graph + docs/views unter den Repo-Root — schließt die Agent-Loop ueber MCP. (CR-GC-127)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.export.test.ts`
 
-#### 3.4.89  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
+#### 3.4.90  `TEST-mcp-export-guard` — MCP-Export-Guard-Test
 
 MCP graph_export-Guard, drei Faelle: (a) leerer Graph wird verweigert, (b) Drop eines committeten Elements wird verweigert und die Datei bleibt unangetastet, (c) force:true ueberschreibt; Fresh-File-Export bleibt gruen. (CR-GC-202)
 
 verify ▶ `REQ-export-no-clobber` · testRefs: `tests/mcp.export-guard.test.ts`
 
-#### 3.4.90  `TEST-mcp-readiness` — MCP-Readiness-Test
+#### 3.4.91  `TEST-mcp-readiness` — MCP-Readiness-Test
 
 graph_readiness bindet scoreReadiness(harness) an die Registry und liefert den ReadinessReport ueber die MCP-Surface — Familie-Compliance (R-/RD-, nie BQ-) ist fuer einen Agenten erreichbar. (CR-GC-129)
 
 verify ▶ `REQ-mcp-tool-registry` · `REQ-messstand-nachvollziehbar` · `REQ-readiness-schwaechste-stufe` · `REQ-readiness-transparent` · testRefs: `tests/mcp.readiness.test.ts`
 
-#### 3.4.91  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
+#### 3.4.92  `TEST-mcp-stdio-server` — MCP-stdio-Server-Test
 
 Registry served over the real MCP protocol (linked transport + disk Kuzu): listTools enumerates all tools, graph_mutate==mutate() incl. R-01 BLOCK, graph_impact bounded slice. (CR-GC-111)
 
 verify ▶ `REQ-audit-trail` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-single-transport` · `REQ-stdio-fuehrt-im-repo-aus` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/mcp.stdio-server.test.ts`
 
-#### 3.4.92  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
+#### 3.4.93  `TEST-mcp-symmetry` — MCP-Symmetrie-Test
 
 MCP graph_mutate == in-process mutate(): identische Semantik/Violations. (FCHAIN-apply-gate, L2)
 
 verify ▶ `REQ-harness-schema-in-contracts` · `REQ-mcp-gate-symmetry` · `REQ-one-gate-per-repo` · testRefs: `tests/mcp.symmetry.test.ts`
 
-#### 3.4.93  `TEST-measurement-vector-contract` — Vertragstest des Messvektors
+#### 3.4.94  `TEST-measurement-vector-contract` — Vertragstest des Messvektors
 
 Prueft, dass jedes Feld des Messvektors, das die Schleife liest, im gebundenen Vertrag steht und von der Messung so geliefert wird.
 
 verify ▶ `REQ-measurement-vector-contract-tested` · `REQ-risk-measurement-vector-contract-unbound`
 
-#### 3.4.94  `TEST-member-name` — Member-Name-Derivation-Test
+#### 3.4.95  `TEST-member-name` — Member-Name-Derivation-Test
 
 serveStdio leitet die Member-Identitaet aus dem Repo ab (package.json name unscoped, sonst Verzeichnisname) → graph_export schreibt docs/graph/<member>.graph.json. (CR-GC-128)
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/mcp.member-name.test.ts`
 
-#### 3.4.95  `TEST-merge` — Wiedereingliederung eines Zweigs
+#### 3.4.96  `TEST-merge` — Wiedereingliederung eines Zweigs
 
 Abnahme der Datei tests/mcp.merge.test.ts: zwei Zweig-Aenderungen werden ohne Konflikt wieder zusammengefuehrt, ohne Knoten oder Kanten zu verlieren. Die Wiedereingliederung laeuft als Replay durchs Gate, nicht als Datei-Merge; echte Zwei-Store-Integration mit eigenem Disk-Kuzu und eigenem Audit-Log je Seite.
 
 verify ▶ `REQ-auto-persist-merge` · `REQ-merge-ohne-konflikt` · `REQ-post-merge-nodes` · `SCHEMA-branch-merge-report` · testRefs: `tests/mcp.merge.test.ts`
 
-#### 3.4.96  `TEST-merge-no-duplicate-edge` — Keine Doppelkante nach dem Verschmelzen
+#### 3.4.97  `TEST-merge-no-duplicate-edge` — Keine Doppelkante nach dem Verschmelzen
 
 Abnahme der Datei tests/mutate.merge-dedupe.test.ts: das Verschmelzen zweier Knoten fuehrt eine identische Kante nur einmal, unabhaengig von der Reihenfolge, und Speicher und Disk zaehlen danach dasselbe. Auch der kanonische Snapshot schreibt ein Tripel nie zweimal.
 
 verify ▶ `REQ-graph-integrity` · testRefs: `tests/mutate.merge-dedupe.test.ts`
 
-#### 3.4.97  `TEST-modulebene-reads-and-separates` — Modulebene-Skill nennt nur
+#### 3.4.98  `TEST-modulebene-reads-and-separates` — Modulebene-Skill nennt nur
 
 Der Skill-Text nennt nur Regeln aus dem Katalog, nur Werkzeuge aus der Registry des Hosts und nur Felder aus ModuleMetrics und ChainMetrics; die Pruefung faengt einen erfundenen Namen. Die Vorschlagsform ist die, die se:optimize als Quelle (a) annimmt, und der Text wendet nichts an.
 
 verify ▶ `REQ-modulebene-reads-and-separates` · testRefs: `tests/skill-modulebene-felder.test.ts`
 
-#### 3.4.98  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
+#### 3.4.99  `TEST-monotone-convergence` — Ratschen-Nachweis ueber die Rundensequenz
 
 Faehrt den Steuerungs-Loop mit einem skriptierten Aktor und assertiert Monotonie, Netto-Fortschritt und Nicht-Kreisen.
 
 verify ▶ `REQ-monotone-convergence` · testRefs: `tests/steering.process-ratchet.test.ts`
 
-#### 3.4.99  `TEST-mutate-gate` — mutate()-Gate Unit-Test
+#### 3.4.100  `TEST-mutate-gate` — mutate()-Gate Unit-Test
 
 mutate() wendet an, gibt Violations zurück, blockt bei error-Severity. (FCHAIN-apply-gate)
 
 verify ▶ `REQ-confidence-tier` · `REQ-one-gate-per-repo` · `REQ-post-apply-gate` · `REQ-rule-enforcement` · `REQ-structural-rule-shared` · testRefs: `tests/harness.gate.test.ts`
 
-#### 3.4.100  `TEST-mutate-input-formate` — Format-E als Eingabe am Gate
+#### 3.4.101  `TEST-mutate-input-formate` — Format-E als Eingabe am Gate
 
 Abnahme der Datei tests/mcp.mutate-input.test.ts: ein Format-E-Block laeuft durch dieselbe Gate-Semantik wie Kommandos, ein Parse-Fehler wird zum Block-Verdikt statt zum Absturz, und der dryRun-Preview wird auditiert. Ein Eingabe-Codec, kein zweiter Schreibweg.
 
 verify ▶ `REQ-formatE-parity` · `REQ-single-write-door` · `SCHEMA-format-e` · testRefs: `tests/mcp.mutate-input.test.ts`
 
-#### 3.4.101  `TEST-mutate-schema-guard` — Fehlgeformte Kommandos werden hart abgelehnt
+#### 3.4.102  `TEST-mutate-schema-guard` — Fehlgeformte Kommandos werden hart abgelehnt
 
 Abnahme der Datei tests/mutate.schema-guard.test.ts: ein Batch mit falsch geschriebenen Operationen wird abgelehnt statt als Erfolg quittiert. Der Live-Befund war genau das: die Kommandos passierten das Gate mit success, ohne dass irgendetwas geschrieben wurde.
 
 verify ▶ `REQ-element-contract-finding` · `REQ-gate-weist-vertragsfremd-ab` · `REQ-harness-schema-in-contracts` · `REQ-structure-driven` · `SCHEMA-mutate-command` · `SCHEMA-steering-snapshot` · testRefs: `tests/mutate.schema-guard.test.ts`
 
-#### 3.4.102  `TEST-mutate-violations` — Verstoesse als Zusammenfassung
+#### 3.4.103  `TEST-mutate-violations` — Verstoesse als Zusammenfassung
 
 Abnahme der Datei tests/mcp.mutate-violations.test.ts: graph_mutate antwortet standardmaessig mit einer Zusammenfassung statt dem vollstaendigen Ergebnis. Vorher trug jede Warnung ihren gesamten Kontext zurueck, was den Loewenanteil der Bytes ausmachte, ohne beim Reparieren zu helfen.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/mcp.mutate-violations.test.ts`
 
-#### 3.4.103  `TEST-mutate-violations-leser` — Leser von graph_mutate lesen Befunde je Element
+#### 3.4.104  `TEST-mutate-violations-leser` — Leser von graph_mutate lesen Befunde je Element
 
 Abnahme der Datei tests/mutate-violations-leser.test.ts: am echten Werkzeug liefert der Aufruf, wie se:import-doc ihn schreibt, je Befund ein elementId ohne Platzhalter, und der Default liefert keins (Praemisse). Jeder Leser im Repo, der elementId aus graph_mutate liest, fordert violations full an.
 
 verify ▶ `REQ-mutate-befund-je-element` · testRefs: `tests/mutate-violations-leser.test.ts`
 
-#### 3.4.104  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
+#### 3.4.105  `TEST-mvp-e2e` — MVP-1 E2E Acceptance
 
 End-to-End-Akzeptanz des MVP-1-Loops: neues Mitglied bootstrappen, Knoten durchs Gate spec’en, graph_impact liefert exakt den Blast-Radius (KNOW statt grep), Knoten implementieren, re-exportieren. Disk-Kuzu, keine Mocks. (CR-GC-123)
 
 verify ▶ `REQ-code-governed-quality` · `REQ-disk-persistence` · `REQ-impact-based-testing` · `REQ-post-impact-testing` · `REQ-precise-context` · `REQ-single-kuzu-owner` · `REQ-single-store` · `REQ-small-model-viable` · testRefs: `tests/mvp-e2e.test.ts`
 
-#### 3.4.105  `TEST-nd-similarity` — Nah-Duplikate: Regeln und Hinweis vor dem Schreiben
+#### 3.4.106  `TEST-nd-similarity` — Nah-Duplikate: Regeln und Hinweis vor dem Schreiben
 
 Abnahme der Datei tests/nd-similarity.test.ts: die Nah-Duplikat-Regeln der Contracts melden genau die konstruierten Duplikat-Paare und sind nie Gate-Regel; die Dublettensuche des Executors findet die belegten Duplikate aus den Greenfield-Laeufen als strukturierte Treffer.
 
 verify ▶ `REQ-near-duplicate-detection` · `REQ-rule-enforcement` · testRefs: `tests/nd-similarity.test.ts`
 
-#### 3.4.106  `TEST-occ` — Optimistische Nebenlaeufigkeit am Werkzeug
+#### 3.4.107  `TEST-occ` — Optimistische Nebenlaeufigkeit am Werkzeug
 
 Abnahme der Datei tests/mcp.occ.test.ts: ein Schreibzugriff traegt die graphVersion, die sein Autor gelesen hat; eine veraltete Basis wird abgelehnt und meldet die seither angewandten Batches zurueck. Damit verliert kein nebenlaeufiger Schreiber still seine Aenderung.
 
 verify ▶ `REQ-auto-persist-merge` · `REQ-single-write-door` · testRefs: `tests/mcp.occ.test.ts`
 
-#### 3.4.107  `TEST-opencode-plugin` — OpenCode-Plugin-Test
+#### 3.4.108  `TEST-opencode-plugin` — OpenCode-Plugin-Test
 
 init und update legen das OpenCode-Plugin fuer den Vorschlag an den Nutzer byte-gleich zum Paket ab, remove nimmt nur dieses mit; der Hook nimmt den vorschlag aus einer echten graph_mutate-Antwort und legt ihn ins Eingabefeld (CR-GC-732).
 
 verify ▶ `REQ-repo-install` · `REQ-repo-uninstall` · testRefs: `tests/opencode-plugin.test.ts`
 
-#### 3.4.108  `TEST-operations-log` — Dauerhaftes Betriebslog in graphcode
+#### 3.4.109  `TEST-operations-log` — Dauerhaftes Betriebslog in graphcode
 
 Abnahme der Datei tests/operations-log.integration.test.ts: die graphcode-Seite des dauerhaften Logs. Das Verhalten des Logs selbst liegt im Store-Modul und wird dort geprueft; hier zaehlt, dass das Gate seine Eintraege wirklich schreibt und wiederfindet.
 
 verify ▶ `REQ-audit-trail` · testRefs: `tests/operations-log.integration.test.ts`
 
-#### 3.4.109  `TEST-optimize-presents-impact` — Optimierer-Skill liest echte Felder und ordnet nichts
+#### 3.4.110  `TEST-optimize-presents-impact` — Optimierer-Skill liest echte Felder und ordnet nichts
 
 Der Skill-Text nennt nur Felder, die graph_metrics, der Trockenlauf von graph_mutate und graph_suggest an einem Messaufbau auf Platte wirklich antworten, bildet keine Rangfolge und keine Summe, nennt die feste Form des Vorschlags wortgleich mit se-fmea und se-laufzeit und zeigt graph_mutate nur als Trockenlauf. Derselbe Lauf haelt fest, dass die Spalte danach aus metricsAfter kommt, dass die Zeile der Kette dort den Antwortweg traegt und dass das Urteil keinen Betrachtungsumfang traegt.
 
 verify ▶ `REQ-optimize-probes-and-presents` · testRefs: `tests/skill-optimize-vorlage.test.ts`
 
-#### 3.4.110  `TEST-path-containment` — Pfade bleiben im Repo
+#### 3.4.111  `TEST-path-containment` — Pfade bleiben im Repo
 
 Abnahme der Datei tests/security.path-containment.test.ts: die zwei im Audit reproduzierten Ausbrueche sind festgenagelt. Beide Senken hatten einen vom Graphen oder Agenten gelieferten Pfad ohne Eindaemmung an den Repo-Wurzelpfad geklebt. Realer Disk-Kuzu, echte Schreibversuche.
 
 verify ▶ `REQ-export-marke-loeschen` · `REQ-gate-only-writes` · `REQ-graph-is-ssot` · testRefs: `tests/security.path-containment.test.ts`
 
-#### 3.4.111  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
+#### 3.4.112  `TEST-phase-gate-not-skippable` — Kein Handoff bei offenem Phasen-Gate
 
 Graph mit erreichter Schwelle, aber offener Gate-Luecke; assertiert, dass die Zustandsmaschine nicht auf handoff geht.
 
 verify ▶ `REQ-phase-gate-not-skippable` · testRefs: `tests/generate.test.ts`
 
-#### 3.4.112  `TEST-prompt-provenance` — Prompt-Provenienz-Test
+#### 3.4.113  `TEST-prompt-provenance` — Prompt-Provenienz-Test
 
 Ein Record traegt Session, Modell und den Prompt im Wortlaut; ueber der Kappungsgrenze wird gekuerzt und das gesagt. Abwesenheit bleibt Abwesenheit statt leerem Feld, und bei zwei gleichzeitigen Sessions wird lieber nichts aufgezeichnet als ein geratenes Paar. (REQ-prompt-provenance)
 
 verify ▶ `REQ-prompt-provenance` · testRefs: `tests/audit.origin.test.ts`, `tests/hooks.prompt-relay.test.ts`
 
-#### 3.4.113  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
+#### 3.4.114  `TEST-published-counts-match-code` — Doku-gegen-Code-Konformitaet der Zahlen
 
 Liest die kanonischen Zahl-Phrasen aus den publizierten Dokumenten und assertiert sie gegen contracts und die gebundene Tool-Registry.
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/claims.conformance.test.ts`
 
-#### 3.4.114  `TEST-read-format-param` — Ausgabeformat der Lese-Werkzeuge
+#### 3.4.115  `TEST-read-format-param` — Ausgabeformat der Lese-Werkzeuge
 
 Abnahme der Datei tests/mcp.read-format.test.ts: die Lese-Werkzeuge liefern standardmaessig JSON fuer die Agentenlogik und auf Wunsch eine round-trip-stabile Format-E-Scheibe im selben Dialekt wie der committete Graph. Ein Vertrag, zwei Darstellungen.
 
 verify ▶ `REQ-formatE-parity` · `REQ-query-precision` · testRefs: `tests/mcp.read-format.test.ts`
 
-#### 3.4.115  `TEST-readiness-altbestand` — Bericht und Schritt antworten an Altbestand
+#### 3.4.116  `TEST-readiness-altbestand` — Bericht und Schritt antworten an Altbestand
 
 Abnahme der Datei tests/readiness.altbestand.test.ts: an einem Modell auf Platte mit einem Art-Wert aus der Zeit vor contracts 10 antworten graph_readiness und graph_generate; der Bericht nennt den R-08-Befund mit Element, Feld und Wert. Vor CR-GC-786 warfen beide Aufrufe.
 
 verify ▶ `REQ-element-contract-finding` · `REQ-messpfad-meldet-vertragsfremd` · testRefs: `tests/readiness.altbestand.test.ts`
 
-#### 3.4.116  `TEST-readiness-completeness` — Readiness-Vollstaendigkeits-Abnahme
+#### 3.4.117  `TEST-readiness-completeness` — Readiness-Vollstaendigkeits-Abnahme
 
 Abnahme der Datei tests/readiness.completeness.test.ts an echten Regellaeufen: der leere Graph erreicht keine Marke, ein Anwendungsfall ohne Wirkkette haelt SRR, eine Funktion ohne Modul PDR, ein Datenfluss ohne Schema CDR, eine Anforderung ohne Test TRR; Plan, Bindung und Abgleich halten Bau. Die Kurzform traegt einen Wert je Marke. Verifiziert REQ-readiness-completeness, REQ-completeness-actor-bounded und REQ-completeness-single-value zusammen (CR-GC-383, CR-GC-748).
 
 verify ▶ `REQ-completeness-actor-bounded` · `REQ-completeness-single-value` · `REQ-interface-schema` · `REQ-readiness-completeness` · testRefs: `tests/readiness.completeness.test.ts`
 
-#### 3.4.117  `TEST-readiness-model` — Readiness-Modell-Test
+#### 3.4.118  `TEST-readiness-model` — Readiness-Modell-Test
 
 Acceptance-Test fuer das Readiness-Modell: INCOSE-Scope lean, Phase-Gates SRR/PDR/CDR/TRR als disjunkte und vollstaendige Partition der V3_RULES, Impl-Gates SAR/FCA/SVR/FRR aus MS + CR-Status; deterministische Unit-Faelle + SSOT-Integration, niemals BQ. (CR-GC-125)
 
 verify ▶ `REQ-readiness-model` · testRefs: `tests/readiness.model.test.ts`
 
-#### 3.4.118  `TEST-readonly-bridge` — Host-Bridge-Abnahme
+#### 3.4.119  `TEST-readonly-bridge` — Host-Bridge-Abnahme
 
 Abnahme der Datei tests/host.bridge.test.ts: die Bridge akzeptiert keine Inbound-Mutation, Writes gehen nur durch MCP mutate(), und der Health-Endpunkt meldet den echten Zustand des Hosts statt einer Konstanten. Verifiziert REQ-readonly-bridge und REQ-real-health-check zusammen (CR-GC-383).
 
 verify ▶ `REQ-diff-an-viewer` · `REQ-health-antwortet-stand` · `REQ-readonly-bridge` · `REQ-real-health-check` · `REQ-sse-strom` · `SCHEMA-health-report` · testRefs: `tests/host.bridge.test.ts`
 
-#### 3.4.119  `TEST-realref-materialize` — Kein Phantompfad hinter einer SCHEMA-Bindung
+#### 3.4.120  `TEST-realref-materialize` — Kein Phantompfad hinter einer SCHEMA-Bindung
 
 Abnahme der Datei tests/export.realref-materialize.test.ts: der Export legt fuer jede gebundene SCHEMA ohne Datei einen z.unknown-Zod-Stub an, wie er es fuer eine gebundene TEST-Datei tut, und ueberschreibt nie eine vorhandene Datei. Ohne das bliebe im Graphen gebunden, was im Code nicht existiert.
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.realref-materialize.test.ts`
 
-#### 3.4.120  `TEST-recommend-next-step` — Abnahme Empfehlen
+#### 3.4.121  `TEST-recommend-next-step` — Abnahme Empfehlen
 
 Konzept: eine Empfehlung erscheint als solche gekennzeichnet und getrennt von Gate-Verdikt und Steuerung; ein ignorierter Vorschlag aendert weder Verdikt noch Kenngroessen.
 
 verify ▶ `REQ-recommend-next-step`
 
-#### 3.4.121  `TEST-reduced-llm` — Modellfrei-Gate-Test
+#### 3.4.122  `TEST-reduced-llm` — Modellfrei-Gate-Test
 
 Gate/Regel-Evaluation läuft ohne Modell-Call (localReachable=false) deterministisch; nur LLM-Zusatzfeatures degradieren.
 
 verify ▶ `REQ-graceful-degradation` · `REQ-post-modelfree-gate` · `REQ-reduced-llm` · `REQ-small-model-viable` · testRefs: `tests/gate.modelfree.test.ts`
 
-#### 3.4.122  `TEST-render-verb` — Abnahme des render-Verbs
+#### 3.4.123  `TEST-render-verb` — Abnahme des render-Verbs
 
 Abnahme des render-Verbs: md mit Gliederung, docx-Rundreise ueber pandoc mit allen Ueberschriften, Exit 2 ohne pandoc ohne Datei. (CR-GC-909)
 
 verify ▶ `REQ-render-document` · testRefs: `tests/render-verb.test.ts`
 
-#### 3.4.123  `TEST-repo-lifecycle` — Repo-Lebenszyklus raeumt vollstaendig ab
+#### 3.4.124  `TEST-repo-lifecycle` — Repo-Lebenszyklus raeumt vollstaendig ab
 
 Faehrt den Lebenszyklus auf echtem Disk-Kuzu: Lock nehmen, Sitzung eintragen, zweiter Owner scheitert, dann Abbau ueber SessionLifecycle. Danach ist der Lock frei und kein Sitzungseintrag uebrig.
 
 verify ▶ `REQ-session-leaves-nothing-behind` · testRefs: `tests/repo-lifecycle.integration.test.ts`
 
-#### 3.4.124  `TEST-reseed` — Reseed auf den committeten Stand
+#### 3.4.125  `TEST-reseed` — Reseed auf den committeten Stand
 
 Abnahme der Datei tests/mcp.reseed.test.ts: graph_reseed synchronisiert den lebenden Store in-process zurueck auf den committeten Snapshot, verwirft dabei eine nicht exportierte Gate-Mutation und stellt die committeten Zahlen ohne Korruption wieder her.
 
 verify ▶ `REQ-graph-state-recall` · `REQ-reseed-ersetzt-store` · `REQ-reseed-meldet-zahlen` · testRefs: `tests/mcp.reseed.test.ts`
 
-#### 3.4.125  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
+#### 3.4.126  `TEST-responsiveness` — Responsiveness-Test (<0,2s)
 
 Draft-Apply + betroffener-Subgraph-Check antwortet < 0,2s (ohne LLM). (FCHAIN-apply-gate NFR)
 
 verify ▶ `REQ-responsiveness`
 
-#### 3.4.126  `TEST-retro-kpi` — KPI-Auswertung nach dem Projekt
+#### 3.4.127  `TEST-retro-kpi` — KPI-Auswertung nach dem Projekt
 
 Abnahme der Datei tests/retro-kpi.test.ts: die Auswertung liefert deterministische Werte aus einer Fixture-Sitzung, und das entscheidende Signal stimmt: eine bewusst graph-lose Sitzung ergibt ein Graph-zu-Grep-Verhaeltnis unter eins.
 
 verify ▶ `REQ-quality-metric` · testRefs: `tests/retro-kpi.test.ts`, `tests/retro-verlauf.test.ts`
 
-#### 3.4.127  `TEST-rewind` — Rueckspulen auf einen Commit
+#### 3.4.128  `TEST-rewind` — Rueckspulen auf einen Commit
 
 Abnahme der Datei tests/rewind.test.ts: graphcode rewind stellt den Graphstand her, der an einem Ref committet war. Der Mechanismus selbst ist anderswo bewiesen; hier zaehlt das Verb als Bedienweg der Rueckhol-Haelfte.
 
 verify ▶ `REQ-graph-state-recall` · `REQ-rewind-liest-snapshot` · testRefs: `tests/rewind.test.ts`
 
-#### 3.4.128  `TEST-roundtrip` — Format-E Round-Trip Conformance
+#### 3.4.129  `TEST-roundtrip` — Format-E Round-Trip Conformance
 
 decode(encode(g))==g; zwei Encodes byte-identisch. (FCHAIN-codec-roundtrip)
 
 verify ▶ `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` · testRefs: `tests/codec.roundtrip.test.ts`
 
-#### 3.4.129  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
+#### 3.4.130  `TEST-rule-calibration` — Regel-Kalibrierungs-Test
 
 audit_stats aggregiert je Regel, je Modell und je Konsument; die Werte sind identisch zur jq-Zeile auf demselben Trail. Ein Record mit 20 Violations derselben Regel zaehlt eine Blockade und zwanzig Vorkommen; fehlendes rulesPassed liefert null statt einer Null. (REQ-rule-calibration)
 
 verify ▶ `REQ-rule-calibration` · testRefs: `tests/audit.stats.test.ts`
 
-#### 3.4.130  `TEST-schema-migration` — Wache gegen Schema-Drift
+#### 3.4.131  `TEST-schema-migration` — Wache gegen Schema-Drift
 
 Abnahme der Datei tests/schema-guard.test.ts: der Store friert seine Kanten-Tabellen beim Anlegen ein; bekommt das Meta-Modell ein neues Paar, weist das eingefrorene Schema die Kante ab. Die Wache erkennt den Versatz und setzt den Store aus dem committeten Stand neu auf, statt ihn kaputt weiterzubenutzen.
 
 verify ▶ `REQ-fingerabdruck-bilden` · `REQ-schema-version-migration` · `REQ-store-folgt-fingerabdruck` · `SCHEMA-schema-fingerprint` · `SCHEMA-store-rebuild-notice` · testRefs: `tests/schema-guard.test.ts`
 
-#### 3.4.131  `TEST-schema-parse-at-interface` — Schema-Parse an der Schnittstelle
+#### 3.4.132  `TEST-schema-parse-at-interface` — Schema-Parse an der Schnittstelle
 
 Vertragstest SCHEMA-fit-advisory, SCHEMA-steering-delta (Ranking-Grenze executor-rank) und SCHEMA-generation-step (Registry-Grenze runExecutor): vertragstreue Antwort kommt als Daten durch, formfremde wird abgewiesen statt still gerankt. (CR-GC-413)
 
 verify ▶ `SCHEMA-fit-advisory` · `SCHEMA-generation-step` · `SCHEMA-steering-delta` · testRefs: `tests/schema-parse-at-interface.test.ts`
 
-#### 3.4.132  `TEST-se-plan-groups` — se-plan Gruppen
+#### 3.4.133  `TEST-se-plan-groups` — se-plan Gruppen
 
 Gruppenbildung am Beispielplan (Datei, Abhaengigkeit, Zyklus), Spalte Gruppe in implplan, Ausfuehrungsanweisung in se-plan.md.
 
 verify ▶ `REQ-cr-gruppen-rechnen` · `REQ-plan-gruppen` · `REQ-se-plan-nennt-gruppen` · `SCHEMA-cr-groups` · testRefs: `tests/se-plan.groups.test.ts`
 
-#### 3.4.133  `TEST-se-plan-ordering` — Reihenfolge des Umsetzungsplans
+#### 3.4.134  `TEST-se-plan-ordering` — Reihenfolge des Umsetzungsplans
 
 Abnahme der Datei tests/se-plan.ordering.test.ts: die Reihenfolge des Plans kommt aus der Abhaengigkeits-Topologie des Graphen, nicht aus dem Prompt-Text. Jede Voraussetzung steht vor dem, was sie braucht.
 
 verify ▶ `REQ-structure-driven` · testRefs: `tests/se-plan.ordering.test.ts`
 
-#### 3.4.134  `TEST-selective-test-audit` — Auswahl-Resolver und Messinstrument
+#### 3.4.135  `TEST-selective-test-audit` — Auswahl-Resolver und Messinstrument
 
 Abnahme der Datei tests/test-selection.audit.test.ts: die Kantensemantik der Auswahl, die Paritaet zwischen Store-Pfad und Snapshot-Pfad, und die Fallback-Regel. Eine nicht aufloesbare Datei fuehrt zum Volllauf, nie zur leeren Auswahl.
 
 verify ▶ `REQ-graph-tests-operational` · `REQ-impact-based-testing` · `REQ-selective-code-lane` · `REQ-testspur-passt-zum-diff` · `SCHEMA-code-lane-plan` · `SCHEMA-impacted-tests` · `SCHEMA-test-selection` · testRefs: `tests/test-selection.audit.test.ts`
 
-#### 3.4.135  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
+#### 3.4.136  `TEST-session-lifecycle` — Host stirbt mit seiner Sitzung
 
 Abnahme der Datei tests/session-lifecycle.test.ts: der Abbau laeuft in umgekehrter Reihenfolge mit dem Store-Lock zuletzt und laeuft nach einem Fehlschlag weiter. Ohne diese Eigenschaften kehrt der Zombie-Host zurueck.
 
 verify ▶ `REQ-host-abbau-3s` · `REQ-host-end-visible` · `REQ-session-leaves-nothing-behind` · `REQ-single-kuzu-owner` · testRefs: `tests/session-lifecycle.test.ts`
 
-#### 3.4.136  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
+#### 3.4.137  `TEST-shared-views-no-fork` — Shared-Views-No-Fork-Test
 
 Die View-Berechnung liegt in @sigloch/graph-api-core; kein lokaler BQ-Regel-Fork (aimpro/src/contracts/se) mehr referenziert. (REQ-shared-views-no-fork)
 
 verify ▶ `REQ-shared-views-no-fork` · testRefs: `tests/views.no-fork.test.ts`
 
-#### 3.4.137  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
+#### 3.4.138  `TEST-single-measurement-path` — Messpfad-Konsistenz ueber drei Oberflaechen
 
 Fixture mit attributgetragenen Bindungen; assertiert identische Violations und Scores ueber alle drei Oberflaechen und faellt rot, sobald eine auf das flache Export-Encoding zurueckfaellt.
 
 verify ▶ `REQ-risk-stale-measurement` · `REQ-single-measurement-path` · `REQ-steering-post` · `REQ-steering-pre` · testRefs: `tests/steering.measurement-path.test.ts`
 
-#### 3.4.138  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
+#### 3.4.139  `TEST-single-write-door` — Die eine Tuer, in einem Nachweis
 
 Drei Assertionen in Folge: legale Mutation landet, illegale laesst den deterministischen Export identisch, Direktschreib-Versuch wird mit Exit-Code und Meldung abgewiesen.
 
 verify ▶ `REQ-gate-only-writes` · `REQ-single-write-door` · testRefs: `tests/gate.single-door.test.ts`
 
-#### 3.4.139  `TEST-sitzung-kpi` — Kennzahlen je Sitzung
+#### 3.4.140  `TEST-sitzung-kpi` — Kennzahlen je Sitzung
 
 Kennzahlen je Sitzung an einem von Hand gebauten Protokoll (Zuege je message.id, Subagenten ausgenommen) und die Hausregeln dazu in der GRAPHCODE.md-Vorlage.
 
 verify ▶ `REQ-graphcode-md-einstieg` · `REQ-graphcode-md-testauswahl` · `REQ-graphcode-md-zuege` · `REQ-modell-befragen` · `REQ-retro-misst-einstieg` · `REQ-retro-misst-modellfragen` · `REQ-retro-misst-zuege` · `REQ-sitzung-einstieg` · `REQ-zuege-sparen` · testRefs: `tests/sitzung-kpi.test.ts`
 
-#### 3.4.140  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
+#### 3.4.141  `TEST-skill-authors-through-gate` — Autoren-Skill nennt das Gate und keinen Seitenweg
 
 Fuer jede FUNC der Kette FCHAIN-skill-authoring: die per realRef gebundene Command-Datei nennt ein Schreibwerkzeug der LIVE-Registry und weist keinen direkten Schreibzugriff auf docs/graph an. Die Atomizitaet eines abgelehnten Batches deckt harness.gate.test.ts ab, nicht dieser Test.
 
 verify ▶ `REQ-skill-authors-through-gate` · testRefs: `tests/skill-authoring-gate.test.ts`
 
-#### 3.4.141  `TEST-skill-bau` — se-bau Skilltext
+#### 3.4.142  `TEST-skill-bau` — se-bau Skilltext
 
 Liest se-bau.md und prueft beide Rollen, die acht Punkte des Umsetzers, die Pflichten des Koordinators, die Werteklassen und den Weg ohne Mensch.
 
 verify ▶ `REQ-bau-nimmt-nichts-an` · `REQ-bau-vertragstest-erzeugen` · testRefs: `tests/skill-bau.test.ts`
 
-#### 3.4.142  `TEST-skill-cdr` — se-cdr Skilltext
+#### 3.4.143  `TEST-skill-cdr` — se-cdr Skilltext
 
 Liest se-cdr.md und prueft beide Schichten, den Stopp an den geprueften Funktionen, die fuenf Fragearten, schreibt nichts ins Modell und den Weg ohne Mensch.
 
 verify ▶ `REQ-cdr-fragen-vor-dem-bau` · testRefs: `tests/skill-cdr.test.ts`
 
-#### 3.4.143  `TEST-skill-constraints` — se:constraints an die Vertraege gebunden
+#### 3.4.144  `TEST-skill-constraints` — se:constraints an die Vertraege gebunden
 
 Abnahme der Datei tests/skill-constraints.test.ts: der Skill heisst se:constraints, die Tabelle traegt je Dimension Frage, Beispiel, Adressat, Pruefung und Prueffunktion; jeder Adressat darf nach R-18 eine nicht-funktionale REQ erfuellen; jede genannte Prueffunktion, Regel und jedes Feld existiert, mit Positivkontrolle.
 
 verify ▶ `REQ-constraints-skill-vertrag` · testRefs: `tests/skill-constraints.test.ts`
 
-#### 3.4.144  `TEST-skill-cr-ueber-aise` — Skills lassen den CR von aise führen
+#### 3.4.145  `TEST-skill-cr-ueber-aise` — Skills lassen den CR von aise führen
 
 Abnahme der Datei tests/skill-cr-ueber-aise.test.ts: die Skill-Texte lassen Nummer, Status und Kanten des CR von aise und vom Gate bestimmen.
 
 verify ▶ `REQ-trade-cr-ueber-aise` · testRefs: `tests/skill-cr-ueber-aise.test.ts`
 
-#### 3.4.145  `TEST-skill-faq-angleich` — Skills folgen den entschiedenen Modellfragen
+#### 3.4.146  `TEST-skill-faq-angleich` — Skills folgen den entschiedenen Modellfragen
 
 Abnahme der Datei tests/skill-faq-angleich.test.ts: die Skill-Texte folgen den entschiedenen Modellfragen, darunter der Modellzug vor dem Löschen der Dateien.
 
 verify ▶ `REQ-umbau-modellzug-vor-loeschen` · testRefs: `tests/skill-faq-angleich.test.ts`
 
-#### 3.4.146  `TEST-skill-faq-ergaenzung` — Skills tragen entschiedene FAQ-Sätze
+#### 3.4.147  `TEST-skill-faq-ergaenzung` — Skills tragen entschiedene FAQ-Sätze
 
 Abnahme der Datei tests/skill-faq-ergaenzung.test.ts: die Skill-Texte enthalten die entschiedenen FAQ-Sätze zu Testbindung, Umbau-Reihenfolge und Befunden.
 
 verify ▶ `REQ-author-req-eine-uid-je-testdatei` · `REQ-umbau-modellzug-vor-loeschen` · testRefs: `tests/skill-faq-ergaenzung.test.ts`
 
-#### 3.4.147  `TEST-skill-import-code-nennt-verb` — Skill nennt das registrierte Verb und graph_export
+#### 3.4.148  `TEST-skill-import-code-nennt-verb` — Skill nennt das registrierte Verb und graph_export
 
 Ziel: .claude/commands/se/import-code.md. Werkzeug: vitest liest Datei, src/cli.ts und src/surface/import-code-verb.ts. Bestanden, wenn das Verb im Aufruf der Datei als case in main steht und graph_export in der Datei vorkommt; rot gegen eine Datei ohne beides.
 
 verify ▶ `REQ-skill-import-code-nennt-verb` · testRefs: `tests/skill-import-code.test.ts`
 
-#### 3.4.148  `TEST-skill-irr-fremde-quellen` — se-irr fremde Quellen
+#### 3.4.149  `TEST-skill-irr-fremde-quellen` — se-irr fremde Quellen
 
 Liest se-irr.md und prueft im Schritt Foreign sources die vier Zaehlgroessen, das Verbot von Inhalten, den Weg ohne Zugang und die Uebergabe an die Liste in §2.
 
 verify ▶ `REQ-irr-fremde-quellen` · testRefs: `tests/skill-irr-fremde-quellen.test.ts`
 
-#### 3.4.149  `TEST-skill-keine-eigene-rechnung` — Skills führen keine eigene Rechnung
+#### 3.4.150  `TEST-skill-keine-eigene-rechnung` — Skills führen keine eigene Rechnung
 
 Abnahme der Datei tests/skill-keine-eigene-rechnung.test.ts: die Skill-Texte nennen Regeln, Reihenfolge und Deckung aus dem Werkzeug statt aus einer eigenen Liste.
 
 verify ▶ `REQ-close-violations-nimmt-nur-guide-regeln` · `REQ-se-review-bindung-mit-deckung` · `REQ-se-status-reihenfolge-aus-werkzeug` · testRefs: `tests/skill-keine-eigene-rechnung.test.ts`
 
-#### 3.4.150  `TEST-skill-kinds-werte` — Genannte kinds-Werte sind legal
+#### 3.4.151  `TEST-skill-kinds-werte` — Genannte kinds-Werte sind legal
 
 Jeder in Skills, Help und Executor-Vorbild genannte kinds-Wert liegt im Wertebereich der Ontologie, und jedes dort gezeigte satisfy-Paar mit kinds ist nach den Trace-Mustern legal; ein kuenstlich illegales Beispiel wird gemeldet.
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/skill-kinds-werte.test.ts`
 
-#### 3.4.151  `TEST-skill-moves-are-legal` — Skills weisen nur zulaessige Zuege an
+#### 3.4.152  `TEST-skill-moves-are-legal` — Skills weisen nur zulaessige Zuege an
 
 Prueft, dass kein Skilltext einen Zug anweist, den die Grammatik nicht zulaesst.
 
 verify ▶ `REQ-risk-skill-instructs-rejected-move`
 
-#### 3.4.152  `TEST-skill-nennt-parameter` — Skills nennen den Parameter skill
+#### 3.4.153  `TEST-skill-nennt-parameter` — Skills nennen den Parameter skill
 
 Jede Skill-Datei unter .claude/commands, deren Text graph_mutate nennt, nennt skill mit dem eigenen Namen aus dem Dateikopf; der Name passt zu skillNames. Ohne diesen Satz zählt audit_stats den Zug unter null.
 
 verify ▶ `REQ-rule-calibration` · testRefs: `tests/skill-nennt-parameter.test.ts`
 
-#### 3.4.153  `TEST-skill-red-first` — Test-Skills lehren Red-First
+#### 3.4.154  `TEST-skill-red-first` — Test-Skills lehren Red-First
 
 Abnahme der Datei tests/skill-red-first.test.ts: se-test und se-test-ui enthalten die Red-First-Regel mit ihren drei Teilen (rot sehen, aus genau diesem Grund, gegen kaputten Code), mit Positivkontrolle. (CR-GC-697)
 
 verify ▶ `REQ-se-test-red-first` · `REQ-se-test-ui-red-first` · `REQ-test-skill-red-first` · testRefs: `tests/skill-red-first.test.ts`
 
-#### 3.4.154  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
+#### 3.4.155  `TEST-skill-reports-measured-values` — Lesender Skill misst statt zu schaetzen
 
 Fuer jede FUNC der Kette FCHAIN-skill-report: die per realRef gebundene Command-Datei nennt mindestens ein Messwerkzeug aus der LIVE-Registry und kein schreibendes. Grundgesamtheit und Werkzeugnamen kommen aus Graph und Registry, nicht aus einer Liste im Test.
 
 verify ▶ `REQ-skill-reads-only` · testRefs: `tests/skill-report-measured.test.ts`
 
-#### 3.4.155  `TEST-skill-rule-ids` — Abnahme: keine erfundenen Regel-IDs in Skills und Prompts
+#### 3.4.156  `TEST-skill-rule-ids` — Abnahme: keine erfundenen Regel-IDs in Skills und Prompts
 
 Prueft, dass jede Regel-ID, die ein Skill oder der Rundenprompt nennt, im Katalog ALL_RULE_DEFS steht — Skill-Dateien, RULE_CLAUSE-Schluessel, gerenderte Klauseltexte, Dimensions-Vorlagen, System-Prompt und Nachfass-Text. Praefixe und IDs kommen aus dem Katalog, nicht aus einer gepflegten Liste. Gefunden hat der erste Lauf drei erfundene Nennungen gestrichener Regeln. Prueft die EXISTENZ, nicht die Wahrheit der Aussage ueber die Regel. (CR-GC-571)
 
 verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/skill-rule-ids.test.ts`
 
-#### 3.4.156  `TEST-skill-se-help` — se:help erklärt aus graph_help
+#### 3.4.157  `TEST-skill-se-help` — se:help erklärt aus graph_help
 
 Abnahme der Datei tests/skill-se-help.test.ts: die Anleitung von se:help ruft graph_help mit token und rules_get_violations mit detail grouped, mit Positivkontrolle.
 
 verify ▶ `REQ-se-help-erklaert-aus-graph-help` · testRefs: `tests/skill-se-help.test.ts`
 
-#### 3.4.157  `TEST-skill-top-level-ausloeser` — Ausloeser-, Akteur- und Namensregeln in den Schnitt-Skills
+#### 3.4.158  `TEST-skill-top-level-ausloeser` — Ausloeser-, Akteur- und Namensregeln in den Schnitt-Skills
 
 Abnahme der Datei tests/skill-top-level-ausloeser.test.ts: die Anleitungen von se:top-level, se:author-actor und se:author-uc tragen die entschiedenen Regeln zu Eingangsknoten, Akteuren und Namen.
 
 verify ▶ `REQ-author-actor-kein-eigenes-teil` · `REQ-author-uc-name-nennt-beduerfnis` · `REQ-top-level-ein-eingangsknoten-je-kette` · testRefs: `tests/skill-top-level-ausloeser.test.ts`
 
-#### 3.4.158  `TEST-skill-zugangsliste` — Zugangsliste und Stufe 0
+#### 3.4.159  `TEST-skill-zugangsliste` — Zugangsliste und Stufe 0
 
 Liest se-conops.md und se-plan.md: Spalten und Quellen der Zugangsliste, Pflicht-Stufe 0 mit CR Provide access und Pruefskript, Sperre fuer Stufe 1.
 
 verify ▶ `REQ-conops-zugangsliste` · `REQ-plan-stufe-null` · `REQ-zugangsliste-vor-bau` · testRefs: `tests/skill-zugangsliste.test.ts`
 
-#### 3.4.159  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
+#### 3.4.160  `TEST-skills-mcp` — Skills-MCP-Conformance-Test
 
 Alle mitgelieferten .claude/commands/se*-Dateien sind MCP-getrieben: 0 Treffer fuer die abgeschaltete localhost:3001-API (/api/graph, /api/dashboard, GRAPH_API) und jedes Skill referenziert mindestens ein Tool aus der Live-Registry. (CR-GC-132, CR-GC-876)
 
 verify ▶ `REQ-agent-loop-executes-skill` · testRefs: `tests/skills.mcp-conformance.test.ts`
 
-#### 3.4.160  `TEST-snapshot-drift` — Snapshot-Abweichung-Test
+#### 3.4.161  `TEST-snapshot-drift` — Snapshot-Abweichung-Test
 
 Start-Meldung bei neuerem Snapshot: abweichender Snapshot, stehender Export, unveränderter Snapshot, fehlender Stempel, Stempel durch graph_export.
 
 verify ▶ `REQ-snapshot-drift-notice` · testRefs: `tests/snapshot-drift.test.ts`
 
-#### 3.4.161  `TEST-stage-names-enumerated` — Stufennamen sind aufgezaehlt
+#### 3.4.162  `TEST-stage-names-enumerated` — Stufennamen sind aufgezaehlt
 
 Prueft, dass ein unbekannter Stufenname beim Bilden des Steuerungs-Snapshots abgewiesen wird.
 
 verify ▶ `REQ-risk-stage-name-free-text` · `REQ-stage-names-enumerated`
 
-#### 3.4.162  `TEST-stand-verlauf` — Verlauf je Stand
+#### 3.4.163  `TEST-stand-verlauf` — Verlauf je Stand
 
 Drei Staende in einem Wegwerf-Git-Repo: Marken, Befunde je Stufe und Tests je Stand, der juengste gleicht graph_readiness ohne Code-Abgleich; zweiter Aufruf aus dem Zwischenspeicher, andere Policy misst neu, unlesbarer Stand zaehlt unter skipped.
 
 verify ▶ `REQ-stand-verlauf` · `SCHEMA-verlauf` · testRefs: `tests/verlauf.test.ts`
 
-#### 3.4.163  `TEST-status-verb` — Abnahme des status-Verbs
+#### 3.4.164  `TEST-status-verb` — Abnahme des status-Verbs
 
 Abnahme der Datei tests/status.test.ts: eine antwortende URL zaehlt nur, wenn die Instanz dieses Repo bedient. Alle Effekte sind injiziert, damit der Befund nicht davon abhaengt, was zufaellig lokal laeuft.
 
 verify ▶ `REQ-single-kuzu-owner` · `REQ-status-sammeln` · testRefs: `tests/status.test.ts`
 
-#### 3.4.164  `TEST-steering-delta-in-answer` — Delta steht in der Antwort
+#### 3.4.165  `TEST-steering-delta-in-answer` — Delta steht in der Antwort
 
 Prueft, dass die Antwort auf einen angenommenen Zug das Delta aus dem Stand vor und nach genau diesem Zug traegt.
 
 verify ▶ `REQ-risk-steering-delta-missing` · `REQ-steering-delta-in-answer-tested`
 
-#### 3.4.165  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
+#### 3.4.166  `TEST-steering-promise-one-owner` — Steuerungszusage hat einen Verantwortlichen
 
 Prueft am Modell, dass REQ-steering-from-metrics genau einen Erfueller vom Typ FUNC hat und dass jede zuliefernde Funktion der Steuerungsschleife eine eigene Anforderung erfuellt.
 
 verify ▶ `REQ-risk-shared-steering-promise` · `REQ-steering-promise-one-owner`
 
-#### 3.4.166  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
+#### 3.4.167  `TEST-steering-snapshot` — Steuerung sieht die flachen Attribute
 
 Abnahme der Datei tests/steering-snapshot.test.ts: der Steuerungs- und Generierungspfad baut seine Sicht nicht mehr ueber den Umweg der Serialisierung, die die Attribute abflacht. Genau dieser Umweg machte Bindungen fuer die Regeln unsichtbar.
 
 verify ▶ `REQ-single-measurement-path` · testRefs: `tests/steering-snapshot.test.ts`
 
-#### 3.4.167  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
+#### 3.4.168  `TEST-store-lock` — Store-Besitz und Schreib-Serialisierung
 
 Abnahme der Datei tests/store-lock.test.ts: ein zweiter Schreiber auf demselben Store wird laut abgewiesen statt still ueberschrieben, ein verwaister Lock wird zurueckgeholt, und ein lebender bleibt unangetastet. Dazu die Serialisierung, damit sich Reseed und Mutation nie verschraenken.
 
 verify ▶ `REQ-first-session-claims-store-lock` · `REQ-harness-factory-returns-one-owner` · `REQ-one-gate-per-repo` · `REQ-reseed-ohne-verschraenkung` · `REQ-single-kuzu-owner` · `REQ-store-lock-uebernahme` · `SCHEMA-lock-owner` · testRefs: `tests/store-lock.test.ts`
 
-#### 3.4.168  `TEST-store-recovery` — Store-Recovery-Test
+#### 3.4.169  `TEST-store-recovery` — Store-Recovery-Test
 
 Abnahme der Datei tests/store-recovery.test.ts: eine Store-Datei mit ueberschriebenem Kopf oder auf die Haelfte gekuerzt wird beim Oeffnen aus dem committeten Snapshot neu aufgebaut und gemeldet, und der neue Store liegt auf Platte; ohne Snapshot bleibt der Lesefehler ein Fehler und die Sperre frei. Lock-Konflikt und beendeter Besitzer: TEST-store-lock. (CR-GC-796)
 
 verify ▶ `REQ-risk-store-unreadable` · `REQ-store-recovery` · testRefs: `tests/store-recovery.test.ts`
 
-#### 3.4.169  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
+#### 3.4.170  `TEST-target-profile` — Zielprofil als Steuer-Konfiguration
 
 Abnahme der Datei tests/target-profile.test.ts: Schema nur mit Themen, eine Datei mit Gewichten oder Zielwerten scheitert laut, Laden der Themen; graph_suggest nimmt kein target und graph_metrics traegt keine Zielmarke, gegen einen echten Disk-Kuzu. (CR-GC-861)
 
 verify ▶ `REQ-profil-laden` · `REQ-target-shifts-ranking` · `REQ-thresholds-from-config` · `SCHEMA-target-profile` · testRefs: `tests/target-profile.test.ts`
 
-#### 3.4.170  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
+#### 3.4.171  `TEST-target-shifts-ranking` — Ranking gegen zwei gegenlaeufige Zielvektoren
 
 Zwei Laeufe auf identischem Graphen, verschieden nur im Vorzeichen des Ziels; assertiert Score-Negation, Spitzenwechsel und Magnituden-Invarianz.
 
 verify ▶ `REQ-target-shifts-ranking` · `REQ-umbau-haelt-vorhersage` · testRefs: `tests/mcp.suggest.test.ts`
 
-#### 3.4.171  `TEST-target-state` — Abnahme Zielbild
+#### 3.4.172  `TEST-target-state` — Abnahme Zielbild
 
 Konzept: moneyflow und sirail werden allein ueber Regeln und Steuerung strukturiert; der Autor nimmt FUNC- und MOD-View ab; die Vertraege je Modulrand sind ohne Aussageverlust nicht weiter reduzierbar.
 
 verify ▶ `REQ-target-state`
 
-#### 3.4.172  `TEST-task-analysen` — Analyse-Tasks
+#### 3.4.173  `TEST-task-analysen` — Analyse-Tasks
 
 Am Task-Eintritt verweist der Schritt auf den Skill des Tasks; ein Bauplan-Stempel von Hand schliesst den Eintritt nicht; ein Patch ersetzt die Stempel ganz, und jeder Analyse-Skill schliesst mit Lesen, Uebernehmen, ganz Schreiben.
 
 verify ▶ `REQ-analyse-artefakt-vor-stempel` · `REQ-analyse-zaehlt-mit-auftrag` · `REQ-se-plan-stempel-ganz-schreiben` · testRefs: `tests/task-analysen.test.ts`
 
-#### 3.4.173  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
+#### 3.4.174  `TEST-test-result-withdrawn-on-change` — Testergebnis wird bei Aenderung zurueckgenommen
 
 Abnahme der Datei tests/testreport.ruecknahme.test.ts: nach einer gemeldeten Aenderung traegt der Eintrag des betroffenen Tests kein Ergebnis mehr und FM-03 meldet das Risiko; ein nicht betroffener Test behaelt sein Ergebnis; ein frisches Ergebnis im selben Aufruf bleibt; eine unbekannte uid wird abgewiesen.
 
 verify ▶ `REQ-risk-stale-test-result` · `REQ-test-result-withdrawn-on-change` · testRefs: `tests/testreport.ruecknahme.test.ts`
 
-#### 3.4.174  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
+#### 3.4.175  `TEST-test-runnable-binding` — TestRef-Aufloesungs-Test
 
 Abnahme der Datei tests/mcp.tests-deduction.test.ts: ein impacted TEST-Knoten wird ueber testRefs eindeutig auf eine lauffaehige Datei aufgeloest, graph_tests erzeugt daraus ein selektives Run-Kommando ueber genau diese Dateien, und ein TEST ohne testRefs erscheint unter unresolved statt zu verschwinden. Synthetische Disk-Kuzu-Fixture.
 
 verify ▶ `REQ-test-runnable-binding` · `REQ-tests-aufloesen` · `REQ-vitest-aufruf-aus-tests` · testRefs: `tests/mcp.tests-deduction.test.ts`
 
-#### 3.4.175  `TEST-test-schlupf` — Schlupf und Zusage
+#### 3.4.176  `TEST-test-schlupf` — Schlupf und Zusage
 
 Schlupf gegen Auswahl und Graph-Anteil, Folge rueckwaerts (VOLL neutral, Schlupf bricht ab, je CR die juengste Zeile), Blackbox- und Schnittstellenbindung am synthetischen Graphen, gepruefte JSONL-Zeilen.
 
 verify ▶ `REQ-full-run-on-probation` · `REQ-lane-red-without-report` · `REQ-risk-selection-misses-red-test` · `REQ-volllauf-nennt-folge` · `REQ-volllauf-schreibt-schlupf` · `SCHEMA-lauf-urteil` · `SCHEMA-schlupf-zeile` · `SCHEMA-vitest-lauf` · testRefs: `tests/test-schlupf.test.ts`
 
-#### 3.4.176  `TEST-test-von-hand` — Test von Hand
+#### 3.4.177  `TEST-test-von-hand` — Test von Hand
 
 Testbeschreibung von Hand im tmp-Repo mit Disk-Kuzu: Bindung ueber die Ueberschrift, Ergebnis mit Protokoll, kein vitest-Befehl, Ruecknahme bei geaendertem SCHEMA
 
 verify ▶ `REQ-test-von-hand-auswahl` · `REQ-test-von-hand-ergebnis` · `REQ-test-von-hand-spur` · testRefs: `tests/test-von-hand.test.ts`
 
-#### 3.4.177  `TEST-testref-kopf-bindung` — Kopf-Bindungs-Check
+#### 3.4.178  `TEST-testref-kopf-bindung` — Kopf-Bindungs-Check
 
 Abnahme der Datei tests/testreport.kopf-bindung.test.ts: echtes Disk-Kuzu und echte Dateien; Bindung mit Ergebnis, kein Doppel beim zweiten Lauf, Anhaengen an eine bestehende Bindung, und je ein benannter Grund fuer keine, zwei, fremde uid, fehlendes Werkzeug, fehlende und repo-fremde Datei.
 
 verify ▶ `REQ-testref-kopf-bindung` · testRefs: `tests/testreport.kopf-bindung.test.ts`
 
-#### 3.4.178  `TEST-testref-materialize` — Export stub-materialization test
+#### 3.4.179  `TEST-testref-materialize` — Export stub-materialization test
 
 graph_export scaffoldt einen lauffaehigen it.todo-Stub fuer eine fehlende testRef-Datei, ueberschreibt nie eine existierende, ueberspringt concept-only; danach loest graph_tests auf die materialisierte Datei auf. (CR-GC-205 Item 4)
 
 verify ▶ `REQ-testref-materialized` · testRefs: `tests/export.testref-materialize.test.ts`
 
-#### 3.4.179  `TEST-testreport` — Rueckweg des Testergebnisses
+#### 3.4.180  `TEST-testreport` — Rueckweg des Testergebnisses
 
 Abnahme der Datei tests/testreport.test.ts: das Ergebnis eines Laufs kommt in den Graphen und der Pruefreport wieder heraus. Vorher meldete die Ergebnis-Regel jeden TEST-Knoten als ergebnislos, waehrend die Suite vollstaendig gruen lief.
 
 verify ▶ `REQ-audit-trail` · `REQ-ingest-je-testref` · `REQ-test-runnable-binding` · testRefs: `tests/testreport.test.ts`
 
-#### 3.4.180  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
+#### 3.4.181  `TEST-thresholds-from-config` — Schwelle als Knopf, nicht als Literal
 
 Zwei Repos, identischer Graph, verschieden nur in graphcode.config.jsonc; assertiert das gekippte Urteil bei identischer Messung.
 
 verify ▶ `REQ-thresholds-from-config` · `SCHEMA-metric-policy` · testRefs: `tests/config.test.ts`
 
-#### 3.4.181  `TEST-token-efficiency` — Token-Budget-Test
+#### 3.4.182  `TEST-token-efficiency` — Token-Budget-Test
 
 graph_impact-Kontext ist messbar kleiner als ein Volltext-/grep-Dump desselben Scopes (Token-Count-Assertion).
 
 verify ▶ `REQ-benchmark-harness` · `REQ-precise-context` · `REQ-token-efficiency`
 
-#### 3.4.182  `TEST-tool-contract` — Werkzeug-Vertrags-Test
+#### 3.4.183  `TEST-tool-context` — Zugriffe des Werkzeug-Kontexts
+
+Zugriffe des Werkzeug-Kontexts am echten Kontext: Graphversion, Sitzungskennung, Besitzer-PID; createToolContext gibt das Original zurück. (CR-GC-991)
+
+verify ▶ `SCHEMA-tool-context` · testRefs: `tests/tool-context.test.ts`
+
+#### 3.4.184  `TEST-tool-contract` — Werkzeug-Vertrags-Test
 
 Parst die ECHTE Registry aus acht Fabriken an einem echten Harness gegen MCPToolRegistrySchema und den Kontext gegen ToolContext; Ablehnung prüfen die erzeugten Vertragstests.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · `SCHEMA-tool-context` · testRefs: `tests/tool-contract.test.ts`
 
-#### 3.4.183  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
+#### 3.4.185  `TEST-tool-list-change-announced` — Geaenderte Werkzeugliste wird gemeldet
 
 Prueft, dass eine laufende Sitzung eine geaenderte Werkzeugliste des Hosts erfaehrt.
 
 verify ▶ `REQ-risk-client-holds-stale-tool-list`
 
-#### 3.4.184  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
+#### 3.4.186  `TEST-uc-authoring-style` — Stilregel fuer Use Cases als Linter
 
 Abnahme der Datei tests/se-author-uc.test.ts: die Stilregel ist ausfuehrbar statt Prosa. Hoechstens 25 Woerter, hoechstens zwei Fachbegriffe, jeder davon an einem Knoten geerdet, geprueft auch gegen den committeten Graphen.
 
 verify ▶ `REQ-interactive-capture-suggest` · testRefs: `tests/se-author-uc.test.ts`
 
-#### 3.4.185  `TEST-umbau-ausloeser` — Auslöser für graph_suggest
+#### 3.4.187  `TEST-umbau-ausloeser` — Auslöser für graph_suggest
 
 Je auslösender Regel nennt der Hinweis graph_suggest; MT-02 ohne Zug nicht. An einer echten Kuzu-Arbeitskopie mit RD-04-Befund nennen beide Werkzeuge graph_suggest, schweigen nach dem Aufruf und melden neu, sobald Stand und Befundmenge sich geändert haben.
 
 verify ▶ `REQ-generate-nennt-suggest` · `REQ-violations-nennt-suggest` · testRefs: `tests/umbau-ausloeser.test.ts`
 
-#### 3.4.186  `TEST-upgrade` — Abnahme des upgrade-Verbs
+#### 3.4.188  `TEST-upgrade` — Abnahme des upgrade-Verbs
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
 verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · `REQ-update-traegt-policy-ein` · `REQ-upgrade-entfernt-fremde-skills` · testRefs: `tests/upgrade.test.ts`, `tests/config-nachziehen.test.ts`
 
-#### 3.4.187  `TEST-verify-code-plan` — verify:code --plan fährt nichts
+#### 3.4.189  `TEST-verify-code-plan` — verify:code --plan fährt nichts
 
 Startet scripts/verify-code.mjs als Prozess mit --plan: eine gebundene Quelldatei ergibt Spur CODE und ein Kommando mit den Testdateien der Auswahl, eine Quelldatei ohne Knoten ergibt Spur VOLL und das Kommando ohne Dateiargument; beide enden mit Exit 0 innerhalb von 20 s, ohne Rückmeldung und ohne vitest-Bericht. (CR-GC-972)
 
 verify ▶ `REQ-verify-code-plan-nennt-spur` · testRefs: `tests/verify-code-plan.test.ts`
 
-#### 3.4.188  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
+#### 3.4.190  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
 
 Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.
 
 verify ▶ `REQ-model-lane-fixed-set` · `REQ-testspur-passt-zum-diff` · testRefs: `tests/verify-model.completeness.test.ts`
 
-#### 3.4.189  `TEST-vertrag-aufruf-ohne-daten` — Vertragstest Aufruf ohne Daten
+#### 3.4.191  `TEST-vertrag-aufruf-ohne-daten` — Vertragstest Aufruf ohne Daten
 
 Vertragstest SCHEMA-aufruf-ohne-daten: erzeugt aus z.void (undefined angenommen, jeder Wert abgelehnt). Der Parse in stop steht in tests/flow-vertraege.test.ts. (CR-GC-989)
 
 verify ▶ `SCHEMA-aufruf-ohne-daten` · testRefs: `tests/vertrag/SCHEMA-aufruf-ohne-daten.vertrag.test.ts`
 
-#### 3.4.190  `TEST-vertrag-export-answer` — Vertragstest Antwort graph_export
+#### 3.4.192  `TEST-vertrag-export-answer` — Vertragstest Antwort graph_export
 
 Vertragstest SCHEMA-export-answer, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-973)
 
 verify ▶ `SCHEMA-export-answer` · testRefs: `tests/vertrag/SCHEMA-export-answer.vertrag.test.ts`
 
-#### 3.4.191  `TEST-vertrag-function-criticality` — Vertragstest Funktionskritikalität
+#### 3.4.193  `TEST-vertrag-function-criticality` — Vertragstest Funktionskritikalität
 
 Vertragstest SCHEMA-function-criticality gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-function-criticality` · testRefs: `tests/vertrag/SCHEMA-function-criticality.vertrag.test.ts`
 
-#### 3.4.192  `TEST-vertrag-impact-slice` — Vertragstest Wirkungsausschnitt
+#### 3.4.194  `TEST-vertrag-harness-handle` — Vertragstest Harness-Griff
+
+Erzeugter Vertragstest SCHEMA-harness-handle: Beispiel mit allen Funktionen, Ablehnung je fehlendem Mitglied und je Nicht-Funktion. (CR-GC-991)
+
+verify ▶ `SCHEMA-harness-handle` · testRefs: `tests/vertrag/SCHEMA-harness-handle.vertrag.test.ts`
+
+#### 3.4.195  `TEST-vertrag-impact-slice` — Vertragstest Wirkungsausschnitt
 
 Vertragstest SCHEMA-impact-slice gegen das Paket @sigloch/graph-api-core: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-impact-slice` · testRefs: `tests/vertrag/SCHEMA-impact-slice.vertrag.test.ts`
 
-#### 3.4.193  `TEST-vertrag-import-summary` — Vertragstest Zusammenfassung Code-Import
+#### 3.4.196  `TEST-vertrag-import-summary` — Vertragstest Zusammenfassung Code-Import
 
 Vertragstest SCHEMA-import-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Zähler, Zählung je Typ, Status, Befund je Element, leere Pfade). (CR-GC-986)
 
 verify ▶ `SCHEMA-import-summary` · testRefs: `tests/vertrag/SCHEMA-import-summary.vertrag.test.ts`
 
-#### 3.4.194  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
+#### 3.4.197  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
 
 Vertragstest SCHEMA-init-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-init-report` · testRefs: `tests/vertrag/SCHEMA-init-report.vertrag.test.ts`
 
-#### 3.4.195  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
+#### 3.4.198  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
 
 Vertragstest SCHEMA-install-result, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-install-result` · testRefs: `tests/vertrag/SCHEMA-install-result.vertrag.test.ts`
 
-#### 3.4.196  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
+#### 3.4.199  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
 
 Vertragstest SCHEMA-markdown-text, erzeugt aus dem Zod-Schema: Text angenommen, Nicht-Text abgelehnt. (CR-GC-959)
 
 verify ▶ `SCHEMA-markdown-text` · testRefs: `tests/vertrag/SCHEMA-markdown-text.vertrag.test.ts`
 
-#### 3.4.197  `TEST-vertrag-mcp-tool` — Vertragstest Werkzeug
+#### 3.4.200  `TEST-vertrag-mcp-tool` — Vertragstest Werkzeug
 
 Erzeugter Vertragstest SCHEMA-mcp-tool: Beispiel mit Funktionen, Ablehnung je Pflichtfeld, safeParse und handler als Funktion. (CR-GC-990)
 
 verify ▶ `SCHEMA-mcp-tool` · testRefs: `tests/vertrag/SCHEMA-mcp-tool.vertrag.test.ts`
 
-#### 3.4.198  `TEST-vertrag-mcp-tool-registry` — Vertragstest Werkzeug-Register
+#### 3.4.201  `TEST-vertrag-mcp-tool-registry` — Vertragstest Werkzeug-Register
 
 Erzeugter Vertragstest SCHEMA-mcp-tool-registry: leere Registry, Werkzeug je Name, Ablehnung eines Werts, der kein Werkzeug ist. (CR-GC-990)
 
 verify ▶ `SCHEMA-mcp-tool-registry` · testRefs: `tests/vertrag/SCHEMA-mcp-tool-registry.vertrag.test.ts`
 
-#### 3.4.199  `TEST-vertrag-metric-vector` — Vertragstest Metrikvektor
+#### 3.4.202  `TEST-vertrag-metric-vector` — Vertragstest Metrikvektor
 
 Vertragstest SCHEMA-metric-vector gegen das Paket @sigloch/se-engine: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-metric-vector` · testRefs: `tests/vertrag/SCHEMA-metric-vector.vertrag.test.ts`
 
-#### 3.4.200  `TEST-vertrag-module-metrics` — Vertragstest Modulkennzahlen
+#### 3.4.203  `TEST-vertrag-module-metrics` — Vertragstest Modulkennzahlen
 
 Vertragstest SCHEMA-module-metrics gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-module-metrics` · testRefs: `tests/vertrag/SCHEMA-module-metrics.vertrag.test.ts`
 
-#### 3.4.201  `TEST-vertrag-mutate-answer` — Vertragstest Antwort graph_mutate
+#### 3.4.204  `TEST-vertrag-mutate-answer` — Vertragstest Antwort graph_mutate
 
 Vertragstest SCHEMA-mutate-answer: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Union-Varianten), von Hand die Wertregeln (Zähler, graphVersion, confidence, Listen, Bindungsreport, Steuerdelta, OCC) und am echten Werkzeug jede Antwortvariante von graph_mutate (Probelauf und Anwendung, summary und full, Ablehnungen, OCC, unbekannter Skill, Format-Fehler, Warnungen, refs). (CR-GC-985)
 
 verify ▶ `SCHEMA-mutate-answer` · testRefs: `tests/vertrag/SCHEMA-mutate-answer.vertrag.test.ts`, `tests/mcp.mutate-answer.test.ts`
 
-#### 3.4.202  `TEST-vertrag-ontology-graph` — Vertragstest Ontologie-Graph
+#### 3.4.205  `TEST-vertrag-ontology-graph` — Vertragstest Ontologie-Graph
 
 Vertragstest SCHEMA-ontology-graph gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-ontology-graph` · testRefs: `tests/vertrag/SCHEMA-ontology-graph.vertrag.test.ts`
 
-#### 3.4.203  `TEST-vertrag-render-summary` — Vertragstest Zusammenfassung Render
+#### 3.4.206  `TEST-vertrag-render-summary` — Vertragstest Zusammenfassung Render
 
 Vertragstest SCHEMA-render-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Format, Sicht, Größe, Pfad, Vorlage null). (CR-GC-986)
 
 verify ▶ `SCHEMA-render-summary` · testRefs: `tests/vertrag/SCHEMA-render-summary.vertrag.test.ts`
 
-#### 3.4.204  `TEST-vertrag-repo-pfad` — Vertragstest Repo-Pfad
+#### 3.4.207  `TEST-vertrag-repo-pfad` — Vertragstest Repo-Pfad
 
 Vertragstest SCHEMA-repo-pfad: erzeugt aus dem Zod-Schema (nicht leerer Text, leerer Text abgelehnt, falscher Typ). Der Parse an den Grenzen steht in tests/flow-vertraege.test.ts. (CR-GC-989)
 
 verify ▶ `SCHEMA-repo-pfad` · testRefs: `tests/vertrag/SCHEMA-repo-pfad.vertrag.test.ts`
 
-#### 3.4.205  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
+#### 3.4.208  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
 
 Vertragstest SCHEMA-repo-status, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-repo-status` · testRefs: `tests/vertrag/SCHEMA-repo-status.vertrag.test.ts`
 
-#### 3.4.206  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
+#### 3.4.209  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
 
 Vertragstest SCHEMA-rewind-summary, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-971)
 
 verify ▶ `SCHEMA-rewind-summary` · testRefs: `tests/vertrag/SCHEMA-rewind-summary.vertrag.test.ts`
 
-#### 3.4.207  `TEST-vertrag-rule-violation` — Vertragstest Regelverletzung
+#### 3.4.210  `TEST-vertrag-rule-violation` — Vertragstest Regelverletzung
 
 Vertragstest SCHEMA-rule-violation gegen das Paket @sigloch/contracts/harness: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-rule-violation` · testRefs: `tests/vertrag/SCHEMA-rule-violation.vertrag.test.ts`
 
-#### 3.4.208  `TEST-vertrag-sitzungsende` — Vertragstest Sitzungsende
+#### 3.4.211  `TEST-vertrag-sitzungsende` — Vertragstest Sitzungsende
 
 Vertragstest SCHEMA-sitzungsende: erzeugt aus dem Zod-Schema (Werteliste eingefroren, jeder Wert angenommen, Fremdwert abgelehnt). Der Parse in end und die gebundenen Signale stehen in tests/flow-vertraege.test.ts. (CR-GC-989)
 
 verify ▶ `SCHEMA-sitzungsende` · testRefs: `tests/vertrag/SCHEMA-sitzungsende.vertrag.test.ts`
 
-#### 3.4.209  `TEST-vertrag-test-ingest-answer` — Vertragstest Antwort graph_test_ingest
+#### 3.4.212  `TEST-vertrag-test-ingest-answer` — Vertragstest Antwort graph_test_ingest
 
 Vertragstest SCHEMA-test-ingest-answer, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-973)
 
 verify ▶ `SCHEMA-test-ingest-answer` · testRefs: `tests/vertrag/SCHEMA-test-ingest-answer.vertrag.test.ts`
 
-#### 3.4.210  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
+#### 3.4.213  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
 
 Vertragstest SCHEMA-test-ingest-input, von Hand geschrieben (zwei refine, der Generator nimmt es nicht): jede angenommene Variante, Ablehnung bei keinem Feld, bei report und results zugleich und bei falschem Typ. (CR-GC-971)
 
 verify ▶ `SCHEMA-test-ingest-input` · testRefs: `tests/vertrag/SCHEMA-test-ingest-input.vertrag.test.ts`
 
-#### 3.4.211  `TEST-vertrag-trajectory` — Vertragstest Trajektorie
+#### 3.4.214  `TEST-vertrag-tool-context` — Vertragstest Werkzeug-Kontext
+
+Erzeugter Vertragstest SCHEMA-tool-context: Beispiel, Ablehnung je fehlendem Mitglied, fremder Schlüssel. (CR-GC-991)
+
+verify ▶ `SCHEMA-tool-context` · testRefs: `tests/vertrag/SCHEMA-tool-context.vertrag.test.ts`
+
+#### 3.4.215  `TEST-vertrag-trajectory` — Vertragstest Trajektorie
 
 Vertragstest SCHEMA-trajectory gegen das Paket @sigloch/learning-core/interfaces: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-trajectory` · testRefs: `tests/vertrag/SCHEMA-trajectory.vertrag.test.ts`
 
-#### 3.4.212  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
+#### 3.4.216  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
 
 Vertragstest SCHEMA-upgrade-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-upgrade-report` · testRefs: `tests/vertrag/SCHEMA-upgrade-report.vertrag.test.ts`
 
-#### 3.4.213  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
+#### 3.4.217  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
 
 Erzeugter Vertragstest SCHEMA-vertragstest-bericht
 
 verify ▶ `SCHEMA-vertragstest-bericht` · testRefs: `tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts`
 
-#### 3.4.214  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
+#### 3.4.218  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
 
 Erzeugter Vertragstest SCHEMA-vertragstest-satz
 
 verify ▶ `SCHEMA-vertragstest-satz` · testRefs: `tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts`
 
-#### 3.4.215  `TEST-vertrag-work-set` — Vertragstest Arbeitsmenge
+#### 3.4.219  `TEST-vertrag-work-set` — Vertragstest Arbeitsmenge
 
 Vertragstest SCHEMA-work-set: das erzeugte Beispiel und die Ablehnung je Pflichtfeld, dazu von Hand die leere Menge, negative und gebrochene Zugzahl, leere uid. (CR-GC-975)
 
 verify ▶ `SCHEMA-work-set` · testRefs: `tests/vertrag/SCHEMA-work-set.vertrag.test.ts`
 
-#### 3.4.216  `TEST-vertragstest-generator` — Vertragstest-Generator
+#### 3.4.220  `TEST-vertragstest-generator` — Vertragstest-Generator
 
 Unit-Tests des Erzeugers (je Konstrukt ein kleines Schema: verschachteltes Objekt, Liste, Tupel, Record, Union, optional, Tiefengrenze, rekursives z.lazy) und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
 
 verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · `REQ-contract-test-manual` · testRefs: `tests/vertragstest.test.ts`
 
-#### 3.4.217  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.221  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.218  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.222  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.219  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.223  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.220  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.224  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.221  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.225  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.222  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.226  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.223  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.227  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.224  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.228  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.225  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.229  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 

@@ -559,8 +559,8 @@ export function createToolContext(
     return ArbeitsmengeSchema.parse(arbeitsmengeAusAudit(await auditLog.query({ since: _bootAt })));
   }
 
-  // das geparste — Form und Datenanteile geprueft, die Traeger dieselben Instanzen.
-  return ToolContext.parse({
+  // Geprueft wird die Form; zurueck geht das Original, nicht die Kopie von parse.
+  const context: ToolContext = {
     harness,
     auditLog,
     graphVersion: () => _graphVersion,
@@ -575,5 +575,7 @@ export function createToolContext(
     serializeToolWrite,
     occReject,
     arbeitsmenge,
-  });
+  };
+  ToolContext.parse(context);
+  return context;
 }

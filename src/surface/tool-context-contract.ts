@@ -1,115 +1,85 @@
 /**
  * tool-context-contract.ts — SCHEMA-tool-context, der Vertrag des Werkzeug-Kontexts
- * (FLOW-tool-context, CR-GC-523, ITEM-2026-064).
+ * (FLOW-tool-context, CR-GC-523, ITEM-2026-064; ohne z.custom und superRefine CR-GC-991).
  *
  * `createToolContext` baut den Kontext, `bindToolsToHarness` reicht ihn an jede
  * Tool-Gruppe (auch der Host-Shim, fuer seine Vorlage mit gesperrtem Stand-in-Harness).
- * Bis hierher war er ein TS-Interface; jetzt ist der Typ aus dem Schema abgeleitet und
- * die Uebergabe wird geparst. Strikt, weil der Kontext ein Objektliteral
- * ist und ein unbekannter Schluessel in jede Registry-Enumeration lecken wuerde
- * (mcp.symmetry). Funktionen prueft z.custom auf Aufrufbarkeit; die Datenanteile
- * hinter den Zugriffen (Graphversion, Sitzungskennung, Besitzer-PID) prueft der
- * Refine — Zustand, der in Closures lebt, ist nur so erreichbar.
+ * Strikt, weil der Kontext ein Objektliteral ist und ein unbekannter Schluessel in jede
+ * Registry-Enumeration lecken wuerde (mcp.symmetry).
  *
- * Der Kontext erfuellt `ToolPort` (den Ausschnitt, den eine Tool-Fabrik braucht) —
- * unten erzwungen, nicht kommentiert.
+ * Der Vertrag ist die Form: jedes Mitglied eine Funktion (`z.function()`), die Traeger
+ * Objekte. Die genaue Signatur jedes Mitglieds steht an der Schnittstelle `ToolContext`
+ * (sie erweitert `ToolPort`), nicht im Schema; `satisfies Record<keyof ToolContext, …>`
+ * haelt beide Listen gleich. Was die Zugriffe zurueckgeben (Graphversion, Sitzungskennung,
+ * Besitzer-PID), ist Verhalten und steht im Test der Funktionen, nicht im Schema.
+ *
+ * `parse` liefert eine Kopie. Der Erzeuger prueft und gibt das ORIGINAL zurueck.
  *
  * @author andreas@siglochconsulting
  */
 import { z } from 'zod/v4';
-import type { AuditLog } from '@sigloch/graph-api-core';
 import type { MutateCommand, MutateResult } from '@sigloch/contracts/harness';
-import type { GraphCodeHarness } from '../kernel/harness.js';
-import { forwardIssues } from '../kernel/harness-handle-contract.js';
 import type { ToolPort } from '../kernel/tool-contract.js';
 import type { EditSource, TrajectoryStamps } from '../projections/trajectory.js';
-import type { Arbeitsmenge } from '../kernel/measure/working-set.js';
 import type { AuditOrigin } from './tool-context.js';
 
-/** Ein aufrufbares Mitglied mit seiner Signatur — die Abweisung nennt es beim Namen. */
-const member = <F extends (...args: never[]) => unknown>(name: string) =>
-  z.custom<F>((v) => typeof v === 'function', { message: `${name} muss eine Funktion sein` });
-
-const GraphVersion = z.number().int().min(0);
-const SessionId = z.string().min(1);
-const OwnerPid = z.string().min(1).nullable();
-
-export const ToolContext = z
-  .strictObject({
-    /**
-     * Der Griff wird an SEINER Grenze geprueft — `HarnessHandle.parse` in `createHarness`
-     * (FLOW-harness-handle), nicht hier ein zweites Mal. Der Host-Shim bindet die
-     * Werkzeug-Vorlage bewusst an einen zugriffsgesperrten Stand-in (`buildProxyRegistry`:
-     * „the template must stay unbound"); eine strukturelle Pruefung hier wuerde genau
-     * diesen Zugriff ausloesen. Hier gilt: ein Objekt liegt vor, kein null/Primitiv.
-     */
-    harness: z.custom<GraphCodeHarness>((v) => typeof v === 'object' && v !== null, {
-      message: 'harness muss ein Objekt sein (Griff geprueft in createHarness)',
-    }),
-    auditLog: z.custom<AuditLog>(
-      (v) => typeof (v as AuditLog | null)?.record === 'function' && typeof (v as AuditLog | null)?.query === 'function',
-      { message: 'auditLog muss record() und query() tragen' },
-    ),
-    /** Read accessor for the applied-batch counter (never a settable field). */
-    graphVersion: member<() => number>('graphVersion'),
-    /**
-     * The ONLY writer of the version + the audit log (no audit bypass, CR-GC-232).
-     * `stamps` (CR-GC-434) carries what only the GATE PATH can determine.
-     */
-    recordAudit:
-      member<
-        (
-          consumerId: string,
-          result: MutateResult,
-          commands?: MutateCommand[],
-          stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource' | 'skill'>,
-        ) => Promise<void>
-      >('recordAudit'),
-    /** Audit a dryRun preview as `operation:'validate'` (CR-GC-276) — the version does NOT move. */
-    recordPreview:
-      member<(consumerId: string, result: MutateResult, commands: MutateCommand[], skill?: string) => Promise<void>>(
-        'recordPreview',
-      ),
-    /** Note a READ tool that completed (CR-GC-434) — drained onto the next recorded mutation. */
-    noteConsulted: member<(toolName: string) => void>('noteConsulted'),
-    /** Note the template batches graph_suggest DELIVERED, as commands (CR-GC-434, CR-GC-696C). */
-    noteTemplateEdits: member<(commands: MutateCommand[]) => void>('noteTemplateEdits'),
-    /** 'suggestion-template' iff the whole batch is delivered template edits; else 'authored'. */
-    classifyEditSource: member<(commands: MutateCommand[]) => EditSource>('classifyEditSource'),
-    /** Set the provenance stamped onto every SUBSEQUENT record (CR-GC-354); replaces wholesale. */
-    setOrigin: member<(origin: AuditOrigin) => void>('setOrigin'),
-    /** The session id stamped on this context's records — one per host process. */
-    sessionId: member<() => string>('sessionId'),
-    /** The client process this one belongs to (CR-GC-357), or null when the ancestry is unknown. */
-    ownerPid: member<() => string | null>('ownerPid'),
-    /** Run a write body on the single tool-write chain (check+gate+record atomic). */
-    serializeToolWrite: member<<T>(body: () => Promise<T>) => Promise<T>>('serializeToolWrite'),
-    /**
-     * CR-GC-613 — die eigene Arbeitsmenge der Sitzung: jede uid, die ein ANGEWANDTER Schreibzug
-     * seit dem Binden dieses Kontexts angefasst hat. Die Lesewerkzeuge schneiden ihre Antwort
-     * vorgabeweise darauf und nennen den genommenen Umfang. Leer = noch kein Zug ⇒ ganzes Modell.
-     */
-    arbeitsmenge: member<() => Promise<Arbeitsmenge>>('arbeitsmenge'),
-    /** Stale-base rejection with staleDelta, or null when the base is fresh (CR-GC-233). */
-    occReject:
-      member<
-        (
-          consumerId: string,
-          baseVersion: number | undefined,
-          commands: MutateCommand[] | undefined,
-          skill?: string,
-        ) => Promise<(MutateResult & { graphVersion: number }) | null>
-      >('occReject'),
-  })
-  .superRefine((ctx, ref) => {
-    // Nur erreicht, wenn die Form stimmt (zod ueberspringt Refines nach Formfehlern).
-    forwardIssues(ref, ['graphVersion'], GraphVersion.safeParse(ctx.graphVersion()));
-    forwardIssues(ref, ['sessionId'], SessionId.safeParse(ctx.sessionId()));
-    forwardIssues(ref, ['ownerPid'], OwnerPid.safeParse(ctx.ownerPid()));
-  });
-
 /** Everything a tool group needs; the state behind it exists once per bound registry. */
-export type ToolContext = z.infer<typeof ToolContext>;
+export interface ToolContext extends ToolPort {
+  /**
+   * The ONLY writer of the version + the audit log (no audit bypass, CR-GC-232).
+   * `stamps` (CR-GC-434) carries what only the GATE PATH can determine.
+   */
+  recordAudit(
+    consumerId: string,
+    result: MutateResult,
+    commands?: MutateCommand[],
+    stamps?: Pick<TrajectoryStamps, 'respondsTo' | 'editSource' | 'skill'>,
+  ): Promise<void>;
+  /** Audit a dryRun preview as `operation:'validate'` (CR-GC-276) — the version does NOT move. */
+  recordPreview(consumerId: string, result: MutateResult, commands: MutateCommand[], skill?: string): Promise<void>;
+  /** Note a READ tool that completed (CR-GC-434) — drained onto the next recorded mutation. */
+  noteConsulted(toolName: string): void;
+  /** Note the template batches graph_suggest DELIVERED, as commands (CR-GC-434, CR-GC-696C). */
+  noteTemplateEdits(commands: MutateCommand[]): void;
+  /** 'suggestion-template' iff the whole batch is delivered template edits; else 'authored'. */
+  classifyEditSource(commands: MutateCommand[]): EditSource;
+  /** Set the provenance stamped onto every SUBSEQUENT record (CR-GC-354); replaces wholesale. */
+  setOrigin(origin: AuditOrigin): void;
+  /** The session id stamped on this context's records — one per host process. */
+  sessionId(): string;
+  /** The client process this one belongs to (CR-GC-357), or null when the ancestry is unknown. */
+  ownerPid(): string | null;
+  /** Stale-base rejection with staleDelta, or null when the base is fresh (CR-GC-233). */
+  occReject(
+    consumerId: string,
+    baseVersion: number | undefined,
+    commands: MutateCommand[] | undefined,
+    skill?: string,
+  ): Promise<(MutateResult & { graphVersion: number }) | null>;
+}
 
-/** Der Kontext erfuellt den Port der Tool-Fabriken — erzwungen beim Kompilieren. */
-const _portCheck: ToolPort = null as unknown as ToolContext;
+/**
+ * Die Mitglieder des Vertrags. `harness` ist ein Objekt, kein Griff: der Griff wird an SEINER
+ * Grenze geprueft (`HarnessHandle.parse` in `createHarness`, FLOW-harness-handle). Der Host-Shim
+ * bindet die Werkzeug-Vorlage bewusst an einen zugriffsgesperrten Stand-in (`buildProxyRegistry`:
+ * „the template must stay unbound"); ein Vertrag, der die Mitglieder des Griffs liest, wuerde
+ * genau diesen Zugriff ausloesen.
+ */
+const Mitglieder = {
+  harness: z.looseObject({}),
+  auditLog: z.looseObject({ record: z.function(), query: z.function() }),
+  graphVersion: z.function(),
+  recordAudit: z.function(),
+  recordPreview: z.function(),
+  noteConsulted: z.function(),
+  noteTemplateEdits: z.function(),
+  classifyEditSource: z.function(),
+  setOrigin: z.function(),
+  sessionId: z.function(),
+  ownerPid: z.function(),
+  serializeToolWrite: z.function(),
+  arbeitsmenge: z.function(),
+  occReject: z.function(),
+} satisfies Record<keyof ToolContext, z.ZodType>;
+
+export const ToolContext = z.strictObject(Mitglieder);

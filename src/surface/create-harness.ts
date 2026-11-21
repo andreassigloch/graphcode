@@ -81,14 +81,14 @@ export async function createHarness(
   });
   // O2 lock guards the store this factory just wired: <repoRoot>/.graphcode (CR-GC-218).
   // storePath enables the CR-GC-249 schema-drift guard (auto-reseed on meta-model change).
-  // SCHEMA-harness-handle (CR-GC-523): der Griff, den jeder Konsument abholt, ist an
-  // seiner Uebergabe geprueft — parse liefert dieselbe Instanz, nie eine Kopie.
-  return HarnessHandle.parse(
-    new GraphCodeHarness(cfg, storage, hooks, {
-      lockDir: dirname(kuzuPath),
-      storePath: kuzuPath,
-      graphcodeConfig,
-      onLockLost: opts?.onLockLost,
-    }),
-  );
+  // SCHEMA-harness-handle (CR-GC-523): der Griff, den jeder Konsument abholt, ist an seiner
+  // Uebergabe geprueft. Zurueck geht das Original: parse liefert eine Kopie ohne Prototyp.
+  const harness = new GraphCodeHarness(cfg, storage, hooks, {
+    lockDir: dirname(kuzuPath),
+    storePath: kuzuPath,
+    graphcodeConfig,
+    onLockLost: opts?.onLockLost,
+  });
+  HarnessHandle.parse(harness);
+  return harness;
 }
