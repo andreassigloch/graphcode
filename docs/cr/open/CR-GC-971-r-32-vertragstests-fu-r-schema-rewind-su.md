@@ -38,8 +38,8 @@ Kein Code geändert, daher Mutanten am Schema, je zurückgenommen (`git diff src
 ## Akzeptanz
 
 - [x] Beide Dateien grün, vorher je aus dem richtigen Grund rot gesehen (Mutanten oben).
-- [ ] `verify:code` und `verify:full CR-GC-971` grün.
-- [ ] R-32 von 23 auf 21.
+- [x] `verify:code` grün (58 Dateien, 522 Tests); `verify:full CR-GC-971` grün (248 Dateien, 2160 Tests), Schlupf 0, Link-Modus nein.
+- [x] R-32 von 23 auf 21 (`rules_evaluate`, graphVersion 1361).
 
 ---
 
