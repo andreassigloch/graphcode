@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 584 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 584 CR · 571 done · 1 open.
+Total: 584 CR · 572 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -644,5 +644,5 @@ Total: 584 CR · 571 done · 1 open.
 | `CR-GC-976` | n/a | Skills: Umzug eines Altbestands — Aufnahme, Zugangsliste, Durchlauf vor dem Schnitt (se-conops, se-cdr, se-plan) |
 | `CR-GC-977` | n/a | Skills: Rückfragen im Bau — Regel statt Einzelfall, Entscheidungen durchsuchen, Stoppen nach Rang (se-cdr, se-bau) |
 | `CR-GC-978` | n/a | se-plan: Meilenstein je Use Case, darin Blätter aufwärts (ändert CR-GC-892) |
-| `CR-GC-979` | n/a | Skills se:author-req und se-bau: feste Schreibweise fuer Definition und Verweis eines Parameters; eine fehlende Angabe ist Designfreiheit, keine Annahme (Autor 2026-11-21) |
+| `CR-GC-979` | done | Skills se:author-req und se-bau: feste Schreibweise fuer Definition und Verweis eines Parameters; eine fehlende Angabe ist Designfreiheit, keine Annahme (Autor 2026-11-21) |
 | `CR-GC-980` | n/a | Vertragstest-Generator prüft nur die erste Feldebene |

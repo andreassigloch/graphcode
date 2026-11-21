@@ -4653,7 +4653,8 @@
       "id": "CR-GC-979",
       "type": "CR",
       "name": "Skills se:author-req und se-bau: feste Schreibweise fuer Definition und Verweis eines Parameters; eine fehlende Angabe ist Designfreiheit, keine Annahme (Autor 2026-11-21)",
-      "description": "docs/cr/open/CR-GC-979-skills-se-author-req-und-se-bau-feste-sc.md"
+      "description": "docs/cr/done/CR-GC-979-skills-se-author-req-und-se-bau-feste-sc.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-980",
@@ -37582,5 +37583,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1392
+  "graphVersion": 1393
 }
