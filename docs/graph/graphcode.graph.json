@@ -4769,6 +4769,18 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-996",
+      "type": "CR",
+      "name": "Proxy-Antwortfluesse streichen",
+      "description": "docs/cr/open/CR-GC-996-proxy-antwortfluesse-streichen.md"
+    },
+    {
+      "id": "CR-GC-997",
+      "type": "CR",
+      "name": "PARAM im Skill: Invariante und berechneter Wert bekommen ein Zod-Schema im Vertragspaket, der Test prueft das Ergebnis dagegen; Einheit als UCUM-Code (Festlegung CR-SM-419, 2026-11-22)",
+      "description": "docs/cr/open/CR-GC-997-param-im-skill-invariante-und-berechnete.md"
+    },
+    {
       "id": "FCHAIN-advisory-roundtrip",
       "type": "FCHAIN",
       "name": "Advisory Roundtrip (Read -> Status -> Propose -> Apply)",
@@ -6348,25 +6360,6 @@
       "type": "FLOW",
       "name": "Spur-Anfrage (verify:full)",
       "description": "Die geaenderten Dateien und der Kontext, mit denen verify:full planCodeLane ruft. Beleg: scripts/verify-full.mjs.",
-      "sync": "sync"
-    },
-    {
-      "id": "FLOW-proxy-answer",
-      "type": "FLOW",
-      "name": "Werkzeugantwort (Host an Stellvertreter)",
-      "description": "Die Antwort des Hosts an die angedockte Sitzung, ueber host.sock. Beleg: src/surface/host-shim.ts.",
-      "sync": "sync",
-      "realRef": {
-        "file": "src/surface/host-shim.ts",
-        "symbol": "dispatch",
-        "lang": "ts"
-      }
-    },
-    {
-      "id": "FLOW-proxy-answer-agent",
-      "type": "FLOW",
-      "name": "Werkzeugantwort (an die angedockte Ablaufsteuerung)",
-      "description": "Die Werkzeugantwort, die der Stellvertreter an die Ablaufsteuerung seiner Sitzung gibt. Beleg: src/surface/host-shim.ts.",
       "sync": "sync"
     },
     {
@@ -25348,6 +25341,21 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-996",
+      "target": "FUNC-host-proxy",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-996",
+      "target": "FUNC-host-socket",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-996",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation"
+    },
+    {
       "source": "FCHAIN-advisory-roundtrip",
       "target": "FUNC-agent-loop",
       "type": "compose"
@@ -29189,26 +29197,6 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-proxy-answer",
-      "target": "FUNC-host-proxy",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-proxy-answer",
-      "target": "SCHEMA-mutate-result",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-proxy-answer-agent",
-      "target": "FUNC-agent-loop",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-proxy-answer-agent",
-      "target": "SCHEMA-mutate-result",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-proxy-build",
       "target": "FUNC-host-proxy",
       "type": "io"
@@ -32462,11 +32450,6 @@
     },
     {
       "source": "FUNC-host-proxy",
-      "target": "FLOW-proxy-answer-agent",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-host-proxy",
       "target": "FLOW-proxy-call",
       "type": "io"
     },
@@ -32493,11 +32476,6 @@
     {
       "source": "FUNC-host-socket",
       "target": "FLOW-mutate-cmd-host-socket",
-      "type": "io"
-    },
-    {
-      "source": "FUNC-host-socket",
-      "target": "FLOW-proxy-answer",
       "type": "io"
     },
     {
@@ -38583,5 +38561,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1474
+  "graphVersion": 1477
 }

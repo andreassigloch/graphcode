@@ -1,6 +1,6 @@
 ---
 name: se-bau
-version: 6
+version: 7
 description: Bau eines CR in zwei Rollen — Koordinator (Hauptsitzung) startet je CR einen Agenten, schreibt das Modell allein und schließt erst nach dem Testlauf auf der Zielumgebung; Umsetzer (Agent) baut aus dem Ausschnitt graph_context, setzt Werte nach Werteklasse, hält das Vertragspaket ein, stoppt bei jeder Lücke und nennt jede Annahme. Fester Teil jedes Bauauftrags an einen Agenten.
 ---
 
@@ -116,4 +116,9 @@ Die Einschränkung wird an mindestens einer Stelle geprüft:
 | Code | der Wert entsteht erst in der Funktion | Rest der Laufzeit ≥ 0 vor dem nächsten Schritt |
 | Test | der Wert ist ein Ergebnis des Systems | Antwortzeit ≤ 2 s |
 
-Herkunft: CR-GC-759, CR-GC-974. Dieser Skill ist die Quelle für den Ort im Code, se:author-req für den Satz der Anforderung.
+Das Zod-Schema ist die Quelle der Einschränkung. Bei Laufzeit-Parameter, Start-Konfiguration und Aufrufwert
+steht sie am Feld des Vertrags. Die Einschränkung einer Invariante oder eines berechneten Werts steht als Zod-Schema im Vertragspaket,
+Beispiel `z.number().max(2)` für `[response_time ≤ 2 s]`. Der Test prüft das gemessene Ergebnis gegen dieses Schema.
+Kein Test trägt die Grenze als eigene Zahl. Die Einheit eines Parameters ist ein UCUM-Code, z. B. `V`, `ms`, `kW.h`.
+
+Herkunft: CR-GC-759, CR-GC-974, CR-GC-997. Dieser Skill ist die Quelle für den Ort im Code, se:author-req für den Satz der Anforderung.

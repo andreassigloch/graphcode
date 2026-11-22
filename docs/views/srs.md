@@ -436,7 +436,7 @@ Der Agent liest den Skill se:import-code und ruft danach das CLI-Verb import-cod
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -860,7 +860,7 @@ Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1048,7 +1048,7 @@ Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-rules
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1212,7 +1212,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1534,7 +1534,7 @@ Die Fuehrung von aussen, fuer beide Clients: messen, Fokus waehlen, vorschlagen,
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -2096,7 +2096,7 @@ Verification ◀ `TEST-test-runnable-binding` (unit) · satisfy ◀ `FUNC-deduce
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -2202,7 +2202,7 @@ Der Agent meldet einen Testlauf oder eine Aenderung an graph_test_ingest; das We
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -2916,7 +2916,7 @@ Agent gibt graph_merge den Pfad eines Branch-Logs und den Fork-Punkt; das Werkze
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -3292,7 +3292,7 @@ Der Agent schreibt ueber graph_mutate; das Gate setzt nach jeder angenommenen Mu
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -3640,7 +3640,7 @@ Der Agent exportiert ueber graph_export die committete Datei; spaeter laedt grap
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -3808,7 +3808,7 @@ Ein Runden-Durchlauf eines Chat-Turns: der Agent liest den Blast-Radius (graph_i
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4076,7 +4076,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-read-
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4152,7 +4152,7 @@ Agent gibt Format-E an graph_mutate; das Werkzeug laesst es lesen (formatEToComm
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4428,7 +4428,7 @@ Agent erzeugt Format-E-Kandidaten aus Text (agent-seitig); graph_mutate laesst s
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4694,7 +4694,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4760,7 +4760,7 @@ Der Agent fragt die Kanten-Grammatik eines Elementtyps ab und bekommt sie zuruec
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4878,7 +4878,7 @@ Verification ◀ `TEST-test-runnable-binding` (unit) · satisfy ◀ `FUNC-deduce
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4916,7 +4916,7 @@ Nach jeder Gate-Mutation ruft das Gate den Hook makeUpdateEventHook mit dem Urte
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -5478,7 +5478,7 @@ Ein Mensch beauftragt einen Autoren-Skill; der Skill legt Knoten und Kanten durc
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -6060,7 +6060,7 @@ Der Agent meldet einen Testlauf oder eine Aenderung an graph_test_ingest; das We
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -6546,7 +6546,7 @@ Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · `FLOW-proxy-answer` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -7048,7 +7048,7 @@ Nach jeder Gate-Mutation ruft das Gate den Hook makeUpdateEventHook mit dem Urte
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -7296,7 +7296,7 @@ Verification ◀ `TEST-audit-rules-passed` (integration) · `TEST-audit-skill-un
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -7418,7 +7418,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -7904,7 +7904,7 @@ Der Agent liest den Skill se:import-code und ruft danach das CLI-Verb import-cod
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -8288,7 +8288,7 @@ Eine zweite Sitzung im selben Repo verliert die Store-Wahl und bedient ihre Abla
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-proxy-answer-agent` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-action` · `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-ergebnis` · `FLOW-formatE-artifact-agent` · `FLOW-query-request-agent` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -8360,7 +8360,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · 
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · `FLOW-proxy-answer` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -8378,87 +8378,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket` · allocate ▶ `MOD-surface`
 
-###### 3.3.1.9.1.5  `FUNC-host-proxy` — buildProxyRegistry (Stellvertreter)
-
-> auch in: `FUNC-block-host-sitzung`
-
-Die duenne Stellvertreter-Registry einer Sitzung, die die Store-Wahl verloren hat: jeder Werkzeugaufruf geht ueber host.sock an den Host, die Antwort zurueck an die eigene Ablaufsteuerung. Beleg: src/surface/host-shim.ts, buildProxyRegistry.
-
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-proxy-answer` · `FLOW-proxy-build` · io ▶ `FLOW-bind-request-proxy` · `FLOW-proxy-answer-agent` · `FLOW-proxy-call` · allocate ▶ `MOD-surface`
-
-###### `REQ-proxy-reicht-an-host` — Proxy reicht den Aufruf an den Host
-
-Wenn eine Sitzung ohne Store-Besitz ein Werkzeug aufruft, reicht buildProxyRegistry den Aufruf über host.sock an den Host und gibt dessen Antwort zurück, auch das Urteil des Gates und einen Fehler des Werkzeugs.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-proxy` · allocate ▶ `MOD-surface`
-
-###### 3.3.1.9.1.6  `FUNC-bind-tools` — bindToolsToHarness
-
-> auch in: `FCHAIN-host-start` · `FCHAIN-model-import` · `FCHAIN-skill-import-code` · `FUNC-block-ruestzeug`
-
-Bindet die Werkzeug-Registry an einen Harness, sodass jedes Werkzeug ueber dasselbe Gate schreibt wie ein Aufruf im Prozess.
-
-io ◀ `FLOW-bind-request` · `FLOW-bind-request-import-code` · `FLOW-bind-request-proxy` · `FLOW-mcp-tool` · `FLOW-tool-context` · io ▶ `FLOW-context-request` · `FLOW-read-bind` · `FLOW-tool-registry` · allocate ▶ `MOD-surface`
-
-###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
-
-Wenn ein Host startet, bindet die Registry jedes Werkzeug der MCP-Oberflaeche an die Harness dieses Repos; jeder Werkzeugaufruf wirkt auf den Store dieses Repos.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · allocate ▶ `MOD-surface`
-
-###### `REQ-tool-input-parsed-once` — Werkzeug-Eingabe einmal im Register geparst
-
-Jede Werkzeug-Eingabe muss genau einmal gegen das Schema des Werkzeugs geparst werden, im Register: Defaults gesetzt, Ungueltiges abgewiesen, gleich ob der Aufruf ueber MCP, den Host-Socket oder direkt im Prozess kommt. (CR-GC-866)
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-werkzeug-eingang-geparst` (integration) · satisfy ◀ `FUNC-bind-tools` · allocate ▶ `MOD-surface`
-
-###### 3.3.1.9.1.7  `FUNC-serve-stdio` — serveStdio()
-
-> auch in: `FCHAIN-host-start` · `FCHAIN-schema-migration` · `FUNC-block-host-sitzung`
-
-Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
-
-io ◀ `FLOW-cli-command` · `FLOW-harness-handle` · `FLOW-tool-registry` · io ▶ `FLOW-auto-export-register` · `FLOW-bind-request` · `FLOW-broadcast-hook` · `FLOW-gve-attach` · `FLOW-harness-request` · `FLOW-lifecycle-create` · `FLOW-own-kuzu-request-stdio` · `FLOW-proxy-build` · `FLOW-seed-request` · `FLOW-socket-start` · `FLOW-store-close` · `FLOW-store-open` · `FLOW-tool-surface` · allocate ▶ `MOD-surface`
-
-###### `REQ-stdio-fuehrt-im-repo-aus` — Stdio führt den Aufruf im Repo aus
-
-Wenn ein MCP-Client über stdio ein Werkzeug aufruft, führt serveStdio das Werkzeug auf dem Store des Repos aus, in dem der Host läuft, und schickt das Ergebnis als Antwort zurück.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · allocate ▶ `MOD-surface`
-
-###### 3.3.1.9.1.8  `FUNC-graph-store` — GraphStore
-
-> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-generation-states` · `FCHAIN-health` · `FCHAIN-host-start` · `FCHAIN-impact-testing` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FCHAIN-session-end` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-import-code` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-speicherwerk`
-
-Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
-
-io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · `FLOW-store-build` · `FLOW-store-close` · `FLOW-store-close-cli` · `FLOW-store-close-render` · `FLOW-store-close-rewind` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-import-target` · `FLOW-lock-release-close` · `FLOW-store-load` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
-
-###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
-
-Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
-
-priority: must · status: open · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
-
-Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
-
-priority: must · status: reviewed · kinds: functional
-
-Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
-
-###### 3.3.1.9.1.9  `FUNC-mutate` — mutate(commands)
+###### 3.3.1.9.1.5  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-skill-import-code` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-gate`
 
@@ -8514,7 +8434,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
-###### 3.3.1.9.1.10  `FUNC-evaluate-rules` — evaluateRules()
+###### 3.3.1.9.1.6  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-health` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -8537,6 +8457,86 @@ evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
+
+###### 3.3.1.9.1.7  `FUNC-graph-store` — GraphStore
+
+> auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-agent-query` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-dashboard-metrics` · `FCHAIN-doc-export` · `FCHAIN-generation-states` · `FCHAIN-health` · `FCHAIN-host-start` · `FCHAIN-impact-testing` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-recall` · `FCHAIN-schema-migration` · `FCHAIN-session-end` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-import-code` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-snapshot-roundtrip` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-speicherwerk`
+
+Der eine Besitzer des Graph-Zustands: oeffnet den Store (Lock, Schema-Guard), laedt, uebernimmt angenommene Deltas und importierte Graphen, leert fuer den Reseed, schliesst. Arbeitskopie und Kuzu-Store werden nur hier geschrieben. (CR-GC-503)
+
+io ◀ `FLOW-graph-delta` · `FLOW-imported-graph` · `FLOW-store-build` · `FLOW-store-close` · `FLOW-store-close-cli` · `FLOW-store-close-render` · `FLOW-store-close-rewind` · io ▶ `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-import-target` · `FLOW-lock-release-close` · `FLOW-store-load` · `FLOW-store-query` · allocate ▶ `MOD-kernel`
+
+###### `REQ-snapshot-drift-notice` — Snapshot-Abweichung beim Start melden
+
+Beim Start meldet der Host, wenn der committete Snapshot seit dem letzten Export oder Reseed ein anderer ist als der, aus dem der Store stammt (Hash der Datei gegen den Stempel unter .graphcode). Er nennt graph_reseed und ändert nichts; steht ein Export aus, meldet er den Konflikt. Fehlt der Stempel, meldet er nichts. Kein zweites DB-Handle, kein Vergleich Knoten für Knoten. (CR-GC-931)
+
+priority: must · status: open · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-snapshot-drift` (integration) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
+###### `REQ-steering-pre` — Vorbedingung Steuerungsrunde
+
+Vor einer Steuerungsrunde ist der Store initialisiert, der Graph geladen und der Regelkatalog samt Urteils-Policy verfuegbar.
+
+priority: must · status: reviewed · kinds: functional
+
+Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-graph-store` · allocate ▶ `MOD-kernel`
+
+###### 3.3.1.9.1.8  `FUNC-host-proxy` — buildProxyRegistry (Stellvertreter)
+
+> auch in: `FUNC-block-host-sitzung`
+
+Die duenne Stellvertreter-Registry einer Sitzung, die die Store-Wahl verloren hat: jeder Werkzeugaufruf geht ueber host.sock an den Host, die Antwort zurueck an die eigene Ablaufsteuerung. Beleg: src/surface/host-shim.ts, buildProxyRegistry.
+
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-proxy-build` · io ▶ `FLOW-bind-request-proxy` · `FLOW-proxy-call` · allocate ▶ `MOD-surface`
+
+###### `REQ-proxy-reicht-an-host` — Proxy reicht den Aufruf an den Host
+
+Wenn eine Sitzung ohne Store-Besitz ein Werkzeug aufruft, reicht buildProxyRegistry den Aufruf über host.sock an den Host und gibt dessen Antwort zurück, auch das Urteil des Gates und einen Fehler des Werkzeugs.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-proxy` · allocate ▶ `MOD-surface`
+
+###### 3.3.1.9.1.9  `FUNC-bind-tools` — bindToolsToHarness
+
+> auch in: `FCHAIN-host-start` · `FCHAIN-model-import` · `FCHAIN-skill-import-code` · `FUNC-block-ruestzeug`
+
+Bindet die Werkzeug-Registry an einen Harness, sodass jedes Werkzeug ueber dasselbe Gate schreibt wie ein Aufruf im Prozess.
+
+io ◀ `FLOW-bind-request` · `FLOW-bind-request-import-code` · `FLOW-bind-request-proxy` · `FLOW-mcp-tool` · `FLOW-tool-context` · io ▶ `FLOW-context-request` · `FLOW-read-bind` · `FLOW-tool-registry` · allocate ▶ `MOD-surface`
+
+###### `REQ-mcp-tool-registry` — MCP-Tool-Registry an Harness gebunden
+
+Wenn ein Host startet, bindet die Registry jedes Werkzeug der MCP-Oberflaeche an die Harness dieses Repos; jeder Werkzeugaufruf wirkt auf den Store dieses Repos.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-formate-ops` (integration) · `TEST-help-tool` (integration) · `TEST-mcp-readiness` (integration) · `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-bind-tools` · allocate ▶ `MOD-surface`
+
+###### `REQ-tool-input-parsed-once` — Werkzeug-Eingabe einmal im Register geparst
+
+Jede Werkzeug-Eingabe muss genau einmal gegen das Schema des Werkzeugs geparst werden, im Register: Defaults gesetzt, Ungueltiges abgewiesen, gleich ob der Aufruf ueber MCP, den Host-Socket oder direkt im Prozess kommt. (CR-GC-866)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-werkzeug-eingang-geparst` (integration) · satisfy ◀ `FUNC-bind-tools` · allocate ▶ `MOD-surface`
+
+###### 3.3.1.9.1.10  `FUNC-serve-stdio` — serveStdio()
+
+> auch in: `FCHAIN-host-start` · `FCHAIN-schema-migration` · `FUNC-block-host-sitzung`
+
+Bindet die MCP-Tool-Registry headless an einen stdio-Transport; jeder Agent (Claude Code oder OpenCode, BYOK) ist ein gleichwertiger Client. Beweist agent-agnostisch + headless. (CR-GC-124)
+
+io ◀ `FLOW-cli-command` · `FLOW-harness-handle` · `FLOW-tool-registry` · io ▶ `FLOW-auto-export-register` · `FLOW-bind-request` · `FLOW-broadcast-hook` · `FLOW-gve-attach` · `FLOW-harness-request` · `FLOW-lifecycle-create` · `FLOW-own-kuzu-request-stdio` · `FLOW-proxy-build` · `FLOW-seed-request` · `FLOW-socket-start` · `FLOW-store-close` · `FLOW-store-open` · `FLOW-tool-surface` · allocate ▶ `MOD-surface`
+
+###### `REQ-stdio-fuehrt-im-repo-aus` — Stdio führt den Aufruf im Repo aus
+
+Wenn ein MCP-Client über stdio ein Werkzeug aufruft, führt serveStdio das Werkzeug auf dem Store des Repos aus, in dem der Host läuft, und schickt das Ergebnis als Antwort zurück.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-mcp-stdio-server` (integration) · satisfy ◀ `FUNC-serve-stdio` · allocate ▶ `MOD-surface`
 
 ###### 3.3.1.9.2  `FCHAIN-host-start` — Host starten
 
@@ -8908,7 +8908,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · `FLOW-proxy-answer` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -9438,7 +9438,7 @@ Verification ◀ `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-s
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · `FLOW-proxy-answer` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -9914,7 +9914,7 @@ Verification ◀ `TEST-readonly-bridge` (integration) · satisfy ◀ `FUNC-healt
 
 Die duenne Stellvertreter-Registry einer Sitzung, die die Store-Wahl verloren hat: jeder Werkzeugaufruf geht ueber host.sock an den Host, die Antwort zurueck an die eigene Ablaufsteuerung. Beleg: src/surface/host-shim.ts, buildProxyRegistry.
 
-io ◀ `FLOW-formatE-artifact-agent` · `FLOW-proxy-answer` · `FLOW-proxy-build` · io ▶ `FLOW-bind-request-proxy` · `FLOW-proxy-answer-agent` · `FLOW-proxy-call` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-formatE-artifact-agent` · `FLOW-proxy-build` · io ▶ `FLOW-bind-request-proxy` · `FLOW-proxy-call` · allocate ▶ `MOD-surface`
 
 ###### `REQ-proxy-reicht-an-host` — Proxy reicht den Aufruf an den Host
 
@@ -9930,7 +9930,7 @@ Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-proxy`
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · `FLOW-proxy-answer` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -13538,565 +13538,553 @@ Die geaenderten Dateien und der Kontext, mit denen verify:full planCodeLane ruft
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-plan-code-lane` · schema ▶ `SCHEMA-code-lane-plan`
 
-###### 3.3.4.1.174  `FLOW-proxy-answer` — Werkzeugantwort (Host an Stellvertreter)
-
-Die Antwort des Hosts an die angedockte Sitzung, ueber host.sock. Beleg: src/surface/host-shim.ts.
-
-io ◀ `FUNC-host-socket` · io ▶ `FUNC-host-proxy` · schema ▶ `SCHEMA-mutate-result`
-
-###### 3.3.4.1.175  `FLOW-proxy-answer-agent` — Werkzeugantwort (an die angedockte Ablaufsteuerung)
-
-Die Werkzeugantwort, die der Stellvertreter an die Ablaufsteuerung seiner Sitzung gibt. Beleg: src/surface/host-shim.ts.
-
-io ◀ `FUNC-host-proxy` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mutate-result`
-
-###### 3.3.4.1.176  `FLOW-proxy-build` — Stellvertreter bauen
+###### 3.3.4.1.174  `FLOW-proxy-build` — Stellvertreter bauen
 
 Der Auftrag an buildProxyRegistry, die Stellvertreter-Werkzeuge fuer eine angedockte Sitzung zu bauen. Beleg: src/surface/mcp-server.ts. (CR-GC-849)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-host-proxy` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.177  `FLOW-proxy-call` — Werkzeugaufruf (Stellvertreter an Host)
+###### 3.3.4.1.175  `FLOW-proxy-call` — Werkzeugaufruf (Stellvertreter an Host)
 
 Ein Werkzeugaufruf einer angedockten Sitzung an den Host, ueber host.sock (callHost). Traegt jeden Werkzeugaufruf, nicht nur graph_mutate. Beleg: src/surface/host-shim.ts.
 
 io ◀ `FUNC-host-proxy` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.178  `FLOW-query-export` — Sichtauftrag an den Renderer
+###### 3.3.4.1.176  `FLOW-query-export` — Sichtauftrag an den Renderer
 
 Graph, Sicht und Systemname, mit denen graph_export je Sicht exportMarkdown ruft.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.179  `FLOW-query-request-agent` — Query-Request (Agent)
+###### 3.3.4.1.177  `FLOW-query-request-agent` — Query-Request (Agent)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-agent-loop → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-graph-readiness, FUNC-graph-metrics, FUNC-rules-tool, FUNC-authoring-guide, FUNC-graph-export-snapshot; aufgetrennt aus FLOW-query-request (CR-GC-510, Quelle korrigiert CR-GC-815).
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-graph-export-snapshot` · `FUNC-graph-help` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.180  `FLOW-query-request-auto-export` — Query-Request (auto-export)
+###### 3.3.4.1.178  `FLOW-query-request-auto-export` — Query-Request (auto-export)
 
 Der entprellte Aufruf des graph_export-Werkzeugs nach einer angenommenen Mutation (250 ms, single-flight).
 
 io ◀ `FUNC-auto-export` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.181  `FLOW-read-bind` — Lese-Werkzeuge binden
+###### 3.3.4.1.179  `FLOW-read-bind` — Lese-Werkzeuge binden
 
 Der Werkzeug-Kontext, mit dem bindToolsToHarness die Lese-Werkzeuge bindet (bindReadTools). Beleg: src/surface/mcp-tools.ts. (CR-GC-849)
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-tool-context`
 
-###### 3.3.4.1.182  `FLOW-read-request` — Leseanfrage (Werkzeug an Kern)
+###### 3.3.4.1.180  `FLOW-read-request` — Leseanfrage (Werkzeug an Kern)
 
 Die Leseanfrage, die ein Lesewerkzeug (graph_impact, graph_expand, graph_elements) an den Kern gibt: Knoten, Tiefe, Filter. Beleg: src/surface/read.ts.
 
 io ◀ `FUNC-read-tools` · io ▶ `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.183  `FLOW-readiness-report` — Readiness-Report
+###### 3.3.4.1.181  `FLOW-readiness-report` — Readiness-Report
 
 Der Bericht von graph_readiness an jeden, der ihn ueber das Werkzeug abfragt: die Ablaufsteuerung und das Dashboard ueber host.sock (detail:true, mit den rohen Verstoessen). Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten. (CR-GC-822)
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-agent-loop` · `FUNC-host-socket` · schema ▶ `SCHEMA-readiness-report`
 
-###### 3.3.4.1.184  `FLOW-readiness-request` — Befunde (an die Marken)
+###### 3.3.4.1.182  `FLOW-readiness-request` — Befunde (an die Marken)
 
 Die Befunde einer Erhebung (evaluateAll), die graph_readiness an readinessOf gibt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-compute-readiness` · schema ▶ `SCHEMA-rule-violation`
 
-###### 3.3.4.1.185  `FLOW-render-file` — Sicht als Datei
+###### 3.3.4.1.183  `FLOW-render-file` — Sicht als Datei
 
 Die geschriebene Datei der Sicht (md, docx oder pdf) samt Zusammenfassung an den Auftraggeber.
 
 io ◀ `FUNC-render-verb` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-render-summary`
 
-###### 3.3.4.1.186  `FLOW-render-view-request` — Sichtauftrag (render)
+###### 3.3.4.1.184  `FLOW-render-view-request` — Sichtauftrag (render)
 
 Die angeforderte Sicht aus graphcode render, geprueft gegen MarkdownViewSchema, an den Renderer.
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-markdown-view`
 
-###### 3.3.4.1.187  `FLOW-reseed-answer` — Antwort graph_reseed
+###### 3.3.4.1.185  `FLOW-reseed-answer` — Antwort graph_reseed
 
 Die Antwort von graph_reseed: Zahl der Knoten und Kanten nach dem Neuaufbau. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-reseed-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.188  `FLOW-reseed-order` — Reseed-Auftrag
+###### 3.3.4.1.186  `FLOW-reseed-order` — Reseed-Auftrag
 
 Der serialisierte Auftrag, den Store aus dem Snapshot neu aufzusetzen. Beleg: src/kernel/harness.ts, reseed ruft applyReseed hinter dem Single-Writer. (CR-GC-768)
 
 io ◀ `FUNC-reseed` · io ▶ `FUNC-apply-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.189  `FLOW-reseed-order-open` — Neuaufbau-Auftrag (Store oeffnen)
+###### 3.3.4.1.187  `FLOW-reseed-order-open` — Neuaufbau-Auftrag (Store oeffnen)
 
 Der Neuaufbau aus der committeten SSOT, den GraphStore.open bei Schema-Abweichung anstoesst (applyReseed). Beleg: src/kernel/graph-store.ts.
 
 io ◀ `FUNC-open-store` · io ▶ `FUNC-apply-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.190  `FLOW-reseed-request` — Reseed-Anfrage (Werkzeug)
+###### 3.3.4.1.188  `FLOW-reseed-request` — Reseed-Anfrage (Werkzeug)
 
 Der Aufruf harness.reseed aus dem Werkzeug graph_reseed, mit optionalem Pfad. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-reseed-tool` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.191  `FLOW-reseed-snapshot` — Snapshot zum Reseed
+###### 3.3.4.1.189  `FLOW-reseed-snapshot` — Snapshot zum Reseed
 
 Der bereitgestellte Snapshot eines Commits auf dem Weg zum Neuaufsetzen. Beleg: src/surface/rewind.ts, executeRewind ruft harness.reseed. (CR-GC-768)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.192  `FLOW-reseeded-graph` — Snapshot zum Neuaufsetzen
+###### 3.3.4.1.190  `FLOW-reseeded-graph` — Snapshot zum Neuaufsetzen
 
 Der Pfad des bereitgestellten Snapshots, den applyReseed nach dem Leeren des Stores an seedFromJsonFile gibt. Beleg: src/kernel/harness-import.ts:240-241.
 
 io ◀ `FUNC-apply-reseed` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.193  `FLOW-rewind-summary` — Rewind-Zusammenfassung
+###### 3.3.4.1.191  `FLOW-rewind-summary` — Rewind-Zusammenfassung
 
 Die Zusammenfassung von graphcode rewind auf der Schale: Ref, Snapshot, wiederhergestellter Stand. Beleg: src/cli.ts schreibt executeRewind nach stderr (CR-GC-311, CR-GC-823)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-rewind-summary`
 
-###### 3.3.4.1.194  `FLOW-rule-findings` — Regelbefunde
+###### 3.3.4.1.192  `FLOW-rule-findings` — Regelbefunde
 
 Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)
 
 io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` · schema ▶ `SCHEMA-rule-violation`
 
-###### 3.3.4.1.195  `FLOW-rules-answer` — Regelbefunde (Antwort)
+###### 3.3.4.1.193  `FLOW-rules-answer` — Regelbefunde (Antwort)
 
 Die Regelbefunde, wie rules_evaluate oder rules_get_violations sie der Ablaufsteuerung geben.
 
 io ◀ `FUNC-rules-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-rule-violation`
 
-###### 3.3.4.1.196  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
+###### 3.3.4.1.194  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
 
 Der aktuelle und der gespeicherte Fingerabdruck der DDL, an GraphStore.open.
 
 io ◀ `FUNC-schema-guard` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-schema-fingerprint`
 
-###### 3.3.4.1.197  `FLOW-schlupf-request` — Schlupf-Anfrage
+###### 3.3.4.1.195  `FLOW-schlupf-request` — Schlupf-Anfrage
 
 Rote Tests, Auswahl und reine Graph-Treffer, die verify:full an schlupfVon gibt. Beleg: scripts/verify-full.mjs.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-measure-test-schlupf` · schema ▶ `SCHEMA-schlupf-zeile`
 
-###### 3.3.4.1.198  `FLOW-schlupf-result` — Schlupf
+###### 3.3.4.1.196  `FLOW-schlupf-result` — Schlupf
 
 Der Schlupf, den schlupfVon an verify:full zurueckgibt. Beleg: src/projections/test-schlupf.ts.
 
 io ◀ `FUNC-measure-test-schlupf` · io ▶ `FUNC-verify-lane-full` · schema ▶ `SCHEMA-schlupf-zeile`
 
-###### 3.3.4.1.199  `FLOW-schlupf-zeile` — Schlupf-Zeile
+###### 3.3.4.1.197  `FLOW-schlupf-zeile` — Schlupf-Zeile
 
 Die Zeile in docs/messung/testauswahl.jsonl und auf stderr, die verify:full je Lauf schreibt.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-schlupf-zeile`
 
-###### 3.3.4.1.200  `FLOW-seed-request` — Erstbefuellung (Hoststart)
+###### 3.3.4.1.198  `FLOW-seed-request` — Erstbefuellung (Hoststart)
 
 Die Erstbefuellung eines leeren Stores beim Hoststart (harness.seedFromJson). Beleg: src/surface/mcp-server.ts, bootHost.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.201  `FLOW-seed-request-import-code` — Erstbefuellung (import-code)
+###### 3.3.4.1.199  `FLOW-seed-request-import-code` — Erstbefuellung (import-code)
 
 Die Erstbefuellung eines leeren Stores vor dem Code-Import. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.202  `FLOW-seed-request-render` — Erstbefuellung (render)
+###### 3.3.4.1.200  `FLOW-seed-request-render` — Erstbefuellung (render)
 
 Die Erstbefuellung eines leeren Stores, bevor graphcode render die Sicht rendert. Beleg: src/surface/render-verb.ts. (CR-GC-909)
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.203  `FLOW-select-request` — Auswahl-Anfrage (testImpact)
+###### 3.3.4.1.201  `FLOW-select-request` — Auswahl-Anfrage (testImpact)
 
 Graph und Aenderungsmenge, die testImpact an impactedTests gibt. Beleg: src/kernel/harness.ts.
 
 io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.204  `FLOW-select-request-lane` — Auswahl-Anfrage (Code-Spur)
+###### 3.3.4.1.202  `FLOW-select-request-lane` — Auswahl-Anfrage (Code-Spur)
 
 Committeter Graph und Knoten der Aenderung, die planCodeLane an impactedTests gibt. Beleg: src/projections/test-selection-audit.ts.
 
 io ◀ `FUNC-plan-code-lane` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.205  `FLOW-selected-tests` — Gewaehlte Tests
+###### 3.3.4.1.203  `FLOW-selected-tests` — Gewaehlte Tests
 
 Die betroffenen TEST-Knoten, die impactedTests an den Aufrufer zurueckgibt. Beleg: src/kernel/measure/test-selection.ts.
 
 io ◀ `FUNC-select-tests` · io ▶ `FUNC-plan-code-lane` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-impacted-tests`
 
-###### 3.3.4.1.206  `FLOW-session-end` — Sitzungsende
+###### 3.3.4.1.204  `FLOW-session-end` — Sitzungsende
 
 Das Ende der Sitzung: der stdio-Client schliesst, ein Signal kommt oder der Store-Lock geht verloren. Der Grund ist ein Wert aus SCHEMA-sitzungsende. Beleg: src/surface/session-lifecycle.ts, installTriggers und end. (CR-GC-989)
 
 io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-session-shutdown` · schema ▶ `SCHEMA-sitzungsende`
 
-###### 3.3.4.1.207  `FLOW-session-entry` — Sitzungseintrag
+###### 3.3.4.1.205  `FLOW-session-entry` — Sitzungseintrag
 
 Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
 
-###### 3.3.4.1.208  `FLOW-session-registry` — Sitzungsregister
+###### 3.3.4.1.206  `FLOW-session-registry` — Sitzungsregister
 
 Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird.
 
 io ◀ `FUNC-gve-sessions` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-session-registry`
 
-###### 3.3.4.1.209  `FLOW-skill-request` — Skill-Aufruf
+###### 3.3.4.1.207  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-bau` · `FUNC-se-cdr` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.210  `FLOW-snapshot-request` — Messanfrage (generationStep)
+###### 3.3.4.1.208  `FLOW-snapshot-request` — Messanfrage (generationStep)
 
 Graph und Metrikpolitik, die generationStep an takeSteeringSnapshot gibt. Beleg: src/loop/generate.ts.
 
 io ◀ `FUNC-generation-step` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.211  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
+###### 3.3.4.1.209  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
 
 Graph und Metrikpolitik, die graph_mutate im Probelauf vor und nach dem Zug an takeSteeringSnapshot gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.212  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
+###### 3.3.4.1.210  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
 
 Graph und Metrikpolitik, die graph_readiness an takeSteeringSnapshot gibt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.213  `FLOW-socket-close` — Host-Socket schliessen
+###### 3.3.4.1.211  `FLOW-socket-close` — Host-Socket schliessen
 
 Der Auftrag beim Sitzungsende, den Host-Socket zu schliessen und die Socket-Datei zu entfernen. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.214  `FLOW-socket-start` — Host-Socket starten
+###### 3.3.4.1.212  `FLOW-socket-start` — Host-Socket starten
 
 Die Werkzeug-Registry, mit der bootHost den Host-Socket startet. Beleg: src/surface/mcp-server.ts, bootHost.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.215  `FLOW-sse-frame` — SSE-Frame (versioniert)
+###### 3.3.4.1.213  `FLOW-sse-frame` — SSE-Frame (versioniert)
 
 Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501) BENANNTE OFFENE DIFFERENZ: graph-view-edit abonniert /events heute nicht, es beobachtet die Snapshot-Datei; das Abo ist Ziel von CR-GC-809. (CR-GC-822)
 
 io ◀ `FUNC-broadcast-diff` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-###### 3.3.4.1.216  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+###### 3.3.4.1.214  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-steering-delta`
 
-###### 3.3.4.1.217  `FLOW-steering-pair` — Snapshot-Paar
+###### 3.3.4.1.215  `FLOW-steering-pair` — Snapshot-Paar
 
 Die zwei Steuerungs-Snapshots vor und nach dem Probelauf, die graph_mutate an computeSteeringDelta gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-compute-steering-delta` · schema ▶ `SCHEMA-steering-snapshot`
 
-###### 3.3.4.1.218  `FLOW-steering-snapshot` — Steering-Snapshot
+###### 3.3.4.1.216  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-generation-step` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · schema ▶ `SCHEMA-steering-snapshot`
 
-###### 3.3.4.1.219  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
+###### 3.3.4.1.217  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
 
 Der Aufruf von graph_generate durch die Ablaufsteuerung: Intention, defer, task, peek.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.220  `FLOW-store-build` — Store und Lock anlegen
+###### 3.3.4.1.218  `FLOW-store-build` — Store und Lock anlegen
 
 Store und Lock, die die Harness-Fabrik beim Bau des Harness anlegt. Beleg: src/kernel/harness.ts, GraphCodeHarness legt GraphStore und StoreLock an. (CR-GC-849)
 
 io ◀ `FUNC-create-harness` · io ▶ `FUNC-claim-store-lock` · `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.221  `FLOW-store-close` — Store schliessen
+###### 3.3.4.1.219  `FLOW-store-close` — Store schliessen
 
 Das Schliessen des Stores am Sitzungsende: serveStdio ruft harness.close, das GraphStore.close ruft. Beleg: src/surface/mcp-server.ts. (CR-GC-849)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.222  `FLOW-store-close-cli` — Store schliessen (CLI)
+###### 3.3.4.1.220  `FLOW-store-close-cli` — Store schliessen (CLI)
 
 Das Schliessen des Stores beim CLI-Abschluss: shutdown ruft harness.close, das GraphStore.close ruft. Beleg: src/cli.ts. (CR-GC-849)
 
 io ◀ `FUNC-cli-dispatch` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.223  `FLOW-store-close-render` — Store schliessen (render)
+###### 3.3.4.1.221  `FLOW-store-close-render` — Store schliessen (render)
 
 Das Schliessen des Stores am Ende von graphcode render: harness.close ruft GraphStore.close. Beleg: src/surface/render-verb.ts. (CR-GC-909)
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.224  `FLOW-store-close-rewind` — Store schliessen (rewind)
+###### 3.3.4.1.222  `FLOW-store-close-rewind` — Store schliessen (rewind)
 
 Das Schliessen des Stores am Ende von rewind: executeRewind ruft harness.close, das GraphStore.close ruft. Beleg: src/surface/rewind.ts. (CR-GC-849)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.225  `FLOW-store-load` — Geladener Graph
+###### 3.3.4.1.223  `FLOW-store-load` — Geladener Graph
 
 Der aus Kuzu geladene Graph, den open() beim Oeffnen von load() bekommt. Beleg: src/kernel/graph-store.ts. (CR-GC-849)
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.226  `FLOW-store-open` — Store oeffnen (serveStdio)
+###### 3.3.4.1.224  `FLOW-store-open` — Store oeffnen (serveStdio)
 
 Der Aufruf harness.initialize, der den Store oeffnet; serveStdio wartet darauf, er ist die Store-Wahl (CR-GC-218). Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.227  `FLOW-store-open-import-code` — Store oeffnen (import-code)
+###### 3.3.4.1.225  `FLOW-store-open-import-code` — Store oeffnen (import-code)
 
 Der Aufruf harness.initialize aus import-code. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.228  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
+###### 3.3.4.1.226  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
 
 Der Aufruf harness.initialize aus ownKuzu. Beleg: src/kernel/own-kuzu.ts.
 
 io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.229  `FLOW-store-open-render` — Store oeffnen (render)
+###### 3.3.4.1.227  `FLOW-store-open-render` — Store oeffnen (render)
 
 Der Aufruf harness.initialize aus graphcode render. Beleg: src/surface/render-verb.ts. (CR-GC-909)
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.230  `FLOW-store-open-rewind` — Store oeffnen (rewind)
+###### 3.3.4.1.228  `FLOW-store-open-rewind` — Store oeffnen (rewind)
 
 Der Aufruf harness.initialize aus rewind. Beleg: src/surface/rewind.ts.
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.231  `FLOW-store-ownership` — Store-Besitzanspruch
+###### 3.3.4.1.229  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der zugesprochene Store-Besitz an GraphStore.open; ohne ihn wirft open StoreOwnershipError (Wahl verloren).
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-lock-owner`
 
-###### 3.3.4.1.232  `FLOW-store-query` — Store-Abfrage
+###### 3.3.4.1.230  `FLOW-store-query` — Store-Abfrage
 
 Die Antwort des Kuzu-Adapters auf eine Leseanfrage: Teilgraph, Elementliste oder ganzer Graph aus dem persistierten Store. Die Lesewege des Harness fragen den Adapter direkt, nicht ueber GraphStore. Uebergabe: createHarness gibt denselben Adapter an GraphStore und an den Harness. (CR-GC-843)
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.233  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
+###### 3.3.4.1.231  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
 
 Der GraphStore meldet beim Start, dass er den Store nach einem Schemawechsel aus der SSOT neu befuellt hat; was vorher nur im Store stand und nicht exportiert war, ist fort. Beleg: src/kernel/graph-store.ts, open schreibt formatStoreRebuildNotice auf stderr (CR-GC-831).
 
 io ◀ `FUNC-open-store` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-store-rebuild-notice`
 
-###### 3.3.4.1.234  `FLOW-suggest-answer` — Antwort graph_suggest
+###### 3.3.4.1.232  `FLOW-suggest-answer` — Antwort graph_suggest
 
 Die Antwort von graph_suggest an die Ablaufsteuerung: die gerankten Kandidaten mit Urteil und Bericht je Probelauf. Beleg: src/loop/suggest.ts.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-suggest-answer`
 
-###### 3.3.4.1.235  `FLOW-target-profile` — Zielprofil
+###### 3.3.4.1.233  `FLOW-target-profile` — Zielprofil
 
 Das geladene und gepruefte Profil: die 3-7 Themen der Intention. Erzeugt von target-profile-load aus der Rohform. (CR-GC-861: ohne Gewichte und Zielkonflikte)
 
 io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-graph-generate-tool` · `FUNC-graph-readiness` · `FUNC-vorschlag` · schema ▶ `SCHEMA-target-profile`
 
-###### 3.3.4.1.236  `FLOW-target-profile-file` — Zielprofil (Rohform)
+###### 3.3.4.1.234  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
 Die Profildatei, wie der Skill se:target-profile oder ein Hand-Edit sie nach .graphcode/target-profile.json schreibt: ungeprueft, die Themen der Intention.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-###### 3.3.4.1.237  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
+###### 3.3.4.1.235  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
 
 Die Aenderungsmenge und Tiefe, mit denen graph_tests harness.testImpact ruft. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.238  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
+###### 3.3.4.1.236  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
 
 Die Aenderungsmenge, mit der graph_test_ingest harness.testImpact ruft. Beleg: src/projections/testreport.ts.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.239  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
+###### 3.3.4.1.237  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
 
 Die Antwort von graph_test_ingest: zugeordnete Ergebnisse, zurueckgenommene Ergebnisse, Knoten ohne Lauf.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-aenderung-melden` · `FUNC-agent-loop` · schema ▶ `SCHEMA-test-ingest-answer`
 
-###### 3.3.4.1.240  `FLOW-test-ingest-call` — Aufruf graph_test_ingest
+###### 3.3.4.1.238  `FLOW-test-ingest-call` — Aufruf graph_test_ingest
 
 Der Aufruf von graph_test_ingest ueber MCP-stdio mit Bericht und Changeset der Aenderung.
 
 io ◀ `FUNC-aenderung-melden` · io ▶ `FUNC-test-ingest` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.241  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
+###### 3.3.4.1.239  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
 
 Der vitest-Bericht der Code-Spur mit der Aenderungsmenge, den verify:code ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-aenderung-melden` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.242  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
+###### 3.3.4.1.240  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
 
 Der vitest-Bericht der vollen Suite mit der Aenderungsmenge, den verify:full ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-aenderung-melden` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.243  `FLOW-test-selection` — Selektive Testauswahl
+###### 3.3.4.1.241  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-test-selection`
 
-###### 3.3.4.1.244  `FLOW-tool-context` — Werkzeug-Kontext
+###### 3.3.4.1.242  `FLOW-tool-context` — Werkzeug-Kontext
 
 Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-###### 3.3.4.1.245  `FLOW-tool-registry` — Werkzeug-Register
+###### 3.3.4.1.243  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.246  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
+###### 3.3.4.1.244  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
 
 Die gebundenen Werkzeuge, wie der Agent sie ueber stdio sieht und ruft. Beleg: src/surface/mcp-server.ts, serveStdio verbindet den Server mit dem stdio-Transport. (CR-GC-768)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.247  `FLOW-trajectory` — Trajectory/Outcome
+###### 3.3.4.1.245  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-###### 3.3.4.1.248  `FLOW-trajectory-entry` — Trajektorie-Eintrag
+###### 3.3.4.1.246  `FLOW-trajectory-entry` — Trajektorie-Eintrag
 
 Der Audit-Eintrag, den recordAudit direkt an materializeTrajectory gibt; recordAudit wartet auf die Projektion. Beleg: src/surface/tool-context.ts. (CR-GC-849)
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-emit-trajectory` · schema ▶ `SCHEMA-audit-record`
 
-###### 3.3.4.1.249  `FLOW-update-hook` — Update-Hook anlegen
+###### 3.3.4.1.247  `FLOW-update-hook` — Update-Hook anlegen
 
 Der Update-Hook, den die Harness-Fabrik beim Bau registriert (registerEmitters ruft makeUpdateEventHook). Beleg: src/surface/create-harness.ts. (CR-GC-849)
 
 io ◀ `FUNC-create-harness` · io ▶ `FUNC-emit-update-event` · schema ▶ `SCHEMA-update-event`
 
-###### 3.3.4.1.250  `FLOW-verlauf-bereitschaft` — Verlauf-Befunde an Marken
+###### 3.3.4.1.248  `FLOW-verlauf-bereitschaft` — Verlauf-Befunde an Marken
 
 Die Befunde eines alten Stands, die die Verlaufsrechnung an die Marken-Rechnung gibt.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-compute-readiness` · schema ▶ `SCHEMA-rule-violation`
 
-###### 3.3.4.1.251  `FLOW-verlauf-konformanz` — Verlauf-Stand an Konformanz
+###### 3.3.4.1.249  `FLOW-verlauf-konformanz` — Verlauf-Stand an Konformanz
 
 Der Graph eines alten Stands, den die Verlaufsrechnung an die Konformanz-Erhebung gibt; ohne Repo-Wurzel laufen die RC-Regeln nicht.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-check-code-conformance` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.252  `FLOW-verlauf-report` — Verlauf-Bericht
+###### 3.3.4.1.250  `FLOW-verlauf-report` — Verlauf-Bericht
 
 Die Reihe der Staende mit Marken, Befunden je Stufe, Steuerwert, Tests und Ketten, die graph_readiness bei verlauf antwortet.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-verlauf`
 
-###### 3.3.4.1.253  `FLOW-verlauf-request` — Verlauf-Anfrage
+###### 3.3.4.1.251  `FLOW-verlauf-request` — Verlauf-Anfrage
 
 Die Zahl der juengsten Staende, die graph_readiness an die Verlaufsrechnung gibt.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-stand-verlauf` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.254  `FLOW-verlauf-snapshot` — Verlauf-Stand an Snapshot
+###### 3.3.4.1.252  `FLOW-verlauf-snapshot` — Verlauf-Stand an Snapshot
 
 Der Graph eines alten Stands, den die Verlaufsrechnung an den Steuerungs-Snapshot gibt.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.255  `FLOW-vertragstest-bericht` — Vertragstest-Bericht
+###### 3.3.4.1.253  `FLOW-vertragstest-bericht` — Vertragstest-Bericht
 
 Der Bericht je SCHEMA (Faelle und verworfene Faelle oder Fehler) vom Erzeuger an das Verb
 
 io ◀ `FUNC-erzeuge-vertragstests` · io ▶ `FUNC-vertragstest-verb` · schema ▶ `SCHEMA-vertragstest-bericht`
 
-###### 3.3.4.1.256  `FLOW-vertragstest-satz` — Vertragstest-Satz
+###### 3.3.4.1.254  `FLOW-vertragstest-satz` — Vertragstest-Satz
 
 Die SCHEMA mit ihrem Zod-Symbol, im Repo oder im Paket, vom Verb an den Erzeuger
 
 io ◀ `FUNC-vertragstest-verb` · io ▶ `FUNC-erzeuge-vertragstests` · schema ▶ `SCHEMA-vertragstest-satz`
 
-###### 3.3.4.1.257  `FLOW-viewer-start` — Viewer starten
+###### 3.3.4.1.255  `FLOW-viewer-start` — Viewer starten
 
 Der Start des Viewer-Prozesses durch attachGve: spawn des Viewers mit --repo und dem Pfad der Repo-Wurzel, wenn die erste Sitzung des Repos ihn anhaengt. Das Beenden steht in FLOW-viewer-stop. Beleg: src/surface/gve.ts, ensureViewer und spawnViewer. (CR-GC-989)
 
 io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-repo-pfad`
 
-###### 3.3.4.1.258  `FLOW-viewer-stop` — Viewer beenden
+###### 3.3.4.1.256  `FLOW-viewer-stop` — Viewer beenden
 
 Das Beenden des Viewer-Prozesses durch attachGve: SIGTERM an die Prozessgruppe, wenn die letzte Sitzung des Repos sich abmeldet. Der Aufruf traegt keine Daten. Beleg: src/surface/gve.ts, stopViewerIfLastSession und killProcessGroup. (CR-GC-989)
 
 io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-aufruf-ohne-daten`
 
-###### 3.3.4.1.259  `FLOW-vitest-lauf-code` — vitest-Lauf Code-Spur
+###### 3.3.4.1.257  `FLOW-vitest-lauf-code` — vitest-Lauf Code-Spur
 
 Der beendete vitest-Lauf der Spur verify:code: Exit-Status, Signal und der JSON-Bericht, falls vitest ihn schrieb.
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-lauf-urteil` · schema ▶ `SCHEMA-vitest-lauf`
 
-###### 3.3.4.1.260  `FLOW-vitest-lauf-full` — vitest-Lauf Vollspur
+###### 3.3.4.1.258  `FLOW-vitest-lauf-full` — vitest-Lauf Vollspur
 
 Der beendete vitest-Lauf der Spur verify:full: Exit-Status, Signal und der JSON-Bericht, falls vitest ihn schrieb.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-lauf-urteil` · schema ▶ `SCHEMA-vitest-lauf`
 
-###### 3.3.4.1.261  `FLOW-vorschlag` — Vorschlag an den Nutzer
+###### 3.3.4.1.259  `FLOW-vorschlag` — Vorschlag an den Nutzer
 
 Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis; den Nutzer erreicht er mit FLOW-mutate-answer. (CR-GC-770, CR-GC-823)
 
 io ◀ `FUNC-vorschlag` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-answer`
 
-###### 3.3.4.1.262  `FLOW-work-set` — Arbeitsmenge der Sitzung
+###### 3.3.4.1.260  `FLOW-work-set` — Arbeitsmenge der Sitzung
 
 Die Arbeitsmenge der Sitzung, die graph_readiness beim Werkzeug-Kontext abfragt, um Befunde auf die Arbeit der Sitzung zu schneiden. Beleg: src/surface/tool-context.ts, arbeitsmenge. (CR-GC-849)
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-work-set`
 
-###### 3.3.4.1.263  `FLOW-write-slot` — Schreibzug einreihen
+###### 3.3.4.1.261  `FLOW-write-slot` — Schreibzug einreihen
 
 Der Schreibzug, den graph_suggest beim Anwenden in die Schreibreihenfolge des Werkzeug-Kontexts stellt (serializeToolWrite). Beleg: src/loop/suggest.ts. (CR-GC-849)
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-tool-context` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.264  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
+###### 3.3.4.1.262  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_mutate an mitBericht gibt. Beleg: src/surface/write.ts, graph_mutate.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.265  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
+###### 3.3.4.1.263  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_suggest je Kandidat an mitBericht gibt. Beleg: src/loop/suggest.ts, graph_suggest.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.266  `FLOW-zug-bericht` — Bericht zum Zug
+###### 3.3.4.1.264  `FLOW-zug-bericht` — Bericht zum Zug
 
 Die Berichte zum Zug, zurueck an das Werkzeug, das mitBericht gerufen hat: graph_mutate fuer seine Antwort an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)
 
 io ◀ `FUNC-zug-bericht` · io ▶ `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-zug-bericht`
 
-###### 3.3.4.1.267  `FLOW-zug-staende` — Stand davor und danach
+###### 3.3.4.1.265  `FLOW-zug-staende` — Stand davor und danach
 
 Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil an das aufrufende Werkzeug zurueckgibt (mutateWithStates). Ein geblockter Zug hat kein Paar. (CR-GC-778)
 
@@ -14354,7 +14342,7 @@ schema ◀ `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-
 
 Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
-schema ◀ `FLOW-gate-verdict` · `FLOW-proxy-answer` · `FLOW-proxy-answer-agent`
+schema ◀ `FLOW-gate-verdict`
 
 ###### 3.3.4.2.43  `SCHEMA-ontology-graph` — OntologyGraph
 

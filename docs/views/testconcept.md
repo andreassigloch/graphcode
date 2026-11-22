@@ -13,7 +13,7 @@
            ╱────────╲
           ╱ use cases ╲      9 UC · 9 / 9 with a verified requirement
          ╱────────────╲
-        ╱ integration  ╲     ✗ 221/342 FUNC↔FUNC connections tested  ← GAP
+        ╱ integration  ╲     ✗ 221/340 FUNC↔FUNC connections tested  ← GAP
        ╱────────────────╲
       ╱ module · function ╲   7 MOD · 136 FUNC
      ╱────────────────────╲
@@ -24,7 +24,7 @@
 | Validation | UC (9) | validation (VAL.1) | 1 | 1 / 9 use cases played through | ⚠ 8 UC not played through |
 | System | SYS (1) | system verification (SYS.5) | 46 | 35 / 35 system requirements | ✓ |
 | Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 63 | 9 / 9 use cases | ✓ |
-| Integration | FUNC↔FUNC (342 conn) | integration verification (SYS.4 · SWE.5) | 44 | 221 / 342 connections | ✗ 121 uncovered |
+| Integration | FUNC↔FUNC (340 conn) | integration verification (SYS.4 · SWE.5) | 44 | 221 / 340 connections | ✗ 119 uncovered |
 | Interface | SCHEMA (78) | integration verification (SYS.4 · SWE.5) | 59 | 68 / 78 schemas | ⚠ 10 without a test |
 | Module | MOD (7) | component verification (SWE.5 · HWE.3) | 55 | 6 / 7 | ⚠ 1 without a verified requirement |
 | Function | FUNC (119) | unit verification (SWE.4 · HWE.3) | 134 | 119 / 119 | ✓ |
@@ -36,4 +36,4 @@
 > Validation = a UC composes a REQ that the SYS carries and a TEST verifies: the use case is played through on the whole system.
 > Whether the intended users accept the result is a sign-off outside the graph.
 > 17 composite FUNC without an own REQ are not counted: their children carry the REQ.
-> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (221/342 covered).
+> An untested FUNC↔FUNC connection (R-21) surfaces as ✗ (221/340 covered).

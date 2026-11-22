@@ -134,3 +134,43 @@ describe('TEST-skill-wortlaut-angleich (CR-GC-979): Schreibweise und Designfreih
   });
 });
 
+
+/**
+ * CR-GC-997 — Zod ist die Quelle der Einschränkung (CR-SM-419, Festlegung 2026-11-22). Invariante und
+ * berechneter Wert bekommen ein eigenes Zod-Schema im Vertragspaket; der Test prüft das Ergebnis dagegen.
+ * Die Einheit ist ein UCUM-Code.
+ */
+describe('TEST-skill-wortlaut-angleich (CR-GC-997): Zod als Quelle, UCUM', () => {
+  it('se:author-req: die Einschränkung steht im Zod-Schema, die Klammer wiederholt sie lesbar', () => {
+    expect(authorReq).toMatch(/The Zod schema is the source of the restriction/);
+    expect(authorReq).toMatch(/the bracket repeats it for the reader/);
+  });
+
+  it('se:author-req: Invariante und berechneter Wert bekommen ein Zod-Schema im Vertragspaket', () => {
+    expect(authorReq).toMatch(/An invariant and a computed value get a Zod schema of their own in the contract package/);
+    expect(authorReq).toContain('`z.number().max(2)`');
+    expect(authorReq).toMatch(/the test parses the measured result against that schema/);
+  });
+
+  it('se:author-req: die Einheit ist ein UCUM-Code', () => {
+    expect(authorReq).toMatch(/Write the unit as a UCUM code/);
+    expect(authorReq).toContain('`kW.h`');
+  });
+
+  it('se-conops: die Einheit als UCUM-Code', () => {
+    expect(conops).toMatch(/each unit as a UCUM code/);
+  });
+
+  it('se-bau: die Einschränkung von Invariante und berechnetem Wert steht als Zod-Schema im Vertragspaket', () => {
+    expect(bau).toMatch(/Die Einschränkung einer Invariante oder eines berechneten Werts steht als Zod-Schema im Vertragspaket/);
+    expect(bau).toMatch(/Der Test prüft das gemessene Ergebnis gegen dieses Schema/);
+    expect(bau).toMatch(/Kein Test trägt die Grenze als eigene Zahl/);
+    expect(bau).toMatch(/UCUM-Code/);
+  });
+
+  it('die drei Skills tragen eine höhere Version als vor CR-GC-997', () => {
+    expect(version(authorReq)).toBeGreaterThanOrEqual(9);
+    expect(version(conops)).toBeGreaterThanOrEqual(13);
+    expect(version(bau)).toBeGreaterThanOrEqual(7);
+  });
+});

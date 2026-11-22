@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 78 SCHEMA · 267 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 78 SCHEMA · 265 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -266,8 +266,6 @@
 | `FLOW-own-kuzu-request-stdio` | `FUNC-serve-stdio` | `FUNC-own-kuzu-host` |
 | `FLOW-plan-request` | `FUNC-verify-lane-code` | `FUNC-plan-code-lane` |
 | `FLOW-plan-request-full` | `FUNC-verify-lane-full` | `FUNC-plan-code-lane` |
-| `FLOW-proxy-answer` | `FUNC-host-socket` | `FUNC-host-proxy` |
-| `FLOW-proxy-answer-agent` | `FUNC-host-proxy` | `FUNC-agent-loop` |
 | `FLOW-proxy-build` | `FUNC-serve-stdio` | `FUNC-host-proxy` |
 | `FLOW-proxy-call` | `FUNC-host-proxy` | `FUNC-host-socket` |
 | `FLOW-query-export` | `FUNC-graph-export-snapshot` | `FUNC-export-markdown` |

@@ -1,6 +1,6 @@
 ---
 name: se:author-req
-version: 8
+version: 9
 description: Author a REQ together with its verifying TEST concept in one gated batch — the REQ-with-test invariant
 ---
 
@@ -22,6 +22,8 @@ A non-functional REQ names its value the same way: "The gate judges a batch of 5
 **A value with a restriction is a parameter (PARAM): name, value, restriction — in the sentence** (CR-GC-759, CR-GC-974). Write it in square brackets (CR-GC-979). The bracket with name and value defines the parameter: `[limit ≤ 100]`, `[response_time ≤ 2 s]`, `[U_supply = 24 V (21.6 … 26.4 V)]`; the bracket with the name alone, `[limit]`, refers to it. Example: "The search returns at most [limit ≤ 100] hits (call value, checked in the contract)." "The system answers within [response_time ≤ 2 s] (computed, checked in a test)." One name has exactly one definition: state the number in exactly one requirement; every other text refers with `[limit]`, never with the number. A value without a restriction is not a parameter. Never end a description with a bracket — close the sentence with a full stop: the Format-E line reads a bracket at the end of a line as attributes and drops it from the text.
 
 Say next to the value where it comes from — one of five: *runtime parameter* (set in operation, takes effect at once, with history), *start configuration* (read at start, fixed until restart), *invariant* (set in the code, not adjustable by any path), *call value* (set by the caller, belongs to one call and stands in that call's contract) or *computed* (results from other values or from a measurement; name the formula or what is measured). Say where the restriction is checked: in code, in the contract or in a test — at least one of the three.
+
+The Zod schema is the source of the restriction; the bracket repeats it for the reader (CR-GC-997). A runtime parameter, a start configuration and a call value are fields of a contract: the restriction stands at that Zod field. An invariant and a computed value get a Zod schema of their own in the contract package, e.g. `z.number().max(2)` for `[response_time ≤ 2 s]`; the test parses the measured result against that schema and carries no number of its own. Write the unit as a UCUM code: `V`, `ms`, `s`, `kW.h`.
 
 Who decides: What the requirement names is binding. Where it names no origin or no place of the check, that is design freedom, not an assumption: whoever builds chooses, and the choice is written back into the requirement. Only the author of the requirement sets or lifts *invariant*; whatever shapes the system's behaviour is adjustable unless the requirement says invariant. Write all of this into the text, not into a free attribute: the views show the text, a free attribute stays invisible to the reader. Two values of different origin in one requirement are a sign that it is two requirements — split it, so the invariant gets its own test that it cannot be changed; keep them together only if you can say why.
 

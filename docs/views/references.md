@@ -1758,6 +1758,9 @@
 | `CR-GC-993` | relation | `FUNC-se-bau` |
 | `CR-GC-994` | relation | `FUNC-erzeuge-vertragstests` |
 | `CR-GC-995` | relation | `FUNC-audit-trail` |
+| `CR-GC-996` | relation | `FUNC-host-proxy` |
+| `CR-GC-996` | relation | `FUNC-host-socket` |
+| `CR-GC-996` | relation | `SCHEMA-mutate-result` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2517,10 +2520,6 @@
 | `FLOW-plan-request` | relation | `SCHEMA-code-lane-plan` |
 | `FLOW-plan-request-full` | io | `FUNC-plan-code-lane` |
 | `FLOW-plan-request-full` | relation | `SCHEMA-code-lane-plan` |
-| `FLOW-proxy-answer` | io | `FUNC-host-proxy` |
-| `FLOW-proxy-answer` | relation | `SCHEMA-mutate-result` |
-| `FLOW-proxy-answer-agent` | io | `FUNC-agent-loop` |
-| `FLOW-proxy-answer-agent` | relation | `SCHEMA-mutate-result` |
 | `FLOW-proxy-build` | io | `FUNC-host-proxy` |
 | `FLOW-proxy-build` | relation | `SCHEMA-mcp-tool-registry` |
 | `FLOW-proxy-call` | io | `FUNC-host-socket` |
@@ -3165,14 +3164,12 @@
 | `FUNC-held-back-traces` | satisfy | `REQ-held-back-edges-derived-every-call` |
 | `FUNC-host-proxy` | allocate | `MOD-surface` |
 | `FUNC-host-proxy` | io | `FLOW-bind-request-proxy` |
-| `FUNC-host-proxy` | io | `FLOW-proxy-answer-agent` |
 | `FUNC-host-proxy` | io | `FLOW-proxy-call` |
 | `FUNC-host-proxy` | satisfy | `REQ-proxy-reicht-an-host` |
 | `FUNC-host-socket` | allocate | `MOD-surface` |
 | `FUNC-host-socket` | io | `FLOW-dashboard-answer` |
 | `FUNC-host-socket` | io | `FLOW-dashboard-tool-call` |
 | `FUNC-host-socket` | io | `FLOW-mutate-cmd-host-socket` |
-| `FUNC-host-socket` | io | `FLOW-proxy-answer` |
 | `FUNC-host-socket` | satisfy | `REQ-docked-session-reelects-once` |
 | `FUNC-host-socket` | satisfy | `REQ-further-session-docks-via-socket` |
 | `FUNC-import` | allocate | `MOD-kernel` |
