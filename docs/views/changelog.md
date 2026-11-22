@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 615 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 616 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 615 CR · 604 done · 1 open.
+Total: 616 CR · 604 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -235,6 +235,7 @@ Total: 615 CR · 604 done · 1 open.
 | `CR-GC-1009` | done | Erzeugte Vertragstests fuer 31 SCHEMA mit Zod-Symbol |
 | `CR-GC-1010` | done | Untergrenzen graph-view-edit 0.22.1 und graphify 0.6.1 |
 | `CR-GC-1011` | done | Doppelte Flüsse ohne Vertrag: FLOW-measurement-vector und FLOW-action entfernen |
+| `CR-GC-1012` | n/a | SCHEMA-import-access ohne Zod-Schema: ImportTargetSchema, Erzeuger parst |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |

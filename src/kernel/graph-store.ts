@@ -25,7 +25,7 @@ import { GraphNodeSchema, GraphEdgeSchema, type GraphDelta } from '@sigloch/grap
 import type { StorageAdapter, Graph, OntologyDescriptor } from '@sigloch/graph-api-core';
 import type { HarnessConfig } from '@sigloch/contracts/harness';
 import type { StoreLock } from './store-lock.js';
-import { graphSnapshotRel, applyReseed, type ImportTarget } from './harness-import.js';
+import { graphSnapshotRel, applyReseed, ImportTargetSchema, type ImportTarget } from './harness-import.js';
 import { schemaFingerprint, readStoredFingerprint, writeStoredFingerprint, resetKuzuStore } from './schema-guard.js';
 import { detectSnapshotDrift, formatSnapshotDriftNotice } from './snapshot-stamp.js';
 import { formatStoreRebuildNotice, StoreRebuildNoticeSchema, type StoreRebuildNotice } from './store-rebuild-notice.js';
@@ -180,7 +180,7 @@ export class GraphStore {
    */
   importTarget(): ImportTarget {
     const { storage, repoRoot, scope } = this.opts;
-    return {
+    const port: ImportTarget = {
       repoRoot,
       systemId: scope.systemId,
       replace: async (graph: Graph) => {
@@ -195,6 +195,8 @@ export class GraphStore {
         this.graph = { nodes: [], edges: [] };
       },
     };
+    ImportTargetSchema.parse(port);
+    return port;
   }
 
   /** Release the store handle + the ownership lock (single-writer cleanup). */

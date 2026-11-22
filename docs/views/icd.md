@@ -34,7 +34,7 @@
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
-| `SCHEMA-import-access` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-import-access` | src/kernel/harness-import.ts#ImportTargetSchema | n/a |
 | `SCHEMA-import-summary` | src/surface/import-code-verb.ts#ImportCodeSummarySchema | n/a |
 | `SCHEMA-init-report` | src/surface/init-verb.ts#InitReportSchema | n/a |
 | `SCHEMA-install-result` | src/surface/scaffold.ts#InstallResultSchema | n/a |

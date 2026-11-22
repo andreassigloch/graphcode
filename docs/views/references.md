@@ -110,6 +110,8 @@
 | `CR-GC-101` | relation | `REQ-subgraph-slicing` |
 | `CR-GC-1011` | relation | `FUNC-goal-steerer` |
 | `CR-GC-1011` | relation | `FUNC-take-steering-snapshot` |
+| `CR-GC-1012` | relation | `FUNC-graph-store` |
+| `CR-GC-1012` | relation | `SCHEMA-import-access` |
 | `CR-GC-102` | relation | `FUNC-emit-trajectory` |
 | `CR-GC-102` | relation | `FUNC-emit-update-event` |
 | `CR-GC-102` | relation | `MOD-surface` |
@@ -4330,6 +4332,7 @@
 | `TEST-vertrag-health-report` | verify | `SCHEMA-health-report` |
 | `TEST-vertrag-impact-slice` | verify | `SCHEMA-impact-slice` |
 | `TEST-vertrag-impacted-tests` | verify | `SCHEMA-impacted-tests` |
+| `TEST-vertrag-import-access` | verify | `SCHEMA-import-access` |
 | `TEST-vertrag-import-summary` | verify | `SCHEMA-import-summary` |
 | `TEST-vertrag-init-report` | verify | `SCHEMA-init-report` |
 | `TEST-vertrag-install-result` | verify | `SCHEMA-install-result` |

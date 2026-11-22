@@ -84,6 +84,20 @@ export interface ImportTarget {
 }
 
 /**
+ * SCHEMA-import-access: the contract of the import port (FLOW-import-target, CR-GC-1012).
+ * Two texts and two functions. `satisfies` ties the list to the interface: a new member
+ * without a contract line is a type error. Strict, so a port that carries more — a store
+ * handle, a setter — is rejected at the handover. The producer `importTarget()` parses
+ * and returns the original (FAQ erzeuger-parst-vertrag).
+ */
+export const ImportTargetSchema = z.strictObject({
+  repoRoot: z.string().min(1),
+  systemId: z.string().min(1),
+  replace: z.function(),
+  clear: z.function(),
+} satisfies Record<keyof ImportTarget, z.ZodType>);
+
+/**
  * Ensure the imported node set carries a SYS anchor (CR-GC-302).
  *
  * The SYS node anchors AF-01..05 (the analysis-freshness stamps live under
