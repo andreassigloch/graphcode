@@ -28,6 +28,14 @@
 | `CR-GC-100` | relation | `REQ-one-gate-per-repo` |
 | `CR-GC-100` | relation | `REQ-rule-enforcement` |
 | `CR-GC-100` | relation | `REQ-single-kuzu-owner` |
+| `CR-GC-1000` | relation | `FUNC-erzeuge-vertragstests` |
+| `CR-GC-1000` | relation | `FUNC-se-bau` |
+| `CR-GC-1000` | relation | `FUNC-vertragstest-verb` |
+| `CR-GC-1000` | relation | `REQ-contract-test-cases` |
+| `CR-GC-1000` | relation | `SCHEMA-branch-merge-report` |
+| `CR-GC-1000` | relation | `SCHEMA-metric-policy` |
+| `CR-GC-1000` | relation | `SCHEMA-metrics-answer` |
+| `CR-GC-1000` | relation | `SCHEMA-mutate-command` |
 | `CR-GC-101` | relation | `FUNC-graph-expand` |
 | `CR-GC-101` | relation | `FUNC-graph-impact` |
 | `CR-GC-101` | relation | `MOD-surface` |
@@ -4214,6 +4222,8 @@
 | `TEST-verify-model-set` | verify | `REQ-model-lane-fixed-set` |
 | `TEST-verify-model-set` | verify | `REQ-testspur-passt-zum-diff` |
 | `TEST-vertrag-aufruf-ohne-daten` | verify | `SCHEMA-aufruf-ohne-daten` |
+| `TEST-vertrag-ausdruck` | verify | `REQ-contract-test-cases` |
+| `TEST-vertrag-branch-merge-report` | verify | `SCHEMA-branch-merge-report` |
 | `TEST-vertrag-export-answer` | verify | `SCHEMA-export-answer` |
 | `TEST-vertrag-function-criticality` | verify | `SCHEMA-function-criticality` |
 | `TEST-vertrag-harness-handle` | verify | `SCHEMA-harness-handle` |
@@ -4224,9 +4234,12 @@
 | `TEST-vertrag-markdown-text` | verify | `SCHEMA-markdown-text` |
 | `TEST-vertrag-mcp-tool` | verify | `SCHEMA-mcp-tool` |
 | `TEST-vertrag-mcp-tool-registry` | verify | `SCHEMA-mcp-tool-registry` |
+| `TEST-vertrag-metric-policy` | verify | `SCHEMA-metric-policy` |
 | `TEST-vertrag-metric-vector` | verify | `SCHEMA-metric-vector` |
+| `TEST-vertrag-metrics-answer` | verify | `SCHEMA-metrics-answer` |
 | `TEST-vertrag-module-metrics` | verify | `SCHEMA-module-metrics` |
 | `TEST-vertrag-mutate-answer` | verify | `SCHEMA-mutate-answer` |
+| `TEST-vertrag-mutate-command` | verify | `SCHEMA-mutate-command` |
 | `TEST-vertrag-ontology-graph` | verify | `SCHEMA-ontology-graph` |
 | `TEST-vertrag-render-summary` | verify | `SCHEMA-render-summary` |
 | `TEST-vertrag-repo-pfad` | verify | `SCHEMA-repo-pfad` |

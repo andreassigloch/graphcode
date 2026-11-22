@@ -47,7 +47,7 @@
 | `REQ-confidence-tier` | ✓ | ✓ passed | `TEST-mutate-gate` |
 | `REQ-conops-zugangsliste` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 | `REQ-constraints-skill-vertrag` | ✓ | ✓ passed | `TEST-skill-constraints` |
-| `REQ-contract-test-cases` | ✓ | ✓ passed | `TEST-vertragstest-generator` |
+| `REQ-contract-test-cases` | ✓ | ✓ passed | `TEST-vertrag-ausdruck` · `TEST-vertragstest-generator` |
 | `REQ-contract-test-generation` | ✓ | ✓ passed | `TEST-vertragstest-generator` |
 | `REQ-contract-test-manual` | ✓ | ✓ passed | `TEST-vertragstest-generator` |
 | `REQ-cr-gruppen-rechnen` | ✓ | ✓ passed | `TEST-se-plan-groups` |

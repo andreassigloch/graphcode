@@ -378,6 +378,8 @@ describe('CODE-Spur: die Auswahl, ihre Reichweite und ihr Fallback (CR-GC-541)',
   // Uebersetzer parst genau diesen Vertrag, also gehoert sein Test in die Auswahl.
   // CR-GC-768: plus der Vertragstest von SCHEMA-mutate-command — das Modell fuehrt jetzt den Fluss
   // decode → mutate (FLOW-mutate-cmd-decode), der Uebersetzer erzeugt genau diesen Vertrag.
+  // CR-GC-1000: plus der erzeugte Vertragstest SCHEMA-mutate-command (TEST-vertrag-mutate-command) — das SCHEMA
+  // hat jetzt einen erzeugten Test mit verify; er prueft genau den Vertrag, den der Uebersetzer erzeugt.
   it('src/kernel/format-e-commands.ts waehlt aus dem Graphen genau den Handschnitt aus CR-GC-536', () => {
     const result = selectForChange(['src/kernel/format-e-commands.ts'], ctx);
 
@@ -388,6 +390,7 @@ describe('CODE-Spur: die Auswahl, ihre Reichweite und ihr Fallback (CR-GC-541)',
       'tests/mutate.edge-only-batch.test.ts',
       'tests/mutate.formate-name.test.ts',
       'tests/mutate.schema-guard.test.ts',
+      'tests/vertrag/SCHEMA-mutate-command.vertrag.test.ts',
     ]);
     expect(result.complete).toBe(true);
     expect(result.files.length).toBeLessThan(ctx.allTests.length);

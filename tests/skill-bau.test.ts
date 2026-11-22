@@ -32,7 +32,7 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
   it('die Datei se-bau.md existiert, Name und Version stehen im Kopf', () => {
     expect(existsSync(DATEI)).toBe(true);
     expect(text).toMatch(/^name: se-bau$/m);
-    expect(text).toMatch(/^version: 7$/m);
+    expect(text).toMatch(/^version: 8$/m);
     expect(text).toMatch(/^description: .{40,}$/m);
   });
 
@@ -100,9 +100,13 @@ describe('TEST-skill-bau (CR-GC-924)', () => {
       expect(k).toMatch(/nicht von Hand/);
       expect(k).toMatch(/Exit 1/);
     });
-    it('ein Vertrag hat kein z.custom, refine, superRefine; die Bedingung wird zu Varianten; bricht das Verb ab, ändert der Umsetzer den Vertrag (CR-GC-993)', () => {
+    it('ein Vertrag hat kein z.custom, superRefine, transform; refine nur in drei Formen; jede andere Bedingung wird zu Varianten; bricht das Verb ab, ändert der Umsetzer den Vertrag (CR-GC-993, CR-GC-1000)', () => {
       const k = koordinator();
-      expect(k).toMatch(/kein `z\.custom`, kein `refine`, kein `superRefine`/);
+      expect(k).toMatch(/kein `z\.custom`, kein `superRefine`, kein `transform`/);
+      expect(k).toMatch(/`refine` nur als\s+eine von drei Formen/);
+      expect(k).toMatch(/Vergleich zweier Zahlfelder/);
+      expect(k).toMatch(/mindestens eines von N optionalen Feldern/);
+      expect(k).toMatch(/Text ohne Muster/);
       expect(k).toMatch(/Bedingung über mehrere\s+Felder wird zu Varianten/);
       expect(k).toMatch(/z\.discriminatedUnion/);
       expect(k).toMatch(/z\.function\(\)/);

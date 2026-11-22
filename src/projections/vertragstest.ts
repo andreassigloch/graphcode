@@ -27,6 +27,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, posix, relative } from 'node:path';
 import { z } from 'zod';
+import { AusdruckFehler, liesAusdruck, type Ausdruck } from './vertrag-ausdruck.js';
 
 /** Ein SCHEMA des Modells mit seinem Zod-Symbol im Code, im Paket (`paket`) oder mit seiner Vertragsdatei (`.md`, ohne Symbol). */
 export const VertragstestSatzSchema = z.array(
@@ -60,6 +61,7 @@ interface Def {
   innerType: Zod;
   options: Zod[];
   in: Zod;
+  out: Zod;
   getter: () => Zod;
   values: unknown[];
   entries: Record<string, unknown>;
@@ -68,6 +70,8 @@ interface Def {
 }
 interface Check {
   check?: string;
+  /** Bei `check === 'custom'` die Funktion von `refine`. */
+  fn?: unknown;
   format?: string;
   pattern?: RegExp;
   minimum?: number;
@@ -79,6 +83,7 @@ interface Check {
 interface Zod {
   _zod: { def: Def };
   safeParse(v: unknown): { success: boolean; data?: unknown };
+  clone(def: Def): Zod;
 }
 /** Ein Schritt im Schema von der Wurzel zu einer Stelle: Feld der Definition, bei Objekt, Tupel und Union mit Schluessel. */
 export type Schritt = [string, (string | number)?];
@@ -179,7 +184,103 @@ const FORMATE: Record<string, string> = {
 
 /** Der Ausweg, den der Bericht bei `refine`, `superRefine` und `z.custom` nennt (CR-GC-993); die Entscheidung des Autors vom 2026-11-21 steht im Skill se-bau. */
 const AUSWEG =
-  'eine Bedingung ueber mehrere Felder wird zu Varianten des Vertrags (z.discriminatedUnion), ein Mitglied, das eine Funktion ist, zu z.function(); der Umsetzer aendert den Vertrag';
+  'eine Bedingung ueber mehrere Felder wird zu Varianten des Vertrags (z.discriminatedUnion), ausser sie ist der Vergleich zweier Zahlfelder oder mindestens eines von N optionalen Feldern; ein Mitglied, das eine Funktion ist, zu z.function(); der Umsetzer aendert den Vertrag';
+const TRANSFORM = 'transform im Vertrag nicht unterstuetzt: eine Pruefung mit eigener Funktion gehoert nicht in den Vertrag; der Umsetzer aendert den Vertrag';
+
+const ZAHLEN = ['number', 'int'];
+
+/** Die Bedingungen der `refine` an einem Objekt oder Text als Datenform; jede andere Bedingung bricht ab (CR-GC-1000). */
+function ausdruecke(s: Zod): Ausdruck[] {
+  const custom = checks(s).filter((c) => c.check === 'custom');
+  if (custom.length === 0) return [];
+  const d = def(s);
+  const abbruch = (grund: string): never => {
+    throw new Error(`refine/superRefine im Vertrag nicht unterstuetzt: ${AUSWEG}; ${grund}`);
+  };
+  if (d.type !== 'object' && d.type !== 'string') return abbruch(`die Bedingung steht an einem ${d.type}, nicht an einem Objekt oder Text`);
+  return custom.map((c) => {
+    let a: Ausdruck;
+    try {
+      a = liesAusdruck(String(c.fn), d.type === 'object' ? Object.keys(d.shape) : []);
+    } catch (e) {
+      return abbruch(e instanceof AusdruckFehler ? e.message : String(e));
+    }
+    const gelesen = String(c.fn);
+    if (a.art === 'textOhneMuster') {
+      if (d.type !== 'string') abbruch(`Text ohne Muster steht an einem Objekt (gelesen: ${gelesen})`);
+      try {
+        ausRegex(new RegExp(a.muster));
+      } catch (e) {
+        abbruch(`${(e as Error).message}: das Muster /${a.muster}/ bildet der Erzeuger nicht (gelesen: ${gelesen})`);
+      }
+    } else if (d.type !== 'object') {
+      abbruch(`die Bedingung steht an einem ${d.type}, nicht an einem Objekt (gelesen: ${gelesen})`);
+    } else if (a.art === 'vergleich') {
+      for (const f of [a.links, a.rechts]) if (!ZAHLEN.includes(def(kern(d.shape[f] as Zod)).type)) abbruch(`Feld ${f} ist kein Zahlfeld (gelesen: ${a.links} ${a.operator} ${a.rechts})`);
+    } else {
+      for (const f of a.felder) if (!(d.shape[f] as Zod).safeParse(undefined).success) abbruch(`Feld ${f} ist nicht optional (gelesen: mindestens eines von ${a.felder.join(', ')})`);
+    }
+    return a;
+  });
+}
+
+/** Dasselbe Text-Schema ohne die `i`-te `refine`-Bedingung: was die uebrigen Regeln annehmen. */
+function ohneBedingung(s: Zod, i: number): Zod {
+  let n = -1;
+  const rest = (def(s).checks ?? []).filter((c) => c._zod.def.check !== 'custom' || ++n !== i);
+  return s.clone({ ...def(s), checks: rest });
+}
+
+/** Abstand von `links` zu `rechts` auf der Grenze des Vergleichs: `erfuellt` auf der Seite, die er annimmt, sonst knapp daneben. */
+const GRENZE: Record<string, [number, number]> = { '<=': [0, 1], '<': [-1, 0], '>=': [0, -1], '>': [1, 0] };
+
+/** Ein Wertepaar auf der Grenze des Vergleichs, das die Wertregeln beider Felder einhaelt; undefined, wenn keines bildbar ist. */
+function vergleichsWerte(shape: Record<string, Zod>, a: Extract<Ausdruck, { art: 'vergleich' }>, erfuellt: boolean, anker: unknown[] = []): { links: number; rechts: number } | undefined {
+  const ganz = [a.links, a.rechts].every((f) => def(kern(shape[f] as Zod)).type === 'int' || checks(kern(shape[f] as Zod)).some((c) => c.check === 'number_format' && c.format?.includes('int')));
+  const schritt = ganz ? 1 : 0.001;
+  const rund = (x: number): number => Number(x.toFixed(6));
+  const abstand = (GRENZE[a.operator] as [number, number])[erfuellt ? 0 : 1] * schritt;
+  const nimmt = (f: string, x: number): boolean => (shape[f] as Zod).safeParse(x).success;
+  for (const x of [...anker.filter((v): v is number => typeof v === 'number'), 0, 1, 2, 10, 100, 1000]) {
+    for (const [links, rechts] of [
+      [rund(x + abstand), x],
+      [x, rund(x - abstand)],
+    ] as Array<[number, number]>) {
+      if (nimmt(a.links, links) && nimmt(a.rechts, rechts)) return { links, rechts };
+    }
+  }
+  return undefined;
+}
+
+const text = (x: unknown): string => JSON.stringify(x);
+
+/** Das Beispiel erfuellt jede Bedingung: ein Feld der Oder-Kette ist gesetzt, der Vergleich haelt, der Text trifft kein verbotenes Muster. */
+function erfuelle(s: Zod, b: unknown, aus: Ausdruck[]): unknown {
+  if (def(s).type === 'string') {
+    const wert = [b, 'beispiel', 'a', 'x', '1', 'abc'].find((c) => s.safeParse(c).success);
+    if (wert === undefined) throw new Error(`refine/superRefine im Vertrag nicht unterstuetzt: kein Text, der die Bedingung ${aus.map((a) => (a.art === 'textOhneMuster' ? `nicht /${a.muster}/` : a.art)).join(', ')} und die uebrigen Regeln erfuellt`);
+    return wert;
+  }
+  const o = { ...(b as Record<string, unknown>) };
+  const shape = def(s).shape;
+  for (const a of aus) {
+    if (a.art === 'mindestensEines') {
+      if (a.felder.every((f) => o[f] === undefined)) o[a.felder[0] as string] = beispiel(shape[a.felder[0] as string]);
+      continue;
+    }
+    if (a.art !== 'vergleich') continue;
+    const l = o[a.links] as number;
+    const r = o[a.rechts] as number;
+    const haelt = { '<=': l <= r, '<': l < r, '>=': l >= r, '>': l > r }[a.operator];
+    if (haelt) continue;
+    const w = vergleichsWerte(shape, a, true, [r, l]);
+    if (!w) throw new Error(`refine/superRefine im Vertrag nicht unterstuetzt: kein Beispiel, das ${a.links} ${a.operator} ${a.rechts} erfuellt und die Wertregeln beider Felder einhaelt`);
+    o[a.links] = w.links;
+    o[a.rechts] = w.rechts;
+  }
+  return o;
+}
+
 
 /** Das Beispiel eines z.lazy-Schemas, das sich selbst enthaelt, hat kein Ende (CR-GC-980). */
 export class RekursionsFehler extends Error {
@@ -191,10 +292,14 @@ export class RekursionsFehler extends Error {
 
 /** Ein gueltiges Beispiel; `minimal` laesst optionale Objektfelder und, wo das Schema es erlaubt, Listenelemente weg. */
 export function beispiel(schema: unknown, minimal = false, offen: readonly Zod[] = []): unknown {
-  const s = schema as Zod;
+  const aus = ausdruecke(schema as Zod);
+  const b = beispielOhneBedingung(schema as Zod, minimal, offen);
+  return aus.length > 0 ? erfuelle(schema as Zod, b, aus) : b;
+}
+
+function beispielOhneBedingung(s: Zod, minimal: boolean, offen: readonly Zod[]): unknown {
   const d = def(s);
   const rek = (x: unknown, m = minimal): unknown => beispiel(x, m, offen);
-  if (checks(s).some((c) => c.check === 'custom')) throw new Error(`refine/superRefine im Vertrag nicht unterstuetzt: ${AUSWEG}`);
   if (minimal && d.type === 'object') {
     return Object.fromEntries(
       Object.entries(d.shape)
@@ -262,6 +367,7 @@ export function beispiel(schema: unknown, minimal = false, offen: readonly Zod[]
     case 'union':
       return rek(d.options[0]);
     case 'pipe':
+      if (def(d.in).type === 'transform' || def(d.out).type === 'transform') throw new Error(TRANSFORM);
       return rek(d.in);
     case 'lazy': {
       if (offen.includes(s)) throw new RekursionsFehler();
@@ -454,6 +560,43 @@ function zahlFaelle(s: Zod, wert: unknown, st: Stelle): Fall[] {
   return faelle;
 }
 
+/** Faelle zur Bedingung eines `refine` am Objekt: je Grenze ein Fall; nur auf der Datenform, ohne Quelltext (CR-GC-1000). */
+function ausdruckFaelle(shape: Record<string, Zod>, a: Ausdruck, b: Record<string, unknown>, st: Stelle): Fall[] {
+  const fall = (name: string, eingabe: Record<string, unknown>, erwartet: boolean): Fall => ({ name: benannt(st, name), eingabe: st.einsetzen(eingabe), erwartet });
+  if (a.art === 'mindestensEines') {
+    const ohne = { ...b };
+    for (const f of a.felder) delete ohne[f];
+    return [
+      fall(`lehnt ab: keines von ${a.felder.join(', ')} gesetzt`, ohne, false),
+      ...a.felder.map((f) => fall(`nimmt an: nur ${f} gesetzt (mindestens eines von ${a.felder.join(', ')})`, { ...ohne, [f]: b[f] ?? beispiel(shape[f]) }, true)),
+    ];
+  }
+  if (a.art !== 'vergleich') return [];
+  const faelle: Fall[] = [];
+  for (const erfuellt of [true, false]) {
+    const w = vergleichsWerte(shape, a, erfuellt);
+    const was = `${a.links} ${a.operator} ${a.rechts}`;
+    if (!w) {
+      st.ungebildet.push(`${st.pfad || 'Wurzel'}: ${was}: kein Wertepaar an der Grenze, das die Wertregeln beider Felder einhält`);
+      continue;
+    }
+    const paar = `${a.links} = ${text(w.links)}, ${a.rechts} = ${text(w.rechts)}`;
+    faelle.push(fall(erfuellt ? `nimmt an: ${was} auf der Grenze (${paar})` : `lehnt ab: ${was} knapp verletzt (${paar})`, { ...b, [a.links]: w.links, [a.rechts]: w.rechts }, erfuellt));
+  }
+  return faelle;
+}
+
+/** Der ablehnende Fall zu einem verbotenen Muster: ein Text, der es trifft und die uebrigen Regeln des Schemas haelt; sonst Abbruch. */
+function musterFall(s: Zod, muster: string, i: number, st: Stelle): Fall {
+  const re = new RegExp(muster);
+  const t = ausRegex(re);
+  const basis = String(beispielOhneBedingung(s, false, []));
+  const rest = ohneBedingung(s, i);
+  const text = [t, t + 'x'.repeat(Math.max(0, laengen(checks(s)).lo - t.length)), basis + t, t + basis].find((c) => re.test(c) && rest.safeParse(c).success);
+  if (text === undefined) throw new Error(`refine/superRefine im Vertrag nicht unterstuetzt: kein Text, der /${muster}/ trifft und die uebrigen Regeln des Schemas erfuellt`);
+  return { name: benannt(st, `lehnt ab: Text passt auf das verbotene Muster /${muster}/`), eingabe: st.einsetzen(text), erwartet: false };
+}
+
 /** Die Faelle zu einem Knoten des Schemas und seinem Beispielwert; jeder Fall ist die ganze Eingabe. */
 function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
   const d = def(s);
@@ -462,7 +605,10 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
     if (d.type !== 'nullable') return innen;
     return [{ name: benannt(st, 'nimmt null an'), eingabe: st.einsetzen(null), erwartet: true }, ...innen];
   }
-  if (d.type === 'pipe') return knoten(d.in, wert, hinein(st, ['in']));
+  if (d.type === 'pipe') {
+    if (def(d.in).type === 'transform' || def(d.out).type === 'transform') throw new Error(TRANSFORM);
+    return knoten(d.in, wert, hinein(st, ['in']));
+  }
   if (d.type === 'lazy') return knoten(d.getter(), wert, hinein(st, ['getter']));
   if (st.ebene > MAX_EBENE) {
     st.begrenzt.push(`${st.pfad}: Tiefe ${MAX_EBENE} erreicht, darunter keine Fälle`);
@@ -506,6 +652,7 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
         erwartet: rest === 'unknown',
       });
     }
+    for (const a of ausdruecke(s)) faelle.push(...ausdruckFaelle(d.shape, a, b, st));
     return faelle;
   }
   if (d.type === 'array') {
@@ -554,7 +701,12 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
     // Wie beim Enum: ein Wert mehr im Literal (`z.literal(['a', 'b'])`) laesst sich durch keinen Parse-Fall fassen.
     faelle.push({ name: benannt(st, 'Werteliste unverändert'), eingabe: null, erwartet: true, enumWerte: { weg: st.weg, liste: [...d.values], feld: 'values' } });
   }
-  if (d.type === 'string') faelle.push(...textFaelle(s, st));
+  if (d.type === 'string') {
+    faelle.push(...textFaelle(s, st));
+    ausdruecke(s).forEach((a, i) => {
+      if (a.art === 'textOhneMuster') faelle.push(musterFall(s, a.muster, i, st));
+    });
+  }
   if (d.type === 'number') faelle.push(...zahlFaelle(s, wert, st));
   return faelle;
 }

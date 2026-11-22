@@ -194,6 +194,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | CR | status | Änderung | Betroffene Elemente |
 |---|---|---|---|
 | `CR-GC-100` | done | Harness Core | `FUNC-evaluate-rules` · `FUNC-graph-store` · `FUNC-import` · `FUNC-mutate` · `MOD-kernel` · `REQ-buildable-standalone` · `REQ-confidence-tier` · `REQ-disk-persistence` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-one-gate-per-repo` · `REQ-rule-enforcement` · `REQ-single-kuzu-owner` |
+| `CR-GC-1000` | done | Generator liest refine in zwei festen Formen | `FUNC-erzeuge-vertragstests` · `FUNC-se-bau` · `FUNC-vertragstest-verb` · `REQ-contract-test-cases` |
 | `CR-GC-101` | done | MCP-Tools | `FUNC-graph-expand` · `FUNC-graph-impact` · `MOD-surface` · `REQ-audit-trail` · `REQ-cache-layering` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-single-transport` · `REQ-subgraph-slicing` |
 | `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-surface` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |

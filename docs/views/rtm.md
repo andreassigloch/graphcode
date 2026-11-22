@@ -392,7 +392,7 @@
 | `REQ-confidence-tier` | `TEST-mutate-gate` | `FUNC-mutate` | `MOD-kernel` |
 | `REQ-conops-zugangsliste` | `TEST-skill-zugangsliste` | `FUNC-se-conops` | `MOD-agent-surface` |
 | `REQ-constraints-skill-vertrag` | `TEST-skill-constraints` | `FUNC-se-constraints` | `MOD-agent-surface` |
-| `REQ-contract-test-cases` | `TEST-vertragstest-generator` | `FUNC-erzeuge-vertragstests` | `MOD-projections` |
+| `REQ-contract-test-cases` | `TEST-vertrag-ausdruck` · `TEST-vertragstest-generator` | `FUNC-erzeuge-vertragstests` | `MOD-projections` |
 | `REQ-contract-test-generation` | `TEST-vertragstest-generator` | `FUNC-vertragstest-verb` | `MOD-surface` |
 | `REQ-contract-test-manual` | `TEST-vertragstest-generator` | `FUNC-erzeuge-vertragstests` | `MOD-projections` |
 | `REQ-cr-gruppen-rechnen` | `TEST-se-plan-groups` | `FUNC-cr-groups` | `MOD-loop` |
