@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 601 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 601 CR · 588 done · 1 open.
+Total: 601 CR · 589 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -662,4 +662,4 @@ Total: 601 CR · 588 done · 1 open.
 | `CR-GC-994` | done | Vertragstest-Generator: Werteliste eines z.literal einfrieren (Art-Feld einer Variante) |
 | `CR-GC-995` | done | tools/list: Platz schaffen für die neue Eingabe von graph_test_ingest (Texte von audit_trail und graph_elements kürzen) |
 | `CR-GC-996` | n/a | Proxy-Antwortfluesse streichen |
-| `CR-GC-997` | n/a | PARAM im Skill: Invariante und berechneter Wert bekommen ein Zod-Schema im Vertragspaket, der Test prueft das Ergebnis dagegen; Einheit als UCUM-Code (Festlegung CR-SM-419, 2026-11-22) |
+| `CR-GC-997` | done | PARAM im Skill: Invariante und berechneter Wert bekommen ein Zod-Schema im Vertragspaket, der Test prueft das Ergebnis dagegen; Einheit als UCUM-Code (Festlegung CR-SM-419, 2026-11-22) |

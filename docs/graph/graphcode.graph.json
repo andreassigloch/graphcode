@@ -4778,7 +4778,8 @@
       "id": "CR-GC-997",
       "type": "CR",
       "name": "PARAM im Skill: Invariante und berechneter Wert bekommen ein Zod-Schema im Vertragspaket, der Test prueft das Ergebnis dagegen; Einheit als UCUM-Code (Festlegung CR-SM-419, 2026-11-22)",
-      "description": "docs/cr/open/CR-GC-997-param-im-skill-invariante-und-berechnete.md"
+      "description": "docs/cr/done/CR-GC-997-param-im-skill-invariante-und-berechnete.md",
+      "status": "done"
     },
     {
       "id": "FCHAIN-advisory-roundtrip",
@@ -38561,5 +38562,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1477
+  "graphVersion": 1478
 }
