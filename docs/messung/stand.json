@@ -1,15 +1,15 @@
 {
-  "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty",
+  "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty",
   "zeilen": [
     {
       "id": "T-V4",
       "nr": "8",
       "kriterium": "Urteil `kongruent`, Bindungsquote 100 %, Grenzmenge 100 % modelliert",
-      "wert": "gedriftet, Bindung 118/119 (99 %), Grenzmenge FUNC 17/62, SCHEMA 14/57",
+      "wert": "gedriftet, Bindung 120/121 (99 %), Grenzmenge FUNC 17/61, SCHEMA 17/58",
       "urteil": "nicht bestanden",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "T-V2",
@@ -17,9 +17,9 @@
       "kriterium": "0 Befunde über Schwelle (BW-02: > 5 SCHEMA)",
       "wert": "BW-02 14 bei 17 Whiteboxes",
       "urteil": "nicht bestanden",
-      "datum": "2026-11-20",
+      "datum": "2026-11-22",
       "seit": "2026-11-15",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "T-H2",
@@ -27,9 +27,9 @@
       "kriterium": "jede Regel steht in der Matrix, jede genannte ID existiert",
       "wert": "unbekannt CL-01",
       "urteil": "nicht bestanden",
-      "datum": "2026-11-20",
+      "datum": "2026-11-22",
       "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "T-M4",
@@ -37,39 +37,39 @@
       "kriterium": "12/12 Prüfungen grün, 3 Rotkontrollen schlagen an",
       "wert": "12/12 grün",
       "urteil": "bestanden",
-      "datum": "2026-11-20",
+      "datum": "2026-11-22",
       "seit": "2026-11-15",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "T-E8",
       "nr": "10",
       "kriterium": "Runde lesen → Status → Vorschlag → Anwenden < 200 ms (feste Eingabe)",
-      "wert": "Median 2682.7 ms bei 2000 Knoten",
+      "wert": "Median 2795.9 ms bei 2000 Knoten",
       "urteil": "nicht bestanden",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "T-E1",
       "nr": "12",
       "kriterium": "`graph_impact` bei CRs mit Löschung aufgerufen (keine Schwelle)",
-      "wert": "6 von 20 CRs mit Löschung riefen graph_impact (jüngste 20; zuletzt CR-GC-946: nein)",
+      "wert": "5 von 20 CRs mit Löschung riefen graph_impact (jüngste 20; zuletzt CR-GC-1008: nein)",
       "urteil": "ohne Schwelle",
-      "datum": "2026-11-19",
-      "seit": "2026-11-15",
-      "stempel": "commit ab260d8c"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "commit fca80445"
     },
     {
       "id": "T-E2",
       "nr": "—",
       "kriterium": "100 % der geänderten Knoten in W bei |W|/|G| ≤ 0,05 (jüngste 10 CR-Commits)",
-      "wert": "2/10 Jobs: CR-GC-964: 8/183 in W, |W|/|G| 0.035; CR-GC-963: 2/2 in W, |W|/|G| 0.006; CR-GC-954: 21/186 in W, |W|/|G| 0.026; CR-GC-934: 7/165 in W, |W|/|G| 0.049; CR-GC-934: 7/64 in W, |W|/|G| 0.049; CR-GC-956: 3/3 in W, |W|/|G| 0.007; CR-GC-923: 3/163 in W, |W|/|G| 0.011; CR-GC-925: 1/161 in W, |W|/|G| 0.009; CR-GC-955: 3/161 in W, |W|/|G| 0.021; CR-GC-918: 103/299 in W, |W|/|G| 0.075; Kalibrierung J1: 1/1 in W, |W|/|G| 0.846",
+      "wert": "0/10 Jobs: CR-GC-1009: 53/251 in W, |W|/|G| 0.031; CR-GC-1007: 9/220 in W, |W|/|G| 0.005; CR-GC-1006: 6/216 in W, |W|/|G| 0.026; CR-GC-1005: 2/215 in W, |W|/|G| 0.001; CR-GC-1004: 3/215 in W, |W|/|G| 0.01; CR-GC-1003: 2/214 in W, |W|/|G| 0.015; CR-GC-1002: 7/218 in W, |W|/|G| 0.018; CR-GC-1001: 8/221 in W, |W|/|G| 0.009; CR-GC-1000: 11/214 in W, |W|/|G| 0.02; CR-GC-999: 4/210 in W, |W|/|G| 0.033; Kalibrierung J1: 1/1 in W, |W|/|G| 0.846",
       "urteil": "nicht bestanden",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "T-O1",
@@ -77,79 +77,79 @@
       "kriterium": "Referenzkette reproduziert; ≥ 90 % der Ketten auswertbar",
       "wert": "Referenzkette reproduziert; 77 von 96 Ketten bewertbar (80 %, 10 Graphen); nicht gerechnet: syncDepth, errorPathDepth, answerPath",
       "urteil": "nicht bestanden",
-      "datum": "2026-11-20",
+      "datum": "2026-11-22",
       "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "T-M3",
       "nr": "1, 2",
       "kriterium": "Fehler bleiben 0; eine erreichte Marke fällt nicht zurück; die Befunde je Stufe ohne Plan fallen oder sind abgenommen (hier geurteilt: Fehler und Marken)",
-      "wert": "24 Stände e90aae1..a55747a; Fehler höchstens 0; Marken SRR PDR → SRR PDR; Befunde ohne Plan 120 → 121 (Anforderung 9→9, Funktion 15→15, Modul 33→34, Schema 13→13, Test 29→29, Bindung 21→21); Plan 429 → 437",
+      "wert": "24 Stände 050be96..fca8044; Fehler höchstens 0; Marken SRR PDR → SRR PDR; Befunde ohne Plan 104 → 102 (Anforderung 9→9, Funktion 14→14, Modul 34→35, Schema 9→9, Test 17→14, Bindung 21→21); Plan 434 → 453",
       "urteil": "bestanden",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "G3",
       "nr": "3",
       "kriterium": "Steuerwert und Überschreitungen je Steuerregel (keine Schwelle)",
-      "wert": "Steuerwert 9.75 bei BW-02 FUNC-block-grounding; Überschreitungen: BW-02 14, CR-01 13, MT-02 0, R-04 7, RD-04 9 (Stand a55747a)",
+      "wert": "Steuerwert 9.75 bei BW-02 FUNC-block-grounding; Überschreitungen: BW-02 14, CR-01 13, MT-02 0, R-04 7, RD-04 10 (Stand fca8044)",
       "urteil": "ohne Schwelle",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "G4",
       "nr": "4",
       "kriterium": "Testergebnis je Anforderung (keine Schwelle)",
-      "wert": "260 von 302 Anforderungen bestanden, 4 rot, 29 nie gelaufen (Stand a55747a)",
+      "wert": "266 von 308 Anforderungen bestanden, 4 rot, 29 nie gelaufen (Stand fca8044)",
       "urteil": "ohne Schwelle",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "G5",
       "nr": "5",
       "kriterium": "Ketten bewertbar im eigenen Modell (keine Schwelle)",
-      "wert": "34 von 34 Ketten bewertbar (Stand a55747a)",
+      "wert": "34 von 34 Ketten bewertbar (Stand fca8044)",
       "urteil": "ohne Schwelle",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "G6",
       "nr": "6",
       "kriterium": "Folge ohne Schlupf, bereinigt (keine Schwelle)",
-      "wert": "Folge ohne Schlupf 2 CRs der Spur CODE (Schwelle 10); CODE-CRs mit Schlupf 47 von 123",
+      "wert": "Folge ohne Schlupf 29 CRs der Spur CODE (Schwelle 10); CODE-CRs mit Schlupf 47 von 150",
       "urteil": "ohne Schwelle",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "G7",
       "nr": "7",
       "kriterium": "Bindung der Blackbox- und Schnittstellen-Tests (keine Schwelle)",
-      "wert": "Blackbox 84/100, Schnittstelle 47/58 (CR-GC-966)",
+      "wert": "Blackbox 84/100, Schnittstelle 69/69 (CR-GC-1009)",
       "urteil": "ohne Schwelle",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     },
     {
       "id": "G9",
       "nr": "9",
       "kriterium": "Dauer Auswahl gegen Volllauf (keine Schwelle)",
-      "wert": "Auswahl 223 s gegen Volllauf 381 s, Rechenzeit (CR-GC-966)",
+      "wert": "Auswahl 303 s gegen Volllauf 468 s, Rechenzeit (CR-GC-1009)",
       "urteil": "ohne Schwelle",
-      "datum": "2026-11-20",
-      "seit": "2026-11-20",
-      "stempel": "graph 8d3beccd77b9 (1610/4207) · policy graphcode.config.jsonc · rules 54.1.0 · code 8f1bcccd+dirty"
+      "datum": "2026-11-22",
+      "seit": "2026-11-22",
+      "stempel": "graph c8552008f90c (1747/4489) · policy graphcode.config.jsonc · rules 54.2.0 · code fca80445+dirty"
     }
   ]
 }
