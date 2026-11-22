@@ -124,7 +124,8 @@
       "id": "CR-GC-1011",
       "type": "CR",
       "name": "Doppelte Flüsse ohne Vertrag: FLOW-measurement-vector und FLOW-action entfernen",
-      "description": "docs/cr/open/CR-GC-1011-doppelte-flu-sse-ohne-vertrag-flow-measu.md"
+      "description": "docs/cr/done/CR-GC-1011-doppelte-flu-sse-ohne-vertrag-flow-measu.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-102",
@@ -40149,5 +40150,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1541
+  "graphVersion": 1542
 }
