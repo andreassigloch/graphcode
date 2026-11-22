@@ -1761,6 +1761,8 @@
 | `CR-GC-996` | relation | `FUNC-host-proxy` |
 | `CR-GC-996` | relation | `FUNC-host-socket` |
 | `CR-GC-996` | relation | `SCHEMA-mutate-result` |
+| `CR-GC-998` | relation | `FUNC-erzeuge-vertragstests` |
+| `CR-GC-998` | relation | `FUNC-vertragstest-verb` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |

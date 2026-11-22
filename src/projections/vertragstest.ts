@@ -4,11 +4,11 @@
  *
  * Je Schema: ein gueltiges Beispiel, das angenommen wird, und je Objektfeld die Ablehnung ohne Feld
  * (bei einem optionalen Feld die Annahme ohne Feld), mit falschem Typ und ausserhalb eines Enums, dazu
- * ein unbekanntes Zusatzfeld; je Union-Variante dasselbe. Die Faelle gelten auf jeder Ebene: in verschachtelten Objekten, in den Elementen einer Liste,
+ * bei einem strikten Objekt (`z.strictObject`) ein unbekanntes Zusatzfeld; je Union-Variante dasselbe. Die Faelle gelten auf jeder Ebene: in verschachtelten Objekten, in den Elementen einer Liste,
  * eines Tupels und eines Records (CR-GC-980). Die Tiefe ist auf `MAX_EBENE` begrenzt, ein rekursives
  * Schema (z.lazy) liefert sein Beispiel ohne optionale Felder; beides steht im Bericht (`begrenzt`).
  * Eine Funktion (`z.function()`) ist ein Feld wie jedes andere: das Beispiel ist eine Funktion, die Datei nennt sie `fn`,
- * ein Wert ohne Funktion wird abgelehnt (CR-GC-990). Ein offenes Objekt (`z.looseObject`) nimmt ein Zusatzfeld an.
+ * ein Wert ohne Funktion wird abgelehnt (CR-GC-990). Ein offenes Objekt (`z.looseObject`) nimmt ein Zusatzfeld an; ein nicht-striktes `z.object` bekommt keinen Zusatzfeld-Fall.
  * Ein Fall kommt nur in die Datei, wenn das Original-Schema ihn so urteilt, wie der Fall es
  * erwartet; angenommene Faelle frieren die Ausgabe ein. Das Laden der TS-Quellen des Ziel-Repos
  * gehoert dem Aufrufer (`laden`), weil es Node-Flags braucht (vertragstest-verb.ts).
@@ -498,12 +498,14 @@ function knoten(s: Zod, wert: unknown, st: Stelle): Fall[] {
         faelle.push(...knoten(feld, b[k], tiefer(st, st.pfad ? `${st.pfad}.${k}` : k, (t) => st.einsetzen({ ...b, [k]: t }), false, ['shape', k])));
       }
     }
-    const offen = d.catchall !== undefined && def(d.catchall).type === 'unknown';
-    faelle.push({
-      name: benannt(st, offen ? 'nimmt an: unbekanntes Zusatzfeld (offenes Objekt)' : 'lehnt ab: unbekanntes Zusatzfeld'),
-      eingabe: st.einsetzen({ ...b, __zusatz__: 1 }),
-      erwartet: offen,
-    });
+    const rest = d.catchall === undefined ? undefined : def(d.catchall).type;
+    if (rest === 'never' || rest === 'unknown') {
+      faelle.push({
+        name: benannt(st, rest === 'unknown' ? 'nimmt an: unbekanntes Zusatzfeld (offenes Objekt)' : 'lehnt ab: unbekanntes Zusatzfeld'),
+        eingabe: st.einsetzen({ ...b, __zusatz__: 1 }),
+        erwartet: rest === 'unknown',
+      });
+    }
     return faelle;
   }
   if (d.type === 'array') {

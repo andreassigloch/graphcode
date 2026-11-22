@@ -690,6 +690,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-994` | done | Vertragstest-Generator: Werteliste eines z.literal einfrieren (Art-Feld einer Variante) | `FUNC-erzeuge-vertragstests` |
 | `CR-GC-995` | done | tools/list: Platz schaffen für die neue Eingabe von graph_test_ingest (Texte von audit_trail und graph_elements kürzen) | `FUNC-audit-trail` |
 | `CR-GC-996` | done | Proxy-Antwortfluesse streichen | `FUNC-host-proxy` · `FUNC-host-socket` |
+| `CR-GC-998` | done | Generator: kein Zusatzfeld-Fall fuer nicht-strikte Objekte | `FUNC-erzeuge-vertragstests` · `FUNC-vertragstest-verb` |
 
 > Jeder CR buendelt, was er erzeugt/veraendert hat — nicht immer ein neuer Use Case,
 > oft nur eine Funktion oder ein Requirement. Reine Milestone-Zuordnungen

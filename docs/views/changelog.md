@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 601 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 602 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 601 CR · 590 done · 1 open.
+Total: 602 CR · 591 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -663,3 +663,4 @@ Total: 601 CR · 590 done · 1 open.
 | `CR-GC-995` | done | tools/list: Platz schaffen für die neue Eingabe von graph_test_ingest (Texte von audit_trail und graph_elements kürzen) |
 | `CR-GC-996` | done | Proxy-Antwortfluesse streichen |
 | `CR-GC-997` | done | PARAM im Skill: Invariante und berechneter Wert bekommen ein Zod-Schema im Vertragspaket, der Test prueft das Ergebnis dagegen; Einheit als UCUM-Code (Festlegung CR-SM-419, 2026-11-22) |
+| `CR-GC-998` | done | Generator: kein Zusatzfeld-Fall fuer nicht-strikte Objekte |

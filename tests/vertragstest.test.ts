@@ -104,11 +104,20 @@ describe('erzeugeFaelle unter der ersten Feldebene (CR-GC-980)', () => {
     const O = z.strictObject({ o: z.strictObject({ a: z.string() }).optional(), p: z.array(z.strictObject({ q: z.string() })).nullable() });
     expect(namen(erzeugeFaelle(O).aufgenommen)).toEqual(expect.arrayContaining(['o: lehnt ab ohne a', 'p[]: lehnt ab ohne q']));
   });
-  it('lehnt ab, was das Original annimmt, und verwirft den Fall statt ihn aufzunehmen', () => {
+  it('bildet für ein nicht-striktes Objekt keinen Zusatzfeld-Fall, weder aufgenommen noch verworfen', () => {
     const N = z.strictObject({ a: z.object({ b: z.string() }) });
     const { aufgenommen, verworfen } = erzeugeFaelle(N);
-    expect(namen(aufgenommen)).not.toContain('a: lehnt ab: unbekanntes Zusatzfeld');
-    expect(verworfen).toContain('a: lehnt ab: unbekanntes Zusatzfeld');
+    expect(namen(aufgenommen).filter((n) => n.includes('Zusatzfeld'))).toEqual(['lehnt ab: unbekanntes Zusatzfeld']);
+    expect(verworfen).toEqual([]);
+    const flach = erzeugeFaelle(z.object({ a: z.string() }));
+    expect(namen(flach.aufgenommen).filter((n) => n.includes('Zusatzfeld'))).toEqual([]);
+    expect(flach.verworfen).toEqual([]);
+  });
+  it('ein offenes Objekt nimmt das Zusatzfeld an, ein striktes lehnt es ab', () => {
+    const offen = erzeugeFaelle(z.looseObject({ a: z.string() })).aufgenommen.filter((f) => f.name.includes('Zusatzfeld'));
+    expect(offen.map((f) => [f.name, f.erwartet])).toEqual([['nimmt an: unbekanntes Zusatzfeld (offenes Objekt)', true]]);
+    const strikt = erzeugeFaelle(z.strictObject({ a: z.string() })).aufgenommen.filter((f) => f.name.includes('Zusatzfeld'));
+    expect(strikt.map((f) => [f.name, f.erwartet])).toEqual([['lehnt ab: unbekanntes Zusatzfeld', false]]);
   });
   it('begrenzt die Tiefe und meldet es', () => {
     let T: z.ZodType = z.strictObject({ blatt: z.string() });
