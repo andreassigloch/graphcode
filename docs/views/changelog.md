@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 602 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 603 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 602 CR · 591 done · 1 open.
+Total: 603 CR · 592 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -664,3 +664,4 @@ Total: 602 CR · 591 done · 1 open.
 | `CR-GC-996` | done | Proxy-Antwortfluesse streichen |
 | `CR-GC-997` | done | PARAM im Skill: Invariante und berechneter Wert bekommen ein Zod-Schema im Vertragspaket, der Test prueft das Ergebnis dagegen; Einheit als UCUM-Code (Festlegung CR-SM-419, 2026-11-22) |
 | `CR-GC-998` | done | Generator: kein Zusatzfeld-Fall fuer nicht-strikte Objekte |
+| `CR-GC-999` | done | skills sync: SCHEMA und FLOW im Modell |

@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 78 SCHEMA · 265 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 79 SCHEMA · 266 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -67,6 +67,7 @@
 | `SCHEMA-schlupf-zeile` | src/projections/test-schlupf.ts#SchlupfZeileSchema | n/a |
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
 | `SCHEMA-sitzungsende` | src/surface/session-end-contract.ts#SitzungsendeSchema | reviewed |
+| `SCHEMA-skill-sync-result` | src/surface/scaffold.ts#SkillSyncResultSchema | n/a |
 | `SCHEMA-skill-text` | extern definiert (kein realRef) | n/a |
 | `SCHEMA-steering-channel` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
@@ -153,6 +154,7 @@
 | `FLOW-cli-output-import-code` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-remove` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-rewind` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-skills-sync` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-status` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-upgrade` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-vertragstest` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |

@@ -371,7 +371,7 @@ export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): S
   const res: SkillSyncResult = { repoRoot, added: [], updated: [], unchanged: [], removed: [] };
   const srcDir = packagedSkillsDir();
   const files = shippedSkillFiles();
-  if (files.length === 0) return res; // skills not packaged — nothing to sync.
+  if (files.length === 0) return SkillSyncResultSchema.parse(res); // skills not packaged — nothing to sync.
   // Alt-Layout-Migration läuft auch über sync (nicht nur init/update) — sonst
   // koexistieren Command- und Legacy-Kopie bis zum nächsten `graphcode update`.
   // CR-GC-538: im Trockenlauf NICHT — `--check` darf keine Datei anfassen, auch keine alte.
@@ -402,6 +402,7 @@ export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): S
     }
   }
   res.removed = removeStaleSkills(repoRoot, dry);
+  SkillSyncResultSchema.parse(res); // Erzeuger parst an der Grenze, das Original geht zurueck
   return res;
 }
 

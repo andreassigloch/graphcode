@@ -1763,6 +1763,9 @@
 | `CR-GC-996` | relation | `SCHEMA-mutate-result` |
 | `CR-GC-998` | relation | `FUNC-erzeuge-vertragstests` |
 | `CR-GC-998` | relation | `FUNC-vertragstest-verb` |
+| `CR-GC-999` | relation | `FUNC-cli-dispatch` |
+| `CR-GC-999` | relation | `FUNC-harness-cli` |
+| `CR-GC-999` | relation | `SCHEMA-skill-sync-result` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-agent-loop` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-advisory-roundtrip` | compose | `FUNC-graph-impact` |
@@ -2250,6 +2253,8 @@
 | `FLOW-cli-output-remove` | relation | `SCHEMA-install-result` |
 | `FLOW-cli-output-rewind` | io | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-rewind` | relation | `SCHEMA-rewind-summary` |
+| `FLOW-cli-output-skills-sync` | io | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-skills-sync` | relation | `SCHEMA-skill-sync-result` |
 | `FLOW-cli-output-status` | io | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-status` | relation | `SCHEMA-repo-status` |
 | `FLOW-cli-output-upgrade` | io | `ACTOR-auftraggeber` |
@@ -2960,6 +2965,7 @@
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-import-code` |
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-remove` |
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-rewind` |
+| `FUNC-cli-dispatch` | io | `FLOW-cli-output-skills-sync` |
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-status` |
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-upgrade` |
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-vertragstest` |
@@ -4228,6 +4234,7 @@
 | `TEST-vertrag-rewind-summary` | verify | `SCHEMA-rewind-summary` |
 | `TEST-vertrag-rule-violation` | verify | `SCHEMA-rule-violation` |
 | `TEST-vertrag-sitzungsende` | verify | `SCHEMA-sitzungsende` |
+| `TEST-vertrag-skill-sync-result` | verify | `SCHEMA-skill-sync-result` |
 | `TEST-vertrag-test-ingest-answer` | verify | `SCHEMA-test-ingest-answer` |
 | `TEST-vertrag-test-ingest-input` | verify | `SCHEMA-test-ingest-input` |
 | `TEST-vertrag-tool-context` | verify | `SCHEMA-tool-context` |
