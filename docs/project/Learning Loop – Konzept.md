@@ -65,7 +65,7 @@ Abweichung zur FAQ heute: Sie trennt die drei Ebenen nicht (ein Format für alle
 - Die Engine läuft nur bei Andreas, in aise-bok als zentralem Aggregator und Lerner; fragt später auch graphcode-Instanzen auf eigenen Servern ab (mit Zustimmung).
 - Eigene Kunden-FAQ vorerst weggelassen.
 - Heute fehlt dafür: Der Index kommt per Hook aus dem lokalen Pfad von aise-bok (CR-GC-935). Viele der 243 Einträge sind Familien-Interna (z. B. `link-modus-bedienen`, `paket-patch-bump`). Das Kunden-Set braucht einen Filter auf Werkzeug und Methode und einen Platz im npm-Paket.
-- Zu prüfen: „Regel früher bekannt machen (Skill)" setzt voraus, dass der Skill beim Kunden ankommt; `init`/`upgrade` entfernen se\*-Skills, die das Paket nicht mehr ausliefert (FAQ `skills-nicht-mehr-ausgeliefert`).
+- Zu prüfen: „Regel früher bekannt machen (Skill)" setzt voraus, dass der Skill beim Kunden ankommt; `init`, `update` und `skills sync` entfernen se\*-Skills, die das Paket nicht mehr ausliefert (FAQ `skills-nicht-mehr-ausgeliefert`).
 
 ## Markt
 

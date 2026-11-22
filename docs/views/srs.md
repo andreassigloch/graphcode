@@ -12184,9 +12184,9 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ — · allocate ▶ —
 
-###### `REQ-upgrade-entfernt-fremde-skills` — upgrade entfernt fremde Skills
+###### `REQ-upgrade-entfernt-fremde-skills` — Fremde Skills entfernen und als Drift zählen
 
-Wenn update, skills sync oder upgrade laeuft, entfernt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift.
+Wenn update oder skills sync läuft, entfernt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zählt sie als Drift.
 
 priority: must · status: n/a · kinds: functional
 

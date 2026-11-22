@@ -198,6 +198,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-1001` | done | FUNC-sync-skills mit eigener Anforderung und Fluessen | `FUNC-sync-skills` · `FUNC-upgrade` · `REQ-skills-sync-gleicht-ab` |
 | `CR-GC-1002` | done | Entfernen veralteter Skills: eine Anforderung je Erfueller | `FUNC-harness-cli` · `FUNC-sync-skills` · `FUNC-upgrade` · `REQ-skills-sync-entfernt-fremde-skills` · `REQ-update-entfernt-fremde-skills` · `REQ-upgrade-check-zaehlt-fremde-skills` · `REQ-upgrade-entfernt-fremde-skills` |
 | `CR-GC-1003` | done | Aufraeumen des Alt-Layouts der Skills loeschen | `FUNC-harness-cli` · `FUNC-sync-skills` |
+| `CR-GC-1004` | done | REQ upgrade entfernt: Wortlaut auf update und skills sync verengen | `FUNC-upgrade` · `REQ-upgrade-entfernt-fremde-skills` |
 | `CR-GC-101` | done | MCP-Tools | `FUNC-graph-expand` · `FUNC-graph-impact` · `MOD-surface` · `REQ-audit-trail` · `REQ-cache-layering` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-single-transport` · `REQ-subgraph-slicing` |
 | `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-surface` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |

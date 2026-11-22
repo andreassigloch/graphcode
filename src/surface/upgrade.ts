@@ -109,7 +109,7 @@ export const UpgradeReportSchema = z.object({
   missingSkills: z.array(z.string()),
   /**
    * CR-GC-879: `se*`-Kopien im Repo, die das Paket nicht mehr kennt (z. B. `se-view/*` nach
-   * CR-GC-876). Ein Rest ist Drift wie ein fehlender Skill; `upgrade` räumt ihn weg.
+   * CR-GC-876). Ein Rest ist Drift wie ein fehlender Skill; `--check` zählt ihn, das Entfernen macht `update`.
    */
   staleSkills: z.array(z.string()),
   /**
