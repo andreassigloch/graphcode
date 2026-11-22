@@ -27,6 +27,7 @@ export {
   computeMarks,
   summarizeReadiness,
   computeReadiness,
+  ReadinessReportSchema,
   scoreReadiness,
   getFamilyRuleIds,
   type IncoseScope,

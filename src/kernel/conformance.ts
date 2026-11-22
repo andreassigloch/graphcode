@@ -142,7 +142,53 @@ function parseFileFacts(source: string, fileName: string): Omit<FileFacts, 'exis
     importedSymbols: [...importedSymbols],
     parsedSymbols: [...parsedSymbols],
     zodSymbols: [...zodSymbols],
+    wrappedSymbols: wrappedSymbolsOf(sf, parsedSymbols, new Set([...declaredSymbols, ...importedSymbols])),
   };
+}
+
+/**
+ * CR-GC-1006 (Vertrag CR-SM-449): die Symbole, die in einem Schema stehen, das diese Datei parst.
+ * Für jedes geparste `W`, das hier als `const W = <Initializer>` deklariert ist: alle Bezeichner im
+ * Initializer, die in der Datei deklariert oder importiert sind, über lokal deklarierte `const`
+ * transitiv. `W` selbst steht nicht darin. Der Name hinter einem Punkt und der Schlüssel eines
+ * Objektliterals sind keine Verweise.
+ */
+function wrappedSymbolsOf(sf: ts.SourceFile, parsed: ReadonlySet<string>, known: ReadonlySet<string>): string[] {
+  const initializers = new Map<string, ts.Expression>();
+  const collect = (node: ts.Node): void => {
+    if (ts.isVariableDeclaration(node) && ts.isIdentifier(node.name) && node.initializer !== undefined) {
+      initializers.set(node.name.text, node.initializer);
+    }
+    ts.forEachChild(node, collect);
+  };
+  collect(sf);
+
+  const wrapped = new Set<string>();
+  for (const root of parsed) {
+    const start = initializers.get(root);
+    if (start === undefined) continue;
+    const seen = new Set<string>([root]);
+    const walk = (expr: ts.Node): void => {
+      const visit = (node: ts.Node): void => {
+        const parent = node.parent;
+        const isName =
+          (ts.isPropertyAccessExpression(parent) && parent.name === node) ||
+          (ts.isPropertyAssignment(parent) && parent.name === node);
+        if (ts.isIdentifier(node) && !isName && node.text !== root && known.has(node.text)) {
+          wrapped.add(node.text);
+          const next = initializers.get(node.text);
+          if (next !== undefined && !seen.has(node.text)) {
+            seen.add(node.text);
+            walk(next);
+          }
+        }
+        ts.forEachChild(node, visit);
+      };
+      visit(expr);
+    };
+    walk(start);
+  }
+  return [...wrapped];
 }
 
 /** The identifier a call/member chain starts from: `z.object({…}).strict()` → `z`. */

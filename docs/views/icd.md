@@ -19,7 +19,7 @@
 | `SCHEMA-chain-metrics` | packages/contracts/src/se/chain-metrics.ts#ChainMetrics | reviewed |
 | `SCHEMA-cli-command` | src/surface/cli-args.ts#CliVerbSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
-| `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMark | reviewed |
+| `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMarkSchema | reviewed |
 | `SCHEMA-cr-groups` | src/loop/se-plan.ts#CrGroupsSchema | n/a |
 | `SCHEMA-eingangs-befund` | src/kernel/measure/constraints.ts#EingangsBefund | n/a |
 | `SCHEMA-export-answer` | src/projections/export.ts#GraphExportAnswerSchema | n/a |
@@ -55,7 +55,7 @@
 | `SCHEMA-ontology-graph` | packages/contracts/src/se/ontology.ts#OntologyGraph | reviewed |
 | `SCHEMA-ontology-json` | src/kernel/harness-import.ts#OntologyJsonSchema | n/a |
 | `SCHEMA-query-params` | ⚠ kein realRef (R-26) | reviewed |
-| `SCHEMA-readiness-report` | packages/contracts/src/se/readiness.ts#ReadinessReport | reviewed |
+| `SCHEMA-readiness-report` | packages/graphcode-client/src/readiness.ts#ReadinessReportSchema | reviewed |
 | `SCHEMA-real-ref` | packages/contracts/src/se/ontology.ts#RealRefSchema | reviewed |
 | `SCHEMA-rejected-trace` | src/kernel/harness-import.ts#RejectedTraceSchema | n/a |
 | `SCHEMA-render-summary` | src/surface/render-verb.ts#RenderSummarySchema | n/a |

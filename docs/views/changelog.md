@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 609 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 610 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 609 CR · 598 done · 1 open.
+Total: 610 CR · 599 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -229,6 +229,7 @@ Total: 609 CR · 598 done · 1 open.
 | `CR-GC-1003` | done | Aufraeumen des Alt-Layouts der Skills loeschen |
 | `CR-GC-1004` | done | REQ upgrade entfernt: Wortlaut auf update und skills sync verengen |
 | `CR-GC-1005` | done | Nachzug contracts 12.17.0, graph-api-core 6.0.0, graphcode-client 3.3.1: Bereiche und Format-E-Tuer |
+| `CR-GC-1006` | done | Readiness-Vertraege: realRef auf Zod-Symbole, Parse beim Erzeuger, wrappedSymbols |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |

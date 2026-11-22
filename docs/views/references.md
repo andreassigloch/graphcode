@@ -52,6 +52,10 @@
 | `CR-GC-1004` | relation | `FUNC-upgrade` |
 | `CR-GC-1004` | relation | `REQ-upgrade-entfernt-fremde-skills` |
 | `CR-GC-1005` | relation | `SCHEMA-format-e` |
+| `CR-GC-1006` | relation | `FUNC-compute-readiness` |
+| `CR-GC-1006` | relation | `FUNC-graph-readiness` |
+| `CR-GC-1006` | relation | `SCHEMA-completeness` |
+| `CR-GC-1006` | relation | `SCHEMA-readiness-report` |
 | `CR-GC-101` | relation | `FUNC-graph-expand` |
 | `CR-GC-101` | relation | `FUNC-graph-impact` |
 | `CR-GC-101` | relation | `MOD-surface` |

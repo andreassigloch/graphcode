@@ -61,7 +61,7 @@ import {
 } from '@sigloch/contracts/se';
 import { conformanceEvaluation, toOntologyGraph, type ConformanceHarness } from './conformance.js';
 import type { CallCoverage, ImportCoverage } from '@sigloch/contracts/se';
-import { computeReadiness, type ReadinessReport } from './measure/readiness.js';
+import { computeReadiness, ReadinessReportSchema, type ReadinessReport } from './measure/readiness.js';
 
 type CGraph = Pick<Graph, 'nodes' | 'edges'>;
 
@@ -314,7 +314,10 @@ export function evaluateAll(harness: EvaluationHarness): Evaluation {
 
 /** Readiness aus einer bereits erhobenen Auswertung — kein zweiter Lauf. */
 export function readinessOf(evaluation: Evaluation): ReadinessReport {
-  return computeReadiness(evaluation.findings);
+  const bericht = computeReadiness(evaluation.findings);
+  // CR-GC-1006: der Erzeuger prueft seine Ausgabe an der Grenze und gibt das Original zurueck, keine Kopie.
+  ReadinessReportSchema.parse(bericht);
+  return bericht;
 }
 
 /**
