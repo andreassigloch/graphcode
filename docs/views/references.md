@@ -108,6 +108,8 @@
 | `CR-GC-101` | relation | `REQ-query-precision` |
 | `CR-GC-101` | relation | `REQ-single-transport` |
 | `CR-GC-101` | relation | `REQ-subgraph-slicing` |
+| `CR-GC-1011` | relation | `FUNC-goal-steerer` |
+| `CR-GC-1011` | relation | `FUNC-take-steering-snapshot` |
 | `CR-GC-102` | relation | `FUNC-emit-trajectory` |
 | `CR-GC-102` | relation | `FUNC-emit-update-event` |
 | `CR-GC-102` | relation | `MOD-surface` |
@@ -2189,8 +2191,6 @@
 | `FCHAIN-verify-lane-full` | compose | `FUNC-test-ingest` |
 | `FCHAIN-verify-lane-full` | compose | `FUNC-tool-context` |
 | `FCHAIN-verify-lane-full` | compose | `FUNC-verify-lane-full` |
-| `FLOW-action` | io | `FUNC-agent-loop` |
-| `FLOW-action` | relation | `SCHEMA-action` |
 | `FLOW-adapter-befund` | io | `FUNC-verify-lane-model` |
 | `FLOW-adapter-befund` | relation | `SCHEMA-adapter-befund` |
 | `FLOW-anleitung-author-actor` | io | `FUNC-agent-loop` |
@@ -2548,8 +2548,6 @@
 | `FLOW-marker-set` | relation | `SCHEMA-export-pending` |
 | `FLOW-mcp-tool` | io | `FUNC-bind-tools` |
 | `FLOW-mcp-tool` | relation | `SCHEMA-mcp-tool` |
-| `FLOW-measurement-vector` | io | `FUNC-generation-step` |
-| `FLOW-measurement-vector` | relation | `SCHEMA-measurement-vector` |
 | `FLOW-meldung` | io | `FUNC-verify-lane-code` |
 | `FLOW-meldung` | io | `FUNC-verify-lane-full` |
 | `FLOW-meldung` | relation | `SCHEMA-test-ingest-answer` |
@@ -3143,7 +3141,6 @@
 | `FUNC-goal-steerer` | compose | `FUNC-block-anleitung` |
 | `FUNC-goal-steerer` | compose | `FUNC-block-autorieren` |
 | `FUNC-goal-steerer` | compose | `FUNC-block-q-improvement` |
-| `FUNC-goal-steerer` | io | `FLOW-action` |
 | `FUNC-graph-expand` | allocate | `MOD-kernel` |
 | `FUNC-graph-expand` | io | `FLOW-expand-subgraph` |
 | `FUNC-graph-expand` | satisfy | `REQ-progressive-expansion` |
@@ -3484,7 +3481,6 @@
 | `FUNC-sync-skills` | satisfy | `REQ-skills-sync-entfernt-fremde-skills` |
 | `FUNC-sync-skills` | satisfy | `REQ-skills-sync-gleicht-ab` |
 | `FUNC-take-steering-snapshot` | allocate | `MOD-kernel-measure` |
-| `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-steering-snapshot` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-measurement-vector-contract-tested` |
 | `FUNC-take-steering-snapshot` | satisfy | `REQ-messpfad-meldet-vertragsfremd` |

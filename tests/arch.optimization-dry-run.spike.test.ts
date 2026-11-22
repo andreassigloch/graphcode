@@ -548,9 +548,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // FLOW-cli-output in sechs Fluesse je Verb zerfiel: drei Zuege statt vier. serve-stdio wird nicht mehr
       // umgehaengt. Weiter derselbe Befund — Bloecke werden umgehaengt, keiner ist fachlich begruendet
       // (ITEM-2026-798). Der Steuerwert am Start ist nicht neu notiert.
+      // CR-GC-1011 (graphVersion 1541, 2026-11-22) — NEU GEMESSEN, nachdem die Doppelfluesse FLOW-measurement-vector
+      // und FLOW-action mit ihren zwei Vertraegen entfielen (BW-02 an FUNC-goal-steerer 8): dieselben drei Zuege,
+      // Abfrage nimmt Ruestzeug jetzt vor Bedienung Test-Ingest auf. Weiter derselbe Befund (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
-        'FUNC-block-bedienung -compose-> FUNC-test-ingest (retire FUNC-test-ingest)',
         'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
+        'FUNC-block-bedienung -compose-> FUNC-test-ingest (retire FUNC-test-ingest)',
         'FUNC-block-abfrage -compose-> FUNC-stand-verlauf',
       ]);
       expect(

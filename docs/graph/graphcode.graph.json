@@ -121,6 +121,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-1011",
+      "type": "CR",
+      "name": "Doppelte Flüsse ohne Vertrag: FLOW-measurement-vector und FLOW-action entfernen",
+      "description": "docs/cr/open/CR-GC-1011-doppelte-flu-sse-ohne-vertrag-flow-measu.md"
+    },
+    {
       "id": "CR-GC-102",
       "type": "CR",
       "name": "Hook-System",
@@ -5094,15 +5100,6 @@
       "description": "Der Entwickler faehrt npm run verify:full vor dem CR-Abschluss; die Spur plant ueber planCodeLane aus dem committeten Snapshot, faehrt die volle Suite, meldet das Ergebnis ueber graph_test_ingest zurueck und schreibt die Schlupf-Zeile. Eigener Einsprung neben verify:code: kein Aufruf zwischen den beiden Skripten (CR-GC-874)."
     },
     {
-      "id": "FLOW-action",
-      "type": "FLOW",
-      "name": "Handlung",
-      "description": "Der gemeinsame Ausgang der vier Entscheidungen: blocken, Fokus setzen, Kandidat waehlen, uebergeben. Vier Auspraegungen einer Form.",
-      "status": "reviewed",
-      "concept": true,
-      "sync": "sync"
-    },
-    {
       "id": "FLOW-adapter-befund",
       "type": "FLOW",
       "name": "Adapter-Befund",
@@ -6263,15 +6260,6 @@
       "name": "Werkzeug",
       "description": "Traegt MCPTool ueber die Modulgrenze.",
       "sync": "async"
-    },
-    {
-      "id": "FLOW-measurement-vector",
-      "type": "FLOW",
-      "name": "Messvektor",
-      "description": "Der gemeinsame Eingang der vier Entscheidungen: der gemessene Zustand als Vektor, unabhaengig davon, welche Projektion ihn fuellt. Erst mit diesem Vertrag ist die Gleichheit der vier Signaturen geprueft statt behauptet.",
-      "status": "reviewed",
-      "concept": true,
-      "sync": "sync"
     },
     {
       "id": "FLOW-meldung",
@@ -11900,14 +11888,6 @@
       ]
     },
     {
-      "id": "SCHEMA-action",
-      "type": "SCHEMA",
-      "name": "Handlung (Vertrag der vier Entscheidungen)",
-      "description": "Der gemeinsame Ausgang: blocken, Fokus setzen, Kandidat waehlen, uebergeben. Spec-only aus demselben Grund wie der Messvektor.",
-      "status": "reviewed",
-      "concept": true
-    },
-    {
       "id": "SCHEMA-adapter-befund",
       "type": "SCHEMA",
       "name": "Adapter-Befund",
@@ -12300,14 +12280,6 @@
         "symbol": "MCPToolRegistrySchema",
         "lang": "ts"
       }
-    },
-    {
-      "id": "SCHEMA-measurement-vector",
-      "type": "SCHEMA",
-      "name": "Messvektor (Vertrag der vier Entscheidungen)",
-      "description": "Der gemeinsame Eingang: Regelstrom plus Projektionen, so weit die jeweilige Entscheidung sie braucht. Bewusst spec-only, weil er heute in vier Signaturen verstreut ist; sein Zweck ist, diese Verstreuung sichtbar zu halten.",
-      "status": "reviewed",
-      "concept": true
     },
     {
       "id": "SCHEMA-metric-policy",
@@ -17663,6 +17635,16 @@
       "type": "relation",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "CR-GC-1011",
+      "target": "FUNC-goal-steerer",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1011",
+      "target": "FUNC-take-steering-snapshot",
+      "type": "relation"
     },
     {
       "source": "CR-GC-102",
@@ -28417,16 +28399,6 @@
       "type": "compose"
     },
     {
-      "source": "FLOW-action",
-      "target": "FUNC-agent-loop",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-action",
-      "target": "SCHEMA-action",
-      "type": "relation"
-    },
-    {
       "source": "FLOW-adapter-befund",
       "target": "FUNC-verify-lane-model",
       "type": "io"
@@ -30225,16 +30197,6 @@
     {
       "source": "FLOW-mcp-tool",
       "target": "SCHEMA-mcp-tool",
-      "type": "relation"
-    },
-    {
-      "source": "FLOW-measurement-vector",
-      "target": "FUNC-generation-step",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-measurement-vector",
-      "target": "SCHEMA-measurement-vector",
       "type": "relation"
     },
     {
@@ -33225,11 +33187,6 @@
       "type": "compose"
     },
     {
-      "source": "FUNC-goal-steerer",
-      "target": "FLOW-action",
-      "type": "io"
-    },
-    {
       "source": "FUNC-graph-expand",
       "target": "MOD-kernel",
       "type": "allocate"
@@ -34943,11 +34900,6 @@
       "source": "FUNC-take-steering-snapshot",
       "target": "MOD-kernel-measure",
       "type": "allocate"
-    },
-    {
-      "source": "FUNC-take-steering-snapshot",
-      "target": "FLOW-measurement-vector",
-      "type": "io"
     },
     {
       "source": "FUNC-take-steering-snapshot",
@@ -40197,5 +40149,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1539
+  "graphVersion": 1541
 }

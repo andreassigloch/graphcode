@@ -4,13 +4,12 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 80 SCHEMA · 269 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 78 SCHEMA · 267 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
-| `SCHEMA-action` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-adapter-befund` | src/kernel/measure/constraints.ts#AdapterBefund | n/a |
 | `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit-stats.ts#AuditStatsSchema | reviewed |
@@ -45,7 +44,6 @@
 | `SCHEMA-markdown-view` | src/projections/exporter.ts#MarkdownViewSchema | reviewed |
 | `SCHEMA-mcp-tool` | src/kernel/tool-contract.ts#MCPToolSchema | n/a |
 | `SCHEMA-mcp-tool-registry` | src/kernel/tool-contract.ts#MCPToolRegistrySchema | n/a |
-| `SCHEMA-measurement-vector` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicySchema | n/a |
 | `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
 | `SCHEMA-metrics-answer` | src/projections/metrics.ts#GraphMetricsAnswerSchema | reviewed |
@@ -95,7 +93,6 @@
 
 | Interface (FLOW) | Producer | Consumer |
 |---|---|---|
-| `FLOW-action` | `FUNC-goal-steerer` | `FUNC-agent-loop` |
 | `FLOW-adapter-befund` | `FUNC-ein-adapter-je-akteur` | `FUNC-verify-lane-model` |
 | `FLOW-anleitung-author-actor` | `FUNC-author-actor` | `FUNC-agent-loop` |
 | `FLOW-anleitung-author-req` | `FUNC-author-req` | `FUNC-agent-loop` |
@@ -246,7 +243,6 @@
 | `FLOW-marker-clear-reseed` | `FUNC-apply-reseed` | `FUNC-export-marker-clear` |
 | `FLOW-marker-set` | `FUNC-mutate` | `FUNC-export-marker` |
 | `FLOW-mcp-tool` | `FUNC-graph-suggest` | `FUNC-bind-tools` |
-| `FLOW-measurement-vector` | `FUNC-take-steering-snapshot` | `FUNC-generation-step` |
 | `FLOW-meldung` | `FUNC-aenderung-melden` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
 | `FLOW-merge-answer` | `FUNC-graph-merge-tool` | `FUNC-agent-loop` |
 | `FLOW-merge-report` | `FUNC-merge-nodes` | `FUNC-graph-merge-tool` |
