@@ -56,6 +56,12 @@
 | `CR-GC-1006` | relation | `FUNC-graph-readiness` |
 | `CR-GC-1006` | relation | `SCHEMA-completeness` |
 | `CR-GC-1006` | relation | `SCHEMA-readiness-report` |
+| `CR-GC-1007` | relation | `SCHEMA-completeness` |
+| `CR-GC-1007` | relation | `SCHEMA-format-e` |
+| `CR-GC-1007` | relation | `SCHEMA-readiness-report` |
+| `CR-GC-1007` | relation | `SCHEMA-real-ref` |
+| `CR-GC-1007` | relation | `SCHEMA-test-refs` |
+| `CR-GC-1007` | relation | `SCHEMA-test-selection` |
 | `CR-GC-101` | relation | `FUNC-graph-expand` |
 | `CR-GC-101` | relation | `FUNC-graph-impact` |
 | `CR-GC-101` | relation | `MOD-surface` |
@@ -4264,7 +4270,9 @@
 | `TEST-vertrag-aufruf-ohne-daten` | verify | `SCHEMA-aufruf-ohne-daten` |
 | `TEST-vertrag-ausdruck` | verify | `REQ-contract-test-cases` |
 | `TEST-vertrag-branch-merge-report` | verify | `SCHEMA-branch-merge-report` |
+| `TEST-vertrag-completeness` | verify | `SCHEMA-completeness` |
 | `TEST-vertrag-export-answer` | verify | `SCHEMA-export-answer` |
+| `TEST-vertrag-format-e` | verify | `SCHEMA-format-e` |
 | `TEST-vertrag-function-criticality` | verify | `SCHEMA-function-criticality` |
 | `TEST-vertrag-harness-handle` | verify | `SCHEMA-harness-handle` |
 | `TEST-vertrag-impact-slice` | verify | `SCHEMA-impact-slice` |
@@ -4281,6 +4289,8 @@
 | `TEST-vertrag-mutate-answer` | verify | `SCHEMA-mutate-answer` |
 | `TEST-vertrag-mutate-command` | verify | `SCHEMA-mutate-command` |
 | `TEST-vertrag-ontology-graph` | verify | `SCHEMA-ontology-graph` |
+| `TEST-vertrag-readiness-report` | verify | `SCHEMA-readiness-report` |
+| `TEST-vertrag-real-ref` | verify | `SCHEMA-real-ref` |
 | `TEST-vertrag-render-summary` | verify | `SCHEMA-render-summary` |
 | `TEST-vertrag-repo-pfad` | verify | `SCHEMA-repo-pfad` |
 | `TEST-vertrag-repo-status` | verify | `SCHEMA-repo-status` |
@@ -4290,6 +4300,8 @@
 | `TEST-vertrag-skill-sync-result` | verify | `SCHEMA-skill-sync-result` |
 | `TEST-vertrag-test-ingest-answer` | verify | `SCHEMA-test-ingest-answer` |
 | `TEST-vertrag-test-ingest-input` | verify | `SCHEMA-test-ingest-input` |
+| `TEST-vertrag-test-refs` | verify | `SCHEMA-test-refs` |
+| `TEST-vertrag-test-selection` | verify | `SCHEMA-test-selection` |
 | `TEST-vertrag-tool-context` | verify | `SCHEMA-tool-context` |
 | `TEST-vertrag-trajectory` | verify | `SCHEMA-trajectory` |
 | `TEST-vertrag-upgrade-report` | verify | `SCHEMA-upgrade-report` |
