@@ -51,6 +51,7 @@
 | `CR-GC-1003` | relation | `FUNC-sync-skills` |
 | `CR-GC-1004` | relation | `FUNC-upgrade` |
 | `CR-GC-1004` | relation | `REQ-upgrade-entfernt-fremde-skills` |
+| `CR-GC-1005` | relation | `SCHEMA-format-e` |
 | `CR-GC-101` | relation | `FUNC-graph-expand` |
 | `CR-GC-101` | relation | `FUNC-graph-impact` |
 | `CR-GC-101` | relation | `MOD-surface` |

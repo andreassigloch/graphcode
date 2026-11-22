@@ -13,7 +13,7 @@
  * @author andreas@siglochconsulting
  */
 
-import { FormatEInputSchema } from '@sigloch/graph-api-core';
+import { FormatEInputSchema, leseFormatE } from '@sigloch/graph-api-core';
 import type { Graph } from '@sigloch/graph-api-core';
 import type { MutateCommand } from '@sigloch/contracts/harness';
 
@@ -57,11 +57,17 @@ export function formatEToCommands(
   bestand: Graph,
   text: string,
 ): { commands: MutateCommand[]; unnamed: string[] } {
-  const parsed = FormatEInputSchema.safeParse({ text, bestand });
-  if (!parsed.success) {
-    throw new Error(`Format-E parse errors:\n  - ${parsed.error.issues.map((i) => i.message).join('\n  - ')}`);
+  // CR-GC-1005: Der Parse des Vertrags liegt an dieser Grenze (Struktur: Text und Bestand mit Knoten und Kanten),
+  // die Codec-Meldungen kommen aus `leseFormatE`. Beide enden im selben Fehlertext.
+  const eingabe = FormatEInputSchema.safeParse({ text, bestand });
+  if (!eingabe.success) {
+    throw new Error(`Format-E parse errors:\n  - ${eingabe.error.issues.map((i) => i.message).join('\n  - ')}`);
   }
-  const diff = parsed.data;
+  const lesung = leseFormatE(eingabe.data);
+  if (!lesung.ok) {
+    throw new Error(`Format-E parse errors:\n  - ${lesung.messages.join('\n  - ')}`);
+  }
+  const diff = lesung.diff;
   const resolveType = typeResolver(bestand);
 
   const unnamed: string[] = [];

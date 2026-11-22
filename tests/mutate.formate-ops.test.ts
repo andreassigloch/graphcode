@@ -328,4 +328,15 @@ describe('CR-GC-641: der Uebersetzer geht durch die Tuer der Familie', () => {
     expect(() => formatEToCommands({ nodes: [], edges: [] }, '## Nodes\n### REQ\numbricht ohne Praefix\n'))
       .toThrow(/^Format-E parse errors:\n  - Node line without an operator prefix/);
   });
+
+  // CR-GC-1005: Strukturfehler des Bestands fängt der Parse an der Grenze, in derselben Fehlerform.
+  it('Strukturfehler: Bestand ohne Kanten wird abgelehnt, Fehlertext beginnt wie der Codec-Fehler', () => {
+    const ohneKanten = { nodes: [] } as unknown as Parameters<typeof formatEToCommands>[0];
+    expect(() => formatEToCommands(ohneKanten, '## Nodes\n### REQ\n+ REQ-a|a\n')).toThrow(/^Format-E parse errors:\n  - /);
+  });
+
+  it('Strukturfehler: Knoten null im Bestand wird abgelehnt, kein TypeError', () => {
+    const nullKnoten = { nodes: [null], edges: [] } as unknown as Parameters<typeof formatEToCommands>[0];
+    expect(() => formatEToCommands(nullKnoten, '## Nodes\n### REQ\n+ REQ-a|a\n')).toThrow(/^Format-E parse errors:\n  - /);
+  });
 });

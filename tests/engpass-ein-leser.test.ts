@@ -36,7 +36,7 @@ const REPO = execFileSync('git', ['rev-parse', '--show-toplevel'], { encoding: '
 const ENGPAESSE = [
   {
     name: 'Format-E lesen',
-    muster: /FORMAT_E_CODEC\.parse\s*\(|\.inner\.parse\s*\(|new FormatECodec\([^)]*\)\.parse\s*\(|FormatEInputSchema\.(safeParse|parse)\s*\(/,
+    muster: /FORMAT_E_CODEC\.parse\s*\(|\.inner\.parse\s*\(|new FormatECodec\([^)]*\)\.parse\s*\(|FormatEInputSchema\.(safeParse|parse)\s*\(|\bleseFormatE\s*\(/,
     erlaubt: ['src/kernel/format-e-commands.ts'],
     warum:
       'Format-E-Text wird an GENAU EINER Stelle zu Operationen — `formatEToCommands`, gefahren ' +
