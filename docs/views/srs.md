@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 304 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 307 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -9018,6 +9018,14 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
 
+###### `REQ-update-entfernt-fremde-skills` — update entfernt fremde Skills
+
+Wenn `update` läuft, entfernt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
+
 ###### 3.3.1.9.3.4  `FUNC-init-verb` — executeInit(opts)
 
 Das Verb init fuer Menschen: Scaffold, dann die eingetragene Abhaengigkeit installieren (npm, pnpm oder yarn nach Lockdatei), dann die naechsten Schritte ausgeben. Schlaegt die Installation fehl, endet es mit Status 1 und nennt den Befehl. --json gibt das Ergebnis als JSON aus. (CR-GC-900)
@@ -9054,6 +9062,14 @@ Gleicht die ausgelieferten se-Skills mit dem Repo ab: fehlende schreibt es, ält
 
 io ◀ `FLOW-cli-command` · io ▶ `FLOW-skill-sync-result-sync-skills` · `FLOW-skill-sync-result-upgrade` · allocate ▶ `MOD-surface`
 
+###### `REQ-skills-sync-entfernt-fremde-skills` — skills sync entfernt fremde Skills
+
+Wenn `skills sync` läuft, entfernt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-sync-skills` · allocate ▶ `MOD-surface`
+
 ###### `REQ-skills-sync-gleicht-ab` — skills sync gleicht Skills ab
 
 Wenn `skills sync` läuft, schreibt es fehlende se-Skills, überschreibt ältere nach ihrer Version, lässt gleiche unverändert und berichtet je Skill, was geschah.
@@ -9078,13 +9094,13 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-upgrade` (integration) · satisfy ◀ `FUNC-upgrade` · allocate ▶ `MOD-surface`
 
-###### `REQ-upgrade-entfernt-fremde-skills` — upgrade entfernt fremde Skills
+###### `REQ-upgrade-check-zaehlt-fremde-skills` — upgrade --check zählt fremde Skills als Drift
 
-Wenn update, skills sync oder upgrade laeuft, entfernt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift.
+Wenn `upgrade --check` läuft, zählt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt, als Drift.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-upgrade` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-upgrade` (integration) · satisfy ◀ `FUNC-upgrade` · allocate ▶ `MOD-surface`
 
 ###### 3.3.1.9.4  `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump
 
@@ -9660,6 +9676,14 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
 
+###### `REQ-update-entfernt-fremde-skills` — update entfernt fremde Skills
+
+Wenn `update` läuft, entfernt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-harness-cli` · allocate ▶ `MOD-surface`
+
 ###### 3.3.1.10.1.1.9  `FUNC-import-code-verb` — executeImportCode
 
 > auch in: `FCHAIN-model-import` · `FCHAIN-skill-import-code`
@@ -9788,13 +9812,13 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-upgrade` (integration) · satisfy ◀ `FUNC-upgrade` · allocate ▶ `MOD-surface`
 
-###### `REQ-upgrade-entfernt-fremde-skills` — upgrade entfernt fremde Skills
+###### `REQ-upgrade-check-zaehlt-fremde-skills` — upgrade --check zählt fremde Skills als Drift
 
-Wenn update, skills sync oder upgrade laeuft, entfernt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift.
+Wenn `upgrade --check` läuft, zählt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt, als Drift.
 
 priority: must · status: n/a · kinds: functional
 
-Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ `FUNC-upgrade` · allocate ▶ `MOD-surface`
+Verification ◀ `TEST-upgrade` (integration) · satisfy ◀ `FUNC-upgrade` · allocate ▶ `MOD-surface`
 
 ###### 3.3.1.10.1.1.15  `FUNC-verify-lane-code` — npm run verify:code
 
@@ -12159,6 +12183,14 @@ Wenn graph_suggest Umbauvorschlaege rankt, folgt die Reihenfolge dem Zielprofil,
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-applied-suggestion-moves-target` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ — · allocate ▶ —
+
+###### `REQ-upgrade-entfernt-fremde-skills` — upgrade entfernt fremde Skills
+
+Wenn update, skills sync oder upgrade laeuft, entfernt es se-Skills und deren OpenCode-Kopien, die das Paket nicht mehr kennt; upgrade --check zaehlt sie als Drift.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · `TEST-upgrade` (integration) · satisfy ◀ — · allocate ▶ —
 
 ###### `REQ-versioned-broadcast` — Versioned Diff-Broadcast
 
@@ -15194,7 +15226,7 @@ verify ▶ `REQ-cli-hilfe-fuehrt-nicht-aus` · testRefs: `tests/cli-args.test.ts
 
 graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112)
 
-verify ▶ `REQ-init-legt-an` · `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-remove-loescht-eigene-pfade` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `REQ-skills-sync-gleicht-ab` · `REQ-update-behaelt-store` · `REQ-upgrade-entfernt-fremde-skills` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`, `tests/knowledge-binding.test.ts`
+verify ▶ `REQ-init-legt-an` · `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-remove-loescht-eigene-pfade` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `REQ-skills-sync-entfernt-fremde-skills` · `REQ-skills-sync-gleicht-ab` · `REQ-update-behaelt-store` · `REQ-update-entfernt-fremde-skills` · `REQ-upgrade-entfernt-fremde-skills` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`, `tests/knowledge-binding.test.ts`
 
 #### 3.4.22  `TEST-code-conformance` — Graph-code conformance test
 
@@ -16196,7 +16228,7 @@ verify ▶ `REQ-generate-nennt-suggest` · `REQ-violations-nennt-suggest` · tes
 
 Abnahme der Datei tests/upgrade.test.ts: die Reihenfolge macht den Befehl aus. Erst installieren, dann die Artefakte vom NEU installierten Build schreiben lassen, dann den alten Host beenden. Bleibt ein Schritt aus, steht das im Bericht statt als stiller Erfolg. npm und Signale sind injiziert, kein Netz.
 
-verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · `REQ-update-traegt-policy-ein` · `REQ-upgrade-entfernt-fremde-skills` · testRefs: `tests/upgrade.test.ts`, `tests/config-nachziehen.test.ts`
+verify ▶ `REQ-install-idempotent` · `REQ-repo-update` · `REQ-update-traegt-policy-ein` · `REQ-upgrade-check-zaehlt-fremde-skills` · `REQ-upgrade-entfernt-fremde-skills` · testRefs: `tests/upgrade.test.ts`, `tests/config-nachziehen.test.ts`
 
 #### 3.4.189  `TEST-verify-code-plan` — verify:code --plan fährt nichts
 
@@ -16480,7 +16512,7 @@ Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zu
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 304 REQ · 304 verified · 0 without a verifying TEST (R-01).
+Traceability: 307 REQ · 307 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 

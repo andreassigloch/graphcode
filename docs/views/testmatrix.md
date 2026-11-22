@@ -4,7 +4,7 @@
 
 # graphcode — Verification Cross-Reference Matrix (VCRM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 304 REQ rows. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). REQ × TEST Coverage, 307 REQ rows. Deterministisch generiert.
 
 | REQ | verify-Kante | Lauf-Ergebnis | verifying TEST(s) |
 |---|---|---|---|
@@ -251,6 +251,7 @@
 | `REQ-skill-authors-through-gate` | ✓ | ✓ passed | `TEST-skill-authors-through-gate` |
 | `REQ-skill-import-code-nennt-verb` | ✓ | ✓ passed | `TEST-skill-import-code-nennt-verb` |
 | `REQ-skill-reads-only` | ✓ | ✓ passed | `TEST-skill-reports-measured-values` |
+| `REQ-skills-sync-entfernt-fremde-skills` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-skills-sync-gleicht-ab` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-small-model-viable` | ✓ | ✓ passed | `TEST-mvp-e2e` · `TEST-reduced-llm` |
 | `REQ-snapshot-drift-notice` | ✓ | ✓ passed | `TEST-snapshot-drift` |
@@ -295,7 +296,9 @@
 | `REQ-umbau-modellzug-vor-loeschen` | ✓ | ✓ passed | `TEST-skill-faq-angleich` · `TEST-skill-faq-ergaenzung` |
 | `REQ-umfrage-bemerkt-tod` | ✓ | ✓ passed | `TEST-gve-supervision` |
 | `REQ-update-behaelt-store` | ✓ | ✓ passed | `TEST-cli-scaffold` |
+| `REQ-update-entfernt-fremde-skills` | ✓ | ✓ passed | `TEST-cli-scaffold` |
 | `REQ-update-traegt-policy-ein` | ✓ | ✓ passed | `TEST-upgrade` |
+| `REQ-upgrade-check-zaehlt-fremde-skills` | ✓ | ✓ passed | `TEST-upgrade` |
 | `REQ-upgrade-entfernt-fremde-skills` | ✓ | ✓ passed | `TEST-cli-scaffold` · `TEST-upgrade` |
 | `REQ-verify-code-plan-nennt-spur` | ✓ | ✓ passed | `TEST-verify-code-plan` |
 | `REQ-versioned-broadcast` | ✓ | ✓ passed | `TEST-live-view` |
@@ -313,8 +316,8 @@
 | `REQ-zug-zeigt-kennzahlen-danach` | ✓ | ✓ passed | `TEST-zug-kennzahlen-danach` |
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
-Coverage: 304/304 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 266/304 REQ bestanden (88%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Coverage: 307/307 REQ mit verify-Kante (100%) · 0 offen (R-01).
+Belegt: 269/307 REQ bestanden (88%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 

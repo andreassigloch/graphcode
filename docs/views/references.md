@@ -40,6 +40,13 @@
 | `CR-GC-1001` | relation | `FUNC-upgrade` |
 | `CR-GC-1001` | relation | `REQ-skills-sync-gleicht-ab` |
 | `CR-GC-1001` | relation | `SCHEMA-skill-sync-result` |
+| `CR-GC-1002` | relation | `FUNC-harness-cli` |
+| `CR-GC-1002` | relation | `FUNC-sync-skills` |
+| `CR-GC-1002` | relation | `FUNC-upgrade` |
+| `CR-GC-1002` | relation | `REQ-skills-sync-entfernt-fremde-skills` |
+| `CR-GC-1002` | relation | `REQ-update-entfernt-fremde-skills` |
+| `CR-GC-1002` | relation | `REQ-upgrade-check-zaehlt-fremde-skills` |
+| `CR-GC-1002` | relation | `REQ-upgrade-entfernt-fremde-skills` |
 | `CR-GC-101` | relation | `FUNC-graph-expand` |
 | `CR-GC-101` | relation | `FUNC-graph-impact` |
 | `CR-GC-101` | relation | `MOD-surface` |
@@ -3181,6 +3188,7 @@
 | `FUNC-harness-cli` | satisfy | `REQ-post-harness-cli` |
 | `FUNC-harness-cli` | satisfy | `REQ-remove-loescht-eigene-pfade` |
 | `FUNC-harness-cli` | satisfy | `REQ-update-behaelt-store` |
+| `FUNC-harness-cli` | satisfy | `REQ-update-entfernt-fremde-skills` |
 | `FUNC-health-endpoint` | allocate | `MOD-surface` |
 | `FUNC-health-endpoint` | io | `FLOW-health-eval-request` |
 | `FUNC-health-endpoint` | io | `FLOW-health-report` |
@@ -3417,6 +3425,7 @@
 | `FUNC-sync-skills` | allocate | `MOD-surface` |
 | `FUNC-sync-skills` | io | `FLOW-skill-sync-result-sync-skills` |
 | `FUNC-sync-skills` | io | `FLOW-skill-sync-result-upgrade` |
+| `FUNC-sync-skills` | satisfy | `REQ-skills-sync-entfernt-fremde-skills` |
 | `FUNC-sync-skills` | satisfy | `REQ-skills-sync-gleicht-ab` |
 | `FUNC-take-steering-snapshot` | allocate | `MOD-kernel-measure` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
@@ -3453,7 +3462,7 @@
 | `FUNC-upgrade` | allocate | `MOD-surface` |
 | `FUNC-upgrade` | io | `FLOW-install-result-upgrade` |
 | `FUNC-upgrade` | satisfy | `REQ-update-traegt-policy-ein` |
-| `FUNC-upgrade` | satisfy | `REQ-upgrade-entfernt-fremde-skills` |
+| `FUNC-upgrade` | satisfy | `REQ-upgrade-check-zaehlt-fremde-skills` |
 | `FUNC-verify-lane-code` | allocate | `MOD-dev-scripts` |
 | `FUNC-verify-lane-code` | io | `FLOW-lane-output` |
 | `FUNC-verify-lane-code` | io | `FLOW-plan-request` |
@@ -3715,6 +3724,9 @@
 | `REQ-token-efficiency` | compose | `REQ-precise-context` |
 | `REQ-umbau-haelt-vorhersage` | compose | `REQ-applied-suggestion-moves-target` |
 | `REQ-umbau-haelt-vorhersage` | compose | `REQ-target-shifts-ranking` |
+| `REQ-upgrade-entfernt-fremde-skills` | compose | `REQ-skills-sync-entfernt-fremde-skills` |
+| `REQ-upgrade-entfernt-fremde-skills` | compose | `REQ-update-entfernt-fremde-skills` |
+| `REQ-upgrade-entfernt-fremde-skills` | compose | `REQ-upgrade-check-zaehlt-fremde-skills` |
 | `REQ-versioned-broadcast` | compose | `REQ-diff-an-viewer` |
 | `REQ-versioned-broadcast` | compose | `REQ-post-emit-update-event` |
 | `REQ-versioned-broadcast` | compose | `REQ-sse-strom` |
@@ -3823,8 +3835,10 @@
 | `TEST-cli-scaffold` | verify | `REQ-repo-install` |
 | `TEST-cli-scaffold` | verify | `REQ-repo-uninstall` |
 | `TEST-cli-scaffold` | verify | `REQ-repo-update` |
+| `TEST-cli-scaffold` | verify | `REQ-skills-sync-entfernt-fremde-skills` |
 | `TEST-cli-scaffold` | verify | `REQ-skills-sync-gleicht-ab` |
 | `TEST-cli-scaffold` | verify | `REQ-update-behaelt-store` |
+| `TEST-cli-scaffold` | verify | `REQ-update-entfernt-fremde-skills` |
 | `TEST-cli-scaffold` | verify | `REQ-upgrade-entfernt-fremde-skills` |
 | `TEST-cli-scaffold` | verify | `SCHEMA-cli-command` |
 | `TEST-code-conformance` | verify | `REQ-graph-code-conformance` |
@@ -4233,6 +4247,7 @@
 | `TEST-upgrade` | verify | `REQ-install-idempotent` |
 | `TEST-upgrade` | verify | `REQ-repo-update` |
 | `TEST-upgrade` | verify | `REQ-update-traegt-policy-ein` |
+| `TEST-upgrade` | verify | `REQ-upgrade-check-zaehlt-fremde-skills` |
 | `TEST-upgrade` | verify | `REQ-upgrade-entfernt-fremde-skills` |
 | `TEST-verify-code-plan` | verify | `REQ-verify-code-plan-nennt-spur` |
 | `TEST-verify-model-set` | verify | `REQ-model-lane-fixed-set` |

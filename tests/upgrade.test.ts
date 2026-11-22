@@ -305,6 +305,19 @@ describe('TEST-upgrade (CR-GC-377)', () => {
     expect(formatUpgrade(report, true)).toContain(`1 veraltet: ${rest}`);
   });
 
+  it('--check zählt einen echten Rest als Drift und lässt ihn liegen (CR-GC-1002)', async () => {
+    writeRepoInstall('0.17.0');
+    // Die ECHTE Bestandsquelle: ein se-Befehl, den das Paket nicht kennt, liegt im Repo.
+    const rest = '.claude/commands/se-view/arch.md';
+    mkdirSync(join(repo, '.claude', 'commands', 'se-view'), { recursive: true });
+    writeFileSync(join(repo, rest), '---\nname: alt\nversion: 3\ndescription: alt\n---\nalt\n', 'utf8');
+    const report = await executeUpgrade({ repoRoot: repo, check: true }, { run: runner(), cliVersion: '0.17.0' });
+    expect(report.staleSkills).toEqual([rest]);
+    expect(report.drift).toBe(true);
+    expect(formatUpgrade(report, true)).toContain(`1 veraltet: ${rest}`);
+    expect(existsSync(join(repo, rest)), '--check hat den Rest gelöscht').toBe(true);
+  });
+
   it('eine Config ohne Pflichtfeld der Policy ist Drift und steht unter Artefakte (CR-GC-915)', async () => {
     writeRepoInstall('0.17.0');
     const { needNameTerms: _weg, ...alt } = DEFAULT_METRIC_POLICY;

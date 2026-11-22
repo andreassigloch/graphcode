@@ -4,10 +4,10 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 304 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 307 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
-### System (SYS.2) — 67 REQ
+### System (SYS.2) — 70 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -64,6 +64,7 @@
 | `REQ-single-kuzu-owner` | `TEST-bridge-follows-lock` · `TEST-gve-autostart` · `TEST-host-shim` · `TEST-mvp-e2e` · `TEST-session-lifecycle` · `TEST-status-verb` · `TEST-store-lock` | `MOD-kernel` | — |
 | `REQ-single-store` | `TEST-mvp-e2e` | `MOD-kernel` | — |
 | `REQ-single-transport` | `TEST-mcp-stdio-server` | `MOD-surface` | — |
+| `REQ-skills-sync-entfernt-fremde-skills` | `TEST-cli-scaffold` | `FUNC-sync-skills` | `MOD-surface` |
 | `REQ-skills-sync-gleicht-ab` | `TEST-cli-scaffold` | `FUNC-sync-skills` | `MOD-surface` |
 | `REQ-status-sammeln` | `TEST-status-verb` | `FUNC-collect-status` | `MOD-surface` |
 | `REQ-stdio-fuehrt-im-repo-aus` | `TEST-mcp-stdio-server` | `FUNC-serve-stdio` | `MOD-surface` |
@@ -74,12 +75,14 @@
 | `REQ-token-efficiency` | `TEST-audit-trail-projection` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` | — | — |
 | `REQ-tool-input-parsed-once` | `TEST-werkzeug-eingang-geparst` | `FUNC-bind-tools` | `MOD-surface` |
 | `REQ-update-behaelt-store` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
+| `REQ-update-entfernt-fremde-skills` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-update-traegt-policy-ein` | `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
-| `REQ-upgrade-entfernt-fremde-skills` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
+| `REQ-upgrade-check-zaehlt-fremde-skills` | `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
+| `REQ-upgrade-entfernt-fremde-skills` | `TEST-cli-scaffold` · `TEST-upgrade` | — | — |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-werkzeuge-wirken-im-repo` | `TEST-mcp-stdio-server` · `TEST-werkzeug-eingang-geparst` | — | — |
 
-### funktional (SWE.1 · HWE.1) — 205 REQ
+### funktional (SWE.1 · HWE.1) — 208 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -248,6 +251,7 @@
 | `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `MOD-agent-surface` | — |
 | `REQ-skill-import-code-nennt-verb` | `TEST-skill-import-code-nennt-verb` | `FUNC-import-code` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `MOD-agent-surface` | — |
+| `REQ-skills-sync-entfernt-fremde-skills` | `TEST-cli-scaffold` | `FUNC-sync-skills` | `MOD-surface` |
 | `REQ-skills-sync-gleicht-ab` | `TEST-cli-scaffold` | `FUNC-sync-skills` | `MOD-surface` |
 | `REQ-small-model-viable` | `TEST-mvp-e2e` · `TEST-reduced-llm` | `FCHAIN-apply-gate` | — |
 | `REQ-spur-meldet-zurueck` | `TEST-lane-reports-change` | `FUNC-aenderung-melden` | `MOD-dev-scripts` |
@@ -274,8 +278,10 @@
 | `REQ-umbau-haelt-vorhersage` | `TEST-applied-suggestion-moves-target` · `TEST-target-shifts-ranking` | — | — |
 | `REQ-umfrage-bemerkt-tod` | `TEST-gve-supervision` | `FUNC-gve-supervise` | `MOD-surface` |
 | `REQ-update-behaelt-store` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
+| `REQ-update-entfernt-fremde-skills` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-update-traegt-policy-ein` | `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
-| `REQ-upgrade-entfernt-fremde-skills` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
+| `REQ-upgrade-check-zaehlt-fremde-skills` | `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
+| `REQ-upgrade-entfernt-fremde-skills` | `TEST-cli-scaffold` · `TEST-upgrade` | — | — |
 | `REQ-verify-code-plan-nennt-spur` | `TEST-verify-code-plan` | `FUNC-verify-lane-code` | `MOD-dev-scripts` |
 | `REQ-versioned-broadcast` | `TEST-live-view` | — | — |
 | `REQ-viewer-owned-by-repo` | `TEST-gve-autostart` · `TEST-gve-supervision` | — | — |
@@ -360,7 +366,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 224 REQ
+### Entwurf (SWE.3 · HWE.2) — 226 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -540,6 +546,7 @@
 | `REQ-skill-authors-through-gate` | `TEST-skill-authors-through-gate` | `MOD-agent-surface` | — |
 | `REQ-skill-import-code-nennt-verb` | `TEST-skill-import-code-nennt-verb` | `FUNC-import-code` | `MOD-agent-surface` |
 | `REQ-skill-reads-only` | `TEST-skill-reports-measured-values` | `MOD-agent-surface` | — |
+| `REQ-skills-sync-entfernt-fremde-skills` | `TEST-cli-scaffold` | `FUNC-sync-skills` | `MOD-surface` |
 | `REQ-skills-sync-gleicht-ab` | `TEST-cli-scaffold` | `FUNC-sync-skills` | `MOD-surface` |
 | `REQ-snapshot-drift-notice` | `TEST-snapshot-drift` | `FUNC-graph-store` | `MOD-kernel` |
 | `REQ-spur-meldet-zurueck` | `TEST-lane-reports-change` | `FUNC-aenderung-melden` | `MOD-dev-scripts` |
@@ -576,8 +583,9 @@
 | `REQ-umbau-modellzug-vor-loeschen` | `TEST-skill-faq-angleich` · `TEST-skill-faq-ergaenzung` | `FUNC-se-umbau` | `MOD-agent-surface` |
 | `REQ-umfrage-bemerkt-tod` | `TEST-gve-supervision` | `FUNC-gve-supervise` | `MOD-surface` |
 | `REQ-update-behaelt-store` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
+| `REQ-update-entfernt-fremde-skills` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |
 | `REQ-update-traegt-policy-ein` | `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
-| `REQ-upgrade-entfernt-fremde-skills` | `TEST-cli-scaffold` · `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
+| `REQ-upgrade-check-zaehlt-fremde-skills` | `TEST-upgrade` | `FUNC-upgrade` | `MOD-surface` |
 | `REQ-verify-code-plan-nennt-spur` | `TEST-verify-code-plan` | `FUNC-verify-lane-code` | `MOD-dev-scripts` |
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-viewer-ueberlebt-host` | `TEST-gve-supervision` · `TEST-host-ende-sichtbar` | `FUNC-gve-supervise` | `MOD-surface` |
