@@ -93,7 +93,8 @@
       "id": "CR-GC-1008",
       "type": "CR",
       "name": "codeVerdict aus scripts/kongruenz.mjs im Paket exportieren",
-      "description": "docs/cr/open/CR-GC-1008-codeverdict-aus-scripts-kongruenz-mjs-im.md"
+      "description": "docs/cr/done/CR-GC-1008-codeverdict-aus-scripts-kongruenz-mjs-im.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-1009",
@@ -40189,5 +40190,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1535
+  "graphVersion": 1536
 }

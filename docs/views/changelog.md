@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 613 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 613 CR · 601 done · 1 open.
+Total: 613 CR · 602 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -231,7 +231,7 @@ Total: 613 CR · 601 done · 1 open.
 | `CR-GC-1005` | done | Nachzug contracts 12.17.0, graph-api-core 6.0.0, graphcode-client 3.3.1: Bereiche und Format-E-Tuer |
 | `CR-GC-1006` | done | Readiness-Vertraege: realRef auf Zod-Symbole, Parse beim Erzeuger, wrappedSymbols |
 | `CR-GC-1007` | done | Sechs fehlende Vertragstests erzeugen und binden |
-| `CR-GC-1008` | n/a | codeVerdict aus scripts/kongruenz.mjs im Paket exportieren |
+| `CR-GC-1008` | done | codeVerdict aus scripts/kongruenz.mjs im Paket exportieren |
 | `CR-GC-1009` | done | Erzeugte Vertragstests fuer 31 SCHEMA mit Zod-Symbol |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
