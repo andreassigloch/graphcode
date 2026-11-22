@@ -62,6 +62,9 @@
 | `CR-GC-1007` | relation | `SCHEMA-real-ref` |
 | `CR-GC-1007` | relation | `SCHEMA-test-refs` |
 | `CR-GC-1007` | relation | `SCHEMA-test-selection` |
+| `CR-GC-1008` | relation | `FUNC-code-urteil` |
+| `CR-GC-1008` | relation | `REQ-code-urteil-mit-reichweite` |
+| `CR-GC-1008` | relation | `SCHEMA-code-urteil` |
 | `CR-GC-1009` | relation | `SCHEMA-adapter-befund` |
 | `CR-GC-1009` | relation | `SCHEMA-audit-stats` |
 | `CR-GC-1009` | relation | `SCHEMA-chain-metrics` |
@@ -2087,6 +2090,7 @@
 | `FCHAIN-skill-report` | compose | `FUNC-audit-stats` |
 | `FCHAIN-skill-report` | compose | `FUNC-chain-metrics` |
 | `FCHAIN-skill-report` | compose | `FUNC-check-code-conformance` |
+| `FCHAIN-skill-report` | compose | `FUNC-code-urteil` |
 | `FCHAIN-skill-report` | compose | `FUNC-compute-readiness` |
 | `FCHAIN-skill-report` | compose | `FUNC-evaluate-rules` |
 | `FCHAIN-skill-report` | compose | `FUNC-function-criticality` |
@@ -2331,6 +2335,8 @@
 | `FLOW-code-lane-plan` | io | `FUNC-verify-lane-code` |
 | `FLOW-code-lane-plan` | io | `FUNC-verify-lane-full` |
 | `FLOW-code-lane-plan` | relation | `SCHEMA-code-lane-plan` |
+| `FLOW-code-urteil` | io | `ACTOR-auftraggeber` |
+| `FLOW-code-urteil` | relation | `SCHEMA-code-urteil` |
 | `FLOW-commit-check-request` | io | `FUNC-check-code-conformance` |
 | `FLOW-commit-check-request` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-commit-check-verdict` | io | `ACTOR-auftraggeber` |
@@ -2623,6 +2629,7 @@
 | `FLOW-read-request` | io | `FUNC-list-elements` |
 | `FLOW-read-request` | relation | `SCHEMA-query-params` |
 | `FLOW-readiness-report` | io | `FUNC-agent-loop` |
+| `FLOW-readiness-report` | io | `FUNC-code-urteil` |
 | `FLOW-readiness-report` | io | `FUNC-host-socket` |
 | `FLOW-readiness-report` | relation | `SCHEMA-readiness-report` |
 | `FLOW-readiness-request` | io | `FUNC-compute-readiness` |
@@ -3045,6 +3052,9 @@
 | `FUNC-close-violations` | allocate | `MOD-agent-surface` |
 | `FUNC-close-violations` | io | `FLOW-anleitung-close-violations` |
 | `FUNC-close-violations` | satisfy | `REQ-close-violations-nimmt-nur-guide-regeln` |
+| `FUNC-code-urteil` | allocate | `MOD-projections` |
+| `FUNC-code-urteil` | io | `FLOW-code-urteil` |
+| `FUNC-code-urteil` | satisfy | `REQ-code-urteil-mit-reichweite` |
 | `FUNC-collect-status` | allocate | `MOD-surface` |
 | `FUNC-collect-status` | io | `FLOW-install-result-collect-status` |
 | `FUNC-collect-status` | satisfy | `REQ-status-sammeln` |
@@ -4039,6 +4049,8 @@
 | `TEST-interface-change-names-dependents` | verify | `REQ-interface-change-names-dependents` |
 | `TEST-interface-escalation` | verify | `REQ-interface-change-escalation` |
 | `TEST-interface-escalation` | verify | `REQ-risk-interface-change-unescalated` |
+| `TEST-kongruenz` | verify | `REQ-code-urteil-mit-reichweite` |
+| `TEST-kongruenz` | verify | `SCHEMA-code-urteil` |
 | `TEST-lane-reports-change` | verify | `REQ-lane-reports-change` |
 | `TEST-lane-reports-change` | verify | `REQ-planmodus-meldet-nichts` |
 | `TEST-lane-reports-change` | verify | `REQ-risk-stale-test-result` |
@@ -4306,6 +4318,7 @@
 | `TEST-vertrag-chain-metrics` | verify | `SCHEMA-chain-metrics` |
 | `TEST-vertrag-cli-command` | verify | `SCHEMA-cli-command` |
 | `TEST-vertrag-code-lane-plan` | verify | `SCHEMA-code-lane-plan` |
+| `TEST-vertrag-code-urteil` | verify | `SCHEMA-code-urteil` |
 | `TEST-vertrag-completeness` | verify | `SCHEMA-completeness` |
 | `TEST-vertrag-cr-groups` | verify | `SCHEMA-cr-groups` |
 | `TEST-vertrag-eingangs-befund` | verify | `SCHEMA-eingangs-befund` |

@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 307 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 308 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 70 REQ
@@ -366,7 +366,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 226 REQ
+### Entwurf (SWE.3 · HWE.2) — 227 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -393,6 +393,7 @@
 | `REQ-chain-metrics` | `TEST-graph-metrics` | `FUNC-chain-metrics` | `MOD-projections` |
 | `REQ-cli-hilfe-fuehrt-nicht-aus` | `TEST-cli-args` | `FUNC-cli-dispatch` | `MOD-surface` |
 | `REQ-close-violations-nimmt-nur-guide-regeln` | `TEST-skill-keine-eigene-rechnung` | `FUNC-close-violations` | `MOD-agent-surface` |
+| `REQ-code-urteil-mit-reichweite` | `TEST-kongruenz` | `FUNC-code-urteil` | `MOD-projections` |
 | `REQ-codec-validation` | `TEST-codec-validation` · `TEST-roundtrip` | `FUNC-decode` | `MOD-kernel` |
 | `REQ-commit-check-flow-call` | `TEST-commit-check` | `FUNC-commit-check` | `MOD-dev-scripts` |
 | `REQ-completeness-actor-bounded` | `TEST-readiness-completeness` | `FUNC-score-completeness` | `MOD-projections` |

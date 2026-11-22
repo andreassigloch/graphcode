@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 79 SCHEMA · 268 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 80 SCHEMA · 269 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -19,6 +19,7 @@
 | `SCHEMA-chain-metrics` | packages/contracts/src/se/chain-metrics.ts#ChainMetrics | reviewed |
 | `SCHEMA-cli-command` | src/surface/cli-args.ts#CliVerbSchema | reviewed |
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
+| `SCHEMA-code-urteil` | src/projections/kongruenz.ts#CodeVerdictSchema | n/a |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMarkSchema | reviewed |
 | `SCHEMA-cr-groups` | src/loop/se-plan.ts#CrGroupsSchema | n/a |
 | `SCHEMA-eingangs-befund` | src/kernel/measure/constraints.ts#EingangsBefund | n/a |
@@ -159,6 +160,7 @@
 | `FLOW-cli-output-upgrade` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-vertragstest` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-code-lane-plan` | `FUNC-plan-code-lane` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
+| `FLOW-code-urteil` | `FUNC-code-urteil` | `ACTOR-auftraggeber` |
 | `FLOW-commit-check-request` | `FUNC-commit-check` | `FUNC-check-code-conformance` |
 | `FLOW-commit-check-verdict` | `FUNC-commit-check` | `ACTOR-auftraggeber` |
 | `FLOW-completeness` | `FUNC-score-completeness` | `FUNC-compute-readiness` |
@@ -275,7 +277,7 @@
 | `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-graph-export-snapshot` |
 | `FLOW-read-bind` | `FUNC-bind-tools` | `FUNC-read-tools` |
 | `FLOW-read-request` | `FUNC-read-tools` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` |
-| `FLOW-readiness-report` | `FUNC-graph-readiness` | `FUNC-agent-loop` · `FUNC-host-socket` |
+| `FLOW-readiness-report` | `FUNC-graph-readiness` | `FUNC-agent-loop` · `FUNC-code-urteil` · `FUNC-host-socket` |
 | `FLOW-readiness-request` | `FUNC-graph-readiness` | `FUNC-compute-readiness` |
 | `FLOW-render-file` | `FUNC-render-verb` | `ACTOR-auftraggeber` |
 | `FLOW-render-view-request` | `FUNC-render-verb` | `FUNC-export-markdown` |

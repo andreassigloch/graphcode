@@ -148,7 +148,6 @@ function vitest(datei, json) {
 
 async function erhebe() {
   const dist = await import(join(REPO, 'dist', 'index.js'));
-  const { codeVerdict } = await import(join(REPO, 'scripts', 'kongruenz.mjs'));
   const { randbreiten } = await import(join(REPO, 'scripts', 'randbreiten.mjs'));
   const { messeGrenzmenge } = await import(join(REPO, 'scripts', 'grenzmenge.mjs'));
   const se = await import('@sigloch/contracts/se');
@@ -163,7 +162,7 @@ async function erhebe() {
     // T-V4: Kongruenz + Bindung aus der Readiness, Grenzmenge aus dem Skript — alle drei Teile.
     const r = await dist.bindToolsToHarness(m.harness).graph_readiness.handler({});
     const g = m.graph();
-    const v = codeVerdict(r, {
+    const v = dist.codeVerdict(r, {
       elements: g.nodes.map((n) => ({ id: n.uid, type: n.type, attributes: n.attributes ?? {} })),
       traces: g.edges.map((e) => ({ source: e.sourceId, target: e.targetId, type: e.edgeType })),
     });

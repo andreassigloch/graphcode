@@ -44,6 +44,7 @@
 | `FUNC-claim-store-lock` | FUNC | StoreLock |
 | `FUNC-cli-dispatch` | FUNC | graphcode CLI-Dispatch |
 | `FUNC-close-violations` | FUNC | Skill se:close-violations |
+| `FUNC-code-urteil` | FUNC | Code-Urteil bilden |
 | `FUNC-collect-status` | FUNC | collectStatus |
 | `FUNC-commit-check` | FUNC | Commit-Pruefung Fluss gegen Aufruf |
 | `FUNC-compute-readiness` | FUNC | readinessOf(evaluation) |
@@ -194,6 +195,7 @@
 | `FUNC-claim-store-lock` | `MOD-kernel` |
 | `FUNC-cli-dispatch` | `MOD-surface` |
 | `FUNC-close-violations` | `MOD-agent-surface` |
+| `FUNC-code-urteil` | `MOD-projections` |
 | `FUNC-collect-status` | `MOD-surface` |
 | `FUNC-commit-check` | `MOD-dev-scripts` |
 | `FUNC-compute-readiness` | `MOD-kernel-measure` |

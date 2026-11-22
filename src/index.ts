@@ -165,6 +165,9 @@ export { createHarness } from './surface/create-harness.js';
 // Er komponiert ueber `createHarness`, damit die Repo-Config und der policy-gebaute Descriptor
 // mitreisen; `new GraphCodeHarness(...)` faellt still auf DEFAULT_CONFIG zurueck.
 export { openMeasured, discriminate, stampLine } from './surface/measured.js';
+// CR-GC-1008: das Code-Urteil aus graph_readiness — eine Rechnung fuer messung.mjs (T-V4) und Leser ausserhalb des Repos.
+export { binding, codeVerdict, CodeVerdictSchema } from './projections/kongruenz.js';
+export type { Bindung, CodeUrteil, CodeVerdict, KongruenzGraph, KongruenzReadiness } from './projections/kongruenz.js';
 export type { Measured, Provenance, PolicyProvenance, Discrimination, OpenMeasuredOptions } from './surface/measured.js';
 // CR-GC-617: DER Leser des Lockfiles ist auch nach aussen der eine (CR-GC-420). Ein Rig, das
 // einen haengengebliebenen Host beenden will, muss dessen PID erfahren — tut es das mit einem

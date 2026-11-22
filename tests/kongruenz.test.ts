@@ -1,11 +1,11 @@
 /**
- * CR-GC-574/740 — das dreiwertige Code-Urteil und die Bindungsquote (`scripts/kongruenz.mjs`), rein geprueft.
- * Leser ist `scripts/messung.mjs` (T-V4); die Tests kamen aus dem Systemtest-Rig mit, als es fiel.
+ * CR-GC-574/740/1008 — das dreiwertige Code-Urteil und die Bindungsquote (`src/projections/kongruenz.ts`), rein geprueft.
+ * Leser sind `scripts/messung.mjs` (T-V4) und, ueber den Paketexport, der Nachtlauf von aise-bok.
  *
  * @author andreas@siglochconsulting
  */
 import { describe, it, expect } from 'vitest';
-import { binding, codeVerdict } from '../scripts/kongruenz.mjs';
+import { binding, codeVerdict } from '../src/index.js';
 
 describe('kongruenz: Bindungsquote und Code-Urteil', () => {
   it('die Bindungsquote zaehlt BLATT-FUNCs — ein Elter ohne realRef ist keine Luecke', () => {
