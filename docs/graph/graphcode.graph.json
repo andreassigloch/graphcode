@@ -4772,7 +4772,8 @@
       "id": "CR-GC-996",
       "type": "CR",
       "name": "Proxy-Antwortfluesse streichen",
-      "description": "docs/cr/open/CR-GC-996-proxy-antwortfluesse-streichen.md"
+      "description": "docs/cr/done/CR-GC-996-proxy-antwortfluesse-streichen.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-997",
@@ -38562,5 +38563,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1478
+  "graphVersion": 1479
 }
