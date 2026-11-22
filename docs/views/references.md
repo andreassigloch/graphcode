@@ -47,6 +47,8 @@
 | `CR-GC-1002` | relation | `REQ-update-entfernt-fremde-skills` |
 | `CR-GC-1002` | relation | `REQ-upgrade-check-zaehlt-fremde-skills` |
 | `CR-GC-1002` | relation | `REQ-upgrade-entfernt-fremde-skills` |
+| `CR-GC-1003` | relation | `FUNC-harness-cli` |
+| `CR-GC-1003` | relation | `FUNC-sync-skills` |
 | `CR-GC-101` | relation | `FUNC-graph-expand` |
 | `CR-GC-101` | relation | `FUNC-graph-impact` |
 | `CR-GC-101` | relation | `MOD-surface` |

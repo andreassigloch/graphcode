@@ -55,7 +55,6 @@ import {
   STEERING_FILE,
   COMMANDS_DIR,
   OPENCODE_SKILLS_DIR,
-  LEGACY_SKILLS_DIR,
   LEGACY_WORKSPACE_DIR,
   HOOKS_DIR,
   SETTINGS_FILE,
@@ -286,7 +285,6 @@ function installSkills(repoRoot: string, res: InstallResult): void {
     mkdirSync(dirname(join(repoRoot, oc.rel)), { recursive: true });
     writeArtifact(join(repoRoot, oc.rel), oc.rel, oc.content, res);
   }
-  removeLegacySkills(repoRoot, res);
   res.removed.push(...removeStaleSkills(repoRoot, false));
 }
 
@@ -330,26 +328,7 @@ function removeStaleSkills(repoRoot: string, dry: boolean): string[] {
 }
 
 /**
- * Bis 0.9.0 landeten die Skills flach unter `.claude/skills/se-*.md` — dort
- * registrierte sie nichts. install/update/remove räumen diese verwaisten Kopien
- * ab (nur das paketeigene `se-*.md`-Muster, nie Member-Skills); keine parallelen
- * Pfade zwischen Alt- und Neu-Layout.
- */
-function removeLegacySkills(repoRoot: string, res: InstallResult): void {
-  const legacyDir = join(repoRoot, LEGACY_SKILLS_DIR);
-  if (!existsSync(legacyDir)) return;
-  for (const f of readdirSync(legacyDir)) {
-    if (f.startsWith('se-') && f.endsWith('.md')) {
-      removeArtifact(join(legacyDir, f), join(LEGACY_SKILLS_DIR, f), res);
-    }
-  }
-  if (readdirSync(legacyDir).length === 0) {
-    rmSync(legacyDir, { recursive: true, force: true });
-  }
-}
-
-/**
- * Re-copy the shipped `se-*.md` skills into the target repo's `.claude/skills/`, overwriting
+ * Re-copy the shipped `se-*.md` skills into the target repo's `.claude/commands/`, overwriting
  * ONLY on a `version:` mismatch (CR-GC-208 — anti-drift). Compares the shipped skill's
  * frontmatter `version:` against the target copy's:
  *   - no target copy            → write it, report `added`.
@@ -372,12 +351,6 @@ export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): S
   const srcDir = packagedSkillsDir();
   const files = shippedSkillFiles();
   if (files.length === 0) return SkillSyncResultSchema.parse(res); // skills not packaged — nothing to sync.
-  // Alt-Layout-Migration läuft auch über sync (nicht nur init/update) — sonst
-  // koexistieren Command- und Legacy-Kopie bis zum nächsten `graphcode update`.
-  // CR-GC-538: im Trockenlauf NICHT — `--check` darf keine Datei anfassen, auch keine alte.
-  if (!dry) {
-    removeLegacySkills(repoRoot, { action: 'update', repoRoot, created: [], updated: [], removed: [], preserved: [] });
-  }
   for (const f of files) {
     const shipped = readFileSync(join(srcDir, f), 'utf8');
     // CR-GC-721: beide Ziele nach derselben Regel — das Command fuer Claude Code, der Skill-Ordner fuer OpenCode.
@@ -408,11 +381,10 @@ export function syncSkills(repoRoot: string, options: { dry?: boolean } = {}): S
 
 /**
  * Remove the graphcode-shipped skills restlos — only the `se-*.md` files this package
- * owns (never a member's own skills). Prune `.claude/skills` / `.claude` only when WE
+ * owns (never a member's own skills). Prune `.claude/commands` / `.claude` only when WE
  * emptied them.
  */
 function removeSkills(repoRoot: string, res: InstallResult): void {
-  removeLegacySkills(repoRoot, res);
   res.removed.push(...removeStaleSkills(repoRoot, false)); // auch Reste aelterer Pakete (CR-GC-879)
   removeOpencodeSkills(repoRoot, res);
   const destDir = join(repoRoot, COMMANDS_DIR);

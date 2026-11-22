@@ -49,7 +49,6 @@ const OWN_VERSION = JSON.parse(
   readFileSync(join(__dirname, '..', 'package.json'), 'utf8'),
 ).version as string;
 const COMMANDS_DIR = join('.claude', 'commands');
-const LEGACY_SKILLS_DIR = join('.claude', 'skills');
 /** CR-GC-721: dieselben Skills in OpenCodes Form — `<name>/SKILL.md`, `:` als `-`. */
 const OPENCODE_SKILLS_DIR = join('.opencode', 'skills');
 const HOOKS_DIR = join('.claude', 'hooks');
@@ -152,9 +151,8 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
       );
       expect(res.created).toContain(join(COMMANDS_DIR, f));
     }
-    // No stray files in the scaffolded commands tree — and NOTHING in the legacy dir.
+    // No stray files in the scaffolded commands tree.
     expect(listSkillTree(join(repo, COMMANDS_DIR))).toEqual(SHIPPED_SKILLS);
-    expect(existsSync(join(repo, LEGACY_SKILLS_DIR))).toBe(false);
   });
 
   it('init liefert dieselben Skills fuer OpenCode aus: <name>/SKILL.md, Name ohne Doppelpunkt (CR-GC-721)', async () => {
@@ -197,21 +195,6 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     await scaffold('init', { repoRoot: repo });
     await scaffold('remove', { repoRoot: repo });
     expect(existsSync(join(repo, '.opencode'))).toBe(false);
-  });
-
-  it('update migrates legacy flat .claude/skills/se-*.md copies away (CR-GC-277)', async () => {
-    // Ein Repo mit Alt-Stand: flache Skills aus ≤0.9.0.
-    mkdirSync(join(repo, LEGACY_SKILLS_DIR), { recursive: true });
-    writeFileSync(join(repo, LEGACY_SKILLS_DIR, 'se-fmea.md'), '---\nname: se-fmea\nversion: 1\n---\nalt\n', 'utf8');
-    writeFileSync(join(repo, LEGACY_SKILLS_DIR, 'my-own-skill.md'), '# mine\n', 'utf8');
-
-    const res = await scaffold('update', { repoRoot: repo });
-
-    // Legacy-Kopie weg (nur unsere), Member-Skill bleibt, Commands-Baum steht.
-    expect(existsSync(join(repo, LEGACY_SKILLS_DIR, 'se-fmea.md'))).toBe(false);
-    expect(res.removed).toContain(join(LEGACY_SKILLS_DIR, 'se-fmea.md'));
-    expect(existsSync(join(repo, LEGACY_SKILLS_DIR, 'my-own-skill.md'))).toBe(true);
-    expect(existsSync(join(repo, COMMANDS_DIR, 'se-fmea.md'))).toBe(true);
   });
 
   it('GRAPHCODE.md carries the graph-first onboarding contract (CR-GC-207)', async () => {
@@ -551,7 +534,7 @@ describe('TEST-cli-scaffold: graphcode init | update | remove', () => {
     expect(existsSync(join(repo, GUARDRAILS))).toBe(false);
 
     // Skills + hooks removed restlos; the graphcode-only settings.json is removed too;
-    // the emptied `.claude/skills`, `.claude/hooks` and `.claude` are pruned.
+    // the emptied `.claude/commands`, `.claude/hooks` and `.claude` are pruned.
     for (const f of SHIPPED_SKILLS) {
       expect(existsSync(join(repo, COMMANDS_DIR, f))).toBe(false);
       expect(res.removed).toContain(join(COMMANDS_DIR, f));
@@ -825,8 +808,8 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
     expect(readFileSync(victimAbs, 'utf8')).toBe(shipped);
   });
 
-  it('a missing copy is added (sync also bootstraps a fresh .claude/skills)', () => {
-    // No init: the target has no .claude/skills at all.
+  it('a missing copy is added (sync also bootstraps a fresh .claude/commands)', () => {
+    // No init: the target has no .claude/commands at all.
     const res = syncSkills(repo);
     expect(res.added.sort()).toEqual(SYNC_TARGETS);
     expect(res.updated).toEqual([]);
@@ -1024,8 +1007,7 @@ describe('TEST-steering-doc: GRAPHCODE-STEERING.md (CR-GC-322)', () => {
     const md = readFileSync(join(repo, GUARDRAILS), 'utf8');
     // The pointer exists — and exactly once, so the agent-facing doc stays short.
     expect(md.match(new RegExp(STEERING, 'g'))?.length).toBe(1);
-    // CR-GC-277 moved the skills to .claude/commands/; the guardrails still claimed
-    // `.claude/skills/` — the very layout removeLegacySkills() deletes.
+    // CR-GC-277 moved the skills to .claude/commands/; the guardrails still claimed `.claude/skills/`.
     expect(md).toContain('.claude/commands/');
     expect(md).not.toContain('.claude/skills/');
   });

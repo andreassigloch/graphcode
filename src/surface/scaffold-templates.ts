@@ -72,9 +72,7 @@ export const STEERING_FILE = 'GRAPHCODE-STEERING.md';
 /**
  * Where the shipped SE skills land in a member repo — als Claude-Code-COMMANDS
  * (CR-GC-277): `.claude/commands/<ns>/<rest>.md` ⇒ invocable als `/se:generate`,
- * `/se:top-level` etc. Das flache `.claude/skills/se-*.md`-Layout registrierte
- * NICHTS (Skills brauchen `<name>/SKILL.md`-Verzeichnisse, Commands den Pfad
- * als Namen) — die Doppelpunkt-Namen der Frontmatter waren immer schon das
+ * `/se:top-level` etc. Die Doppelpunkt-Namen der Frontmatter sind das
  * Commands-Schema. Pfad im Paket = Pfad im Ziel, kein Mapping zur Laufzeit.
  */
 export const COMMANDS_DIR = join('.claude', 'commands');
@@ -92,8 +90,6 @@ export const OPENCODE_SKILLS_DIR = join('.opencode', 'skills');
  * OpenCode laedt `.opencode/plugin/*.js` beim Start.
  */
 export const OPENCODE_PLUGIN = join('.opencode', 'plugin', 'graphcode-vorschlag.js');
-/** Das Alt-Ziel bis 0.9.0 — install/sync/remove räumen dort verwaiste se-*.md ab. */
-export const LEGACY_SKILLS_DIR = join('.claude', 'skills');
 /**
  * Der Workspace des Vorgängerprodukts. Bis CR-GC-330 schrieb graphcode seinen
  * Learning-Feed dorthin statt in den eigenen Ordner; `remove` räumt genau diese eine
@@ -106,7 +102,7 @@ export const HOOKS_DIR = join('.claude', 'hooks');
 export const SETTINGS_FILE = join('.claude', 'settings.json');
 
 /**
- * The `.claude/skills/` directory shipped INSIDE this package, resolved relative to
+ * The `.claude/commands/` directory shipped INSIDE this package, resolved relative to
  * this module so it works both in dev (`src/scaffold.ts` → repo root) and bundled
  * (`dist/cli.js` / `dist/index.js` → package root). The skills are listed in
  * package.json `files`, so the npm tarball carries them (REQ-self-contained-dist).

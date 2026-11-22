@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 606 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 607 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 606 CR · 595 done · 1 open.
+Total: 607 CR · 596 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -226,6 +226,7 @@ Total: 606 CR · 595 done · 1 open.
 | `CR-GC-1000` | done | Generator liest refine in zwei festen Formen |
 | `CR-GC-1001` | done | FUNC-sync-skills mit eigener Anforderung und Fluessen |
 | `CR-GC-1002` | done | Entfernen veralteter Skills: eine Anforderung je Erfueller |
+| `CR-GC-1003` | done | Aufraeumen des Alt-Layouts der Skills loeschen |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |
