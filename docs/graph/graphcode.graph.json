@@ -131,7 +131,8 @@
       "id": "CR-GC-1012",
       "type": "CR",
       "name": "SCHEMA-import-access ohne Zod-Schema: ImportTargetSchema, Erzeuger parst",
-      "description": "docs/cr/open/CR-GC-1012-schema-import-access-ohne-zod-schema-imp.md"
+      "description": "docs/cr/done/CR-GC-1012-schema-import-access-ohne-zod-schema-imp.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-102",
@@ -40191,5 +40192,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1546
+  "graphVersion": 1547
 }
