@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 79 SCHEMA · 266 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 79 SCHEMA · 268 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -147,7 +147,7 @@
 | `FLOW-channel-next-step` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-skill-reference` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` |
 | `FLOW-channel-steer-advisory` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
-| `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-render-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` · `FUNC-vertragstest-verb` |
+| `FLOW-cli-command` | `FUNC-cli-dispatch` | `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-render-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-sync-skills` · `FUNC-upgrade` · `FUNC-vertragstest-verb` |
 | `FLOW-cli-invocation` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` · `FUNC-commit-check` · `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · `FUNC-verify-lane-model` |
 | `FLOW-cli-invocation-import-code` | `FUNC-agent-loop` | `FUNC-cli-dispatch` |
 | `FLOW-cli-invocation-render` | `ACTOR-auftraggeber` | `FUNC-cli-dispatch` |
@@ -302,6 +302,8 @@
 | `FLOW-session-entry` | `FUNC-gve-supervise` | `FUNC-gve-sessions` |
 | `FLOW-session-registry` | `FUNC-gve-sessions` | `FUNC-gve-supervise` |
 | `FLOW-skill-request` | `FUNC-agent-loop` | `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-bau` · `FUNC-se-cdr` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` |
+| `FLOW-skill-sync-result-sync-skills` | `FUNC-sync-skills` | `FUNC-cli-dispatch` |
+| `FLOW-skill-sync-result-upgrade` | `FUNC-sync-skills` | `FUNC-upgrade` |
 | `FLOW-snapshot-request` | `FUNC-generation-step` | `FUNC-take-steering-snapshot` |
 | `FLOW-snapshot-request-mutate` | `FUNC-graph-mutate-tool` | `FUNC-take-steering-snapshot` |
 | `FLOW-snapshot-request-readiness` | `FUNC-graph-readiness` | `FUNC-take-steering-snapshot` |

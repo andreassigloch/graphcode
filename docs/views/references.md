@@ -36,6 +36,10 @@
 | `CR-GC-1000` | relation | `SCHEMA-metric-policy` |
 | `CR-GC-1000` | relation | `SCHEMA-metrics-answer` |
 | `CR-GC-1000` | relation | `SCHEMA-mutate-command` |
+| `CR-GC-1001` | relation | `FUNC-sync-skills` |
+| `CR-GC-1001` | relation | `FUNC-upgrade` |
+| `CR-GC-1001` | relation | `REQ-skills-sync-gleicht-ab` |
+| `CR-GC-1001` | relation | `SCHEMA-skill-sync-result` |
 | `CR-GC-101` | relation | `FUNC-graph-expand` |
 | `CR-GC-101` | relation | `FUNC-graph-impact` |
 | `CR-GC-101` | relation | `MOD-surface` |
@@ -1952,6 +1956,7 @@
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-collect-status` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-harness-cli` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-init-verb` |
+| `FCHAIN-repo-lifecycle` | compose | `FUNC-sync-skills` |
 | `FCHAIN-repo-lifecycle` | compose | `FUNC-upgrade` |
 | `FCHAIN-schema-migration` | compose | `FUNC-apply-reseed` |
 | `FCHAIN-schema-migration` | compose | `FUNC-claim-store-lock` |
@@ -2242,6 +2247,7 @@
 | `FLOW-cli-command` | io | `FUNC-rewind` |
 | `FLOW-cli-command` | io | `FUNC-serve-sse` |
 | `FLOW-cli-command` | io | `FUNC-serve-stdio` |
+| `FLOW-cli-command` | io | `FUNC-sync-skills` |
 | `FLOW-cli-command` | io | `FUNC-upgrade` |
 | `FLOW-cli-command` | io | `FUNC-vertragstest-verb` |
 | `FLOW-cli-command` | relation | `SCHEMA-cli-command` |
@@ -2651,6 +2657,10 @@
 | `FLOW-skill-request` | io | `FUNC-test` |
 | `FLOW-skill-request` | io | `FUNC-test-ui` |
 | `FLOW-skill-request` | relation | `SCHEMA-query-params` |
+| `FLOW-skill-sync-result-sync-skills` | io | `FUNC-cli-dispatch` |
+| `FLOW-skill-sync-result-sync-skills` | relation | `SCHEMA-skill-sync-result` |
+| `FLOW-skill-sync-result-upgrade` | io | `FUNC-upgrade` |
+| `FLOW-skill-sync-result-upgrade` | relation | `SCHEMA-skill-sync-result` |
 | `FLOW-snapshot-request` | io | `FUNC-take-steering-snapshot` |
 | `FLOW-snapshot-request` | relation | `SCHEMA-ontology-graph` |
 | `FLOW-snapshot-request-mutate` | io | `FUNC-take-steering-snapshot` |
@@ -3404,6 +3414,10 @@
 | `FUNC-stand-verlauf` | io | `FLOW-verlauf-report` |
 | `FUNC-stand-verlauf` | io | `FLOW-verlauf-snapshot` |
 | `FUNC-stand-verlauf` | satisfy | `REQ-stand-verlauf` |
+| `FUNC-sync-skills` | allocate | `MOD-surface` |
+| `FUNC-sync-skills` | io | `FLOW-skill-sync-result-sync-skills` |
+| `FUNC-sync-skills` | io | `FLOW-skill-sync-result-upgrade` |
+| `FUNC-sync-skills` | satisfy | `REQ-skills-sync-gleicht-ab` |
 | `FUNC-take-steering-snapshot` | allocate | `MOD-kernel-measure` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-measurement-vector` |
 | `FUNC-take-steering-snapshot` | io | `FLOW-steering-snapshot` |
@@ -3650,6 +3664,7 @@
 | `REQ-repo-install` | compose | `REQ-init-nennt-schritte` |
 | `REQ-repo-install` | compose | `REQ-post-harness-cli` |
 | `REQ-repo-uninstall` | compose | `REQ-remove-loescht-eigene-pfade` |
+| `REQ-repo-update` | compose | `REQ-skills-sync-gleicht-ab` |
 | `REQ-repo-update` | compose | `REQ-update-behaelt-store` |
 | `REQ-repo-update` | compose | `REQ-update-traegt-policy-ein` |
 | `REQ-repo-update` | compose | `REQ-upgrade-entfernt-fremde-skills` |
@@ -3808,6 +3823,7 @@
 | `TEST-cli-scaffold` | verify | `REQ-repo-install` |
 | `TEST-cli-scaffold` | verify | `REQ-repo-uninstall` |
 | `TEST-cli-scaffold` | verify | `REQ-repo-update` |
+| `TEST-cli-scaffold` | verify | `REQ-skills-sync-gleicht-ab` |
 | `TEST-cli-scaffold` | verify | `REQ-update-behaelt-store` |
 | `TEST-cli-scaffold` | verify | `REQ-upgrade-entfernt-fremde-skills` |
 | `TEST-cli-scaffold` | verify | `SCHEMA-cli-command` |

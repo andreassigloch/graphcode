@@ -177,7 +177,7 @@ Empfaenger: `ACTOR-auftraggeber` · `ACTOR-dashboard`
 
 - `FCHAIN-docked-session` — Angedockte Sitzung: `FUNC-agent-loop` → `FUNC-bind-tools` → `FUNC-decode` → `FUNC-evaluate-rules` → `FUNC-graph-mutate-tool` → `FUNC-graph-store` → `FUNC-host-proxy` → `FUNC-host-socket` → `FUNC-mutate` → `FUNC-serve-stdio`
 - `FCHAIN-host-start` — Host starten: `FUNC-apply-reseed` → `FUNC-auto-export` → `FUNC-bind-tools` → `FUNC-broadcast-diff` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-create-harness` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-host-socket` → `FUNC-import` → `FUNC-load-config` → `FUNC-open-store` → `FUNC-own-kuzu-host` → `FUNC-schema-guard` → `FUNC-seed-from-json` → `FUNC-serve-stdio` → `FUNC-tool-context`
-- `FCHAIN-repo-lifecycle` — Repo einrichten und aktualisieren: `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-harness-cli` → `FUNC-init-verb` → `FUNC-upgrade`
+- `FCHAIN-repo-lifecycle` — Repo einrichten und aktualisieren: `FUNC-cli-dispatch` → `FUNC-collect-status` → `FUNC-harness-cli` → `FUNC-init-verb` → `FUNC-sync-skills` → `FUNC-upgrade`
 - `FCHAIN-schema-migration` — Schema-Migration bei Version-Bump: `FUNC-apply-reseed` → `FUNC-claim-store-lock` → `FUNC-cli-dispatch` → `FUNC-graph-store` → `FUNC-import` → `FUNC-open-store` → `FUNC-schema-guard` → `FUNC-seed-from-json` → `FUNC-serve-stdio`
 - `FCHAIN-session-end` — Sitzung beenden: `FUNC-auto-export` → `FUNC-claim-store-lock` → `FUNC-graph-export-snapshot` → `FUNC-graph-store` → `FUNC-gve-sessions` → `FUNC-gve-supervise` → `FUNC-host-socket` → `FUNC-session-shutdown`
 
@@ -195,6 +195,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 |---|---|---|---|
 | `CR-GC-100` | done | Harness Core | `FUNC-evaluate-rules` · `FUNC-graph-store` · `FUNC-import` · `FUNC-mutate` · `MOD-kernel` · `REQ-buildable-standalone` · `REQ-confidence-tier` · `REQ-disk-persistence` · `REQ-harness-schema-in-contracts` · `REQ-import-se-ontology` · `REQ-one-gate-per-repo` · `REQ-rule-enforcement` · `REQ-single-kuzu-owner` |
 | `CR-GC-1000` | done | Generator liest refine in zwei festen Formen | `FUNC-erzeuge-vertragstests` · `FUNC-se-bau` · `FUNC-vertragstest-verb` · `REQ-contract-test-cases` |
+| `CR-GC-1001` | done | FUNC-sync-skills mit eigener Anforderung und Fluessen | `FUNC-sync-skills` · `FUNC-upgrade` · `REQ-skills-sync-gleicht-ab` |
 | `CR-GC-101` | done | MCP-Tools | `FUNC-graph-expand` · `FUNC-graph-impact` · `MOD-surface` · `REQ-audit-trail` · `REQ-cache-layering` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-single-transport` · `REQ-subgraph-slicing` |
 | `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-surface` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |

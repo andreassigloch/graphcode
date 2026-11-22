@@ -896,6 +896,22 @@ describe('TEST-skills-sync: graphcode skills sync (CR-GC-208 anti-drift)', () =>
     expect(existsSync(join(repo, COMMANDS_DIR, 'deploy.md'))).toBe(true);
   });
 
+  it('eine Kopie mit gleicher oder höherer Version bleibt Byte für Byte unberührt und steht unter unchanged (CR-GC-1001)', async () => {
+    await scaffold('init', { repoRoot: repo });
+    const gleich = join(COMMANDS_DIR, SHIPPED_SKILLS[0]);
+    const hoeher = join(COMMANDS_DIR, SHIPPED_SKILLS[1]);
+    const version = (rel: string): number => Number(/^version:\s*(\d+)\s*$/m.exec(readFileSync(join(repo, rel), 'utf8'))?.[1]);
+    const eigenGleich = readFileSync(join(repo, gleich), 'utf8') + '\neigene Zeile des Repos\n';
+    const eigenHoeher = readFileSync(join(repo, hoeher), 'utf8').replace(/^version:\s*\d+/m, `version: ${version(hoeher) + 1}`) + '\neigene Zeile\n';
+    writeFileSync(join(repo, gleich), eigenGleich, 'utf8');
+    writeFileSync(join(repo, hoeher), eigenHoeher, 'utf8');
+    const res = syncSkills(repo);
+    expect(res.updated).toEqual([]);
+    expect(res.unchanged).toEqual(expect.arrayContaining([gleich, hoeher]));
+    expect(readFileSync(join(repo, gleich), 'utf8')).toBe(eigenGleich);
+    expect(readFileSync(join(repo, hoeher), 'utf8')).toBe(eigenHoeher);
+  });
+
   it('sync is idempotent — a second run after the first is all unchanged', () => {
     const first = syncSkills(repo); // bootstraps (all added)
     expect(first.added.length).toBe(SYNC_TARGETS.length);

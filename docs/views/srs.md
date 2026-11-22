@@ -4,7 +4,7 @@
 
 # graphcode — System Requirements Specification · SRS-graphcode
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 303 REQ. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). Gliederung nach ISO/IEC/IEEE 29148:2018 Kl. 9 (BRS, StRS, SyRS): compose=Hierarchie, io=Reihenfolge, REQ unter ihrem satisfy-Element. 304 REQ. Deterministisch generiert.
 
 ## 1  Business Requirements (BRS)
 
@@ -158,7 +158,7 @@ Verification ◀ `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-open-s
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -452,7 +452,7 @@ Verification ◀ `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` (integrat
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -3240,7 +3240,7 @@ Verification ◀ `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-open-s
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -4584,7 +4584,7 @@ Vertragstests aus dem Modell erzeugen: Aufruf, Satz aus dem Snapshot, Erzeugung 
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -5202,7 +5202,7 @@ Verification ◀ `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-open-s
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -6962,7 +6962,7 @@ Verification ◀ `TEST-schema-migration` (integration) · satisfy ◀ `FUNC-sche
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -7558,7 +7558,7 @@ Verification ◀ `TEST-store-recovery` (integration) · satisfy ◀ `FUNC-open-s
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -7834,7 +7834,7 @@ Der Auftraggeber ruft graphcode render mit Sicht und Format; der CLI-Einsprung g
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -7920,7 +7920,7 @@ Verification ◀ `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` (integrat
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -8548,7 +8548,7 @@ Der MCP-Client startet graphcode mcp; serveStdio legt den Harness an (Konfigurat
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -8936,7 +8936,7 @@ Der Entwickler richtet das Repo an der Kommandozeile ein, fragt den Stand ab und
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -9048,13 +9048,27 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-init-verb` (integration) · satisfy ◀ `FUNC-init-verb` · allocate ▶ `MOD-surface`
 
-###### 3.3.1.9.3.5  `FUNC-upgrade` — executeUpgrade(opts)
+###### 3.3.1.9.3.5  `FUNC-sync-skills` — syncSkills
+
+Gleicht die ausgelieferten se-Skills mit dem Repo ab: fehlende schreibt es, ältere überschreibt es nach Version, gleiche lässt es, Skills, die das Paket nicht mehr kennt, entfernt es; im Trockenlauf schreibt es nichts und berichtet nur. Beleg: src/surface/scaffold.ts, syncSkills.
+
+io ◀ `FLOW-cli-command` · io ▶ `FLOW-skill-sync-result-sync-skills` · `FLOW-skill-sync-result-upgrade` · allocate ▶ `MOD-surface`
+
+###### `REQ-skills-sync-gleicht-ab` — skills sync gleicht Skills ab
+
+Wenn `skills sync` läuft, schreibt es fehlende se-Skills, überschreibt ältere nach ihrer Version, lässt gleiche unverändert und berichtet je Skill, was geschah.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-cli-scaffold` (integration) · satisfy ◀ `FUNC-sync-skills` · allocate ▶ `MOD-surface`
+
+###### 3.3.1.9.3.6  `FUNC-upgrade` — executeUpgrade(opts)
 
 > auch in: `FUNC-block-bedienung`
 
 Ein Befehl, der alles aktuell macht (CR-GC-377): Ziel aus der Registry (oder --to), Repo-Install ziehen, den NEU installierten Build seine eigenen Artefakte schreiben lassen (Re-Exec), den Host beenden, der auf altem Code weiterlaeuft. Ersetzt das Verb update ersatzlos, dessen Name log: es refreshte nur Artefakte. --check ist die reine Registry-Abfrage ohne Aenderung und macht eine separate Suchfunktion ueberfluessig. Kein stilles Downgrade: liegt die Registry hinter dem Installierten, bricht der Befehl ab und verlangt --to.
 
-io ◀ `FLOW-cli-command` · `FLOW-lock-file` · io ▶ `FLOW-install-result-upgrade` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-lock-file` · `FLOW-skill-sync-result-upgrade` · io ▶ `FLOW-install-result-upgrade` · allocate ▶ `MOD-surface`
 
 ###### `REQ-update-traegt-policy-ein` — update traegt Policy-Felder ein
 
@@ -9082,7 +9096,7 @@ Beim Hoststart vergleicht GraphStore.open den Fingerabdruck des laufenden Meta-M
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -9492,7 +9506,7 @@ Verification ◀ `TEST-lane-reports-change` (integration) · satisfy ◀ `FUNC-a
 
 Der Einsprung des bin: liest Verb und Optionen, waehlt den Handler und setzt den Exit-Code. Selbst nicht exportiert, weil ihn kein Modul ruft, sondern der Prozessstart.
 
-io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render` · `FLOW-host-ready` · `FLOW-import-summary` · `FLOW-install-result-collect-status` · `FLOW-install-result-harness-cli` · `FLOW-install-result-upgrade` · `FLOW-rewind-summary` · `FLOW-skill-sync-result-sync-skills` · io ▶ `FLOW-cli-command` · `FLOW-cli-output-import-code` · `FLOW-cli-output-remove` · `FLOW-cli-output-rewind` · `FLOW-cli-output-skills-sync` · `FLOW-cli-output-status` · `FLOW-cli-output-upgrade` · `FLOW-cli-output-vertragstest` · `FLOW-store-close-cli` · allocate ▶ `MOD-surface`
 
 ###### `REQ-cli-hilfe-fuehrt-nicht-aus` — Hilfe und Tippfehler führen nichts aus
 
@@ -9764,7 +9778,7 @@ Verification ◀ `TEST-render-verb` (integration) · satisfy ◀ `FUNC-render-ve
 
 Ein Befehl, der alles aktuell macht (CR-GC-377): Ziel aus der Registry (oder --to), Repo-Install ziehen, den NEU installierten Build seine eigenen Artefakte schreiben lassen (Re-Exec), den Host beenden, der auf altem Code weiterlaeuft. Ersetzt das Verb update ersatzlos, dessen Name log: es refreshte nur Artefakte. --check ist die reine Registry-Abfrage ohne Aenderung und macht eine separate Suchfunktion ueberfluessig. Kein stilles Downgrade: liegt die Registry hinter dem Installierten, bricht der Befehl ab und verlangt --to.
 
-io ◀ `FLOW-cli-command` · `FLOW-lock-file` · io ▶ `FLOW-install-result-upgrade` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-cli-command` · `FLOW-lock-file` · `FLOW-skill-sync-result-upgrade` · io ▶ `FLOW-install-result-upgrade` · allocate ▶ `MOD-surface`
 
 ###### `REQ-update-traegt-policy-ein` — update traegt Policy-Felder ein
 
@@ -12822,7 +12836,7 @@ io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEM
 
 Das aufgeloeste Kommando, das der Einsprung an den zustaendigen Handler weitergibt: mcp / host / run / import-code / rewind / init / update / remove / skills sync.
 
-io ◀ `FUNC-cli-dispatch` · io ▶ `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-render-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-upgrade` · `FUNC-vertragstest-verb` · schema ▶ `SCHEMA-cli-command`
+io ◀ `FUNC-cli-dispatch` · io ▶ `FUNC-collect-status` · `FUNC-harness-cli` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-render-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-sync-skills` · `FUNC-upgrade` · `FUNC-vertragstest-verb` · schema ▶ `SCHEMA-cli-command`
 
 ###### 3.3.4.1.55  `FLOW-cli-invocation` — CLI-Aufruf (Rohform)
 
@@ -13748,349 +13762,361 @@ Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autor
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-bau` · `FUNC-se-cdr` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.209  `FLOW-snapshot-request` — Messanfrage (generationStep)
+###### 3.3.4.1.209  `FLOW-skill-sync-result-sync-skills` — Skill-Sync-Bericht (cli-dispatch)
+
+Der Bericht des Skill-Abgleichs an den Einsprung: Pfad der Repo-Wurzel und die Listen added, updated, unchanged, removed. Verbindung FUNC-sync-skills zu FUNC-cli-dispatch. Beleg: src/cli.ts, syncSkills(process.cwd()).
+
+io ◀ `FUNC-sync-skills` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-skill-sync-result`
+
+###### 3.3.4.1.210  `FLOW-skill-sync-result-upgrade` — Skill-Sync-Bericht (upgrade)
+
+Der Bericht des Trockenlaufs von syncSkills an upgrade: added und removed werden zu missingSkills und staleSkills. Verbindung FUNC-sync-skills zu FUNC-upgrade. Beleg: src/surface/upgrade.ts, syncImpl(repoRoot, { dry: true }).
+
+io ◀ `FUNC-sync-skills` · io ▶ `FUNC-upgrade` · schema ▶ `SCHEMA-skill-sync-result`
+
+###### 3.3.4.1.211  `FLOW-snapshot-request` — Messanfrage (generationStep)
 
 Graph und Metrikpolitik, die generationStep an takeSteeringSnapshot gibt. Beleg: src/loop/generate.ts.
 
 io ◀ `FUNC-generation-step` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.210  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
+###### 3.3.4.1.212  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
 
 Graph und Metrikpolitik, die graph_mutate im Probelauf vor und nach dem Zug an takeSteeringSnapshot gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.211  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
+###### 3.3.4.1.213  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
 
 Graph und Metrikpolitik, die graph_readiness an takeSteeringSnapshot gibt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.212  `FLOW-socket-close` — Host-Socket schliessen
+###### 3.3.4.1.214  `FLOW-socket-close` — Host-Socket schliessen
 
 Der Auftrag beim Sitzungsende, den Host-Socket zu schliessen und die Socket-Datei zu entfernen. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.213  `FLOW-socket-start` — Host-Socket starten
+###### 3.3.4.1.215  `FLOW-socket-start` — Host-Socket starten
 
 Die Werkzeug-Registry, mit der bootHost den Host-Socket startet. Beleg: src/surface/mcp-server.ts, bootHost.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.214  `FLOW-sse-frame` — SSE-Frame (versioniert)
+###### 3.3.4.1.216  `FLOW-sse-frame` — SSE-Frame (versioniert)
 
 Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501) BENANNTE OFFENE DIFFERENZ: graph-view-edit abonniert /events heute nicht, es beobachtet die Snapshot-Datei; das Abo ist Ziel von CR-GC-809. (CR-GC-822)
 
 io ◀ `FUNC-broadcast-diff` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-###### 3.3.4.1.215  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+###### 3.3.4.1.217  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-steering-delta`
 
-###### 3.3.4.1.216  `FLOW-steering-pair` — Snapshot-Paar
+###### 3.3.4.1.218  `FLOW-steering-pair` — Snapshot-Paar
 
 Die zwei Steuerungs-Snapshots vor und nach dem Probelauf, die graph_mutate an computeSteeringDelta gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-compute-steering-delta` · schema ▶ `SCHEMA-steering-snapshot`
 
-###### 3.3.4.1.217  `FLOW-steering-snapshot` — Steering-Snapshot
+###### 3.3.4.1.219  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-generation-step` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · schema ▶ `SCHEMA-steering-snapshot`
 
-###### 3.3.4.1.218  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
+###### 3.3.4.1.220  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
 
 Der Aufruf von graph_generate durch die Ablaufsteuerung: Intention, defer, task, peek.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.219  `FLOW-store-build` — Store und Lock anlegen
+###### 3.3.4.1.221  `FLOW-store-build` — Store und Lock anlegen
 
 Store und Lock, die die Harness-Fabrik beim Bau des Harness anlegt. Beleg: src/kernel/harness.ts, GraphCodeHarness legt GraphStore und StoreLock an. (CR-GC-849)
 
 io ◀ `FUNC-create-harness` · io ▶ `FUNC-claim-store-lock` · `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.220  `FLOW-store-close` — Store schliessen
+###### 3.3.4.1.222  `FLOW-store-close` — Store schliessen
 
 Das Schliessen des Stores am Sitzungsende: serveStdio ruft harness.close, das GraphStore.close ruft. Beleg: src/surface/mcp-server.ts. (CR-GC-849)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.221  `FLOW-store-close-cli` — Store schliessen (CLI)
+###### 3.3.4.1.223  `FLOW-store-close-cli` — Store schliessen (CLI)
 
 Das Schliessen des Stores beim CLI-Abschluss: shutdown ruft harness.close, das GraphStore.close ruft. Beleg: src/cli.ts. (CR-GC-849)
 
 io ◀ `FUNC-cli-dispatch` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.222  `FLOW-store-close-render` — Store schliessen (render)
+###### 3.3.4.1.224  `FLOW-store-close-render` — Store schliessen (render)
 
 Das Schliessen des Stores am Ende von graphcode render: harness.close ruft GraphStore.close. Beleg: src/surface/render-verb.ts. (CR-GC-909)
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.223  `FLOW-store-close-rewind` — Store schliessen (rewind)
+###### 3.3.4.1.225  `FLOW-store-close-rewind` — Store schliessen (rewind)
 
 Das Schliessen des Stores am Ende von rewind: executeRewind ruft harness.close, das GraphStore.close ruft. Beleg: src/surface/rewind.ts. (CR-GC-849)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.224  `FLOW-store-load` — Geladener Graph
+###### 3.3.4.1.226  `FLOW-store-load` — Geladener Graph
 
 Der aus Kuzu geladene Graph, den open() beim Oeffnen von load() bekommt. Beleg: src/kernel/graph-store.ts. (CR-GC-849)
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.225  `FLOW-store-open` — Store oeffnen (serveStdio)
+###### 3.3.4.1.227  `FLOW-store-open` — Store oeffnen (serveStdio)
 
 Der Aufruf harness.initialize, der den Store oeffnet; serveStdio wartet darauf, er ist die Store-Wahl (CR-GC-218). Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.226  `FLOW-store-open-import-code` — Store oeffnen (import-code)
+###### 3.3.4.1.228  `FLOW-store-open-import-code` — Store oeffnen (import-code)
 
 Der Aufruf harness.initialize aus import-code. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.227  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
+###### 3.3.4.1.229  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
 
 Der Aufruf harness.initialize aus ownKuzu. Beleg: src/kernel/own-kuzu.ts.
 
 io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.228  `FLOW-store-open-render` — Store oeffnen (render)
+###### 3.3.4.1.230  `FLOW-store-open-render` — Store oeffnen (render)
 
 Der Aufruf harness.initialize aus graphcode render. Beleg: src/surface/render-verb.ts. (CR-GC-909)
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.229  `FLOW-store-open-rewind` — Store oeffnen (rewind)
+###### 3.3.4.1.231  `FLOW-store-open-rewind` — Store oeffnen (rewind)
 
 Der Aufruf harness.initialize aus rewind. Beleg: src/surface/rewind.ts.
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.230  `FLOW-store-ownership` — Store-Besitzanspruch
+###### 3.3.4.1.232  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der zugesprochene Store-Besitz an GraphStore.open; ohne ihn wirft open StoreOwnershipError (Wahl verloren).
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-lock-owner`
 
-###### 3.3.4.1.231  `FLOW-store-query` — Store-Abfrage
+###### 3.3.4.1.233  `FLOW-store-query` — Store-Abfrage
 
 Die Antwort des Kuzu-Adapters auf eine Leseanfrage: Teilgraph, Elementliste oder ganzer Graph aus dem persistierten Store. Die Lesewege des Harness fragen den Adapter direkt, nicht ueber GraphStore. Uebergabe: createHarness gibt denselben Adapter an GraphStore und an den Harness. (CR-GC-843)
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.232  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
+###### 3.3.4.1.234  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
 
 Der GraphStore meldet beim Start, dass er den Store nach einem Schemawechsel aus der SSOT neu befuellt hat; was vorher nur im Store stand und nicht exportiert war, ist fort. Beleg: src/kernel/graph-store.ts, open schreibt formatStoreRebuildNotice auf stderr (CR-GC-831).
 
 io ◀ `FUNC-open-store` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-store-rebuild-notice`
 
-###### 3.3.4.1.233  `FLOW-suggest-answer` — Antwort graph_suggest
+###### 3.3.4.1.235  `FLOW-suggest-answer` — Antwort graph_suggest
 
 Die Antwort von graph_suggest an die Ablaufsteuerung: die gerankten Kandidaten mit Urteil und Bericht je Probelauf. Beleg: src/loop/suggest.ts.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-suggest-answer`
 
-###### 3.3.4.1.234  `FLOW-target-profile` — Zielprofil
+###### 3.3.4.1.236  `FLOW-target-profile` — Zielprofil
 
 Das geladene und gepruefte Profil: die 3-7 Themen der Intention. Erzeugt von target-profile-load aus der Rohform. (CR-GC-861: ohne Gewichte und Zielkonflikte)
 
 io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-graph-generate-tool` · `FUNC-graph-readiness` · `FUNC-vorschlag` · schema ▶ `SCHEMA-target-profile`
 
-###### 3.3.4.1.235  `FLOW-target-profile-file` — Zielprofil (Rohform)
+###### 3.3.4.1.237  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
 Die Profildatei, wie der Skill se:target-profile oder ein Hand-Edit sie nach .graphcode/target-profile.json schreibt: ungeprueft, die Themen der Intention.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-###### 3.3.4.1.236  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
+###### 3.3.4.1.238  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
 
 Die Aenderungsmenge und Tiefe, mit denen graph_tests harness.testImpact ruft. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.237  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
+###### 3.3.4.1.239  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
 
 Die Aenderungsmenge, mit der graph_test_ingest harness.testImpact ruft. Beleg: src/projections/testreport.ts.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.238  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
+###### 3.3.4.1.240  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
 
 Die Antwort von graph_test_ingest: zugeordnete Ergebnisse, zurueckgenommene Ergebnisse, Knoten ohne Lauf.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-aenderung-melden` · `FUNC-agent-loop` · schema ▶ `SCHEMA-test-ingest-answer`
 
-###### 3.3.4.1.239  `FLOW-test-ingest-call` — Aufruf graph_test_ingest
+###### 3.3.4.1.241  `FLOW-test-ingest-call` — Aufruf graph_test_ingest
 
 Der Aufruf von graph_test_ingest ueber MCP-stdio mit Bericht und Changeset der Aenderung.
 
 io ◀ `FUNC-aenderung-melden` · io ▶ `FUNC-test-ingest` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.240  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
+###### 3.3.4.1.242  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
 
 Der vitest-Bericht der Code-Spur mit der Aenderungsmenge, den verify:code ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-aenderung-melden` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.241  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
+###### 3.3.4.1.243  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
 
 Der vitest-Bericht der vollen Suite mit der Aenderungsmenge, den verify:full ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-aenderung-melden` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.242  `FLOW-test-selection` — Selektive Testauswahl
+###### 3.3.4.1.244  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-test-selection`
 
-###### 3.3.4.1.243  `FLOW-tool-context` — Werkzeug-Kontext
+###### 3.3.4.1.245  `FLOW-tool-context` — Werkzeug-Kontext
 
 Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-###### 3.3.4.1.244  `FLOW-tool-registry` — Werkzeug-Register
+###### 3.3.4.1.246  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.245  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
+###### 3.3.4.1.247  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
 
 Die gebundenen Werkzeuge, wie der Agent sie ueber stdio sieht und ruft. Beleg: src/surface/mcp-server.ts, serveStdio verbindet den Server mit dem stdio-Transport. (CR-GC-768)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.246  `FLOW-trajectory` — Trajectory/Outcome
+###### 3.3.4.1.248  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-###### 3.3.4.1.247  `FLOW-trajectory-entry` — Trajektorie-Eintrag
+###### 3.3.4.1.249  `FLOW-trajectory-entry` — Trajektorie-Eintrag
 
 Der Audit-Eintrag, den recordAudit direkt an materializeTrajectory gibt; recordAudit wartet auf die Projektion. Beleg: src/surface/tool-context.ts. (CR-GC-849)
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-emit-trajectory` · schema ▶ `SCHEMA-audit-record`
 
-###### 3.3.4.1.248  `FLOW-update-hook` — Update-Hook anlegen
+###### 3.3.4.1.250  `FLOW-update-hook` — Update-Hook anlegen
 
 Der Update-Hook, den die Harness-Fabrik beim Bau registriert (registerEmitters ruft makeUpdateEventHook). Beleg: src/surface/create-harness.ts. (CR-GC-849)
 
 io ◀ `FUNC-create-harness` · io ▶ `FUNC-emit-update-event` · schema ▶ `SCHEMA-update-event`
 
-###### 3.3.4.1.249  `FLOW-verlauf-bereitschaft` — Verlauf-Befunde an Marken
+###### 3.3.4.1.251  `FLOW-verlauf-bereitschaft` — Verlauf-Befunde an Marken
 
 Die Befunde eines alten Stands, die die Verlaufsrechnung an die Marken-Rechnung gibt.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-compute-readiness` · schema ▶ `SCHEMA-rule-violation`
 
-###### 3.3.4.1.250  `FLOW-verlauf-konformanz` — Verlauf-Stand an Konformanz
+###### 3.3.4.1.252  `FLOW-verlauf-konformanz` — Verlauf-Stand an Konformanz
 
 Der Graph eines alten Stands, den die Verlaufsrechnung an die Konformanz-Erhebung gibt; ohne Repo-Wurzel laufen die RC-Regeln nicht.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-check-code-conformance` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.251  `FLOW-verlauf-report` — Verlauf-Bericht
+###### 3.3.4.1.253  `FLOW-verlauf-report` — Verlauf-Bericht
 
 Die Reihe der Staende mit Marken, Befunden je Stufe, Steuerwert, Tests und Ketten, die graph_readiness bei verlauf antwortet.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-verlauf`
 
-###### 3.3.4.1.252  `FLOW-verlauf-request` — Verlauf-Anfrage
+###### 3.3.4.1.254  `FLOW-verlauf-request` — Verlauf-Anfrage
 
 Die Zahl der juengsten Staende, die graph_readiness an die Verlaufsrechnung gibt.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-stand-verlauf` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.253  `FLOW-verlauf-snapshot` — Verlauf-Stand an Snapshot
+###### 3.3.4.1.255  `FLOW-verlauf-snapshot` — Verlauf-Stand an Snapshot
 
 Der Graph eines alten Stands, den die Verlaufsrechnung an den Steuerungs-Snapshot gibt.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.254  `FLOW-vertragstest-bericht` — Vertragstest-Bericht
+###### 3.3.4.1.256  `FLOW-vertragstest-bericht` — Vertragstest-Bericht
 
 Der Bericht je SCHEMA (Faelle und verworfene Faelle oder Fehler) vom Erzeuger an das Verb
 
 io ◀ `FUNC-erzeuge-vertragstests` · io ▶ `FUNC-vertragstest-verb` · schema ▶ `SCHEMA-vertragstest-bericht`
 
-###### 3.3.4.1.255  `FLOW-vertragstest-satz` — Vertragstest-Satz
+###### 3.3.4.1.257  `FLOW-vertragstest-satz` — Vertragstest-Satz
 
 Die SCHEMA mit ihrem Zod-Symbol, im Repo oder im Paket, vom Verb an den Erzeuger
 
 io ◀ `FUNC-vertragstest-verb` · io ▶ `FUNC-erzeuge-vertragstests` · schema ▶ `SCHEMA-vertragstest-satz`
 
-###### 3.3.4.1.256  `FLOW-viewer-start` — Viewer starten
+###### 3.3.4.1.258  `FLOW-viewer-start` — Viewer starten
 
 Der Start des Viewer-Prozesses durch attachGve: spawn des Viewers mit --repo und dem Pfad der Repo-Wurzel, wenn die erste Sitzung des Repos ihn anhaengt. Das Beenden steht in FLOW-viewer-stop. Beleg: src/surface/gve.ts, ensureViewer und spawnViewer. (CR-GC-989)
 
 io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-repo-pfad`
 
-###### 3.3.4.1.257  `FLOW-viewer-stop` — Viewer beenden
+###### 3.3.4.1.259  `FLOW-viewer-stop` — Viewer beenden
 
 Das Beenden des Viewer-Prozesses durch attachGve: SIGTERM an die Prozessgruppe, wenn die letzte Sitzung des Repos sich abmeldet. Der Aufruf traegt keine Daten. Beleg: src/surface/gve.ts, stopViewerIfLastSession und killProcessGroup. (CR-GC-989)
 
 io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-aufruf-ohne-daten`
 
-###### 3.3.4.1.258  `FLOW-vitest-lauf-code` — vitest-Lauf Code-Spur
+###### 3.3.4.1.260  `FLOW-vitest-lauf-code` — vitest-Lauf Code-Spur
 
 Der beendete vitest-Lauf der Spur verify:code: Exit-Status, Signal und der JSON-Bericht, falls vitest ihn schrieb.
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-lauf-urteil` · schema ▶ `SCHEMA-vitest-lauf`
 
-###### 3.3.4.1.259  `FLOW-vitest-lauf-full` — vitest-Lauf Vollspur
+###### 3.3.4.1.261  `FLOW-vitest-lauf-full` — vitest-Lauf Vollspur
 
 Der beendete vitest-Lauf der Spur verify:full: Exit-Status, Signal und der JSON-Bericht, falls vitest ihn schrieb.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-lauf-urteil` · schema ▶ `SCHEMA-vitest-lauf`
 
-###### 3.3.4.1.260  `FLOW-vorschlag` — Vorschlag an den Nutzer
+###### 3.3.4.1.262  `FLOW-vorschlag` — Vorschlag an den Nutzer
 
 Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis; den Nutzer erreicht er mit FLOW-mutate-answer. (CR-GC-770, CR-GC-823)
 
 io ◀ `FUNC-vorschlag` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-answer`
 
-###### 3.3.4.1.261  `FLOW-work-set` — Arbeitsmenge der Sitzung
+###### 3.3.4.1.263  `FLOW-work-set` — Arbeitsmenge der Sitzung
 
 Die Arbeitsmenge der Sitzung, die graph_readiness beim Werkzeug-Kontext abfragt, um Befunde auf die Arbeit der Sitzung zu schneiden. Beleg: src/surface/tool-context.ts, arbeitsmenge. (CR-GC-849)
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-work-set`
 
-###### 3.3.4.1.262  `FLOW-write-slot` — Schreibzug einreihen
+###### 3.3.4.1.264  `FLOW-write-slot` — Schreibzug einreihen
 
 Der Schreibzug, den graph_suggest beim Anwenden in die Schreibreihenfolge des Werkzeug-Kontexts stellt (serializeToolWrite). Beleg: src/loop/suggest.ts. (CR-GC-849)
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-tool-context` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.263  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
+###### 3.3.4.1.265  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_mutate an mitBericht gibt. Beleg: src/surface/write.ts, graph_mutate.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.264  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
+###### 3.3.4.1.266  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_suggest je Kandidat an mitBericht gibt. Beleg: src/loop/suggest.ts, graph_suggest.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.265  `FLOW-zug-bericht` — Bericht zum Zug
+###### 3.3.4.1.267  `FLOW-zug-bericht` — Bericht zum Zug
 
 Die Berichte zum Zug, zurueck an das Werkzeug, das mitBericht gerufen hat: graph_mutate fuer seine Antwort an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)
 
 io ◀ `FUNC-zug-bericht` · io ▶ `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-zug-bericht`
 
-###### 3.3.4.1.266  `FLOW-zug-staende` — Stand davor und danach
+###### 3.3.4.1.268  `FLOW-zug-staende` — Stand davor und danach
 
 Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil an das aufrufende Werkzeug zurueckgibt (mutateWithStates). Ein geblockter Zug hat kein Paar. (CR-GC-778)
 
@@ -14442,7 +14468,7 @@ schema ◀ `FLOW-session-end`
 
 Bericht von graphcode skills sync: repoRoot und die Listen added, updated, unchanged, removed (Pfade relativ zum Repo). syncSkills parst ihn an der Grenze. (CR-GC-999)
 
-schema ◀ `FLOW-cli-output-skills-sync`
+schema ◀ `FLOW-cli-output-skills-sync` · `FLOW-skill-sync-result-sync-skills` · `FLOW-skill-sync-result-upgrade`
 
 ###### 3.3.4.2.59  `SCHEMA-skill-text` — Skill-Text
 
@@ -14850,7 +14876,7 @@ Verification ◀ `TEST-realref-materialize` (integration) · `TEST-testref-mater
 
 Adapter ohne eigene Logik: MCP-stdio-Registry, CLI-Verben und Distribution, Host-Socket zum Store-Besitzer, read-only SSE-Bruecke an den Live-Viewer. Uebersetzt Protokoll in kernel-Aufrufe, mehr nicht. (CR-GC-446)
 
-allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-proxy` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-read-tools` · `FUNC-render-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-tool-context` · `FUNC-upgrade` · `FUNC-vertragstest-verb` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-dashboard-readonly` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
+allocate ◀ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-bind-tools` · `FUNC-broadcast-diff` · `FUNC-cli-dispatch` · `FUNC-collect-status` · `FUNC-create-harness` · `FUNC-emit-update-event` · `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-reseed-tool` · `FUNC-gve-sessions` · `FUNC-gve-supervise` · `FUNC-harness-cli` · `FUNC-health-endpoint` · `FUNC-host-proxy` · `FUNC-host-socket` · `FUNC-import-code-verb` · `FUNC-init-verb` · `FUNC-read-tools` · `FUNC-render-verb` · `FUNC-rewind` · `FUNC-serve-sse` · `FUNC-serve-stdio` · `FUNC-session-shutdown` · `FUNC-sync-skills` · `FUNC-tool-context` · `FUNC-upgrade` · `FUNC-vertragstest-verb` · satisfy ▶ `REQ-agent-agnostic` · `REQ-buildable-standalone` · `REQ-cache-layering` · `REQ-dashboard-readonly` · `REQ-graph-context-replaces-reading` · `REQ-install-idempotent` · `REQ-live-event-in-contracts` · `REQ-readonly-bridge` · `REQ-self-contained-dist` · `REQ-single-transport` · `REQ-versioned-cache`
 
 ###### `REQ-agent-agnostic` — Agent-agnostische MCP-Surface
 
@@ -15168,7 +15194,7 @@ verify ▶ `REQ-cli-hilfe-fuehrt-nicht-aus` · testRefs: `tests/cli-args.test.ts
 
 graphcode init/update/remove against a mkdtemp temp repo (real node:fs): init scaffolds .graphcode/ + .mcp.json (npx form) + GRAPHCODE.md + package.json dep, idempotent re-run is byte-stable, update preserves the .graphcode/kuzu store, remove deletes all artifacts restlos. No localhost/Controller path. (CR-GC-112)
 
-verify ▶ `REQ-init-legt-an` · `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-remove-loescht-eigene-pfade` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `REQ-update-behaelt-store` · `REQ-upgrade-entfernt-fremde-skills` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`, `tests/knowledge-binding.test.ts`
+verify ▶ `REQ-init-legt-an` · `REQ-install-idempotent` · `REQ-post-harness-cli` · `REQ-remove-loescht-eigene-pfade` · `REQ-repo-install` · `REQ-repo-uninstall` · `REQ-repo-update` · `REQ-skills-sync-gleicht-ab` · `REQ-update-behaelt-store` · `REQ-upgrade-entfernt-fremde-skills` · `SCHEMA-cli-command` · testRefs: `tests/cli.scaffold.test.ts`, `tests/knowledge-binding.test.ts`
 
 #### 3.4.22  `TEST-code-conformance` — Graph-code conformance test
 
@@ -16454,7 +16480,7 @@ Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zu
 
 verify ▶ `REQ-zug-zeigt-kennzahlen-danach` · testRefs: `tests/zug-kennzahlen-danach.test.ts`
 
-Traceability: 303 REQ · 303 verified · 0 without a verifying TEST (R-01).
+Traceability: 304 REQ · 304 verified · 0 without a verifying TEST (R-01).
 
 ### 3.5  Appendices
 
