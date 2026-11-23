@@ -212,7 +212,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-1018` | done | Sammelfluss query-params: interne Aufrufe ohne eigenen Vertrag | `FUNC-create-harness` · `FUNC-graph-readiness` · `FUNC-own-kuzu-host` · `FUNC-stand-verlauf` |
 | `CR-GC-1019` | done | RC-04: Trajektorie ungeparst auf Platte, Prozess-Vertraege ohne Grund | `FUNC-audit-stats` |
 | `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-surface` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
-| `CR-GC-1020` | n/a | R-26, R-32: audit-record, suggest-answer und der Dashboard-Socket an die neuen Familien-Schemas binden | `FUNC-graph-suggest` · `FUNC-host-socket` · `FUNC-tool-context` |
+| `CR-GC-1020` | done | R-26, R-32: audit-record, suggest-answer und der Dashboard-Socket an die neuen Familien-Schemas binden | `FUNC-graph-suggest` · `FUNC-host-socket` · `FUNC-tool-context` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
 | `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-agent-surface` · `REQ-doc-export` |
 | `CR-GC-105` | done | Architektur-Verfeinerung | `MOD-surface` · `REQ-impact-based-testing` · `REQ-interface-change-escalation` · `REQ-small-model-viable` |

@@ -197,7 +197,8 @@
       "id": "CR-GC-1020",
       "type": "CR",
       "name": "R-26, R-32: audit-record, suggest-answer und der Dashboard-Socket an die neuen Familien-Schemas binden",
-      "description": "docs/cr/open/CR-GC-1020-r-26-r-32-audit-record-suggest-answer-un.md"
+      "description": "docs/cr/done/CR-GC-1020-r-26-r-32-audit-record-suggest-answer-un.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-103",
@@ -41585,5 +41586,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1588
+  "graphVersion": 1589
 }
