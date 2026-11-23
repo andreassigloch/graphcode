@@ -147,7 +147,8 @@ export function bindTestReportTools(ctx: ToolPort) {
       'names one TEST uid is bound (`bindings`), else `unresolved` with the reason. `changeSet` withdraws ' +
       'the result of every TEST the change impacts (`withdrawn`), unless this call brings a fresh one. `tool` and `evidence` of a result mark a manual run.',
     inputSchema: GraphTestIngestInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphTestIngestInputSchema.parse(raw);
       const { ingest } = input;
       const files: RunnerFileResult[] = ingest.art === 'report' ? parseVitestJson(ingest.report) : ingest.art === 'results' ? ingest.results : [];
       const plan = planIngest(harness.getGraph(), files, kopfZugang(ingest.art === 'report'));

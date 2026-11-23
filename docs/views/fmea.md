@@ -49,7 +49,7 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
 | `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-11-22 |
-| `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-11-22 |
+| `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-11-23 |
 
 ### 2. Risiko falscher Befund laeuft um (`REQ-risk-loop-degradation`)
 

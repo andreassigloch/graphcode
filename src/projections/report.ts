@@ -99,18 +99,14 @@ function inArbeitsreihenfolge(groups: ViolationGroup[]): ViolationGroupWithStage
     .sort((a, b) => (SCHWERE[a.severity] ?? 3) - (SCHWERE[b.severity] ?? 3) || stufenRang(a.ruleId) - stufenRang(b.ruleId));
 }
 
-/** Default-Auflösung für Direktaufrufe des Handlers (Tests, In-Process) — dort
- *  läuft kein Zod-Parse, der den Schema-Default einsetzen würde. */
-const detailOf = (d: Detail | undefined): Detail => d ?? 'full';
+export const RulesEvaluateInputSchema = z.object({ detail: detailField });
 
-const RulesEvaluateInputSchema = z.object({ detail: detailField });
-
-const RulesGetViolationsInputSchema = z.object({
+export const RulesGetViolationsInputSchema = z.object({
   severity: z.enum(['error', 'warning', 'info']).optional(),
   detail: detailField,
 });
 
-const GraphReadinessInputSchema = z.object({
+export const GraphReadinessInputSchema = z.object({
   detail: z
     .boolean()
     .default(false)
@@ -130,7 +126,7 @@ export const GRAPH_HELP_TOKEN_REQUIRED =
   'graph_help needs a `token` — it explains one rule, mark, panel, artifact, metric, tool or vocabulary ' +
   'token. For what to do next, take rules_get_violations({detail:"grouped"}).';
 
-const GraphHelpInputSchema = z.object({
+export const GraphHelpInputSchema = z.object({
   token: z
     .string({ error: GRAPH_HELP_TOKEN_REQUIRED })
     .describe(
@@ -140,11 +136,11 @@ const GraphHelpInputSchema = z.object({
 });
 
 /** Authoring-guide input (CR-GC-231) — which ElementType to surface legal edges for. */
-const GraphAuthoringGuideInputSchema = z.object({
+export const GraphAuthoringGuideInputSchema = z.object({
   type: z.string().describe('The ElementType to author (e.g. UC, REQ, FUNC, TEST, MOD, ACTOR).'),
 });
 
-const GraphTestsInputSchema = z.object({
+export const GraphTestsInputSchema = z.object({
   changeSet: z
     .array(z.string())
     .min(1)
@@ -194,10 +190,11 @@ export function bindReportTools(ctx: ToolPort) {
       'the work list. Reading the result without `skipped` treats a partial figure as a complete one. ' +
       '`graph_help({token:"rules_evaluate"})` explains the layers. Read-only.',
     inputSchema: RulesEvaluateInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = RulesEvaluateInputSchema.parse(raw);
       const ev = evaluateAll(harness);
       return {
-        violations: project(ev.findings, detailOf(input.detail)),
+        violations: project(ev.findings, input.detail),
         skipped: ev.skipped,
         notInGate: ev.notInGate,
         importCoverage: ev.importCoverage,
@@ -226,7 +223,8 @@ export function bindReportTools(ctx: ToolPort) {
       'the uids this session WROTE — `umfang` sizes the slice and counts what lies outside; no write ' +
       'moves yet = whole model. `total` counts only the evaluated rules, so read it with `skipped`.',
     inputSchema: RulesGetViolationsInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = RulesGetViolationsInputSchema.parse(raw);
       const ev = evaluateAll(harness);
       const matched = input.severity
         ? ev.findings.filter((v) => v.severity === input.severity)
@@ -249,7 +247,7 @@ export function bindReportTools(ctx: ToolPort) {
       // Aussage, die Projektion ändert nur ihre Darstellung. Seit CR-GC-613 zaehlt sie die
       // GELIEFERTEN — was ausserhalb liegt, steht in `umfang.ausserhalb`, nie doppelt.
       return {
-        violations: project(genommen, detailOf(input.detail)),
+        violations: project(genommen, input.detail),
         total: genommen.length,
         umfang,
         skipped: ev.skipped,
@@ -318,7 +316,8 @@ export function bindReportTools(ctx: ToolPort) {
       '`skipped` and `importCoverage`. `verlauf: N` adds the last N committed states. ' +
       '`graph_help({token:"graph_readiness"})` explains every block. Read-only.',
     inputSchema: GraphReadinessInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphReadinessInputSchema.parse(raw);
       // EINE Erhebung, zwei Ableitungen (Report mit Marken, skipped) — CR-GC-398.
       const ev = evaluateAll(harness);
       // CR-GC-537: EIN Snapshot für die beiden Projektionen des Steering-Katalogs
@@ -410,7 +409,8 @@ export function bindReportTools(ctx: ToolPort) {
       'and emits the minimal `vitest run <only-affected-files>` command + coverage. TESTs without a ' +
       'resolvable testRefs (unbound) are reported under `unresolved` (never silently dropped).',
     inputSchema: GraphTestsInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphTestsInputSchema.parse(raw);
       // Directed code→REQ→TEST resolution via the SINGLE getSubgraph primitive
       // (harness.testImpact — one traversal path, no second blast-radius).
       const directed = await harness.testImpact(input.changeSet, input.depth);
@@ -478,7 +478,8 @@ export function bindReportTools(ctx: ToolPort) {
       'instead of guessing from a rule id — and instead of asking a tool description to carry the ' +
       'semantics. `token` is required; what to do next is rules_get_violations({detail:"grouped"}) (CR-GC-847).',
     inputSchema: GraphHelpInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphHelpInputSchema.parse(raw);
       const entry = helpEntry(input.token);
       if (!entry) {
         throw new Error(
@@ -524,7 +525,8 @@ export function bindReportTools(ctx: ToolPort) {
       'carries, and one Format-E example. Take it ONCE per type — a repeat call in the same session ' +
       'returns the edge grammar only and says which call carried the rest (CR-GC-622).',
     inputSchema: GraphAuthoringGuideInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphAuthoringGuideInputSchema.parse(raw);
       const descriptor = SE_DESCRIPTOR.nodeTypes[input.type as keyof typeof SE_DESCRIPTOR.nodeTypes];
       if (!descriptor) {
         throw new Error(

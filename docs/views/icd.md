@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 78 SCHEMA · 267 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 84 SCHEMA · 274 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -14,6 +14,7 @@
 | `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit-stats.ts#AuditStatsSchema | reviewed |
 | `SCHEMA-aufruf-ohne-daten` | src/surface/aufruf-ohne-daten-contract.ts#AufrufOhneDatenSchema | reviewed |
+| `SCHEMA-authoring-guide-input` | src/projections/report.ts#GraphAuthoringGuideInputSchema | n/a |
 | `SCHEMA-branch-merge-report` | src/kernel/merge.ts#MergeReportSchema | n/a |
 | `SCHEMA-chain-metrics` | packages/contracts/src/se/chain-metrics.ts#ChainMetrics | reviewed |
 | `SCHEMA-cli-command` | src/surface/cli-args.ts#CliVerbSchema | reviewed |
@@ -32,6 +33,7 @@
 | `SCHEMA-grenz-befund` | src/kernel/measure/constraints.ts#GrenzBefund | n/a |
 | `SCHEMA-harness-handle` | src/kernel/harness-handle-contract.ts#HarnessHandle | n/a |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
+| `SCHEMA-help-input` | src/projections/report.ts#GraphHelpInputSchema | n/a |
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
 | `SCHEMA-import-access` | src/kernel/harness-import.ts#ImportTargetSchema | n/a |
@@ -54,6 +56,7 @@
 | `SCHEMA-ontology-graph` | packages/contracts/src/se/ontology.ts#OntologyGraph | reviewed |
 | `SCHEMA-ontology-json` | src/kernel/harness-import.ts#OntologyJsonSchema | n/a |
 | `SCHEMA-query-params` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-readiness-input` | src/projections/report.ts#GraphReadinessInputSchema | n/a |
 | `SCHEMA-readiness-report` | packages/graphcode-client/src/readiness.ts#ReadinessReportSchema | reviewed |
 | `SCHEMA-real-ref` | packages/contracts/src/se/ontology.ts#RealRefSchema | reviewed |
 | `SCHEMA-rejected-trace` | src/kernel/harness-import.ts#RejectedTraceSchema | n/a |
@@ -62,6 +65,8 @@
 | `SCHEMA-repo-status` | src/surface/status.ts#RepoStatusSchema | n/a |
 | `SCHEMA-rewind-summary` | src/surface/rewind.ts#RewindSummarySchema | n/a |
 | `SCHEMA-rule-violation` | packages/contracts/src/harness/index.ts#RuleViolationSchema | n/a |
+| `SCHEMA-rules-evaluate-input` | src/projections/report.ts#RulesEvaluateInputSchema | n/a |
+| `SCHEMA-rules-get-violations-input` | src/projections/report.ts#RulesGetViolationsInputSchema | n/a |
 | `SCHEMA-schema-fingerprint` | src/kernel/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
 | `SCHEMA-schlupf-zeile` | src/projections/test-schlupf.ts#SchlupfZeileSchema | n/a |
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
@@ -78,6 +83,7 @@
 | `SCHEMA-test-ingest-input` | src/projections/testreport.ts#GraphTestIngestInputSchema | n/a |
 | `SCHEMA-test-refs` | packages/contracts/src/se/ontology.ts#TestRefsSchema | reviewed |
 | `SCHEMA-test-selection` | src/kernel/measure/test-selection.ts#TestSelectionSchema | n/a |
+| `SCHEMA-tests-input` | src/projections/report.ts#GraphTestsInputSchema | n/a |
 | `SCHEMA-tool-context` | src/surface/tool-context-contract.ts#ToolContext | n/a |
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
@@ -129,6 +135,7 @@
 | `FLOW-audit-record` | `FUNC-tool-context` | `FUNC-audit-stats` · `FUNC-audit-trail` |
 | `FLOW-audit-report` | `FUNC-audit-stats` | `FUNC-agent-loop` |
 | `FLOW-auftrag` | `ACTOR-auftraggeber` | `FUNC-agent-loop` |
+| `FLOW-authoring-guide-call` | `FUNC-agent-loop` | `FUNC-authoring-guide` |
 | `FLOW-auto-export-register` | `FUNC-serve-stdio` | `FUNC-auto-export` |
 | `FLOW-bind-request` | `FUNC-serve-stdio` | `FUNC-bind-tools` |
 | `FLOW-bind-request-import-code` | `FUNC-import-code-verb` | `FUNC-bind-tools` |
@@ -215,6 +222,7 @@
 | `FLOW-held-back-request-readiness` | `FUNC-graph-readiness` | `FUNC-held-back-traces` |
 | `FLOW-held-back-traces` | `FUNC-held-back-traces` | `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` |
 | `FLOW-help-answer` | `FUNC-graph-help` | `FUNC-agent-loop` |
+| `FLOW-help-call` | `FUNC-agent-loop` | `FUNC-graph-help` |
 | `FLOW-host-ready` | `FUNC-serve-sse` | `FUNC-cli-dispatch` |
 | `FLOW-http-route` | `FUNC-serve-sse` | `FUNC-graph-expand` · `FUNC-health-endpoint` |
 | `FLOW-impact-slice` | `FUNC-graph-impact` | `FUNC-read-tools` |
@@ -269,10 +277,11 @@
 | `FLOW-proxy-build` | `FUNC-serve-stdio` | `FUNC-host-proxy` |
 | `FLOW-proxy-call` | `FUNC-host-proxy` | `FUNC-host-socket` |
 | `FLOW-query-export` | `FUNC-graph-export-snapshot` | `FUNC-export-markdown` |
-| `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-graph-export-snapshot` · `FUNC-graph-help` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` |
+| `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` · `FUNC-read-tools` |
 | `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-graph-export-snapshot` |
 | `FLOW-read-bind` | `FUNC-bind-tools` | `FUNC-read-tools` |
 | `FLOW-read-request` | `FUNC-read-tools` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` |
+| `FLOW-readiness-call` | `FUNC-agent-loop` | `FUNC-graph-readiness` |
 | `FLOW-readiness-report` | `FUNC-graph-readiness` | `FUNC-agent-loop` · `FUNC-code-urteil` · `FUNC-host-socket` |
 | `FLOW-readiness-request` | `FUNC-graph-readiness` | `FUNC-compute-readiness` |
 | `FLOW-render-file` | `FUNC-render-verb` | `ACTOR-auftraggeber` |
@@ -286,6 +295,8 @@
 | `FLOW-rewind-summary` | `FUNC-rewind` | `FUNC-cli-dispatch` |
 | `FLOW-rule-findings` | `FUNC-evaluate-rules` | `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` |
 | `FLOW-rules-answer` | `FUNC-rules-tool` | `FUNC-agent-loop` |
+| `FLOW-rules-evaluate-call` | `FUNC-agent-loop` | `FUNC-rules-tool` |
+| `FLOW-rules-get-violations-call` | `FUNC-agent-loop` | `FUNC-rules-tool` |
 | `FLOW-schema-fingerprint` | `FUNC-schema-guard` | `FUNC-open-store` |
 | `FLOW-schlupf-request` | `FUNC-verify-lane-full` | `FUNC-measure-test-schlupf` |
 | `FLOW-schlupf-result` | `FUNC-measure-test-schlupf` | `FUNC-verify-lane-full` |
@@ -333,9 +344,11 @@
 | `FLOW-test-impact-request-ingest` | `FUNC-test-ingest` | `FUNC-resolve-tests-from-code` |
 | `FLOW-test-ingest-answer` | `FUNC-test-ingest` | `FUNC-aenderung-melden` · `FUNC-agent-loop` |
 | `FLOW-test-ingest-call` | `FUNC-aenderung-melden` | `FUNC-test-ingest` |
+| `FLOW-test-ingest-call-agent` | `FUNC-agent-loop` | `FUNC-test-ingest` |
 | `FLOW-test-run-report-code` | `FUNC-verify-lane-code` | `FUNC-aenderung-melden` |
 | `FLOW-test-run-report-full` | `FUNC-verify-lane-full` | `FUNC-aenderung-melden` |
 | `FLOW-test-selection` | `FUNC-deduce-tests` | `FUNC-agent-loop` |
+| `FLOW-tests-call` | `FUNC-agent-loop` | `FUNC-deduce-tests` |
 | `FLOW-tool-context` | `FUNC-tool-context` | `FUNC-bind-tools` |
 | `FLOW-tool-registry` | `FUNC-bind-tools` | `FUNC-serve-stdio` |
 | `FLOW-tool-surface` | `FUNC-serve-stdio` | `FUNC-agent-loop` |
