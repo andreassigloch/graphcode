@@ -17,11 +17,11 @@ const LEER: Graph = { nodes: [], edges: [] };
 
 describe('CR-GC-983: generationStep parst den Schritt', () => {
   it('lehnt einen Schritt mit Schwelle NaN ab', () => {
-    expect(() => generationStep(LEER, DEFAULT_METRIC_POLICY, undefined, Number.NaN)).toThrow();
+    expect(() => generationStep({ graph: LEER, policy: DEFAULT_METRIC_POLICY, threshold: Number.NaN })).toThrow();
   });
 
   it('liefert fuer eine gueltige Schwelle den Schritt', () => {
-    const step = generationStep(LEER, DEFAULT_METRIC_POLICY, undefined, 0.5);
+    const step = generationStep({ graph: LEER, policy: DEFAULT_METRIC_POLICY, threshold: 0.5 });
     expect(step.threshold).toBe(0.5);
     expect(step.phase).toBe('seed');
   });

@@ -236,11 +236,11 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
       ],
       edges: [e('SYS-s', 'UC-a', 'compose'), e('SYS-s', 'REQ-risk', 'compose'), e('SYS-s', 'REQ-risk', 'satisfy'), e('TEST-risk', 'REQ-risk', 'verify')],
     } as never;
-    let cur = generationStep(graph, DEFAULT_METRIC_POLICY, 'Bestellungen', 0.8, []);
+    let cur = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, intent: 'Bestellungen', threshold: 0.8, defer: [] });
     const defer: string[] = [];
     while (cur.focusKey && cur.focusKey.split(':')[1] !== 'FM-01' && defer.length < 40) {
       defer.push(cur.focusKey);
-      cur = generationStep(graph, DEFAULT_METRIC_POLICY, 'Bestellungen', 0.8, defer);
+      cur = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, intent: 'Bestellungen', threshold: 0.8, defer });
     }
     expect(cur.focusKey).toMatch(/:FM-01:/);
     expect(analyseSkill('FM-01')).toBe(RULE_HELP['FM-01']!.prompt);

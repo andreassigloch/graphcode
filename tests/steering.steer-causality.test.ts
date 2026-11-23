@@ -164,7 +164,7 @@ describe('T-C3 (CR-GC-340): the judging threshold is a knob in the config, not a
       // The config value arrives where the focus is judged — and only there. That the verdict
       // flips with it (handoff at threshold 0) is proven on a real fixture in generate.test.ts.
       const step = (rig: Rig) =>
-        generationStep(rig.harness.getGraph(), rig.harness.getMetricPolicy(), 'steering causality', rig.harness.getFocusThreshold(), []);
+        generationStep({ graph: rig.harness.getGraph(), policy: rig.harness.getMetricPolicy(), intent: 'steering causality', threshold: rig.harness.getFocusThreshold(), defer: [] });
       const sLow = step(low);
       const sHigh = step(high);
       expect(sLow.threshold).toBe(0.05);

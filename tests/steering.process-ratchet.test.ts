@@ -114,7 +114,7 @@ describe('T-B3 / T-B5 (CR-GC-341): the ratchet, and the control that makes it re
   });
 
   const step = (defer: string[] = []) =>
-    generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering reference system', harness.getFocusThreshold(), defer);
+    generationStep({ graph: harness.getGraph(), policy: harness.getMetricPolicy(), intent: 'steering reference system', threshold: harness.getFocusThreshold(), defer });
 
   /** Run the loop, deferring any focus whose repair changed nothing (what the real driver does). */
   async function runLoop(): Promise<Round[]> {

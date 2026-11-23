@@ -36,6 +36,7 @@
 | `SCHEMA-format-e` | packages/graph-api-core/src/format-e-door.ts#FormatEInputSchema | reviewed |
 | `SCHEMA-function-criticality` | packages/contracts/src/se/function-criticality.ts#FunctionCriticality | reviewed |
 | `SCHEMA-generate-input` | src/loop/suggest.ts#GraphGenerateInputSchema | n/a |
+| `SCHEMA-generation-request` | src/loop/generate.ts#GenerationRequestSchema | n/a |
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-get-edges-input` | src/surface/read.ts#GraphGetEdgesInputSchema | n/a |
 | `SCHEMA-get-node-input` | src/surface/read.ts#GraphGetNodeInputSchema | n/a |
@@ -69,7 +70,6 @@
 | `SCHEMA-ontology-graph` | packages/contracts/src/se/ontology.ts#OntologyGraph | reviewed |
 | `SCHEMA-ontology-json` | src/kernel/harness-import.ts#OntologyJsonSchema | n/a |
 | `SCHEMA-own-kuzu-options` | src/kernel/own-kuzu.ts#OwnKuzuOptionsSchema | n/a |
-| `SCHEMA-query-params` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-readiness-input` | src/projections/report.ts#GraphReadinessInputSchema | n/a |
 | `SCHEMA-readiness-report` | packages/graphcode-client/src/readiness.ts#ReadinessReportSchema | reviewed |
 | `SCHEMA-real-ref` | packages/contracts/src/se/ontology.ts#RealRefSchema | reviewed |

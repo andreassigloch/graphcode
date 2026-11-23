@@ -60,11 +60,7 @@ describe('CR-GC-587: kein ausgelieferter Text widerspricht dem Register', () => 
   }
 
   it('der Host-Prompt setzt die Saetze des Registers ein, statt sie zu wiederholen', () => {
-    const step = generationStep(
-      { nodes: [], edges: [] } as never,
-      DEFAULT_METRIC_POLICY,
-      'Ein Testsystem, das etwas leistet.',
-      0.8,
+    const step = generationStep({ graph: { nodes: [], edges: [] } as never, policy: DEFAULT_METRIC_POLICY, intent: 'Ein Testsystem, das etwas leistet.', threshold: 0.8 }
     );
     expect(step.prompt).toContain(decision('probe'));
   });

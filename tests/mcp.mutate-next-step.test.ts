@@ -120,7 +120,7 @@ describe('CR-GC-729: Vorschlag an den Nutzer an der angewandten Mutation', () =>
     expect(weiter).not.toContain('Einsatzkonzept');
     for (const muster of KEIN_AUFTRAG) expect(weiter, String(muster)).not.toMatch(muster);
     // Der Autopilot bleibt am Eintrittspunkt (CR-GC-604): das Gedaechtnis hat nichts zurueckgestellt.
-    const auto = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [...memory.deferred], null, 'kern');
+    const auto = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [...memory.deferred], profile: null, task: 'kern' });
     expect(auto.focusKey).toMatch(/:AF-01:/);
   });
 

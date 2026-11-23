@@ -90,7 +90,7 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
   // Snapshot und nicht ueber eine eigene Graph-Abbildung (die Lektion aus CR-GC-324).
   it('generationStep reports the blocking errors and the findings per stage of the shared snapshot', async () => {
     const snap = snapshot();
-    const gen = generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
+    const gen = generationStep({ graph: harness.getGraph(), policy: harness.getMetricPolicy(), intent: 'steering fixture', threshold: harness.getFocusThreshold() });
 
     expect(gen.blockingErrors).toBe(snap.blockingErrors);
 
@@ -140,7 +140,7 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
     const nodes = before.nodes.length;
     const edges = before.edges.length;
 
-    generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
+    generationStep({ graph: harness.getGraph(), policy: harness.getMetricPolicy(), intent: 'steering fixture', threshold: harness.getFocusThreshold() });
     await tools.graph_readiness.handler({});
 
     expect(harness.getGraph().nodes.length).toBe(nodes);
@@ -166,8 +166,8 @@ describe('T-0 (CR-GC-340): every steering surface measures the same graph', () =
   // Die Zusicherung stand in `tests/steering.test.ts` an `nextStep` und waere mit der
   // Datei ersatzlos gefallen — sie gehoert hierher, an den verbliebenen Treiber.
   it('is deterministic: the same graph yields the same recommendation, prompt included', () => {
-    const a = generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
-    const b = generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering fixture', harness.getFocusThreshold());
+    const a = generationStep({ graph: harness.getGraph(), policy: harness.getMetricPolicy(), intent: 'steering fixture', threshold: harness.getFocusThreshold() });
+    const b = generationStep({ graph: harness.getGraph(), policy: harness.getMetricPolicy(), intent: 'steering fixture', threshold: harness.getFocusThreshold() });
     expect(b).toEqual(a);
     expect(b.prompt).toBe(a.prompt);
     expect(b.focusKey).toBe(a.focusKey);

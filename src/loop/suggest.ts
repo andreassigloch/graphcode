@@ -380,7 +380,7 @@ export function bindSuggestTools(ctx: ToolPort) {
       // kommt aus dem Stand der Sitzung (Task, Zurueckgestelltes, Steuer-Optimum), wie der naechste echte.
       if (input.peek) {
         const m = focusMemoryOf(harness);
-        const step = generationStep(harness.getGraph(), harness.getMetricPolicy(), undefined, input.threshold ?? harness.getFocusThreshold(), [...m.deferred], profile, m.task, m.steerOptimum);
+        const step = generationStep({ graph: harness.getGraph(), policy: harness.getMetricPolicy(), threshold: input.threshold ?? harness.getFocusThreshold(), defer: [...m.deferred], profile, task: m.task, steerOptimum: m.steerOptimum });
         return { ...step, umbau: gedaempft(harness, ctx.graphVersion(), step.umbau) };
       }
       // CR-GC-307: die Kernthemen der Intention werden STILL gesetzt — kein
@@ -395,7 +395,7 @@ export function bindSuggestTools(ctx: ToolPort) {
       // CR-GC-601: der Task der Sitzung — ohne `task` zurueck in den Kern.
       const task = input.task ?? 'kern';
       const compute = (defer: string[], optimum: SteerOptimum | null = null) =>
-        generationStep(harness.getGraph(), harness.getMetricPolicy(), input.intent, input.threshold ?? harness.getFocusThreshold(), defer, profile, task, optimum);
+        generationStep({ graph: harness.getGraph(), policy: harness.getMetricPolicy(), intent: input.intent, threshold: input.threshold ?? harness.getFocusThreshold(), defer, profile, task, steerOptimum: optimum });
       // CR-GC-596: die Maschine fuehrt das Gedaechtnis (zweimal gleicher Fokus nach einem Zug →
       // zurueckstellen).
       const memory = focusMemoryOf(harness);

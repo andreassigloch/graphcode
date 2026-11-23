@@ -181,7 +181,7 @@ describe('T-B4 (CR-GC-353): a rule finding and a document gap are the same fact'
 
   it('T-B1 follow-up — focusTypes stay read off the measurement in BOTH states', async () => {
     const step = () =>
-      generationStep(harness.getGraph(), harness.getMetricPolicy(), 'steering reference system', harness.getFocusThreshold(), []);
+      generationStep({ graph: harness.getGraph(), policy: harness.getMetricPolicy(), intent: 'steering reference system', threshold: harness.getFocusThreshold(), defer: [] });
 
     const check = (label: string): void => {
       const s = step();

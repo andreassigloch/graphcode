@@ -84,7 +84,7 @@ describe('CR-GC-724: Analyse-Tasks', () => {
   });
 
   it('Rundenprompt: am Task-Eintritt verweist der Schritt auf den Skill des Tasks', () => {
-    const schritt = generationStep(harness.getGraph(), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'fmea');
+    const schritt = generationStep({ graph: harness.getGraph(), policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [], profile: null, task: 'fmea' });
     expect(schritt.focusKey).toMatch(/:AF-04:/);
     expect(schritt.prompt).toContain('Lade den Skill se-fmea');
     expect(schritt.skill).toBe('se-fmea');
@@ -92,7 +92,7 @@ describe('CR-GC-724: Analyse-Tasks', () => {
 
   // CR-GC-752 (contracts 11, CR-SM-395): der Bauplan ist die Menge der offenen Auftraege, kein Stempel.
   describe('CR-GC-752: der Bauplan setzt keinen Stempel — sein Ergebnis sind offene Auftraege', () => {
-    const planFokus = () => generationStep(harness.getGraph(), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'plan');
+    const planFokus = () => generationStep({ graph: harness.getGraph(), policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [], profile: null, task: 'plan' });
 
     it('ein Bauplan-Stempel von Hand schliesst den Eintritt NICHT — er wird nicht mehr gelesen', async () => {
       const res = await mutate(`## Nodes\n### SYS\n~ SYS-app\n@analysisFreshness ${JSON.stringify({ ...stempel(), implplan: { graphVersion: 2 } })}\n`);

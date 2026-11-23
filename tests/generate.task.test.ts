@@ -16,7 +16,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DEFAULT_METRIC_POLICY, evaluateAllRules, taskOf } from '@sigloch/contracts/se';
 import { focusViolations } from '../src/kernel/measure/focus-set.js';
-import { generationStep, TASK_SKILL } from '../src/loop/generate.js';
+import { generationStep, TASK_SKILL, type GenerationRequest } from '../src/loop/generate.js';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
 import { alsFormatE } from './helpers/format-e.js';
 
@@ -34,8 +34,8 @@ const alsGraph = (g: Flat) => {
     edges: g.traces.map((t) => ({ sourceId: t.source, targetId: t.target, edgeType: t.type, attributes: t.label ? { label: t.label } : {} })),
   } as never;
 };
-const step = (task: Parameters<typeof generationStep>[6] = 'kern', defer: string[] = []) =>
-  generationStep(alsGraph(golden), DEFAULT_METRIC_POLICY, undefined, 0.8, defer, null, task);
+const step = (task: GenerationRequest['task'] = 'kern', defer: string[] = []) =>
+  generationStep({ graph: alsGraph(golden), policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer, profile: null, task });
 
 /** Die Regeln, die im Kern-Fokus eines Graphen offen sind. */
 const kernRegeln = (g: Flat): string[] => {
@@ -65,7 +65,7 @@ describe('CR-GC-601: graph_generate {task}', () => {
     const ziel = mit.elements.find((e) => e.type === 'FUNC')!.id;
     mit.elements.push({ id: 'CR-bau-1', type: 'CR', name: 'Bauauftrag', description: 'Realisiere das Ungebaute.', attributes: { status: 'open' } });
     mit.traces.push({ source: 'CR-bau-1', target: ziel, type: 'relation' });
-    const s = generationStep(alsGraph(mit), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'plan');
+    const s = generationStep({ graph: alsGraph(mit), policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [], profile: null, task: 'plan' });
     expect(s.done).toBe(true);
     expect(s.prompt).toMatch(/Task plan fertig/);
     expect(kernRegeln(golden)).toContain('AF-05');
@@ -78,7 +78,7 @@ describe('CR-GC-601: graph_generate {task}', () => {
     const stempel = { ...(sys.attributes!.analysisFreshness as Record<string, unknown>) };
     delete stempel.trade;
     sys.attributes = { ...sys.attributes, analysisFreshness: stempel };
-    const s = generationStep(alsGraph(ohne), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'trade');
+    const s = generationStep({ graph: alsGraph(ohne), policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [], profile: null, task: 'trade' });
     expect(s.done).toBe(false);
     expect(s.focusKey).toMatch(/:AF-02:/);
     expect(s.prompt).toContain('Das Artefakt des Tasks trade fehlt noch');
@@ -90,7 +90,7 @@ describe('CR-GC-601: graph_generate {task}', () => {
     expect(s.prompt).not.toMatch(/Frischestempel|\(analysisFreshness/);
     // ein im Kern abgenommener Eintritt ("im schlanken Umfang nicht noetig") gilt auch im Task
     sys.attributes = { ...sys.attributes, acceptedFindings: [{ ruleId: 'AF-02', reason: 'lean' }] };
-    const ab = generationStep(alsGraph(ohne), DEFAULT_METRIC_POLICY, undefined, 0.8, [], null, 'trade');
+    const ab = generationStep({ graph: alsGraph(ohne), policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [], profile: null, task: 'trade' });
     expect(ab.done).toBe(true);
   });
 

@@ -52,7 +52,7 @@ const rang = (ruleId: string): number => {
 };
 const istExistenz = (ruleId: string): boolean => DEF.get(ruleId)!.role === 'existence';
 const INTENT = 'Ein Werkzeug, das Aufgaben auf der Kommandozeile verwaltet.';
-const step = (graph: Graph, defer: string[] = []) => generationStep(graph, DEFAULT_METRIC_POLICY, INTENT, 0.8, defer);
+const step = (graph: Graph, defer: string[] = []) => generationStep({ graph, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: 0.8, defer });
 const regelVon = (focusKey: string): string => focusKey.split(':')[1]!;
 
 /** Alle Fenster eines Graphen in der Reihenfolge, in der der Schritt sie stellt (jedes wird nach Erscheinen zurueckgestellt). */
@@ -146,7 +146,7 @@ describe('CR-GC-749: der Kaltstart kommt aus den Existenz-Regeln', () => {
     expect(s).toMatchObject({ phase: 'seed', focusStage: 'seed:sys', focusTypes: ['SYS'], focusKey: null });
     expect(s.prompt).toContain('Lege GENAU EIN Element an: die SYS-Wurzel');
     // ohne Intention fragt er zuerst danach — der Befund ist derselbe
-    expect(generationStep(leer, DEFAULT_METRIC_POLICY, undefined, 0.8)).toMatchObject({ phase: 'seed', focusStage: null });
+    expect(generationStep({ graph: leer, policy: DEFAULT_METRIC_POLICY, threshold: 0.8 })).toMatchObject({ phase: 'seed', focusStage: null });
   });
 
   it('Elemente ohne System (Import): derselbe Befund, derselbe Schritt — und mit SYS nicht mehr', () => {
@@ -206,7 +206,7 @@ describe('CR-GC-749: der Kaltstart kommt aus den Existenz-Regeln', () => {
   });
 
   it('in einem Arbeitsschritt gilt der Kaltstart des Systems ebenso — ohne System gibt es keine Analyse', () => {
-    const s = generationStep(g([]), DEFAULT_METRIC_POLICY, INTENT, 0.8, [], null, 'fmea');
+    const s = generationStep({ graph: g([]), policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: 0.8, defer: [], profile: null, task: 'fmea' });
     expect(s.focusStage).toBe('seed:sys');
   });
 });

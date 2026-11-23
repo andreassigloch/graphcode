@@ -18,19 +18,19 @@
  * Wahl bleibt deterministisch).
  */
 import { z } from 'zod/v4';
-import type { Graph } from '@sigloch/graph-api-core';
+import { GraphSchema, type Graph } from '@sigloch/graph-api-core';
 import { ALL_RULE_DEFS, STAGE_SETS } from '@sigloch/contracts/se';
-import type { MetricPolicy } from '@sigloch/contracts/se';
+import { MetricPolicySchema, type MetricPolicy } from '@sigloch/contracts/se';
 import { takeSteeringSnapshot } from '../kernel/measure/steering-snapshot.js';
 import { UmbauHinweis, alsBefund, hinweisAus } from './umbau-ausloeser.js';
 import { acceptedRuleIds } from '@sigloch/contracts/se';
-import { isIntentTooThin, intentCoverage, type LoadedTargetProfile } from './target-profile.js';
+import { isIntentTooThin, intentCoverage, TargetProfileSchema, type LoadedTargetProfile } from './target-profile.js';
 import { winner } from './channel-rank.js';
 import { decision } from './decisions.js';
 import { ABNEHMBAR, focusViolations as fokusmenge, blockingOf } from '../kernel/measure/focus-set.js';
-import { RULE_HELP, TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
+import { RULE_HELP, RULE_TASKS, TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
 import { steerTerms, STEER_RULES } from '@sigloch/se-engine';
-import { STEUER_FENSTER, type SteerOptimum, type SteerState } from './stagnation.js';
+import { STEUER_FENSTER, SteerOptimumSchema, type SteerOptimum, type SteerState } from './stagnation.js';
 import { ANALYSE_TASKS } from './task-artifact.js';
 
 /**
@@ -488,6 +488,24 @@ function stufenName(ruleId: string): string {
 }
 
 /**
+ * Was ein Aufrufer an `generationStep` gibt (FLOW-generation-request, CR-GC-1022): Graph,
+ * Metrikpolitik, Intention, Schwelle, Zurueckgestelltes, Zielprofil, Task und Steuer-Optimum.
+ * Vorher acht Positionsargumente — ein Aufrufer aus einem anderen Repo gab sie verschoben.
+ */
+export const GenerationRequestSchema = z.strictObject({
+  graph: GraphSchema,
+  policy: MetricPolicySchema,
+  intent: z.string().optional(),
+  threshold: z.number(),
+  defer: z.array(z.string()).default([]),
+  profile: z.strictObject({ profile: TargetProfileSchema }).nullable().default(null),
+  task: z.enum(RULE_TASKS).default('kern'),
+  steerOptimum: SteerOptimumSchema.nullable().default(null),
+});
+/** Der Graph kommt als `Graph` (Attribute gesetzt), gerechnet wird auf ihm. */
+export type GenerationRequest = z.input<typeof GenerationRequestSchema> & { graph: Graph };
+
+/**
  * Der nächste Generierungsschritt für (Graph, Intention). Deterministisch —
  * gleicher Graph + gleiche Intention + gleiches defer ⇒ gleicher Schritt.
  *
@@ -502,16 +520,11 @@ function stufenName(ruleId: string): string {
  * Ein-Fund-Batches kollidieren mit Batch-Invarianten (REQ braucht TEST im
  * selben Batch). Ein Profil-Parameter existiert deshalb bewusst NICHT.
  */
-export function generationStep(
-  graph: Graph,
-  policy: MetricPolicy,
-  intent: string | undefined,
-  threshold: number,
-  defer: string[] = [],
-  profile: LoadedTargetProfile | null = null,
-  task: RuleTask = 'kern',
-  steerOptimum: SteerOptimum | null = null,
-): GenerationStep {
+export function generationStep(eingabe: GenerationRequest): GenerationStep {
+  const { policy, intent, threshold, defer, profile, task, steerOptimum } = GenerationRequestSchema.parse(eingabe);
+  // Der Graph ist geprueft; gerechnet wird auf dem Original — die Kopie des Schemas verloere Felder,
+  // die der Vertrag nicht nennt.
+  const graph = eingabe.graph;
   const snap = takeSteeringSnapshot(graph, policy);
   const { imperativSkill, ...core } = stepCore(snap, policy, intent, threshold, defer, profile, task, steerOptimum);
   // CR-GC-601: im Task nennt der Schritt den Skill des Tasks, im Kern den der Fokus-Dimension.

@@ -55,10 +55,10 @@ const EMPTY = g([], []);
  */
 function bisRegel(graph: Graph, regel: string): ReturnType<typeof generationStep> {
   const defer: string[] = [];
-  let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, defer);
+  let step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer });
   while (step.focusKey && step.focusKey.split(':')[1] !== regel && defer.length < 200) {
     defer.push(step.focusKey);
-    step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, defer);
+    step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer });
   }
   return step;
 }
@@ -84,7 +84,7 @@ const INTENT = 'Ein Bestellsystem, mit dem Kunden Ersatzteile suchen und bestell
 
 describe('generationStep — Zustandsmaschine (pur)', () => {
   it('leerer Graph ohne Intention → seed-Phase fordert die Intention an', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('seed');
     expect(step.done).toBe(false);
     expect(step.prompt).toContain('Intention');
@@ -92,7 +92,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
   });
 
   it('leerer Graph mit Intention → Stufe 1 fordert GENAU die SYS-Wurzel (CR-GC-559)', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
+    const step = generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: FOCUS });
     expect(step.phase).toBe('seed');
     expect(step.focusStage).toBe('seed:sys');
     expect(step.prompt).toContain(INTENT);
@@ -113,7 +113,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('expand');
     expect(step.done).toBe(false);
     // Intention kommt aus der SYS-description — kein intent-Parameter nötig.
@@ -123,7 +123,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
     // CR-SM-353: UC-01/UC-02 sind Warnungen — blockingErrors zaehlt nur noch Gate-Schuld.
     expect(step.blockingErrors).toBe(0);
     // Deterministisch.
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
+    expect(generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS })).toEqual(step);
   });
 
   it('req-Template fordert den TEST (TEST verify REQ) im selben Batch (CR-GC-284)', () => {
@@ -144,11 +144,11 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
       ],
     );
     // Die Stufe Anforderung ist nicht zwingend der erste Fokus — per defer dorthin rotieren.
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     const keys: string[] = [];
     while (step.focusKey && !step.prompt.includes('REQ-Kandidaten') && keys.length < 10) {
       keys.push(step.focusKey);
-      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+      step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: keys });
     }
     expect(step.prompt).toContain('REQ-Kandidaten');
     expect(step.prompt).toContain('TEST verify REQ');
@@ -176,11 +176,11 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('FCHAIN-bestellung', 'FUNC-pruefen', 'compose'),
       ],
     );
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     const keys: string[] = [];
     while (step.focusKey && !step.prompt.includes('FUNC/FCHAIN-Zerlegungen') && keys.length < 15) {
       keys.push(step.focusKey);
-      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+      step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: keys });
     }
     expect(step.prompt).toContain('satisfy→REQ');
     expect(step.prompt).toContain('allocate→MOD');
@@ -289,7 +289,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('FLOW-berechnet', 'SCHEMA-berechnet', 'relation'),
       ],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);
+    const step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0 });
     expect(step.blockingErrors).toBe(0);
     // CR-GC-303: die Stempel am Fixture-SYS tragen — SRR und PDR sind aus MODELLINHALT erreicht,
     // nicht durch Encoding blockiert. CR-GC-748: gelesen an den Marken des Clients, nicht mehr an einer
@@ -338,7 +338,7 @@ describe('generationStep — Zustandsmaschine (pur)', () => {
         edge('FLOW-in', 'SCHEMA-in', 'relation'),
       ],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0);
+    const step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0 });
     expect(step.blockingErrors).toBe(0); // kein error — die alte Bedingung allein hätte done:true erlaubt
     const r15 = ALL_RULE_DEFS.find((r) => r.id === 'R-15')!;
     const marke = markenVon(graph).find((m) => m.id === r15.mark)!;
@@ -363,7 +363,7 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
   );
 
   it('focusKey ist stabil und deterministisch (stufe:regel:element_ids sortiert)', () => {
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('expand');
     // CR-GC-757: der Schluessel beginnt mit dem NAMEN der Stufe (vorher: mit der Dimension).
     const [stufe, regel, elemente] = (step.focusKey as string).split(':');
@@ -373,29 +373,29 @@ describe('generationStep — Fund-Rotation/defer (CR-GC-281)', () => {
     expect(elemente).toBe([...elemente!.split(',')].sort().join(','));
     expect(step.focusElements).toEqual(elemente!.split(','));
     // Gleicher Graph + gleiches defer ⇒ identischer Schritt inkl. focusKey.
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
+    expect(generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS })).toEqual(step);
     // Kein Fokus ⇒ kein focusKey (seed).
-    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS).focusKey).toBeNull();
+    expect(generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: FOCUS }).focusKey).toBeNull();
   });
 
   it('defer überspringt das Fund-Set — anderer focusKey, anderer Prompt', () => {
-    const first = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
-    const second = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [first.focusKey as string]);
+    const first = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
+    const second = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [first.focusKey as string] });
     expect(second.phase).toBe('expand');
     expect(second.focusKey).not.toBe(first.focusKey);
     expect(second.prompt).not.toBe(first.prompt);
     // Deterministisch auch mit defer.
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [first.focusKey as string])).toEqual(second);
+    expect(generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [first.focusKey as string] })).toEqual(second);
   });
 
   it('alles deferred → stalled: kein Wiederholen, kein done, die Liste im Prompt (CR-GC-596)', () => {
     // Bis CR-GC-596 hiess dieser Test "Fallback ohne Dead-End": defer wurde ignoriert, der erste
     // Kandidat kam zurueck — genau dort entstand in Lauf 11 die Schleife (R-04 sechsmal).
     const keys: string[] = [];
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+    let step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: keys });
     while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 30) {
       keys.push(step.focusKey);
-      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+      step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: keys });
     }
     expect(step.phase).toBe('stalled');
     expect(step.done).toBe(false);
@@ -423,11 +423,11 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
         edge('UC-bestellen', 'FCHAIN-leer', 'compose'),
       ],
     );
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     const keys: string[] = [];
     while (step.focusKey && !keys.includes(step.focusKey) && keys.length < 20) {
       keys.push(step.focusKey);
-      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+      step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: keys });
     }
     // Jedes Fenster trägt genau eine rule_id im Key (stufe:rule_id:elemente) —
     // R-15 (FCHAIN-leer) und UC-01 (UC-bestellen) tauchen nie im selben Fenster auf.
@@ -451,7 +451,7 @@ describe('generationStep — Fund-Fenster/Prompt-Vollständigkeit (CR-GC-290)', 
       ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('expand');
     expect(step.prompt).not.toMatch(/\(Score [\d.]+,\s*\d+ Funde\)/);
     expect(step.prompt).toContain('Funde: ');
@@ -484,11 +484,11 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     // contracts 9.x: auf einer leeren Kette feuert FC-01 zwangsläufig mit (eine
     // Actor-Grenze über den Eltern-UC gibt es ohne ACTOR io→UC nicht mehr) und
     // rankt lexikographisch vor R-15 — per defer ins R-15-Fenster rotieren.
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     const keys: string[] = [];
     while (step.focusKey && !/^Funktion:R-15:/.test(step.focusKey) && keys.length < 10) {
       keys.push(step.focusKey);
-      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+      step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer: keys });
     }
     expect(step.phase).toBe('expand');
     expect(step.focusKey).toMatch(/^Funktion:R-15:/);
@@ -508,7 +508,7 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     // "KEINE neue FCHAIN/UC anlegen" unbedingt — also auch neben Funden, deren Fix
     // GENAU das Anlegen einer FCHAIN ist ("FCHAIN-Szenarien (UC compose FCHAIN)").
     // CR-GC-564 loest das an der Wurzel: wo eine Klausel existiert, entfaellt das Template.
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     const keys: string[] = [];
     let checkedNonR15 = 0;
     let checkedR15 = 0;
@@ -534,7 +534,7 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
         }
       }
       keys.push(step.focusKey);
-      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+      step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: keys });
     }
     // Beide Zweige müssen wirklich durchlaufen worden sein, sonst prüft der Test nichts.
     expect(checkedR15).toBeGreaterThan(0);
@@ -544,11 +544,11 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
 
   it('Funde-Zeile trägt den fix_hint der Violation (R-15: "Add FUNC elements via compose trace")', () => {
     // Wie oben: erst ins R-15-Fenster rotieren (FC-01 rankt seit contracts 9.x davor).
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     const keys: string[] = [];
     while (step.focusKey && !/^Funktion:R-15:/.test(step.focusKey) && keys.length < 10) {
       keys.push(step.focusKey);
-      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+      step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer: keys });
     }
     expect(step.prompt).toContain('Fix: Add FUNC elements via compose trace');
   });
@@ -563,10 +563,10 @@ describe('generationStep — R-15 Stagnations-Fix (CR-GC-290-Nachtrag, Messlauf-
     // und sie nennt genau die zwei, um die es geht. Dorthin rotieren statt das erste
     // beliebige Fenster zu nehmen.
     const keys: string[] = [];
-    let step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     while (step.focusKey && !/^Funktion:R-15:/.test(step.focusKey) && keys.length < 10) {
       keys.push(step.focusKey);
-      step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+      step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer: keys });
     }
     expect(step.focusKey).toMatch(/^Funktion:R-15:/);
     expect(step.focusTypes).toContain('FUNC');
@@ -625,8 +625,8 @@ describe('STAGE_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285, CR-GC-757)',
   });
 
   it('Stufe 1 trägt nur SYS; seed ohne Intention trägt keine Typen', () => {
-    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS).focusTypes).toEqual([...SEED_STAGES.sys]);
-    expect(generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS).focusTypes).toEqual([]);
+    expect(generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: FOCUS }).focusTypes).toEqual([...SEED_STAGES.sys]);
+    expect(generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS }).focusTypes).toEqual([]);
   });
 
   it('expand trägt die Typen der Fokus-Stufe (konsistent zum focusKey)', () => {
@@ -638,7 +638,7 @@ describe('STAGE_FOCUS_TYPES / GenerationStep.focusTypes (CR-GC-285, CR-GC-757)',
       ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('expand');
     const [stufe, regel] = (step.focusKey as string).split(':');
     expect(stufe).toBe(step.focusStage);
@@ -666,11 +666,10 @@ describe('Intentions-Anker im Prompt (CR-GC-295); keine Gewichte (CR-GC-853)', (
   // CR-GC-853: das Profil traegt fuer generationStep nur noch die Themen — Gewichte liest es nicht.
   const withProfile = (intentAnchors?: string[]) => ({
     profile: { ...(intentAnchors ? { intentAnchors } : {}) },
-    conflicts: [],
   });
 
   it('Runde-1-Prompt (kein SYS, keine Intention) fragt nur nach der Intention, nicht nach Gewichten (CR-GC-853)', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.prompt).toContain('Systemintention');
     expect(step.prompt).not.toContain('Zielprofil');
     expect(step.prompt).not.toContain('se:target-profile');
@@ -693,7 +692,7 @@ describe('Intentions-Anker im Prompt (CR-GC-295); keine Gewichte (CR-GC-853)', (
     // Der Begriff ist Steuerungsinternes — der Kunde kann damit nichts anfangen, und
     // ein Frontier-Modell hat die Vorschläge später ohnehin still korrigiert. Die
     // Anker werden jetzt im Hintergrund gesetzt (Tool-Schicht), nicht erfragt.
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
+    const step = generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: FOCUS });
     expect(step.prompt).not.toMatch(/Intentions-Anker/i);
     expect(step.prompt).not.toContain('se:target-profile');
     // Der eigentliche Seed-Auftrag bleibt unberührt.
@@ -703,7 +702,7 @@ describe('Intentions-Anker im Prompt (CR-GC-295); keine Gewichte (CR-GC-853)', (
   it('Seed MIT zu dünner Intention: fachliche Rückfragen statt Steuerungs-Jargon (CR-GC-307)', () => {
     // "Ein System zum Verwalten von Daten" parst sauber und verankert nichts — jedes
     // dieser Wörter matcht fast jedes Element, die Coverage läse 100% und sagte nichts.
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, 'Ein System zum Verwalten von Daten', FOCUS);
+    const step = generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, intent: 'Ein System zum Verwalten von Daten', threshold: FOCUS });
     expect(step.prompt).toMatch(/FACHFRAGEN/);
     expect(step.prompt).not.toMatch(/Intentions-Anker/i);
     // Der Prompt verbietet dem Modell ausdrücklich, nach der Steuerung zu fragen.
@@ -720,7 +719,7 @@ describe('Intentions-Anker im Prompt (CR-GC-295); keine Gewichte (CR-GC-853)', (
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
     const profile = withProfile(['bestellen', 'zauberdrache', 'teil']);
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], profile);
+    const step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [], profile });
     expect(step.phase).toBe('expand');
     // CR-GC-307: Klartext statt Steuerungs-Vokabular — der Mensch sieht die WIRKUNG
     // (ein Thema kommt nirgends vor), nie den Mechanismus.
@@ -729,7 +728,7 @@ describe('Intentions-Anker im Prompt (CR-GC-295); keine Gewichte (CR-GC-853)', (
     // 'bestellen'/'teil' sind über UC-Name/Beschreibung adressiert — nicht gelistet.
     expect(step.prompt).not.toMatch(/Noch nirgends beschrieben:[^.]*bestellen/);
     // Deterministisch auch mit Profil.
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, [], profile)).toEqual(step);
+    expect(generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: [], profile })).toEqual(step);
   });
 
   it('ohne Profil: expand-Prompt unverändert ohne Anker-Zeile (N=1-Determinismus, Regression)', () => {
@@ -741,15 +740,15 @@ describe('Intentions-Anker im Prompt (CR-GC-295); keine Gewichte (CR-GC-853)', (
       ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    const step = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.prompt).not.toContain('Intentions-Anker');
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
+    expect(generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS })).toEqual(step);
   });
 });
 
 describe('CR-GC-589: der Schritt nennt seine Anleitung — eine Zuordnung fuer beide Treiber', () => {
   it('seed:uc → se:author-uc, ohne Skill → null', () => {
-    const seed = generationStep(g([node('SYS-shop', 'SYS', 'shop', INTENT)], []), DEFAULT_METRIC_POLICY, INTENT, 0.8);
+    const seed = generationStep({ graph: g([node('SYS-shop', 'SYS', 'shop', INTENT)], []), policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: 0.8 });
     expect(seed.focusStage).toBe('seed:uc');
     expect(seed.skill).toBe('se:author-uc');
     // keine Anleitung, kein erfundener Eintrag: fuer Schema, Test, Plan und Bindung gibt es keinen Autorier-Skill
@@ -769,7 +768,7 @@ describe('Gate-Protokoll des Schritts (CR-GC-288)', () => {
   );
 
   it('der dryRun-Vergleichs-Auftrag steht im Prompt, ohne fitAdvisory (CR-GC-853)', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
+    const step = generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: FOCUS });
     expect(step.prompt).toContain('dryRun:true');
     // CR-GC-853: fitAdvisory steht nie im Ergebnis von graph_mutate — der Prompt nennt es nicht.
     expect(step.prompt).not.toContain('fitAdvisory');
@@ -780,7 +779,7 @@ describe('Gate-Protokoll des Schritts (CR-GC-288)', () => {
     // 20 % des graph_mutate-Payloads. Die Gegenrechnung ueber alle Laeufe: der opus5-Arm
     // probte 30-mal, 4-mal kam `block`, 3 davon wurden nicht angewandt — und diese 3 haben
     // keinen Schaden verhindert, weil eine abgelehnte Anwendung nichts persistiert.
-    const klausel = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS)
+    const klausel = generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: FOCUS })
       .prompt.split('Gate-Protokoll')[1];
     expect(klausel).toContain('MEHRERE Alternativen');
     // Der EINE Batch geht direkt ans Gate — und der Prompt sagt auch warum, sonst liest
@@ -792,7 +791,7 @@ describe('Gate-Protokoll des Schritts (CR-GC-288)', () => {
   it('das Protokoll nennt keine Rangfolge: mehrere zulaessige Alternativen waehlt der Autor (CR-GC-928, CR-GC-771)', () => {
     // Der Spike zu CR-GC-771 hat die Rangfolge der Verdicts widerlegt: sie ordnete nach dem Falschen.
     // Das Protokoll sagt deshalb nur: proben, vorlegen, den Gewaehlten anwenden.
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, INTENT, FOCUS);
+    const step = generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: FOCUS });
     const klausel = step.prompt.split('Gate-Protokoll')[1];
     expect(klausel).not.toMatch(/Rangfolge|steerAdvisory|tier \(|Element-Ausbeute|besten Batch/);
     expect(klausel).toMatch(/dem Autor mit ihren Verdicts vor/);
@@ -878,10 +877,10 @@ describe('Gate-Protokoll des Schritts (CR-GC-288)', () => {
   });
 
   it('expand: der dryRun-Auftrag steht auch dort im Prompt, der Schritt ist deterministisch', () => {
-    const step = generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph: expandGraph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('expand');
     expect(step.prompt).toContain('dryRun:true');
-    expect(generationStep(expandGraph, DEFAULT_METRIC_POLICY, undefined, FOCUS)).toEqual(step);
+    expect(generationStep({ graph: expandGraph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS })).toEqual(step);
   });
 });
 
@@ -953,7 +952,7 @@ describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
   );
 
   it('SYS allein → Stufe 2 destilliert die UCs', () => {
-    const step = generationStep(sysOnly, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph: sysOnly, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('seed');
     expect(step.focusStage).toBe('seed:uc');
     expect(step.focusTypes).toEqual([...SEED_STAGES.uc]);
@@ -961,7 +960,7 @@ describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
   });
 
   it('SYS + UC → Stufe 3 schneidet das Minimum distinkter ACTORs', () => {
-    const step = generationStep(sysUc, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph: sysUc, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('seed');
     expect(step.focusStage).toBe('seed:actor');
     expect(step.focusTypes).toEqual([...SEED_STAGES.actor]);
@@ -980,7 +979,7 @@ describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
       ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    expect(generationStep(graph, DEFAULT_METRIC_POLICY, undefined, FOCUS).phase).toBe('expand');
+    expect(generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS }).phase).toBe('expand');
   });
 
   it('begonnene Struktur ohne ACTOR fällt NICHT in den Kaltstart zurück', () => {
@@ -994,19 +993,19 @@ describe('CR-GC-559: der Kaltstart in drei gegateten Stufen', () => {
       ],
       [edge('SYS-shop', 'UC-bestellen', 'compose')],
     );
-    expect(generationStep(importiert, DEFAULT_METRIC_POLICY, undefined, FOCUS).phase).toBe('expand');
+    expect(generationStep({ graph: importiert, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS }).phase).toBe('expand');
   });
 
   it('die Intentions-Rückfrage bleibt vorgeschaltet — ohne Intention keine Stufe', () => {
-    const step = generationStep(EMPTY, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph: EMPTY, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('seed');
     expect(step.focusStage).toBeNull();
   });
 
   it('jede Stufe ist deterministisch', () => {
     for (const graph of [EMPTY, sysOnly, sysUc]) {
-      expect(generationStep(graph, DEFAULT_METRIC_POLICY, INTENT, FOCUS)).toEqual(
-        generationStep(graph, DEFAULT_METRIC_POLICY, INTENT, FOCUS),
+      expect(generationStep({ graph, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: FOCUS })).toEqual(
+        generationStep({ graph, policy: DEFAULT_METRIC_POLICY, intent: INTENT, threshold: FOCUS }),
       );
     }
   });
@@ -1042,7 +1041,7 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
   const regelVon = (key: string | null): string => String(key).split(':')[1];
 
   it('das erste Fenster traegt eine Klausel-Regel, obwohl R-16 alphabetisch vorne stuende', () => {
-    const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph: lauf4, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(step.phase).toBe('expand');
     // Klausel: UC-01, UC-02 · ohne: R-16, UC-03.
     // Alphabetisch gewaenne R-16 — in Rig-Lauf 4 war es FC-02.
@@ -1054,11 +1053,11 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
   it('in einer Stufe kommt die Klausel-Regel vor dem blossen Fund — R-16 nie vor UC-02', () => {
     const gesehen: string[] = [];
     const keys: string[] = [];
-    let step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph: lauf4, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     for (let i = 0; i < 12 && step.focusKey && !keys.includes(step.focusKey); i++) {
       gesehen.push(regelVon(step.focusKey));
       keys.push(step.focusKey);
-      step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+      step = generationStep({ graph: lauf4, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer: keys });
     }
     const folge = gesehen.join(' → ');
     expect(gesehen, folge).toContain('UC-02');
@@ -1071,13 +1070,13 @@ describe('CR-GC-563/605: Anweisung vor Fund — die Fundreihenfolge ist kein Alp
   });
 
   it('zweimal derselbe Graph ⇒ derselbe focusKey', () => {
-    const a = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
-    const b = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const a = generationStep({ graph: lauf4, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
+    const b = generationStep({ graph: lauf4, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     expect(b.focusKey).toBe(a.focusKey);
   });
 
   it('ein Fenster traegt weiterhin genau EINE Regel', () => {
-    const step = generationStep(lauf4, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    const step = generationStep({ graph: lauf4, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     const regel = regelVon(step.focusKey);
     // Die Fund-Liste im Prompt nennt nur Funde dieser einen Regel.
     const andere = ['UC-01', 'UC-02', 'UC-03', 'R-15', 'R-16'].filter((r) => r !== regel);
@@ -1126,10 +1125,10 @@ describe('CR-GC-564: die Regel-Klausel IST die Anweisung', () => {
   it('eine Regel OHNE Klausel bekommt die Vorlage ihrer Stufe', () => {
     // UC-01 und UC-02 zurückstellen ⇒ R-16, das keine eigene Klausel hat (bis CR-GC-850: FC-02).
     const keys: string[] = [];
-    let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph: ohneReq, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     for (let i = 0; i < 4 && ['UC-01', 'UC-02'].includes((step.focusKey as string).split(':')[1]); i++) {
       keys.push(step.focusKey as string);
-      step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+      step = generationStep({ graph: ohneReq, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer: keys });
     }
     expect((step.focusKey as string).split(':')[1]).toBe('R-16');
     expect(step.focusStage).toBe(stufenName('R-16'));
@@ -1170,10 +1169,10 @@ describe('CR-GC-566: der Fokus deckt, was die Anweisung verlangt', () => {
 
   it('eine Regel ohne Klausel bekommt die Typen ihrer Stufe', () => {
     const keys: string[] = [];
-    let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph: ohneReq, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     for (let i = 0; i < 4 && ['UC-01', 'UC-02'].includes((step.focusKey as string).split(':')[1]); i++) {
       keys.push(step.focusKey as string);
-      step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+      step = generationStep({ graph: ohneReq, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer: keys });
     }
     expect((step.focusKey as string).split(':')[1]).toBe('R-16');
     expect(stufenName('R-16')).toBe('Anwendungsfall');
@@ -1230,10 +1229,10 @@ describe('CR-GC-648: RD-01 verlangt den Erfueller, nicht neue REQs', () => {
 
   it('das RD-01-Fenster nennt satisfy von FUNC/FCHAIN/MOD/SYS und traegt die Quelltypen im Fokus', () => {
     const keys: string[] = [];
-    let step = generationStep(ohneErfueller, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph: ohneErfueller, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     for (let i = 0; i < 12 && step.focusKey && !step.focusKey.includes(':RD-01:'); i++) {
       keys.push(step.focusKey);
-      step = generationStep(ohneErfueller, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+      step = generationStep({ graph: ohneErfueller, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer: keys });
     }
     expect(step.focusKey, 'RD-01 wird Fokus').toContain(':RD-01:');
     expect(step.prompt).toContain('satisfy→REQ');
@@ -1277,10 +1276,10 @@ describe('CR-GC-655: die Anleitung folgt dem Gewinner, nicht der Stufe', () => {
 
   it('ein Template-Fenster (keine Klausel) behaelt den Skill seiner Stufe', () => {
     const keys: string[] = [];
-    let step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS);
+    let step = generationStep({ graph: ohneReq, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS });
     for (let i = 0; i < 6 && step.focusKey && (step.focusKey.split(':')[1] as string) in RULE_CLAUSE; i++) {
       keys.push(step.focusKey);
-      step = generationStep(ohneReq, DEFAULT_METRIC_POLICY, undefined, FOCUS, keys);
+      step = generationStep({ graph: ohneReq, policy: DEFAULT_METRIC_POLICY, threshold: FOCUS, defer: keys });
     }
     const regel = (step.focusKey as string).split(':')[1];
     expect(regel in RULE_CLAUSE, `Fenster ${regel}`).toBe(false);

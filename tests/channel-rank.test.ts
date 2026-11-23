@@ -69,7 +69,7 @@ describe('die Ordnung wird angewandt, nicht ein zweites Mal entschieden (CR-GC-5
   } as unknown as Graph;
 
   it('stellt eine Regel das Fenster, gewinnt ihre Klausel — fuer TEXT und Fokus-Typen zugleich', () => {
-    const step = generationStep(GRAPH, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const step = generationStep({ graph: GRAPH, policy: DEFAULT_METRIC_POLICY, threshold: 0.8 });
     expect(step.phase).toBe('expand');
     const [stufe, regel] = (step.focusKey as string).split(':');
     // CR-GC-757: der Schluessel beginnt mit dem Namen der Stufe, und die Stufe traegt eine Vorlage.

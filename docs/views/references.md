@@ -161,6 +161,8 @@
 | `CR-GC-1020` | relation | `SCHEMA-shim-request` |
 | `CR-GC-1020` | relation | `SCHEMA-suggest-answer` |
 | `CR-GC-1021` | relation | `SCHEMA-auftragstext` |
+| `CR-GC-1022` | relation | `FUNC-generation-step` |
+| `CR-GC-1022` | relation | `SCHEMA-generation-request` |
 | `CR-GC-103` | relation | `FUNC-decode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |
@@ -2475,7 +2477,7 @@
 | `FLOW-generate-answer` | io | `FUNC-host-socket` |
 | `FLOW-generate-answer` | relation | `SCHEMA-generation-step` |
 | `FLOW-generation-request` | io | `FUNC-generation-step` |
-| `FLOW-generation-request` | relation | `SCHEMA-query-params` |
+| `FLOW-generation-request` | relation | `SCHEMA-generation-request` |
 | `FLOW-generation-step-vorschlag` | io | `FUNC-vorschlag` |
 | `FLOW-generation-step-vorschlag` | relation | `SCHEMA-generation-step` |
 | `FLOW-get-edges-call` | io | `FUNC-read-tools` |
@@ -4419,6 +4421,7 @@
 | `TEST-vertrag-format-e` | verify | `SCHEMA-format-e` |
 | `TEST-vertrag-function-criticality` | verify | `SCHEMA-function-criticality` |
 | `TEST-vertrag-generate-input` | verify | `SCHEMA-generate-input` |
+| `TEST-vertrag-generation-request` | verify | `SCHEMA-generation-request` |
 | `TEST-vertrag-generation-step` | verify | `SCHEMA-generation-step` |
 | `TEST-vertrag-get-edges-input` | verify | `SCHEMA-get-edges-input` |
 | `TEST-vertrag-get-node-input` | verify | `SCHEMA-get-node-input` |

@@ -64,7 +64,7 @@ function ladeLauf(rel: string): Flat {
 }
 /** Zwei Referenzlaeufe der Aufgabe todo, einer je Arm — eingefrorene Kopie (CR-GC-764), die lebende Referenz pflegt graphanalyze. */
 const RUNS = ['lokal', 'frontier'].map((arm) => `beispielgraphen/todo-referenz/${arm}/graph.json`).filter((p) => existsSync(ROOT + p));
-const step = (g: Flat, defer: string[] = []) => generationStep(alsGraph(g), DEFAULT_METRIC_POLICY, undefined, 0.8, defer);
+const step = (g: Flat, defer: string[] = []) => generationStep({ graph: alsGraph(g), policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer });
 const GATE_REGELN = SE_DESCRIPTOR.rules;
 if (!GATE_REGELN) throw new Error('SE_DESCRIPTOR ohne rules — die Gate-Menge waere leer und der Test stumm');
 const GATE = new Set(GATE_REGELN.map((r: { id: string }) => r.id));
@@ -89,7 +89,7 @@ describe('CR-GC-593: done ⇔ kein Fokus — an jedem Graphen des Korpus', () =>
     const { zuege, graph } = await nachspielenRein(trail);
     expect(zuege).toBeGreaterThan(50);
     // Der Endstand des Nachspiels ist ein Harness-Graph; die Invariante gilt auch dort.
-    const s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const s = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8 });
     expect(s.done).toBe(s.focusKey === null);
   });
 

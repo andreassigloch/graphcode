@@ -64,7 +64,7 @@
 | `FUNC-export-marker-clear` | FUNC | Drift-Marker loeschen |
 | `FUNC-fit-advisory` | FUNC | computeFitAdvisory(before, after) |
 | `FUNC-function-criticality` | FUNC | functionCriticality(graph) |
-| `FUNC-generation-step` | FUNC | generationStep(graph, policy, intent) |
+| `FUNC-generation-step` | FUNC | generationStep |
 | `FUNC-goal-steerer` | FUNC | Führung |
 | `FUNC-graph-expand` | FUNC | graph_expand(handle, branch, depth+1) |
 | `FUNC-graph-export-snapshot` | FUNC | graph_export(views?) |

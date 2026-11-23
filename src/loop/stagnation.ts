@@ -18,6 +18,7 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod/v4';
 import type { GenerationStep } from './generate.js';
 import { TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';
 import { STEER_RULES } from '@sigloch/se-engine';
@@ -51,7 +52,9 @@ const STEUERREGELN: ReadonlySet<string> = new Set(STEER_RULES);
 
 /** Der Steuerzustand eines Graphen: kanonischer Termvektor, Steuerwert, lesbare Terme. */
 export interface SteerState { key: string; sum: number; terms: string[] }
-export interface SteerOptimum { grund: 'kreis' | 'plateau'; sum: number; terms: string[] }
+/** Ein lokales Optimum des Steuerwerts: Grund, Wert und Terme (Teil der Generierungsanfrage, CR-GC-1022). */
+export const SteerOptimumSchema = z.strictObject({ grund: z.enum(['kreis', 'plateau']), sum: z.number(), terms: z.array(z.string()) });
+export type SteerOptimum = z.infer<typeof SteerOptimumSchema>;
 
 /** Rein: ist der letzte Zustand des Verlaufs ein lokales Optimum? */
 export function lokalesOptimum(

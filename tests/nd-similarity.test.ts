@@ -163,16 +163,16 @@ describe('generate-Fokus sieht ND (AK 3)', () => {
     const fenster = (graph: Graph): string[] => {
       const gesehen: string[] = [];
       const keys: string[] = [];
-      let s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+      let s = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: keys });
       for (let i = 0; i < 12 && s.focusKey && !keys.includes(s.focusKey); i++) {
         gesehen.push(s.focusKey.split(':')[1]);
         keys.push(s.focusKey);
-        s = generationStep(graph, DEFAULT_METRIC_POLICY, undefined, 0.8, keys);
+        s = generationStep({ graph, policy: DEFAULT_METRIC_POLICY, threshold: 0.8, defer: keys });
       }
       return gesehen;
     };
-    const dup = generationStep(buildGraph('Assemble the selected metrics into a downloadable report document.'), DEFAULT_METRIC_POLICY, undefined, 0.8);
-    const distinct = generationStep(buildGraph('Stream raw audit events into the retention archive nightly.'), DEFAULT_METRIC_POLICY, undefined, 0.8);
+    const dup = generationStep({ graph: buildGraph('Assemble the selected metrics into a downloadable report document.'), policy: DEFAULT_METRIC_POLICY, threshold: 0.8 });
+    const distinct = generationStep({ graph: buildGraph('Stream raw audit events into the retention archive nightly.'), policy: DEFAULT_METRIC_POLICY, threshold: 0.8 });
     expect(dup.blockingErrors).toBe(distinct.blockingErrors);
     expect(fenster(buildGraph('Assemble the selected metrics into a downloadable report document.'))).toContain('ND-01');
     expect(fenster(buildGraph('Stream raw audit events into the retention archive nightly.'))).not.toContain('ND-01');

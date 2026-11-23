@@ -132,7 +132,7 @@ export function vorschlagNachAnwendung(
 ): string {
   const profile = loadTargetProfile(repoRoot);
   const rechne = (defer: string[], optimum = memory.steerOptimum) =>
-    generationStep(graph, policy, undefined, threshold, defer, profile, memory.task, optimum);
+    generationStep({ graph, policy, threshold, defer, profile, task: memory.task, steerOptimum: optimum });
   const step = stepWithMemory(memory, version, rechne);
   const task = memory.task === 'kern' ? eintrittDes(step) : undefined;
   if (!task || !step.focusKey) return vorschlagAusSchritt(step, graph, memory.task);
