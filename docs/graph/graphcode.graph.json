@@ -173,7 +173,8 @@
       "id": "CR-GC-1018",
       "type": "CR",
       "name": "Sammelfluss query-params: interne Aufrufe ohne eigenen Vertrag",
-      "description": "docs/cr/open/CR-GC-1018-sammelfluss-query-params-interne-aufrufe.md"
+      "description": "docs/cr/done/CR-GC-1018-sammelfluss-query-params-interne-aufrufe.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-102",
@@ -41408,5 +41409,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1578
+  "graphVersion": 1579
 }
