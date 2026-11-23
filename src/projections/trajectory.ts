@@ -21,7 +21,7 @@ import { readFileSync, existsSync, realpathSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
 import type { AuditLog } from '@sigloch/graph-api-core';
-import { projectTrajectory } from '@sigloch/learning-core';
+import { projectTrajectory, TrajectorySchema } from '@sigloch/learning-core';
 // Der Feed-Dateiname steht einmal (scaffold-templates) — dieselbe Konstante, die
 // `graphcode remove` beim Aufräumen der Alt-Kopie liest (CR-GC-331).
 import { TRAJECTORY_FILE, GRAPHCODE_DIR } from '../kernel/workspace.js';
@@ -149,7 +149,8 @@ export async function materializeTrajectory(log: AuditLog, outDir: string): Prom
   const body = entries
     .map((entry) =>
       JSON.stringify({
-        ...projectTrajectory(entry),
+        // Die Zeile geht auf die Platte: der Erzeuger parst die Grundzeile selbst (CR-GC-1019).
+        ...TrajectorySchema.parse(projectTrajectory(entry)),
         ...projectStamps(entry as unknown as Record<string, unknown>),
       }),
     )

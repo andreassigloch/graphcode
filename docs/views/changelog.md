@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 622 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 623 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 622 CR · 611 done · 1 open.
+Total: 623 CR · 611 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -242,6 +242,7 @@ Total: 622 CR · 611 done · 1 open.
 | `CR-GC-1016` | done | Sammelfluss query-params: Eingaben von export, metrics, suggest, generate ohne eigenen Vertrag |
 | `CR-GC-1017` | done | Sammelfluss query-params: Eingaben von reseed und audit ohne eigenen Vertrag |
 | `CR-GC-1018` | done | Sammelfluss query-params: interne Aufrufe ohne eigenen Vertrag |
+| `CR-GC-1019` | n/a | RC-04: Trajektorie ungeparst auf Platte, Prozess-Vertraege ohne Grund |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |

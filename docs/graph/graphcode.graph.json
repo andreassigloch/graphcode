@@ -177,6 +177,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-1019",
+      "type": "CR",
+      "name": "RC-04: Trajektorie ungeparst auf Platte, Prozess-Vertraege ohne Grund",
+      "description": "docs/cr/open/CR-GC-1019-rc-04-trajektorie-ungeparst-auf-platte-p.md"
+    },
+    {
       "id": "CR-GC-102",
       "type": "CR",
       "name": "Hook-System",
@@ -7412,8 +7418,8 @@
       "description": "Beantwortet im Aggregat, welche Regel wen wie oft blockt — je Regel, Konsument, Modell und Skill, mit dem Lesefenster als Teil der Antwort, und je Regel die Zahl der Zuege mit Fund. Die Zahl, an der Schwellen justiert werden, statt sie zu setzen. (CR-GC-462, CR-GC-943)",
       "status": "done",
       "realRef": {
-        "file": "src/surface/audit-stats.ts",
-        "symbol": "aggregateAuditEntries",
+        "file": "src/surface/audit.ts",
+        "symbol": "audit_stats",
         "lang": "ts"
       }
     },
@@ -12226,7 +12232,7 @@
       "id": "SCHEMA-completeness",
       "type": "SCHEMA",
       "name": "ReadinessMark",
-      "description": "Eine Marke: id, Bezeichnung, erreicht, haltende Befunde. Aus @sigloch/graphcode-client, deshalb external.",
+      "description": "Eine Marke: id, Bezeichnung, erreicht, haltende Befunde. Aus @sigloch/graphcode-client, deshalb external. Der Befund RC-04 bleibt bewusst stehen: computeMarks gibt die Marken im selben Prozess an readinessOf; kein Fluss verlaesst den Prozess, und das Paket parst die Antwort, in der die Marken nach aussen gehen (SCHEMA-readiness-report). (CR-GC-413, CR-GC-1019)",
       "status": "reviewed",
       "external": true,
       "realRef": {
@@ -12482,7 +12488,7 @@
       "id": "SCHEMA-impact-slice",
       "type": "SCHEMA",
       "name": "ImpactSlice",
-      "description": "Die Impact-Scheibe: Saatknoten, Tiefe, Knoten mit Rolle seed/whitebox/blackbox und Abstand, induzierte Kanten. @sigloch/graph-api-core. Die Rolle traegt Inhalt: an ihr trennt das Lese-Werkzeug den offenen Teil von der Blackbox-Front. (CR-GC-505)",
+      "description": "Die Impact-Scheibe: Saatknoten, Tiefe, Knoten mit Rolle seed/whitebox/blackbox und Abstand, induzierte Kanten. @sigloch/graph-api-core. Die Rolle traegt Inhalt: an ihr trennt das Lese-Werkzeug den offenen Teil von der Blackbox-Front. Der Befund RC-04 bleibt bewusst stehen: die Scheibe geht im selben Prozess von harness.impact an das Lese-Werkzeug; nach aussen geht sie als Format-E-Text. (CR-GC-505, CR-GC-413, CR-GC-1019)",
       "status": "reviewed",
       "external": true,
       "realRef": {
@@ -12599,7 +12605,7 @@
       "id": "SCHEMA-mcp-tool",
       "type": "SCHEMA",
       "name": "Werkzeug",
-      "description": "Was ein Werkzeug IST: Name, Beschreibung, Eingabe-Schema, Handler. Liegt seit CR-GC-480 im Kern, damit keine Schicht das Interface ihrer Oberflaeche kennen muss.",
+      "description": "Was ein Werkzeug IST: Name, Beschreibung, Eingabe-Schema, Handler. Liegt seit CR-GC-480 im Kern, damit keine Schicht das Interface ihrer Oberflaeche kennen muss. Der Befund RC-04 bleibt bewusst stehen: das Werkzeug ist ein Objekt mit Funktionen im selben Prozess; die Eingaben parst jeder Handler selbst (CR-GC-1014 bis CR-GC-1017). (CR-GC-413, CR-GC-1019)",
       "realRef": {
         "file": "src/kernel/tool-contract.ts",
         "symbol": "MCPToolSchema",
@@ -12633,7 +12639,7 @@
       "id": "SCHEMA-metric-vector",
       "type": "SCHEMA",
       "name": "MetricVector",
-      "description": "Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)",
+      "description": "Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. Der Befund RC-04 bleibt bewusst stehen: der Vektor wird im selben Prozess gerechnet und gelesen, je Messung neu. (Herkunft korrigiert CR-GC-453; CR-GC-413, CR-GC-1019)",
       "status": "reviewed",
       "external": true,
       "realRef": {
@@ -12707,7 +12713,7 @@
       "id": "SCHEMA-mutate-result",
       "type": "SCHEMA",
       "name": "MutateResult",
-      "description": "Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply|suggest|block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)",
+      "description": "Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply|suggest|block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). Der Befund RC-04 bleibt bewusst stehen: das Ergebnis geht im selben Prozess vom Gate an die Werkzeugschicht; nach aussen geht es als Antwort von graph_mutate, deren Vertrag dort geparst wird (SCHEMA-mutate-answer). (Kopie entfernt CR-GC-454; CR-GC-413, CR-GC-1019)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "zodDefinition": null,
@@ -12722,7 +12728,7 @@
       "id": "SCHEMA-ontology-graph",
       "type": "SCHEMA",
       "name": "OntologyGraph",
-      "description": "Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.",
+      "description": "Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se. Der Befund RC-04 bleibt bewusst stehen: der Graph geht im selben Prozess zwischen Store, Gate und Messung; ein Parse je Aufruf hiesse, bei jeder Messung mehrere hundert Elemente erneut zu pruefen. Von der Platte liest ihn der Import mit SCHEMA-ontology-json. (CR-GC-413, CR-GC-1019)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "zodDefinition": null,
@@ -12870,7 +12876,7 @@
       "id": "SCHEMA-rule-violation",
       "type": "SCHEMA",
       "name": "RuleViolation",
-      "description": "Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. (CR-GC-501)",
+      "description": "Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. Der Befund RC-04 bleibt bewusst stehen: die Befunde gehen im selben Prozess von der Auswertung an Gate, Bericht und Werkzeuge; nach aussen gehen sie in Antworten mit eigenem, geparstem Vertrag. (CR-GC-501, CR-GC-413, CR-GC-1019)",
       "external": true,
       "realRef": {
         "file": "packages/contracts/src/harness/index.ts",
@@ -12989,7 +12995,7 @@
       "id": "SCHEMA-steering-snapshot",
       "type": "SCHEMA",
       "name": "SteeringSnapshot",
-      "description": "Gemappter OntologyGraph, Violations des vollen Katalogs, Fokusmenge, Zahl der blockierenden Fehler, Befunde je Stufe. Beschreibt die Form des Messpunkts; den Bestand prueft die Regel R-08, nicht dieses Schema. (CR-GC-786)",
+      "description": "Gemappter OntologyGraph, Violations des vollen Katalogs, Fokusmenge, Zahl der blockierenden Fehler, Befunde je Stufe. Beschreibt die Form des Messpunkts; den Bestand prueft die Regel R-08, nicht dieses Schema. Der Befund RC-04 bleibt bewusst stehen: der Snapshot entsteht und wird gelesen im selben Prozess, je Messung neu; ein Parse hiesse, mehrere hundert Elemente je Messung erneut zu pruefen. (CR-GC-786, CR-GC-413, CR-GC-1019)",
       "status": "reviewed",
       "realRef": {
         "file": "src/kernel/measure/steering-snapshot.ts",
@@ -13107,7 +13113,7 @@
       "id": "SCHEMA-trajectory",
       "type": "SCHEMA",
       "name": "Trajectory/Outcome",
-      "description": "append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)",
+      "description": "append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. materializeTrajectory parst jede Grundzeile, bevor sie nach trajectory.jsonl geht. (Kopie entfernt CR-GC-454; Parse CR-GC-1019)",
       "status": "reviewed",
       "created_at": "2026-06-16T00:00:00.000Z",
       "zodDefinition": null,
@@ -13353,7 +13359,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -13383,7 +13389,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -13432,7 +13438,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -13580,7 +13586,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -13640,7 +13646,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -13700,7 +13706,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -13722,7 +13728,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -13809,7 +13815,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -13850,7 +13856,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14053,7 +14059,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14071,7 +14077,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14086,7 +14092,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14117,7 +14123,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14134,7 +14140,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14194,7 +14200,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14209,7 +14215,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14293,7 +14299,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14375,7 +14381,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14390,7 +14396,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14421,7 +14427,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14535,7 +14541,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14620,7 +14626,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14637,7 +14643,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14722,7 +14728,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14889,7 +14895,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14904,7 +14910,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -14980,7 +14986,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15102,7 +15108,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15120,7 +15126,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15263,7 +15269,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15283,7 +15289,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15324,7 +15330,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15385,7 +15391,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15418,7 +15424,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15448,7 +15454,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15479,7 +15485,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15683,7 +15689,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15786,7 +15792,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -15883,7 +15889,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -16125,7 +16131,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -16192,7 +16198,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -17519,7 +17525,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -17701,7 +17707,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T10:05:54.947Z"
+          "ranAt": "2026-11-23T10:16:42.512Z"
         }
       ]
     },
@@ -18554,6 +18560,56 @@
     {
       "source": "CR-GC-1018",
       "target": "FUNC-stand-verlauf",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "FUNC-audit-stats",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "SCHEMA-completeness",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "SCHEMA-impact-slice",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "SCHEMA-mcp-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "SCHEMA-metric-vector",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "SCHEMA-mutate-result",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "SCHEMA-ontology-graph",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "SCHEMA-rule-violation",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "SCHEMA-steering-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1019",
+      "target": "SCHEMA-trajectory",
       "type": "relation"
     },
     {
@@ -41409,5 +41465,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1579
+  "graphVersion": 1583
 }

@@ -134,6 +134,16 @@
 | `CR-GC-1018` | relation | `FUNC-graph-readiness` |
 | `CR-GC-1018` | relation | `FUNC-own-kuzu-host` |
 | `CR-GC-1018` | relation | `FUNC-stand-verlauf` |
+| `CR-GC-1019` | relation | `FUNC-audit-stats` |
+| `CR-GC-1019` | relation | `SCHEMA-completeness` |
+| `CR-GC-1019` | relation | `SCHEMA-impact-slice` |
+| `CR-GC-1019` | relation | `SCHEMA-mcp-tool` |
+| `CR-GC-1019` | relation | `SCHEMA-metric-vector` |
+| `CR-GC-1019` | relation | `SCHEMA-mutate-result` |
+| `CR-GC-1019` | relation | `SCHEMA-ontology-graph` |
+| `CR-GC-1019` | relation | `SCHEMA-rule-violation` |
+| `CR-GC-1019` | relation | `SCHEMA-steering-snapshot` |
+| `CR-GC-1019` | relation | `SCHEMA-trajectory` |
 | `CR-GC-102` | relation | `FUNC-emit-trajectory` |
 | `CR-GC-102` | relation | `FUNC-emit-update-event` |
 | `CR-GC-102` | relation | `MOD-surface` |

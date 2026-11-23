@@ -14358,7 +14358,7 @@ schema ◀ `FLOW-code-urteil`
 
 ###### 3.3.4.2.13  `SCHEMA-completeness` — ReadinessMark
 
-Eine Marke: id, Bezeichnung, erreicht, haltende Befunde. Aus @sigloch/graphcode-client, deshalb external.
+Eine Marke: id, Bezeichnung, erreicht, haltende Befunde. Aus @sigloch/graphcode-client, deshalb external. Der Befund RC-04 bleibt bewusst stehen: computeMarks gibt die Marken im selben Prozess an readinessOf; kein Fluss verlaesst den Prozess, und das Paket parst die Antwort, in der die Marken nach aussen gehen (SCHEMA-readiness-report). (CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-completeness`
 
@@ -14496,7 +14496,7 @@ schema ◀ `FLOW-impact-call`
 
 ###### 3.3.4.2.36  `SCHEMA-impact-slice` — ImpactSlice
 
-Die Impact-Scheibe: Saatknoten, Tiefe, Knoten mit Rolle seed/whitebox/blackbox und Abstand, induzierte Kanten. @sigloch/graph-api-core. Die Rolle traegt Inhalt: an ihr trennt das Lese-Werkzeug den offenen Teil von der Blackbox-Front. (CR-GC-505)
+Die Impact-Scheibe: Saatknoten, Tiefe, Knoten mit Rolle seed/whitebox/blackbox und Abstand, induzierte Kanten. @sigloch/graph-api-core. Die Rolle traegt Inhalt: an ihr trennt das Lese-Werkzeug den offenen Teil von der Blackbox-Front. Der Befund RC-04 bleibt bewusst stehen: die Scheibe geht im selben Prozess von harness.impact an das Lese-Werkzeug; nach aussen geht sie als Format-E-Text. (CR-GC-505, CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-impact-slice`
 
@@ -14556,7 +14556,7 @@ schema ◀ `FLOW-ergebnis` · `FLOW-markdown-docs` · `FLOW-query-export` · `FL
 
 ###### 3.3.4.2.46  `SCHEMA-mcp-tool` — Werkzeug
 
-Was ein Werkzeug IST: Name, Beschreibung, Eingabe-Schema, Handler. Liegt seit CR-GC-480 im Kern, damit keine Schicht das Interface ihrer Oberflaeche kennen muss.
+Was ein Werkzeug IST: Name, Beschreibung, Eingabe-Schema, Handler. Liegt seit CR-GC-480 im Kern, damit keine Schicht das Interface ihrer Oberflaeche kennen muss. Der Befund RC-04 bleibt bewusst stehen: das Werkzeug ist ein Objekt mit Funktionen im selben Prozess; die Eingaben parst jeder Handler selbst (CR-GC-1014 bis CR-GC-1017). (CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-mcp-tool`
 
@@ -14574,7 +14574,7 @@ schema ◀ `FLOW-config-request` · `FLOW-metric-policy`
 
 ###### 3.3.4.2.49  `SCHEMA-metric-vector` — MetricVector
 
-Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)
+Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. Der Befund RC-04 bleibt bewusst stehen: der Vektor wird im selben Prozess gerechnet und gelesen, je Messung neu. (Herkunft korrigiert CR-GC-453; CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-arch-fitness`
 
@@ -14610,13 +14610,13 @@ schema ◀ `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-
 
 ###### 3.3.4.2.55  `SCHEMA-mutate-result` — MutateResult
 
-Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
+Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). Der Befund RC-04 bleibt bewusst stehen: das Ergebnis geht im selben Prozess vom Gate an die Werkzeugschicht; nach aussen geht es als Antwort von graph_mutate, deren Vertrag dort geparst wird (SCHEMA-mutate-answer). (Kopie entfernt CR-GC-454; CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-gate-verdict`
 
 ###### 3.3.4.2.56  `SCHEMA-ontology-graph` — OntologyGraph
 
-Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
+Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se. Der Befund RC-04 bleibt bewusst stehen: der Graph geht im selben Prozess zwischen Store, Gate und Messung; ein Parse je Aufruf hiesse, bei jeder Messung mehrere hundert Elemente erneut zu pruefen. Von der Platte liest ihn der Import mit SCHEMA-ontology-json. (CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-commit-check-request` · `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-fit-anfrage` · `FLOW-fitness-anfrage` · `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · `FLOW-imported-graph` · `FLOW-metrics-request` · `FLOW-select-request` · `FLOW-select-request-lane` · `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-store-load` · `FLOW-store-query` · `FLOW-verlauf-konformanz` · `FLOW-verlauf-snapshot` · `FLOW-zug-anfrage` · `FLOW-zug-anfrage-suggest` · `FLOW-zug-staende`
 
@@ -14692,7 +14692,7 @@ schema ◀ `FLOW-cli-output-rewind` · `FLOW-rewind-summary`
 
 ###### 3.3.4.2.69  `SCHEMA-rule-violation` — RuleViolation
 
-Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. (CR-GC-501)
+Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. Der Befund RC-04 bleibt bewusst stehen: die Befunde gehen im selben Prozess von der Auswertung an Gate, Bericht und Werkzeuge; nach aussen gehen sie in Antworten mit eigenem, geparstem Vertrag. (CR-GC-501, CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-commit-check-verdict` · `FLOW-completeness-request` · `FLOW-conformance-findings` · `FLOW-readiness-request` · `FLOW-rule-findings` · `FLOW-rules-answer` · `FLOW-verlauf-bereitschaft`
 
@@ -14758,7 +14758,7 @@ schema ◀ `FLOW-steering-delta`
 
 ###### 3.3.4.2.80  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
-Gemappter OntologyGraph, Violations des vollen Katalogs, Fokusmenge, Zahl der blockierenden Fehler, Befunde je Stufe. Beschreibt die Form des Messpunkts; den Bestand prueft die Regel R-08, nicht dieses Schema. (CR-GC-786)
+Gemappter OntologyGraph, Violations des vollen Katalogs, Fokusmenge, Zahl der blockierenden Fehler, Befunde je Stufe. Beschreibt die Form des Messpunkts; den Bestand prueft die Regel R-08, nicht dieses Schema. Der Befund RC-04 bleibt bewusst stehen: der Snapshot entsteht und wird gelesen im selben Prozess, je Messung neu; ein Parse hiesse, mehrere hundert Elemente je Messung erneut zu pruefen. (CR-GC-786, CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-steering-pair` · `FLOW-steering-snapshot`
 
@@ -14822,7 +14822,7 @@ schema ◀ `FLOW-read-bind` · `FLOW-tool-context`
 
 ###### 3.3.4.2.91  `SCHEMA-trajectory` — Trajectory/Outcome
 
-append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)
+append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. materializeTrajectory parst jede Grundzeile, bevor sie nach trajectory.jsonl geht. (Kopie entfernt CR-GC-454; Parse CR-GC-1019)
 
 schema ◀ `FLOW-trajectory`
 
