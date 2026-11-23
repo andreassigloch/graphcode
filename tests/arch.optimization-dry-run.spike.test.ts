@@ -555,12 +555,14 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // sechs Werkzeuge an eigene Fluesse mit eigenem Eingabevertrag abgab (Steuerwert am Start 9,50 -> 11,00):
       // fuenf Zuege statt drei. Abfrage nimmt agent-loop, Ruestzeug, Host-Sitzung und graph_mutate auf, Test-Ingest
       // wandert nach agent-surface. Weiter derselbe Befund (ITEM-2026-798).
+      // CR-GC-1015 (graphVersion 1561) — NEU GEMESSEN, nachdem die sechs Lesewerkzeuge eigene Fluesse mit eigenem
+      // Eingabevertrag bekamen (Steuerwert am Start 11,00 -> 12,50): vier Zuege statt fuenf, graph_mutate wird
+      // nicht mehr umgehaengt. Weiter derselbe Befund (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-abfrage -compose-> FUNC-agent-loop',
         'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
         'FUNC-block-abfrage -compose-> FUNC-block-host-sitzung (retire FUNC-block-host-sitzung)',
         'FUNC-test-ingest -allocate-> MOD-agent-surface (retire MOD-projections)',
-        'FUNC-block-abfrage -compose-> FUNC-graph-mutate-tool (retire FUNC-graph-mutate-tool)',
       ]);
       expect(
         rest
@@ -621,9 +623,11 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // wie nach CR-GC-913. Der Vertrag SCHEMA-mutate-answer kam an die Grenzen von surface und agent-surface.
       // CR-GC-1014 (graphVersion 1556) — NEU GEMESSEN: nach den fuenf Zuegen steht R-04 @ MOD-projections vorn, wie
       // nach CR-GC-962. Sechs Eingabevertraege der Werkzeuge kamen an die Grenze von projections (32 -> 38).
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-projections — bitte neu messen').toEqual({
-        ruleId: 'R-04',
-        elementId: 'MOD-projections',
+      // CR-GC-1015 (graphVersion 1561) — NEU GEMESSEN: nach den vier Zuegen steht BW-02 @ FUNC-block-grounding
+      // vorn, wie nach CR-GC-985. Sechs Eingabevertraege der Lesewerkzeuge kamen an die Grenze von Grounding (48 -> 54).
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
+        ruleId: 'BW-02',
+        elementId: 'FUNC-block-grounding',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

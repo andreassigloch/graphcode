@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 84 SCHEMA · 274 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 90 SCHEMA · 280 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -21,19 +21,25 @@
 | `SCHEMA-code-lane-plan` | src/kernel/measure/test-selection.ts#CodeLanePlanSchema | n/a |
 | `SCHEMA-code-urteil` | src/projections/kongruenz.ts#CodeVerdictSchema | n/a |
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMarkSchema | reviewed |
+| `SCHEMA-context-input` | src/surface/read.ts#GraphContextInputSchema | n/a |
 | `SCHEMA-cr-groups` | src/loop/se-plan.ts#CrGroupsSchema | n/a |
 | `SCHEMA-eingangs-befund` | src/kernel/measure/constraints.ts#EingangsBefund | n/a |
+| `SCHEMA-elements-input` | src/surface/read.ts#GraphElementsInputSchema | n/a |
+| `SCHEMA-expand-input` | src/surface/read.ts#GraphExpandInputSchema | n/a |
 | `SCHEMA-export-answer` | src/projections/export.ts#GraphExportAnswerSchema | n/a |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
 | `SCHEMA-fit-advisory` | src/kernel/measure/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | packages/graph-api-core/src/format-e-door.ts#FormatEInputSchema | reviewed |
 | `SCHEMA-function-criticality` | packages/contracts/src/se/function-criticality.ts#FunctionCriticality | reviewed |
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
+| `SCHEMA-get-edges-input` | src/surface/read.ts#GraphGetEdgesInputSchema | n/a |
+| `SCHEMA-get-node-input` | src/surface/read.ts#GraphGetNodeInputSchema | n/a |
 | `SCHEMA-graph-delta` | src/kernel/graph-store.ts#GraphDeltaSchema | n/a |
 | `SCHEMA-grenz-befund` | src/kernel/measure/constraints.ts#GrenzBefund | n/a |
 | `SCHEMA-harness-handle` | src/kernel/harness-handle-contract.ts#HarnessHandle | n/a |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-help-input` | src/projections/report.ts#GraphHelpInputSchema | n/a |
+| `SCHEMA-impact-input` | src/surface/read.ts#GraphImpactInputSchema | n/a |
 | `SCHEMA-impact-slice` | packages/graph-api-core/src/impact-slice.ts#ImpactSliceSchema | reviewed |
 | `SCHEMA-impacted-tests` | src/kernel/measure/test-selection.ts#TestImpactResultSchema | n/a |
 | `SCHEMA-import-access` | src/kernel/harness-import.ts#ImportTargetSchema | n/a |
@@ -171,6 +177,7 @@
 | `FLOW-completeness-request` | `FUNC-compute-readiness` | `FUNC-score-completeness` |
 | `FLOW-config-request` | `FUNC-create-harness` | `FUNC-load-config` |
 | `FLOW-conformance-findings` | `FUNC-check-code-conformance` | `FUNC-commit-check` · `FUNC-graph-readiness` · `FUNC-rules-tool` |
+| `FLOW-context-call` | `FUNC-agent-loop` | `FUNC-read-tools` |
 | `FLOW-context-request` | `FUNC-bind-tools` | `FUNC-tool-context` |
 | `FLOW-cr-groups` | `FUNC-cr-groups` | `FUNC-export-markdown` |
 | `FLOW-cr-groups-request` | `FUNC-export-markdown` | `FUNC-cr-groups` |
@@ -180,7 +187,9 @@
 | `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-graph-readiness` |
 | `FLOW-eingangs-befund` | `FUNC-eingaenge-nur-aus` | `FUNC-verify-lane-model` |
 | `FLOW-element-slice` | `FUNC-list-elements` | `FUNC-health-endpoint` · `FUNC-read-tools` |
+| `FLOW-elements-call` | `FUNC-agent-loop` | `FUNC-read-tools` |
 | `FLOW-ergebnis` | `FUNC-agent-loop` | `ACTOR-auftraggeber` |
+| `FLOW-expand-call` | `FUNC-agent-loop` | `FUNC-read-tools` |
 | `FLOW-expand-subgraph` | `FUNC-graph-expand` | `FUNC-read-tools` |
 | `FLOW-export-answer` | `FUNC-graph-export-snapshot` | `FUNC-agent-loop` |
 | `FLOW-export-cleared` | `FUNC-export-marker-clear` | `ACTOR-auftraggeber` |
@@ -201,6 +210,8 @@
 | `FLOW-generate-answer` | `FUNC-graph-generate-tool` | `FUNC-agent-loop` · `FUNC-host-socket` |
 | `FLOW-generation-request` | `FUNC-graph-generate-tool` | `FUNC-generation-step` |
 | `FLOW-generation-step-vorschlag` | `FUNC-generation-step` | `FUNC-vorschlag` |
+| `FLOW-get-edges-call` | `FUNC-agent-loop` | `FUNC-read-tools` |
+| `FLOW-get-node-call` | `FUNC-agent-loop` | `FUNC-read-tools` |
 | `FLOW-graph-delta` | `FUNC-mutate` | `FUNC-graph-store` |
 | `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-ein-adapter-je-akteur` · `FUNC-eingaenge-nur-aus` · `FUNC-grenze-nur-mit-schema` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` |
 | `FLOW-graph-state` | `FUNC-graph-store` | `FUNC-check-code-conformance` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-metrics` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-import-code-verb` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` |
@@ -225,6 +236,7 @@
 | `FLOW-help-call` | `FUNC-agent-loop` | `FUNC-graph-help` |
 | `FLOW-host-ready` | `FUNC-serve-sse` | `FUNC-cli-dispatch` |
 | `FLOW-http-route` | `FUNC-serve-sse` | `FUNC-graph-expand` · `FUNC-health-endpoint` |
+| `FLOW-impact-call` | `FUNC-agent-loop` | `FUNC-read-tools` |
 | `FLOW-impact-slice` | `FUNC-graph-impact` | `FUNC-read-tools` |
 | `FLOW-impacted-tests` | `FUNC-resolve-tests-from-code` | `FUNC-deduce-tests` · `FUNC-test-ingest` |
 | `FLOW-import-summary` | `FUNC-import-code-verb` | `FUNC-cli-dispatch` |
@@ -277,7 +289,7 @@
 | `FLOW-proxy-build` | `FUNC-serve-stdio` | `FUNC-host-proxy` |
 | `FLOW-proxy-call` | `FUNC-host-proxy` | `FUNC-host-socket` |
 | `FLOW-query-export` | `FUNC-graph-export-snapshot` | `FUNC-export-markdown` |
-| `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` · `FUNC-read-tools` |
+| `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` |
 | `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-graph-export-snapshot` |
 | `FLOW-read-bind` | `FUNC-bind-tools` | `FUNC-read-tools` |
 | `FLOW-read-request` | `FUNC-read-tools` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` |

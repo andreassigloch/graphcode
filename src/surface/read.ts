@@ -27,7 +27,7 @@ const ReadFormatSchema = z
   .default('json')
   .describe("Output format: 'json' (default) or 'formatE' (the Format-E v2 slice, re-importable).");
 
-const GraphElementsInputSchema = z.object({
+export const GraphElementsInputSchema = z.object({
   type: z.string().optional().describe('Filter by node type (e.g. REQ, TEST, MOD)'),
   search: z.string().optional().describe('Substring search against uid, name, description'),
   limit: z.number().int().positive().default(100),
@@ -42,29 +42,29 @@ const GraphElementsInputSchema = z.object({
     ),
 });
 
-const GraphGetNodeInputSchema = z.object({
+export const GraphGetNodeInputSchema = z.object({
   uid: z.string().describe('Node uid'),
 });
 
-const GraphGetEdgesInputSchema = z.object({
+export const GraphGetEdgesInputSchema = z.object({
   uid: z.string().optional().describe('Filter edges incident to this node'),
   edgeType: z.string().optional().describe('Filter by edge type'),
   direction: z.enum(['in', 'out', 'both']).default('both'),
   format: ReadFormatSchema,
 });
 
-const GraphImpactInputSchema = z.object({
+export const GraphImpactInputSchema = z.object({
   id: z.string().describe('Root node uid to compute blast-radius from'),
   depth: z.number().int().nonnegative().default(1).describe('Traversal depth; 1 = direct neighbors'),
 });
 
-const GraphExpandInputSchema = z.object({
+export const GraphExpandInputSchema = z.object({
   handle: z.string().describe('Node uid returned by a previous graph_impact or graph_expand call'),
   branch: z.enum(['callers', 'traces', 'tests', 'all']).default('all'),
   depth: z.number().int().positive().default(2).describe('Depth for this expansion (usually prior_depth + 1)'),
 });
 
-const GraphContextInputSchema = z.object({
+export const GraphContextInputSchema = z.object({
   id: z.string().describe('Realization node uid (e.g. a FUNC) to build the definition-of-done context-pack for'),
   depth: z
     .number()
@@ -390,7 +390,8 @@ export function bindReadTools(ctx: ToolContext) {
       'graph_expand) are ALWAYS Format-E (CR-GC-210). Identity + attributes, descriptions as the cut mark ' +
       '(CR-GC-621); graph_get_node for the wording, prosa:true when the text itself is what you evaluate.',
     inputSchema: GraphElementsInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphElementsInputSchema.parse(raw);
       // Cypher-backed listing via the Kuzu store (KNOW, not grep over the mirror).
       const nodes = await harness.listElements({ type: input.type, search: input.search });
       const total = nodes.length;
@@ -427,7 +428,8 @@ export function bindReadTools(ctx: ToolContext) {
     name: 'graph_get_node',
     description: 'Get a single graph node by uid.',
     inputSchema: GraphGetNodeInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphGetNodeInputSchema.parse(raw);
       const node = harness.getGraph().nodes.find((n) => n.uid === input.uid) ?? null;
       return { node, graphVersion: graphVersion() };
     },
@@ -448,7 +450,8 @@ export function bindReadTools(ctx: ToolContext) {
       'graph_get_node has the wording and the attributes of an endpoint. ' +
       'The slice-tools (graph_impact / graph_expand) are ALWAYS Format-E (CR-GC-210).',
     inputSchema: GraphGetEdgesInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphGetEdgesInputSchema.parse(raw);
       let edges = harness.getGraph().edges;
       if (input.uid) {
         const uid = input.uid;
@@ -505,7 +508,8 @@ export function bindReadTools(ctx: ToolContext) {
       'hops as a Format-E slice, plus the blackbox frontier at depth+1 (identity-only interface ' +
       'lines — the materialized cut). Never the full graph (anti-grep).',
     inputSchema: GraphImpactInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphImpactInputSchema.parse(raw);
       // CR-GC-365 (Weg b): DIE geteilte Traversierung `impactSlice` aus
       // graph-api-core — dieselbe Funktion, die graph-view-edit rendert.
       // Knotengleich zur frueheren Kuzu-Query (Konformanztest im Paket).
@@ -559,7 +563,8 @@ export function bindReadTools(ctx: ToolContext) {
       'directions), and the new depth. No originals store — recomputed from the live Kuzu store. ' +
       'Prose is carried by the handle, its REQ and its SCHEMA (CR-GC-613/621); graph_get_node for the rest.',
     inputSchema: GraphExpandInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphExpandInputSchema.parse(raw);
       // callers = incoming dependents; all/traces/tests = full neighbourhood (both),
       // with traces/tests pruned to the relevant edge types afterwards.
       const direction = input.branch === 'callers' ? 'in' : 'both';
@@ -602,7 +607,8 @@ export function bindReadTools(ctx: ToolContext) {
       '(CR-GC-613), and past depth 1 the outer ring is a frontier listing under `## Rand` (CR-GC-624). ' +
       'graph_get_node has the full text.',
     inputSchema: GraphContextInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphContextInputSchema.parse(raw);
       const graph = harness.getGraph();
       const { slice, missingRefs } = buildContextSlice(graph, input.id, input.depth);
       // CR-GC-624: der Innenring ist die Scheibe EINE Stufe flacher — bei `depth: 1` ist das die
