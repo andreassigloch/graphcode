@@ -112,6 +112,8 @@
 | `CR-GC-1011` | relation | `FUNC-take-steering-snapshot` |
 | `CR-GC-1012` | relation | `FUNC-graph-store` |
 | `CR-GC-1012` | relation | `SCHEMA-import-access` |
+| `CR-GC-1013` | relation | `FUNC-sync-skills` |
+| `CR-GC-1013` | relation | `SCHEMA-skill-text` |
 | `CR-GC-102` | relation | `FUNC-emit-trajectory` |
 | `CR-GC-102` | relation | `FUNC-emit-update-event` |
 | `CR-GC-102` | relation | `MOD-surface` |
@@ -4364,6 +4366,7 @@
 | `TEST-vertrag-session-registry` | verify | `SCHEMA-session-registry` |
 | `TEST-vertrag-sitzungsende` | verify | `SCHEMA-sitzungsende` |
 | `TEST-vertrag-skill-sync-result` | verify | `SCHEMA-skill-sync-result` |
+| `TEST-vertrag-skill-text` | verify | `SCHEMA-skill-text` |
 | `TEST-vertrag-steering-delta` | verify | `SCHEMA-steering-delta` |
 | `TEST-vertrag-steering-snapshot` | verify | `SCHEMA-steering-snapshot` |
 | `TEST-vertrag-store-rebuild-notice` | verify | `SCHEMA-store-rebuild-notice` |

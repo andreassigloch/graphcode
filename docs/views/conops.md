@@ -204,6 +204,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-101` | done | MCP-Tools | `FUNC-graph-expand` · `FUNC-graph-impact` · `MOD-surface` · `REQ-audit-trail` · `REQ-cache-layering` · `REQ-mcp-gate-symmetry` · `REQ-mcp-tool-registry` · `REQ-progressive-expansion` · `REQ-query-precision` · `REQ-single-transport` · `REQ-subgraph-slicing` |
 | `CR-GC-1011` | done | Doppelte Flüsse ohne Vertrag: FLOW-measurement-vector und FLOW-action entfernen | `FUNC-goal-steerer` · `FUNC-take-steering-snapshot` |
 | `CR-GC-1012` | done | SCHEMA-import-access ohne Zod-Schema: ImportTargetSchema, Erzeuger parst | `FUNC-graph-store` |
+| `CR-GC-1013` | n/a | SCHEMA-skill-text ohne Zod-Schema und Vertragstest (R-32) | `FUNC-sync-skills` |
 | `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-surface` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
 | `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-agent-surface` · `REQ-doc-export` |

@@ -14,6 +14,7 @@
  *
  * @author andreas@siglochconsulting
  */
+import { z } from 'zod';
 import { join, sep } from 'node:path';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { readPackageVersion, packageRootDir } from '../kernel/package-version.js';
@@ -167,8 +168,17 @@ export function shippedSkillFiles(): string[] {
   return ownedSkillFiles().filter((f) => parseSkillFrontmatter(readFileSync(join(dir, f), 'utf8')).version > 0);
 }
 
-/** The frontmatter fields a skill carries (CR-GC-208): identity, purpose, sync-version. */
-export type SkillMeta = { name: string; description: string; version: number };
+/**
+ * The frontmatter fields a skill carries (CR-GC-208): identity, purpose, sync-version.
+ * The contract of SCHEMA-skill-text as far as graphcode reads it (CR-GC-1013); the body
+ * stays the agent host's prompt text.
+ */
+export const SkillMetaSchema = z.strictObject({
+  name: z.string(),
+  description: z.string(),
+  version: z.number().int().min(0),
+});
+export type SkillMeta = z.infer<typeof SkillMetaSchema>;
 
 /**
  * Parse the `---`-fenced YAML-ish frontmatter of a skill file for `name`, `description`,
@@ -193,7 +203,7 @@ export function parseSkillFrontmatter(content: string): SkillMeta {
       if (Number.isFinite(n)) meta.version = n;
     }
   }
-  return meta;
+  return SkillMetaSchema.parse(meta);
 }
 
 /**

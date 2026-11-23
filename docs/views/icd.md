@@ -67,7 +67,7 @@
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
 | `SCHEMA-sitzungsende` | src/surface/session-end-contract.ts#SitzungsendeSchema | reviewed |
 | `SCHEMA-skill-sync-result` | src/surface/scaffold.ts#SkillSyncResultSchema | n/a |
-| `SCHEMA-skill-text` | extern definiert (kein realRef) | n/a |
+| `SCHEMA-skill-text` | src/surface/scaffold-templates.ts#SkillMetaSchema | n/a |
 | `SCHEMA-steering-channel` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
 | `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshotSchema | reviewed |
