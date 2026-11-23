@@ -4,7 +4,7 @@
 
 # graphcode — Test Concept
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 295 TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 298 TEST — Verifikationsstufen nach der Lage der geprüften Anforderung, benannt nach Automotive SPICE. Deterministisch generiert.
 
 ```
               ╱╲
@@ -25,7 +25,7 @@
 | System | SYS (1) | system verification (SYS.5) | 46 | 35 / 35 system requirements | ✓ |
 | Use-case | UC (9) | requirements verification (SWE.6 · HWE.4) | 63 | 9 / 9 use cases | ✓ |
 | Integration | FUNC↔FUNC (343 conn) | integration verification (SYS.4 · SWE.5) | 44 | 221 / 343 connections | ✗ 122 uncovered |
-| Interface | SCHEMA (97) | integration verification (SYS.4 · SWE.5) | 124 | 93 / 97 schemas | ⚠ 4 without a test |
+| Interface | SCHEMA (100) | integration verification (SYS.4 · SWE.5) | 127 | 96 / 100 schemas | ⚠ 4 without a test |
 | Module | MOD (7) | component verification (SWE.5 · HWE.3) | 55 | 6 / 7 | ⚠ 1 without a verified requirement |
 | Function | FUNC (121) | unit verification (SWE.4 · HWE.3) | 136 | 121 / 121 | ✓ |
 | (no position) | TEST | — | 8 | verifies no REQ or SCHEMA | ⚠ 8 without a position |

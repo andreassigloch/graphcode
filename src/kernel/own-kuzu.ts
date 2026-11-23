@@ -26,9 +26,11 @@
  *
  * @author andreas@siglochconsulting
  */
-import type { HarnessConfig } from '@sigloch/contracts/harness';
+import { z } from 'zod';
+import { HarnessConfigSchema, type HarnessConfig } from '@sigloch/contracts/harness';
 import type { LiveUpdateEvent } from '@sigloch/contracts/harness';
 import type { GraphCodeHarness } from './harness.js';
+import { HarnessHandle } from './harness-handle-contract.js';
 
 /** Die Fabrik, mit der im OWN-Modus geöffnet wird — in Produktion `createHarness`. */
 export type OpenHarness = (
@@ -49,6 +51,18 @@ export interface OwnKuzuOptions {
   onUpdateEvent?: (event: LiveUpdateEvent) => void;
 }
 
+/**
+ * Der Vertrag des Auftrags an `ownKuzu` (SCHEMA-own-kuzu-options, CR-GC-1018): zwei Funktionen, zwei
+ * Texte, der Scope und — nur im ATTACH-Modus — der Griff des gewählten Besitzers.
+ */
+export const OwnKuzuOptionsSchema = z.strictObject({
+  open: z.function(),
+  repoRoot: z.string().min(1),
+  scope: HarnessConfigSchema.shape.scope,
+  harness: HarnessHandle.optional(),
+  onUpdateEvent: z.function().optional(),
+} satisfies Record<keyof OwnKuzuOptions, z.ZodType>);
+
 export interface OwnedKuzu {
   harness: GraphCodeHarness;
   /** True genau dann, wenn HIER geöffnet wurde — nur dann darf hier geschlossen werden. */
@@ -62,6 +76,7 @@ export interface OwnedKuzu {
  * beantwortet wird.
  */
 export async function ownKuzu(opts: OwnKuzuOptions): Promise<OwnedKuzu> {
+  OwnKuzuOptionsSchema.parse(opts);
   if (opts.harness) {
     // ATTACH: der gewählte Host besitzt den Store bereits. Wir fassen weder
     // Sperre noch Event-Senke an — die stand zu SEINER createHarness-Zeit fest.

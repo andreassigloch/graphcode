@@ -46,7 +46,7 @@ import { MANUELL, TestSelectionSchema, type TestSelection } from '../kernel/meas
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 import { heldBackTraces, type RejectedTrace } from '../kernel/harness-import.js';
 import { schneide, type Umfang } from '../kernel/measure/working-set.js';
-import { verlaufAmRepo } from './verlauf-repo.js';
+import { verlaufAmRepo, VerlaufAmRepoEingabeSchema } from './verlauf-repo.js';
 import type { Verlauf } from './verlauf.js';
 
 // -------------------------------------------------------------------------
@@ -369,13 +369,15 @@ export function bindReportTools(ctx: ToolPort) {
         heldBackTraces: heldBackTraces(harness.getRepoRoot(), harness.getScope().systemId, harness.getGraph()),
         ...(input.verlauf
           ? {
-              verlauf: verlaufAmRepo({
-                repoRoot: harness.getRepoRoot(),
-                storeDir: harness.getStoreDir(),
-                policy: harness.getMetricPolicy(),
-                policySource: harness.getGraphcodeConfig().source,
-                window: input.verlauf,
-              }),
+              verlauf: verlaufAmRepo(
+                VerlaufAmRepoEingabeSchema.parse({
+                  repoRoot: harness.getRepoRoot(),
+                  storeDir: harness.getStoreDir(),
+                  policy: harness.getMetricPolicy(),
+                  policySource: harness.getGraphcodeConfig().source,
+                  window: input.verlauf,
+                }),
+              ),
             }
           : {}),
       };

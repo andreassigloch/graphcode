@@ -125,7 +125,7 @@ Ein Glied der Steuerungsschleife rechnet auf dem Stand vor dem letzten Zug. Die 
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-single-measurement-path` | tests/steering.measurement-path.test.ts | passed | 2026-11-22 |
+| `TEST-single-measurement-path` | tests/steering.measurement-path.test.ts | passed | 2026-11-23 |
 
 ### 6. Risiko Schleife pendelt (`REQ-risk-loop-oscillation`)
 
@@ -334,7 +334,7 @@ Der Besitzer des Stores endet, waehrend andere Sitzungen angedockt sind. Eine an
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-host-shim` | tests/host-shim.test.ts | passed | 2026-11-22 |
+| `TEST-host-shim` | tests/host-shim.test.ts | passed | 2026-11-23 |
 
 ### 17. Risiko halb gefuellter Store nach Abbruch (`REQ-risk-partial-store-after-reseed`)
 

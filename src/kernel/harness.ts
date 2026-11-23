@@ -37,7 +37,6 @@ import {
 } from '@sigloch/graph-api-core';
 import { type MetricPolicy } from '@sigloch/contracts/se';
 import {
-  HarnessConfigSchema,
   type HarnessConfig,
   type MutateCommand,
   type MutateResult,
@@ -114,7 +113,8 @@ export class GraphCodeHarness {
       onLockLost?: () => void;
     },
   ) {
-    this.config = HarnessConfigSchema.parse(config);
+    // Geparst an der Grenze createHarness (CR-GC-1018); hier kommt die getypte Konfiguration an.
+    this.config = config;
     this.storage = storage;
     this.hooks = hooks ?? new HookSystem({ preCommitTimeout: this.config.preCommitTimeout });
     // L2: rules come from the contracts-derived SE descriptor — no local parser.

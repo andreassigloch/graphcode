@@ -9,20 +9,23 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import type { MetricPolicy } from '@sigloch/contracts/se';
+import { z } from 'zod';
+import { MetricPolicySchema } from '@sigloch/contracts/se';
 import { loadGraphcodeConfig } from '../kernel/config.js';
 import { PlattenCache } from './verlauf-cache.js';
 import { rechneVerlauf, verlaufPraefix, type Verlauf, type VerlaufCache } from './verlauf.js';
 
-export interface VerlaufAmRepoEingabe {
-  repoRoot: string;
+/** Der Auftrag des Hosts an die Verlaufsrechnung (SCHEMA-verlauf-request, CR-GC-1018). */
+export const VerlaufAmRepoEingabeSchema = z.strictObject({
+  repoRoot: z.string().min(1),
   /** `harness.getStoreDir()` — nicht fest `.graphcode`. `null` = kein Zwischenspeicher auf Platte. */
-  storeDir: string | null;
-  policy: MetricPolicy;
-  policySource: string;
+  storeDir: z.string().min(1).nullable(),
+  policy: MetricPolicySchema,
+  policySource: z.string().min(1),
   /** Zahl der juengsten Staende; `null` = alle. */
-  window: number | null;
-}
+  window: z.number().int().min(1).nullable(),
+});
+export type VerlaufAmRepoEingabe = z.input<typeof VerlaufAmRepoEingabeSchema>;
 
 export function verlaufAmRepo(e: VerlaufAmRepoEingabe): Verlauf {
   const platte = e.storeDir ? new PlattenCache(e.storeDir) : null;

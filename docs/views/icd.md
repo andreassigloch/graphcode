@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 97 SCHEMA · 287 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 100 SCHEMA · 287 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -40,6 +40,7 @@
 | `SCHEMA-get-node-input` | src/surface/read.ts#GraphGetNodeInputSchema | n/a |
 | `SCHEMA-graph-delta` | src/kernel/graph-store.ts#GraphDeltaSchema | n/a |
 | `SCHEMA-grenz-befund` | src/kernel/measure/constraints.ts#GrenzBefund | n/a |
+| `SCHEMA-harness-config` | packages/contracts/src/harness/index.ts#HarnessConfigSchema | n/a |
 | `SCHEMA-harness-handle` | src/kernel/harness-handle-contract.ts#HarnessHandle | n/a |
 | `SCHEMA-health-report` | src/surface/health.ts#HealthPayloadSchema | n/a |
 | `SCHEMA-help-input` | src/projections/report.ts#GraphHelpInputSchema | n/a |
@@ -66,6 +67,7 @@
 | `SCHEMA-mutate-result` | packages/contracts/src/harness/index.ts#MutateResultSchema | reviewed |
 | `SCHEMA-ontology-graph` | packages/contracts/src/se/ontology.ts#OntologyGraph | reviewed |
 | `SCHEMA-ontology-json` | src/kernel/harness-import.ts#OntologyJsonSchema | n/a |
+| `SCHEMA-own-kuzu-options` | src/kernel/own-kuzu.ts#OwnKuzuOptionsSchema | n/a |
 | `SCHEMA-query-params` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-readiness-input` | src/projections/report.ts#GraphReadinessInputSchema | n/a |
 | `SCHEMA-readiness-report` | packages/graphcode-client/src/readiness.ts#ReadinessReportSchema | reviewed |
@@ -102,6 +104,7 @@
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
 | `SCHEMA-upgrade-report` | src/surface/upgrade.ts#UpgradeReportSchema | n/a |
 | `SCHEMA-verlauf` | src/projections/verlauf.ts#VerlaufSchema | n/a |
+| `SCHEMA-verlauf-request` | src/projections/verlauf-repo.ts#VerlaufAmRepoEingabeSchema | n/a |
 | `SCHEMA-vertragstest-bericht` | src/projections/vertragstest.ts#VertragstestBerichtSchema | n/a |
 | `SCHEMA-vertragstest-satz` | src/projections/vertragstest.ts#VertragstestSatzSchema | n/a |
 | `SCHEMA-vitest-lauf` | src/projections/test-schlupf.ts#VitestLaufSchema | n/a |
