@@ -159,7 +159,8 @@
       "id": "CR-GC-1016",
       "type": "CR",
       "name": "Sammelfluss query-params: Eingaben von export, metrics, suggest, generate ohne eigenen Vertrag",
-      "description": "docs/cr/open/CR-GC-1016-sammelfluss-query-params-eingaben-von-ex.md"
+      "description": "docs/cr/done/CR-GC-1016-sammelfluss-query-params-eingaben-von-ex.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-102",
@@ -41139,5 +41140,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1567
+  "graphVersion": 1568
 }

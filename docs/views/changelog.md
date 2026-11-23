@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 620 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 620 CR · 608 done · 1 open.
+Total: 620 CR · 609 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -239,7 +239,7 @@ Total: 620 CR · 608 done · 1 open.
 | `CR-GC-1013` | done | SCHEMA-skill-text ohne Zod-Schema und Vertragstest (R-32) |
 | `CR-GC-1014` | done | Sammelfluss query-params: Eingaben der Bericht-Werkzeuge ohne eigenen Vertrag |
 | `CR-GC-1015` | done | Sammelfluss query-params: Eingaben der Lesewerkzeuge ohne eigenen Vertrag |
-| `CR-GC-1016` | n/a | Sammelfluss query-params: Eingaben von export, metrics, suggest, generate ohne eigenen Vertrag |
+| `CR-GC-1016` | done | Sammelfluss query-params: Eingaben von export, metrics, suggest, generate ohne eigenen Vertrag |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |
