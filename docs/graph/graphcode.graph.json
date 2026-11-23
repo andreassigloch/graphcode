@@ -204,7 +204,8 @@
       "id": "CR-GC-1021",
       "type": "CR",
       "name": "SCHEMA-query-params: Auftrag und Skill-Aufruf sind Prompt-Text, kein Code-Vertrag",
-      "description": "docs/cr/open/CR-GC-1021-schema-query-params-auftrag-und-skill-au.md"
+      "description": "docs/cr/done/CR-GC-1021-schema-query-params-auftrag-und-skill-au.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-103",
@@ -41603,5 +41604,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1591
+  "graphVersion": 1592
 }
