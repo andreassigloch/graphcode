@@ -145,7 +145,8 @@
       "id": "CR-GC-1014",
       "type": "CR",
       "name": "Sammelfluss query-params: Eingaben der Bericht-Werkzeuge ohne eigenen Vertrag",
-      "description": "docs/cr/open/CR-GC-1014-sammelfluss-query-params-eingaben-der-be.md"
+      "description": "docs/cr/done/CR-GC-1014-sammelfluss-query-params-eingaben-der-be.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-102",
@@ -40573,5 +40574,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1557
+  "graphVersion": 1558
 }
