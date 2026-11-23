@@ -152,7 +152,8 @@
       "id": "CR-GC-1015",
       "type": "CR",
       "name": "Sammelfluss query-params: Eingaben der Lesewerkzeuge ohne eigenen Vertrag",
-      "description": "docs/cr/open/CR-GC-1015-sammelfluss-query-params-eingaben-der-le.md"
+      "description": "docs/cr/done/CR-GC-1015-sammelfluss-query-params-eingaben-der-le.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-102",
@@ -40892,5 +40893,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1562
+  "graphVersion": 1563
 }
