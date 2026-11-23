@@ -163,6 +163,7 @@
 | `CR-GC-1021` | relation | `SCHEMA-auftragstext` |
 | `CR-GC-1022` | relation | `FUNC-generation-step` |
 | `CR-GC-1022` | relation | `SCHEMA-generation-request` |
+| `CR-GC-1023` | relation | `FUNC-graph-suggest` |
 | `CR-GC-103` | relation | `FUNC-decode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |

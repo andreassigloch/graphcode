@@ -135,10 +135,6 @@ export const INCLUDED = [
   // herum, aendert sich genau diese Menge — eine Modellaenderung kann ihn rot machen,
   // also gehoert er in die Spur.
   'tests/test-selection.audit.test.ts',
-  // CR-GC-842: pinnt den Zug am Engpass (`FUNC-block-bedienung -compose-> FUNC-test-ingest`) und den
-  // Engpass danach (BW-02 @ FUNC-block-grounding) an der committeten SSOT. CR-GC-840 hat das gezeigt:
-  // eine reine Modellaenderung machte ihn rot, und nur die volle Suite sah es. ~12 s.
-  'tests/arch.optimization-dry-run.spike.test.ts',
   'tests/skill-authoring-gate.test.ts',
   'tests/skill-report-measured.test.ts',
   // CR-GC-851: der erste Constraint (Ein Schreibweg). Liest die committete SSOT und prueft die
@@ -165,6 +161,9 @@ export const EXCLUDED = {
   'tests/render-verb.test.ts':
     'CR-GC-909: schreibt einen eigenen Snapshot (docs/graph/paketstation.graph.json) in ein Wegwerf-Repo und rendert\n' +
     'ihn. Die committete SSOT liest er nicht; rot wird er nur durch Code am Renderer oder am Verb (Spur CODE).',
+  'tests/arch.optimization-dry-run.spike.test.ts':
+    'CR-GC-1023: misst gegen eine eingefrorene Kopie des Modells (tests/fixtures/arch-dry-run.graph.json, mit\n' +
+    'Pruefsumme), nicht gegen die SSOT. Eine Modellaenderung kann ihn nicht rot machen; Code und Regeln sehr wohl (Spur CODE).',
   'tests/live-feed.test.ts':
     'CR-GC-809: liest die SSOT nur als grosse Eingabe fuer die Format-E-Rundreise. Sie prueft den Codec, nicht das\n' +
     'Modell — eine Modellaenderung kann sie nur rot machen, wenn der Codec einen neuen Wert nicht traegt (Spur CODE).',

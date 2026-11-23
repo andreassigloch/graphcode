@@ -77,7 +77,14 @@ import { toOntologyGraph } from '../src/kernel/conformance.js';
 import { makeSteeringConfig, type FixtureGraph } from './fixtures/steering-graphs.js';
 import { batchFor, type GraphSuggestResult } from '../src/loop/suggest.js';
 
-const REPO_GRAPH = join(__dirname, '..', 'docs/graph/graphcode.graph.json');
+/**
+ * CR-GC-1023: eingefrorene Kopie des eigenen Modells (Commit 76f1b825, graphVersion des Stands), nicht die
+ * lebende SSOT — sonst musste der Test nach jeder Modellaenderung neu eingemessen werden (FAQ
+ * test-kein-live-zustand). Nachziehen nur per bewusstem Commit: Datei ersetzen, FIXTURE_SHA256 und die
+ * gemessenen Erwartungen unten im selben Commit.
+ */
+const REPO_GRAPH = join(__dirname, 'fixtures', 'arch-dry-run.graph.json');
+const FIXTURE_SHA256 = '6f1f086449daf43b4f6a711467400a5bbad2913a074c017d9b5247ee47207d50';
 
 /** Das hinterlegte Zielprofil (.graphcode/target-profile.json) — hier fest im
  *  Test, damit der Lauf nicht von einer Config im Temp-repoRoot abhängt. */
@@ -270,6 +277,8 @@ function printBalance(before: Set<string>, after: Set<string>): void {
 describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-Kuzu)', () => {
   it('Lauf A — greedy: Reichweite des Autopiloten nach CR-GC-435', async () => {
     const ssot = sha256(REPO_GRAPH);
+    // Die Vorlage ist die, gegen die die Erwartungen gemessen sind — sonst Abbruch statt Fehlmessung.
+    expect(ssot).toBe(FIXTURE_SHA256);
     const rig = await makeRig();
     try {
       // Schritt 0 — Grammatik pinnen: gegen welche contracts-Version wird gemessen?
@@ -648,7 +657,7 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
         ruleId: 'R-04',
         elementId: 'MOD-surface',
       });
-      // Trockenübung: der produktive SSOT ist nachweislich unverändert.
+      // Trockenübung: die Vorlage ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);
     } finally {
       await dropRig(rig);
