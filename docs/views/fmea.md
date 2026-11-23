@@ -48,7 +48,7 @@ Ein Risiko oder eine Anforderung gilt als nachgewiesen durch ein bestandenes Tes
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-11-22 |
+| `TEST-lane-reports-change` | tests/aenderungsmeldung.test.ts | passed | 2026-11-23 |
 | `TEST-test-result-withdrawn-on-change` | tests/testreport.ruecknahme.test.ts | passed | 2026-11-23 |
 
 ### 2. Risiko falscher Befund laeuft um (`REQ-risk-loop-degradation`)
@@ -277,7 +277,7 @@ Die Testauswahl laesst einen roten Test aus. Ein Fehler erreicht den Commit.
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-test-schlupf` | tests/test-schlupf.test.ts | passed | 2026-11-22 |
+| `TEST-test-schlupf` | tests/test-schlupf.test.ts | passed | 2026-11-23 |
 
 ### 14. Risiko Export scheitert still (`REQ-risk-auto-export-fails-silently`)
 

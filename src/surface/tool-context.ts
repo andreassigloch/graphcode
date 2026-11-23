@@ -22,7 +22,7 @@ import { randomUUID } from 'node:crypto';
 import type { GraphCodeHarness } from '../kernel/harness.js';
 import { ToolContext } from './tool-context-contract.js';
 import type { AuditLog, AuditEntry, OperationsLog } from '@sigloch/graph-api-core';
-import { SE_DESCRIPTOR, FileOperationsLog } from '@sigloch/graph-api-core';
+import { SE_DESCRIPTOR, FileOperationsLog, AuditEntrySchema } from '@sigloch/graph-api-core';
 // CR-GC-314 REQ-A02: the rule-set version comes from the LOADED package, never from
 // config — otherwise the trail records a claim instead of a fact.
 import { RULES_VERSION } from '@sigloch/contracts/se';
@@ -401,6 +401,9 @@ export function createToolContext(
       ...(stamps?.skill !== undefined ? { skill: stamps.skill } : {}),
       ...codeStateField(),
     };
+    // CR-GC-1020: der Satz geht in einen anderen Prozess (Leser des Logs) — Vertrag pruefen, das
+    // Original schreiben. Das Schema nennt die Stempel nicht; seine Kopie verloere sie.
+    AuditEntrySchema.parse(entry);
     await auditLog.record(entry);
     // Re-project the feed from the log as the single source (CR-252). The write
     // above is the one truth; the feed is derived, so this can never diverge.
@@ -447,6 +450,7 @@ export function createToolContext(
       ...(skill !== undefined ? { skill } : {}),
       ...codeStateField(),
     };
+    AuditEntrySchema.parse(entry); // CR-GC-1020, wie in recordAudit
     await auditLog.record(entry);
     // Same anchor as the mutate path (CR-GC-449): the feed belongs to its log.
     await materializeTrajectory(auditLog, harness.getStoreDir());

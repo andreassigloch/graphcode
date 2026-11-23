@@ -154,6 +154,12 @@
 | `CR-GC-102` | relation | `REQ-precommit-timeout` |
 | `CR-GC-102` | relation | `REQ-trajectory-emit` |
 | `CR-GC-102` | relation | `REQ-versioned-cache` |
+| `CR-GC-1020` | relation | `FUNC-graph-suggest` |
+| `CR-GC-1020` | relation | `FUNC-host-socket` |
+| `CR-GC-1020` | relation | `FUNC-tool-context` |
+| `CR-GC-1020` | relation | `SCHEMA-audit-record` |
+| `CR-GC-1020` | relation | `SCHEMA-shim-request` |
+| `CR-GC-1020` | relation | `SCHEMA-suggest-answer` |
 | `CR-GC-103` | relation | `FUNC-decode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |
@@ -2402,7 +2408,7 @@
 | `FLOW-dashboard-answer` | io | `ACTOR-dashboard` |
 | `FLOW-dashboard-answer` | relation | `SCHEMA-metrics-answer` |
 | `FLOW-dashboard-call` | io | `FUNC-host-socket` |
-| `FLOW-dashboard-call` | relation | `SCHEMA-query-params` |
+| `FLOW-dashboard-call` | relation | `SCHEMA-shim-request` |
 | `FLOW-dashboard-generate-call` | io | `FUNC-graph-generate-tool` |
 | `FLOW-dashboard-generate-call` | relation | `SCHEMA-generate-input` |
 | `FLOW-dashboard-metrics-call` | io | `FUNC-graph-metrics` |
@@ -2661,7 +2667,7 @@
 | `FLOW-proxy-build` | io | `FUNC-host-proxy` |
 | `FLOW-proxy-build` | relation | `SCHEMA-mcp-tool-registry` |
 | `FLOW-proxy-call` | io | `FUNC-host-socket` |
-| `FLOW-proxy-call` | relation | `SCHEMA-mutate-command` |
+| `FLOW-proxy-call` | relation | `SCHEMA-shim-request` |
 | `FLOW-query-export` | io | `FUNC-export-markdown` |
 | `FLOW-query-export` | relation | `SCHEMA-markdown-view` |
 | `FLOW-query-request-auto-export` | io | `FUNC-graph-export-snapshot` |
@@ -4387,6 +4393,7 @@
 | `TEST-verify-model-set` | verify | `REQ-model-lane-fixed-set` |
 | `TEST-verify-model-set` | verify | `REQ-testspur-passt-zum-diff` |
 | `TEST-vertrag-adapter-befund` | verify | `SCHEMA-adapter-befund` |
+| `TEST-vertrag-audit-record` | verify | `SCHEMA-audit-record` |
 | `TEST-vertrag-audit-stats` | verify | `SCHEMA-audit-stats` |
 | `TEST-vertrag-audit-stats-input` | verify | `SCHEMA-audit-stats-input` |
 | `TEST-vertrag-audit-trail-input` | verify | `SCHEMA-audit-trail-input` |
@@ -4459,12 +4466,14 @@
 | `TEST-vertrag-schema-fingerprint` | verify | `SCHEMA-schema-fingerprint` |
 | `TEST-vertrag-schlupf-zeile` | verify | `SCHEMA-schlupf-zeile` |
 | `TEST-vertrag-session-registry` | verify | `SCHEMA-session-registry` |
+| `TEST-vertrag-shim-request` | verify | `SCHEMA-shim-request` |
 | `TEST-vertrag-sitzungsende` | verify | `SCHEMA-sitzungsende` |
 | `TEST-vertrag-skill-sync-result` | verify | `SCHEMA-skill-sync-result` |
 | `TEST-vertrag-skill-text` | verify | `SCHEMA-skill-text` |
 | `TEST-vertrag-steering-delta` | verify | `SCHEMA-steering-delta` |
 | `TEST-vertrag-steering-snapshot` | verify | `SCHEMA-steering-snapshot` |
 | `TEST-vertrag-store-rebuild-notice` | verify | `SCHEMA-store-rebuild-notice` |
+| `TEST-vertrag-suggest-answer` | verify | `SCHEMA-suggest-answer` |
 | `TEST-vertrag-suggest-input` | verify | `SCHEMA-suggest-input` |
 | `TEST-vertrag-target-profile` | verify | `SCHEMA-target-profile` |
 | `TEST-vertrag-test-ingest-answer` | verify | `SCHEMA-test-ingest-answer` |

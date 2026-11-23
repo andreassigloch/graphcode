@@ -29,6 +29,7 @@ import {
   HOST_SOCK_BASENAME,
   SUBSCRIBE_TOOL,
   callHost,
+  ShimRequestSchema,
   type ShimRequest,
   type ShimResponse,
 } from '@sigloch/graphcode-client';
@@ -80,7 +81,7 @@ export function startHostSocket(registry: MCPToolRegistry, socketPath: string, f
     let response: ShimResponse;
     let id = -1;
     try {
-      const req = JSON.parse(line) as ShimRequest;
+      const req = ShimRequestSchema.parse(JSON.parse(line)); // CR-GC-1020: die Zeile kommt aus einem anderen Prozess
       id = req.id;
       if (req.tool === SUBSCRIBE_TOOL && feed) {
         // Stand und Abo im selben synchronen Schritt: dazwischen geht kein Event verloren (CR-GC-809).

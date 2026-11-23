@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 623 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 624 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 623 CR · 612 done · 1 open.
+Total: 624 CR · 612 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -243,6 +243,7 @@ Total: 623 CR · 612 done · 1 open.
 | `CR-GC-1017` | done | Sammelfluss query-params: Eingaben von reseed und audit ohne eigenen Vertrag |
 | `CR-GC-1018` | done | Sammelfluss query-params: interne Aufrufe ohne eigenen Vertrag |
 | `CR-GC-1019` | done | RC-04: Trajektorie ungeparst auf Platte, Prozess-Vertraege ohne Grund |
+| `CR-GC-1020` | n/a | R-26, R-32: audit-record, suggest-answer und der Dashboard-Socket an die neuen Familien-Schemas binden |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |

@@ -4,14 +4,14 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 100 SCHEMA · 287 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 101 SCHEMA · 287 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
 | Interface (SCHEMA) | Contract (realRef) | status |
 |---|---|---|
 | `SCHEMA-adapter-befund` | src/kernel/measure/constraints.ts#AdapterBefund | n/a |
-| `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
+| `SCHEMA-audit-record` | packages/graph-api-core/src/audit.ts#AuditEntrySchema | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit-stats.ts#AuditStatsSchema | reviewed |
 | `SCHEMA-audit-stats-input` | src/surface/audit.ts#AuditStatsInputSchema | n/a |
 | `SCHEMA-audit-trail-input` | src/surface/audit.ts#AuditTrailInputSchema | n/a |
@@ -84,6 +84,7 @@
 | `SCHEMA-schema-fingerprint` | src/kernel/schema-fingerprint-contract.ts#SchemaFingerprintSchema | n/a |
 | `SCHEMA-schlupf-zeile` | src/projections/test-schlupf.ts#SchlupfZeileSchema | n/a |
 | `SCHEMA-session-registry` | src/surface/gve-session-contract.ts#SessionEntrySchema | n/a |
+| `SCHEMA-shim-request` | packages/graphcode-client/src/host-client.ts#ShimRequestSchema | n/a |
 | `SCHEMA-sitzungsende` | src/surface/session-end-contract.ts#SitzungsendeSchema | reviewed |
 | `SCHEMA-skill-sync-result` | src/surface/scaffold.ts#SkillSyncResultSchema | n/a |
 | `SCHEMA-skill-text` | src/surface/scaffold-templates.ts#SkillMetaSchema | n/a |
@@ -91,7 +92,7 @@
 | `SCHEMA-steering-delta` | src/kernel/measure/steering-snapshot.ts#SteeringDelta | reviewed |
 | `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshotSchema | reviewed |
 | `SCHEMA-store-rebuild-notice` | src/kernel/store-rebuild-notice.ts#StoreRebuildNoticeSchema | n/a |
-| `SCHEMA-suggest-answer` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-suggest-answer` | src/loop/suggest.ts#GraphSuggestAnswerSchema | n/a |
 | `SCHEMA-suggest-input` | src/loop/suggest.ts#GraphSuggestInputSchema | n/a |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
 | `SCHEMA-test-ingest-answer` | src/projections/testreport.ts#GraphTestIngestAnswerSchema | n/a |

@@ -32,9 +32,9 @@
  * Überschuss ist. Genau dafür wurde umgestellt.
  */
 import { z } from 'zod/v4';
-import type { MutateResult } from '@sigloch/contracts/harness';
-import type { MutateCommand } from '@sigloch/contracts/harness';
-import { suggestEdits, type Suggestion, type SuggestedEdit } from '@sigloch/se-engine';
+import { MutateTier, type MutateCommand } from '@sigloch/contracts/harness';
+import { suggestEdits, SuggestionSchema, type SuggestedEdit } from '@sigloch/se-engine';
+import { SteerAdvisory } from '../kernel/measure/fit-advisory.js';
 import { toOntologyGraph } from '../kernel/conformance.js';
 import { generationStep, type GenerationStep } from './generate.js';
 import { focusMemoryOf, stepWithMemory, type SteerOptimum } from './stagnation.js';
@@ -110,11 +110,11 @@ export const GraphGenerateInputSchema = z.object({
 // Output types
 // -------------------------------------------------------------------------
 
-export interface SuggestVerdict {
+export const SuggestVerdictSchema = z.strictObject({
   /** Der 3-Tier-Gate-Spruch für den Template-Edit (dryRun, nichts persistiert). */
-  tier: MutateResult['tier'];
-  success: boolean;
-  violations: { ruleId: string; severity: string; message: string }[];
+  tier: MutateTier.optional(),
+  success: z.boolean(),
+  violations: z.array(z.strictObject({ ruleId: z.string(), severity: z.string(), message: z.string() })),
   /**
    * Δm des Gate-Advisorys für genau diesen Edit — gemessen auf `advisoryLayer`
    * des umgebenden Ergebnisses, NICHT auf der Ranking-Ebene (CR-GC-353/352).
@@ -125,14 +125,15 @@ export interface SuggestVerdict {
    * Seit CR-GC-431 ist das zugleich die QUELLE von `score`/`delta` einer
    * anwendbaren Suggestion — eine Messung, nicht zwei.
    */
-  fitDelta: number[];
+  fitDelta: z.array(z.number()),
   /**
    * CR-GC-483: der Chebyshev-Score des Zuges am Gate — `improvement > 0` heisst, er hat die
    * SCHLIMMSTE Stelle des Modells entschaerft. Das ist die Zahl, nach der gerankt wird;
    * `fitDelta` steht daneben und wird nur noch berichtet.
    */
-  steer?: { before: number; after: number; improvement: number; worstAt: { ruleId: string; elementId: string } | null; removesElements: boolean };
-}
+  steer: SteerAdvisory.optional(),
+});
+export type SuggestVerdict = z.infer<typeof SuggestVerdictSchema>;
 
 /**
  * Eine gerankte Suggestion (CR-GC-431).
@@ -148,7 +149,8 @@ export interface SuggestVerdict {
  * jemand ausführen könnte. Solche Zeilen ranken nie über einer anwendbaren
  * Suggestion mit positivem Δm.
  */
-export type RankedSuggestion = Suggestion & { applicable: boolean; verdict?: SuggestVerdict };
+export const RankedSuggestionSchema = SuggestionSchema.extend({ applicable: z.boolean(), verdict: SuggestVerdictSchema.optional() });
+export type RankedSuggestion = z.infer<typeof RankedSuggestionSchema>;
 
 /** Messebene, auf der `harness.mutate()` sein `fitAdvisory` bildet (CR-GC-274). */
 const ADVISORY_LAYER = 'arch' as const;
@@ -212,9 +214,10 @@ export function batchFor(edit: SuggestedEdit): MutateCommand[] {
   ];
 }
 
-export interface GraphSuggestResult {
+/** Die Antwort von graph_suggest (CR-GC-1020): der Handler parst sie, bevor sie den Prozess verlaesst. */
+export const GraphSuggestAnswerSchema = z.strictObject({
   /** Messebene des RANKINGS (= Eingabe `layer`). */
-  layer: 'all' | 'arch';
+  layer: GraphSuggestInputSchema.shape.layer.unwrap(),
   /**
    * Messebene des GATE-ADVISORYS (`verdict.fitDelta`) — heute fest `'arch'`.
    * Zwei Zahlen, zwei Ebenen: ohne diese Angabe konnte ein Treiber auf `'all'`
@@ -222,14 +225,15 @@ export interface GraphSuggestResult {
    * Widerspruch benannte. Seit CR-GC-431 ist das zugleich die Messebene von
    * `score`/`delta` jeder ANWENDBAREN Suggestion.
    */
-  advisoryLayer: typeof ADVISORY_LAYER;
+  advisoryLayer: z.literal(ADVISORY_LAYER),
   /**
    * Gesetzt, sobald Ranking- und Advisory-Ebene auseinanderlaufen. Kein Fehler
    * und keine Warnung im Log — ein Satz IM ERGEBNIS, weil genau dort gelesen wird.
    */
-  layerMismatch?: string;
-  suggestions: RankedSuggestion[];
-}
+  layerMismatch: z.string().optional(),
+  suggestions: z.array(RankedSuggestionSchema),
+});
+export type GraphSuggestResult = z.infer<typeof GraphSuggestAnswerSchema>;
 
 // -------------------------------------------------------------------------
 // Binding
@@ -336,7 +340,7 @@ export function bindSuggestTools(ctx: ToolPort) {
       // CR-GC-934: der Aufruf zaehlt fuer den Hinweis in graph_generate/rules_get_violations — bis
       // zur naechsten Modellaenderung nennen sie graph_suggest nicht wieder.
       merkeSuggestAufruf(harness, ctx.graphVersion(), harness.evaluateRules());
-      return {
+      return GraphSuggestAnswerSchema.parse({
         layer: input.layer,
         advisoryLayer: ADVISORY_LAYER,
         ...(input.layer !== ADVISORY_LAYER
@@ -351,7 +355,7 @@ export function bindSuggestTools(ctx: ToolPort) {
             }
           : {}),
         suggestions: ranked.slice(0, input.k),
-      };
+      });
     },
   };
 
