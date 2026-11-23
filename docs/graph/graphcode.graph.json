@@ -166,7 +166,8 @@
       "id": "CR-GC-1017",
       "type": "CR",
       "name": "Sammelfluss query-params: Eingaben von reseed und audit ohne eigenen Vertrag",
-      "description": "docs/cr/open/CR-GC-1017-sammelfluss-query-params-eingaben-von-re.md"
+      "description": "docs/cr/done/CR-GC-1017-sammelfluss-query-params-eingaben-von-re.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-102",
@@ -41289,5 +41290,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1572
+  "graphVersion": 1573
 }
