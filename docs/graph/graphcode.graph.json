@@ -138,7 +138,8 @@
       "id": "CR-GC-1013",
       "type": "CR",
       "name": "SCHEMA-skill-text ohne Zod-Schema und Vertragstest (R-32)",
-      "description": "docs/cr/open/CR-GC-1013-schema-skill-text-ohne-zod-schema-und-ve.md"
+      "description": "docs/cr/done/CR-GC-1013-schema-skill-text-ohne-zod-schema-und-ve.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-102",
@@ -40232,5 +40233,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1552
+  "graphVersion": 1553
 }
