@@ -210,7 +210,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-1016` | done | Sammelfluss query-params: Eingaben von export, metrics, suggest, generate ohne eigenen Vertrag | `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-suggest` · `FUNC-host-socket` |
 | `CR-GC-1017` | done | Sammelfluss query-params: Eingaben von reseed und audit ohne eigenen Vertrag | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-graph-reseed-tool` |
 | `CR-GC-1018` | done | Sammelfluss query-params: interne Aufrufe ohne eigenen Vertrag | `FUNC-create-harness` · `FUNC-graph-readiness` · `FUNC-own-kuzu-host` · `FUNC-stand-verlauf` |
-| `CR-GC-1019` | n/a | RC-04: Trajektorie ungeparst auf Platte, Prozess-Vertraege ohne Grund | `FUNC-audit-stats` |
+| `CR-GC-1019` | done | RC-04: Trajektorie ungeparst auf Platte, Prozess-Vertraege ohne Grund | `FUNC-audit-stats` |
 | `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-surface` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
 | `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-agent-surface` · `REQ-doc-export` |
