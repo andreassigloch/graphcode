@@ -206,7 +206,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -436,7 +436,7 @@ Der Agent liest den Skill se:import-code und ruft danach das CLI-Verb import-cod
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -524,7 +524,7 @@ Verification ◀ `TEST-werkzeug-eingang-geparst` (integration) · satisfy ◀ `F
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -844,7 +844,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die Werkzeugschicht des Generierungstreibers: laedt das Zielprofil, setzt beim ersten Aufruf die Intent-Anker (Datei-Write in target-profile.json), fuehrt das Fokus-Gedaechtnis der Sitzung und ruft generationStep mit dem Graphen der Arbeitskopie. Beleg: src/loop/suggest.ts, graph_generate.
 
-io ◀ `FLOW-dashboard-tool-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-dashboard-generate-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
 
 ###### `REQ-generate-nennt-suggest` — graph_generate nennt graph_suggest bei offenem Befund mit Zug
 
@@ -860,7 +860,7 @@ Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1048,7 +1048,7 @@ Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-rules
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1196,7 +1196,7 @@ Verification ◀ `TEST-code-conformance` (integration) · satisfy ◀ `FUNC-chec
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-readiness-call` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-readiness-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-readiness-call` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -1212,7 +1212,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1222,29 +1222,13 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` (integration) · satisfy ◀ `FUNC-agent-loop` · allocate ▶ `MOD-agent-surface`
 
-###### 3.3.1.2.3.5  `FUNC-audit-stats` — aggregateAuditEntries(entries)
-
-> auch in: `FCHAIN-loop-closure` · `FUNC-block-abfrage`
-
-Beantwortet im Aggregat, welche Regel wen wie oft blockt — je Regel, Konsument, Modell und Skill, mit dem Lesefenster als Teil der Antwort, und je Regel die Zahl der Zuege mit Fund. Die Zahl, an der Schwellen justiert werden, statt sie zu setzen. (CR-GC-462, CR-GC-943)
-
-io ◀ `FLOW-audit-record` · `FLOW-query-request-agent` · io ▶ `FLOW-audit-report` · allocate ▶ `MOD-surface`
-
-###### `REQ-rule-calibration` — Regel-Kalibrierung aus der Aufzeichnung
-
-Wenn audit_stats aufgerufen wird, liefert es je Regel, je Modell und je Konsument die Zahl der Blockaden und der angenommenen Zuege je Zeitraum.
-
-priority: must · status: open · kinds: functional
-
-Verification ◀ `TEST-audit-rules-passed` (integration) · `TEST-audit-skill-und-feuerbild` (integration) · `TEST-rule-calibration` (unit) · `TEST-skill-nennt-parameter` (unit) · satisfy ◀ `FUNC-audit-stats` · allocate ▶ `MOD-surface`
-
-###### 3.3.1.2.3.6  `FUNC-graph-metrics` — graph_metrics(scope?)
+###### 3.3.1.2.3.5  `FUNC-graph-metrics` — graph_metrics(scope?)
 
 > auch in: `FCHAIN-dashboard-metrics` · `FCHAIN-skill-authoring` · `FUNC-block-abfrage`
 
 MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857, CR-GC-861)
 
-io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-metrics-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-metrics-call` · `FLOW-module-metrics` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
 
@@ -1262,7 +1246,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-graph-metrics` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.2.3.7  `FUNC-chain-metrics` — chainMetrics(graph)
+###### 3.3.1.2.3.6  `FUNC-chain-metrics` — chainMetrics(graph)
 
 > auch in: `FCHAIN-dashboard-metrics` · `FCHAIN-skill-authoring` · `FUNC-block-messwerk`
 
@@ -1278,7 +1262,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-chain-metrics` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.2.3.8  `FUNC-function-criticality` — functionCriticality(graph)
+###### 3.3.1.2.3.7  `FUNC-function-criticality` — functionCriticality(graph)
 
 > auch in: `FCHAIN-dashboard-metrics` · `FUNC-block-messwerk`
 
@@ -1294,7 +1278,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-function-criticality` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.2.3.9  `FUNC-module-metrics` — moduleMetrics(graph)
+###### 3.3.1.2.3.8  `FUNC-module-metrics` — moduleMetrics(graph)
 
 > auch in: `FCHAIN-dashboard-metrics` · `FUNC-block-messwerk`
 
@@ -1309,6 +1293,22 @@ Wenn eine Kennzahlen-Anfrage mit dem Ontologie-Graphen eingeht, liefert moduleMe
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-module-metrics` · allocate ▶ `MOD-projections`
+
+###### 3.3.1.2.3.9  `FUNC-audit-stats` — aggregateAuditEntries(entries)
+
+> auch in: `FCHAIN-loop-closure` · `FUNC-block-abfrage`
+
+Beantwortet im Aggregat, welche Regel wen wie oft blockt — je Regel, Konsument, Modell und Skill, mit dem Lesefenster als Teil der Antwort, und je Regel die Zahl der Zuege mit Fund. Die Zahl, an der Schwellen justiert werden, statt sie zu setzen. (CR-GC-462, CR-GC-943)
+
+io ◀ `FLOW-audit-record` · `FLOW-query-request-agent` · io ▶ `FLOW-audit-report` · allocate ▶ `MOD-surface`
+
+###### `REQ-rule-calibration` — Regel-Kalibrierung aus der Aufzeichnung
+
+Wenn audit_stats aufgerufen wird, liefert es je Regel, je Modell und je Konsument die Zahl der Blockaden und der angenommenen Zuege je Zeitraum.
+
+priority: must · status: open · kinds: functional
+
+Verification ◀ `TEST-audit-rules-passed` (integration) · `TEST-audit-skill-und-feuerbild` (integration) · `TEST-rule-calibration` (unit) · `TEST-skill-nennt-parameter` (unit) · satisfy ◀ `FUNC-audit-stats` · allocate ▶ `MOD-surface`
 
 ###### 3.3.1.2.3.10  `FUNC-rules-tool` — rules_evaluate / rules_get_violations
 
@@ -1548,7 +1548,7 @@ Die Fuehrung von aussen, fuer beide Clients: messen, Fokus waehlen, vorschlagen,
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -1700,7 +1700,7 @@ Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit)
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-readiness-call` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-readiness-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-readiness-call` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -1868,7 +1868,7 @@ Verification ◀ `TEST-recommend-next-step` · satisfy ◀ `FUNC-vorschlag` · a
 
 Die Werkzeugschicht des Generierungstreibers: laedt das Zielprofil, setzt beim ersten Aufruf die Intent-Anker (Datei-Write in target-profile.json), fuehrt das Fokus-Gedaechtnis der Sitzung und ruft generationStep mit dem Graphen der Arbeitskopie. Beleg: src/loop/suggest.ts, graph_generate.
 
-io ◀ `FLOW-dashboard-tool-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-dashboard-generate-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
 
 ###### `REQ-generate-nennt-suggest` — graph_generate nennt graph_suggest bei offenem Befund mit Zug
 
@@ -1884,7 +1884,7 @@ Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph
 
 Rangt die Umbau-Kandidaten aus suggestEdits: je Kandidat ein Probelauf durch das Gate (mutateWithStates), der Bericht zum Zug aus mitBericht, danach zurueck auf den gespeicherten Stand. Das Zielprofil rankt seit CR-GC-483 nichts mehr. Beleg: src/loop/suggest.ts, graph_suggest.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-rule-findings` · `FLOW-suggest-call` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -2110,7 +2110,7 @@ Verification ◀ `TEST-test-runnable-binding` (unit) · satisfy ◀ `FUNC-deduce
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -2216,7 +2216,7 @@ Der Agent meldet einen Testlauf oder eine Aenderung an graph_test_ingest; das We
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -2930,7 +2930,7 @@ Agent gibt graph_merge den Pfad eines Branch-Logs und den Fork-Punkt; das Werkze
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -3306,7 +3306,7 @@ Der Agent schreibt ueber graph_mutate; das Gate setzt nach jeder angenommenen Mu
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -3316,7 +3316,95 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` (integration) · satisfy ◀ `FUNC-agent-loop` · allocate ▶ `MOD-agent-surface`
 
-###### 3.3.1.4.3.2  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
+###### 3.3.1.4.3.2  `FUNC-graph-export-snapshot` — graph_export(views?)
+
+> auch in: `FCHAIN-doc-export` · `FCHAIN-model-import` · `FCHAIN-session-end` · `FCHAIN-skill-import-code` · `FCHAIN-snapshot-roundtrip` · `FUNC-block-speicherwerk`
+
+Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
+
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+
+###### `REQ-export-no-clobber` — Export refuse-to-clobber
+
+graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)
+
+priority: must · status: done · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
+
+###### `REQ-export-refuses-until-held-back-repaired` — Export verweigert bis zur Reparatur
+
+graph_export verweigert, solange eine Kante zurueckgehalten ist, und nennt die Kante und den Reparaturweg; nach einem delete-edge durchs Gate laeuft der Export wieder.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
+
+###### 3.3.1.4.3.3  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
+
+> auch in: `FCHAIN-steering-loop` · `FUNC-block-speicherwerk`
+
+Leitet bei jedem Aufruf ab, welche Kanten der committeten Graph-Datei im Live-Graphen fehlen, weil kein Muster sie zulaesst — dieselbe Pruefung wie der Seed. Wird nicht gemerkt, ueberlebt so jeden Neustart und leert sich mit dem Export, der die Reparatur abschliesst. (CR-GC-532)
+
+io ◀ `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · io ▶ `FLOW-held-back-traces` · allocate ▶ `MOD-kernel`
+
+###### `REQ-held-back-edges-derived-every-call` — Zurueckgehaltene Kanten werden bei jedem Aufruf abgeleitet
+
+Bei jedem Aufruf leitet das Werkzeug aus der committeten Graph-Datei ab, welche Kanten im Live-Graphen fehlen, weil kein Muster sie zulaesst, und nennt jede mit ihrem Grund; das gilt auch nach einem Neustart ohne erneutes Laden.
+
+priority: must · status: n/a · kinds: functional · role: mitigation
+
+Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-held-back-traces` · allocate ▶ `MOD-kernel`
+
+###### 3.3.1.4.3.4  `FUNC-export-marker-clear` — Drift-Marker loeschen
+
+> auch in: `FUNC-block-speicherwerk`
+
+Loescht den Drift-Marker EXPORT_PENDING: graph_export nach dem Schreiben des Snapshots, applyReseed nach dem Wiedereinlesen. Beleg: src/kernel/export-marker.ts, Aufrufer src/projections/export.ts und src/kernel/harness-import.ts. (CR-GC-843)
+
+io ◀ `FLOW-marker-clear` · `FLOW-marker-clear-reseed` · io ▶ `FLOW-export-cleared` · allocate ▶ `MOD-kernel`
+
+###### `REQ-export-marke-loeschen` — Exportmarke loeschen
+
+Wenn ein Export oder ein Reseed gelingt, loescht der Host die Marke EXPORT_PENDING; ein gescheiterter Export laesst sie stehen.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-export-marker-clear` · allocate ▶ `MOD-kernel`
+
+###### 3.3.1.4.3.5  `FUNC-export-markdown` — exportMarkdown(graph, view)
+
+> auch in: `FCHAIN-doc-export` · `FCHAIN-render-document` · `FUNC-block-grounding`
+
+Rendert den Graphen je Sicht aus MARKDOWN_VIEWS (@sigloch/graphcode-client) deterministisch nach Markdown mit GENERATED-Header. Die CR-Knoten zeigt changelog; cr-list ist seit CR-GC-761 gestrichen.
+
+io ◀ `FLOW-cr-groups` · `FLOW-query-export` · `FLOW-render-view-request` · io ▶ `FLOW-cr-groups-request` · `FLOW-markdown-text` · allocate ▶ `MOD-projections`
+
+###### `REQ-doc-export` — Graph → Markdown Re-Export
+
+human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-view-fmea` (unit) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
+
+###### `REQ-post-export-markdown` — Sichten deterministisch
+
+exportMarkdown rendert jede Sicht nicht leer, mit GENERATED-Kopf und Systemname, ueber zwei Laeufe byte-gleich; der JSON-Rundlauf ist byte-gleich.
+
+priority: must · status: done · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
+
+###### `REQ-srs-29148` — SRS nach 29148 gegliedert
+
+Die SRS-Sicht traegt die Abschnitte von BRS, StRS und SyRS nach ISO/IEC/IEEE 29148:2018 Kl. 9 in Normreihenfolge; ein Abschnitt ohne Inhalt traegt den Satz keine Anforderung dieser Art im Modell. (CR-GC-909)
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
+
+###### 3.3.1.4.3.6  `FUNC-graph-mutate-tool` — graph_mutate (Werkzeug)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-skill-import-code` · `FCHAIN-steering-loop` · `FUNC-block-bedienung`
 
@@ -3340,7 +3428,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-capture` (integration) · satisfy ◀ `FUNC-graph-mutate-tool` · allocate ▶ `MOD-surface`
 
-###### 3.3.1.4.3.3  `FUNC-decode` — formatEToCommands(harness, text)
+###### 3.3.1.4.3.7  `FUNC-decode` — formatEToCommands(harness, text)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-skill-import-code` · `FCHAIN-steering-loop` · `FUNC-block-gedaechtnis`
 
@@ -3372,7 +3460,7 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · allocate ▶ `MOD-kernel`
 
-###### 3.3.1.4.3.4  `FUNC-mutate` — mutate(commands)
+###### 3.3.1.4.3.8  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-skill-import-code` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-gate`
 
@@ -3428,7 +3516,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
-###### 3.3.1.4.3.5  `FUNC-evaluate-rules` — evaluateRules()
+###### 3.3.1.4.3.9  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-advisory-roundtrip` · `FCHAIN-apply-gate` · `FCHAIN-docked-session` · `FCHAIN-health` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -3452,7 +3540,7 @@ priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
 
-###### 3.3.1.4.3.6  `FUNC-auto-export` — registerAutoExport
+###### 3.3.1.4.3.10  `FUNC-auto-export` — registerAutoExport
 
 > auch in: `FCHAIN-host-start` · `FCHAIN-session-end` · `FUNC-block-speicherwerk`
 
@@ -3483,94 +3571,6 @@ Scheitert der Export nach einer Mutation, bleibt die Mutation im Store bestehen 
 priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-auto-export` (integration) · satisfy ◀ `FUNC-auto-export` · allocate ▶ `MOD-projections`
-
-###### 3.3.1.4.3.7  `FUNC-graph-export-snapshot` — graph_export(views?)
-
-> auch in: `FCHAIN-doc-export` · `FCHAIN-model-import` · `FCHAIN-session-end` · `FCHAIN-skill-import-code` · `FCHAIN-snapshot-roundtrip` · `FUNC-block-speicherwerk`
-
-Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
-
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
-
-###### `REQ-export-no-clobber` — Export refuse-to-clobber
-
-graph_export verweigert, wenn es committete Elemente/Traces droppen wuerde: Empty-Guard (0 Elemente) + Net-Deletion-Guard (Diff gegen committetes JSON); force:true als explizites Opt-in fuer beabsichtigte Loeschungen. Sicherheitsnetz gegen stale/parallel-writer Clobber. (CR-GC-202)
-
-priority: must · status: done · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-export-graph-guard` (unit) · `TEST-mcp-export-guard` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
-
-###### `REQ-export-refuses-until-held-back-repaired` — Export verweigert bis zur Reparatur
-
-graph_export verweigert, solange eine Kante zurueckgehalten ist, und nennt die Kante und den Reparaturweg; nach einem delete-edge durchs Gate laeuft der Export wieder.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-graph-export-snapshot` · allocate ▶ `MOD-projections`
-
-###### 3.3.1.4.3.8  `FUNC-held-back-traces` — heldBackTraces(repoRoot, systemId, live)
-
-> auch in: `FCHAIN-steering-loop` · `FUNC-block-speicherwerk`
-
-Leitet bei jedem Aufruf ab, welche Kanten der committeten Graph-Datei im Live-Graphen fehlen, weil kein Muster sie zulaesst — dieselbe Pruefung wie der Seed. Wird nicht gemerkt, ueberlebt so jeden Neustart und leert sich mit dem Export, der die Reparatur abschliesst. (CR-GC-532)
-
-io ◀ `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · io ▶ `FLOW-held-back-traces` · allocate ▶ `MOD-kernel`
-
-###### `REQ-held-back-edges-derived-every-call` — Zurueckgehaltene Kanten werden bei jedem Aufruf abgeleitet
-
-Bei jedem Aufruf leitet das Werkzeug aus der committeten Graph-Datei ab, welche Kanten im Live-Graphen fehlen, weil kein Muster sie zulaesst, und nennt jede mit ihrem Grund; das gilt auch nach einem Neustart ohne erneutes Laden.
-
-priority: must · status: n/a · kinds: functional · role: mitigation
-
-Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUNC-held-back-traces` · allocate ▶ `MOD-kernel`
-
-###### 3.3.1.4.3.9  `FUNC-export-marker-clear` — Drift-Marker loeschen
-
-> auch in: `FUNC-block-speicherwerk`
-
-Loescht den Drift-Marker EXPORT_PENDING: graph_export nach dem Schreiben des Snapshots, applyReseed nach dem Wiedereinlesen. Beleg: src/kernel/export-marker.ts, Aufrufer src/projections/export.ts und src/kernel/harness-import.ts. (CR-GC-843)
-
-io ◀ `FLOW-marker-clear` · `FLOW-marker-clear-reseed` · io ▶ `FLOW-export-cleared` · allocate ▶ `MOD-kernel`
-
-###### `REQ-export-marke-loeschen` — Exportmarke loeschen
-
-Wenn ein Export oder ein Reseed gelingt, loescht der Host die Marke EXPORT_PENDING; ein gescheiterter Export laesst sie stehen.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-path-containment` (integration) · satisfy ◀ `FUNC-export-marker-clear` · allocate ▶ `MOD-kernel`
-
-###### 3.3.1.4.3.10  `FUNC-export-markdown` — exportMarkdown(graph, view)
-
-> auch in: `FCHAIN-doc-export` · `FCHAIN-render-document` · `FUNC-block-grounding`
-
-Rendert den Graphen je Sicht aus MARKDOWN_VIEWS (@sigloch/graphcode-client) deterministisch nach Markdown mit GENERATED-Header. Die CR-Knoten zeigt changelog; cr-list ist seit CR-GC-761 gestrichen.
-
-io ◀ `FLOW-cr-groups` · `FLOW-query-export` · `FLOW-render-view-request` · io ▶ `FLOW-cr-groups-request` · `FLOW-markdown-text` · allocate ▶ `MOD-projections`
-
-###### `REQ-doc-export` — Graph → Markdown Re-Export
-
-human-readable Docs (SPEC/Architektur/CR-Liste/References) werden DETERMINISTISCH aus dem Graph generiert (GENERATED-Header), nie hand-editiert. Schließt die graph-is-ssot-Drift-Lücke. (REQ-graph-is-ssot)
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-auto-export` (integration) · `TEST-doc-export` (conformance) · `TEST-mcp-export` (integration) · `TEST-member-name` (unit) · `TEST-view-fmea` (unit) · `TEST-views-auditor` (unit) · `TEST-views-conformance` (unit) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
-
-###### `REQ-post-export-markdown` — Sichten deterministisch
-
-exportMarkdown rendert jede Sicht nicht leer, mit GENERATED-Kopf und Systemname, ueber zwei Laeufe byte-gleich; der JSON-Rundlauf ist byte-gleich.
-
-priority: must · status: done · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
-
-###### `REQ-srs-29148` — SRS nach 29148 gegliedert
-
-Die SRS-Sicht traegt die Abschnitte von BRS, StRS und SyRS nach ISO/IEC/IEEE 29148:2018 Kl. 9 in Normreihenfolge; ein Abschnitt ohne Inhalt traegt den Satz keine Anforderung dieser Art im Modell. (CR-GC-909)
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
 
 ###### 3.3.1.4.3.11  `FUNC-graph-store` — GraphStore
 
@@ -3654,7 +3654,7 @@ Der Agent exportiert ueber graph_export die committete Datei; spaeter laedt grap
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -3670,7 +3670,7 @@ Verification ◀ `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` (integrat
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -3822,7 +3822,7 @@ Ein Runden-Durchlauf eines Chat-Turns: der Agent liest den Blast-Radius (graph_i
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -3872,13 +3872,29 @@ priority: must · status: open · kinds: functional
 
 Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slice` (integration) · satisfy ◀ `FUNC-graph-impact` · allocate ▶ `MOD-kernel`
 
-###### 3.3.1.5.1.4  `FUNC-graph-suggest` — graph_suggest (Werkzeug)
+###### 3.3.1.5.1.4  `FUNC-rules-tool` — rules_evaluate / rules_get_violations
+
+> auch in: `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FUNC-block-abfrage`
+
+Die Regelwerkzeuge rules_evaluate und rules_get_violations: reichen die Befunde des Gate-Katalogs an die Ablaufsteuerung, als ganzes Bild oder als Arbeitsliste. Rechnen nicht selbst.
+
+io ◀ `FLOW-conformance-findings` · `FLOW-graph-state` · `FLOW-rule-findings` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · io ▶ `FLOW-rules-answer` · allocate ▶ `MOD-projections`
+
+###### `REQ-violations-nennt-suggest` — rules_get_violations nennt graph_suggest bei offenem Befund mit Zug
+
+Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt rules_get_violations im Feld umbau das Werkzeug graph_suggest und die Befunde, über das ganze Modell. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
+
+priority: must · status: n/a · kinds: functional
+
+Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-rules-tool` · allocate ▶ `MOD-projections`
+
+###### 3.3.1.5.1.5  `FUNC-graph-suggest` — graph_suggest (Werkzeug)
 
 > auch in: `FCHAIN-steering-loop` · `FUNC-block-optimierung`
 
 Rangt die Umbau-Kandidaten aus suggestEdits: je Kandidat ein Probelauf durch das Gate (mutateWithStates), der Bericht zum Zug aus mitBericht, danach zurueck auf den gespeicherten Stand. Das Zielprofil rankt seit CR-GC-483 nichts mehr. Beleg: src/loop/suggest.ts, graph_suggest.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-rule-findings` · `FLOW-suggest-call` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -3896,7 +3912,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-target-profile` (integration) · `TEST-target-shifts-ranking` (unit) · satisfy ◀ `FUNC-graph-suggest` · allocate ▶ `MOD-loop`
 
-###### 3.3.1.5.1.5  `FUNC-mutate` — mutate(commands)
+###### 3.3.1.5.1.6  `FUNC-mutate` — mutate(commands)
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-capture` · `FCHAIN-docked-session` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-model-import` · `FCHAIN-skill-authoring` · `FCHAIN-skill-import-code` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-gate`
 
@@ -3952,7 +3968,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-host-shim` (integration) · `TEST-mutate-input-formate` (integration) · `TEST-occ` (integration) · `TEST-single-write-door` (integration) · satisfy ◀ `FUNC-mutate` · allocate ▶ `MOD-kernel`
 
-###### 3.3.1.5.1.6  `FUNC-evaluate-rules` — evaluateRules()
+###### 3.3.1.5.1.7  `FUNC-evaluate-rules` — evaluateRules()
 
 > auch in: `FCHAIN-apply-gate` · `FCHAIN-docked-session` · `FCHAIN-health` · `FCHAIN-live-update` · `FCHAIN-merge-branches` · `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FCHAIN-snapshot-freshness` · `FCHAIN-steering-loop` · `FUNC-block-gate`
 
@@ -3975,22 +3991,6 @@ evaluateRules() gegen V3_RULES; error-Severity blockt den Apply. (L2)
 priority: must · status: done · kinds: functional
 
 Verification ◀ `TEST-mutate-gate` (integration) · `TEST-nd-similarity` (unit) · `TEST-violation-context` (integration) · satisfy ◀ `FUNC-evaluate-rules` · allocate ▶ `MOD-kernel`
-
-###### 3.3.1.5.1.7  `FUNC-rules-tool` — rules_evaluate / rules_get_violations
-
-> auch in: `FCHAIN-skill-authoring` · `FCHAIN-skill-help` · `FCHAIN-skill-report` · `FUNC-block-abfrage`
-
-Die Regelwerkzeuge rules_evaluate und rules_get_violations: reichen die Befunde des Gate-Katalogs an die Ablaufsteuerung, als ganzes Bild oder als Arbeitsliste. Rechnen nicht selbst.
-
-io ◀ `FLOW-conformance-findings` · `FLOW-graph-state` · `FLOW-rule-findings` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · io ▶ `FLOW-rules-answer` · allocate ▶ `MOD-projections`
-
-###### `REQ-violations-nennt-suggest` — rules_get_violations nennt graph_suggest bei offenem Befund mit Zug
-
-Ist ein Befund einer Regel offen, für die graph_suggest einen Zug hat (Zug-Tabelle von se-engine), nennt rules_get_violations im Feld umbau das Werkzeug graph_suggest und die Befunde, über das ganze Modell. Nach einem Aufruf von graph_suggest bleibt das Feld leer, bis sich Modellstand und Befundmenge geändert haben.
-
-priority: must · status: n/a · kinds: functional
-
-Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-rules-tool` · allocate ▶ `MOD-projections`
 
 ###### 3.3.1.5.1.8  `FUNC-graph-store` — GraphStore
 
@@ -4090,7 +4090,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · satisfy ◀ `FUNC-read-
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4166,7 +4166,7 @@ Agent gibt Format-E an graph_mutate; das Werkzeug laesst es lesen (formatEToComm
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4442,7 +4442,7 @@ Agent erzeugt Format-E-Kandidaten aus Text (agent-seitig); graph_mutate laesst s
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4684,7 +4684,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -4708,7 +4708,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4774,7 +4774,7 @@ Der Agent fragt die Kanten-Grammatik eines Elementtyps ab und bekommt sie zuruec
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4892,7 +4892,7 @@ Verification ◀ `TEST-test-runnable-binding` (unit) · satisfy ◀ `FUNC-deduce
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -4930,7 +4930,7 @@ Nach jeder Gate-Mutation ruft das Gate den Hook makeUpdateEventHook mit dem Urte
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -5264,7 +5264,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -5492,7 +5492,7 @@ Ein Mensch beauftragt einen Autoren-Skill; der Skill legt Knoten und Kanten durc
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -5700,7 +5700,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857, CR-GC-861)
 
-io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-metrics-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-metrics-call` · `FLOW-module-metrics` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
 
@@ -6074,7 +6074,7 @@ Der Agent meldet einen Testlauf oder eine Aenderung an graph_test_ingest; das We
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -6544,7 +6544,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Die Werkzeugschicht des Generierungstreibers: laedt das Zielprofil, setzt beim ersten Aufruf die Intent-Anker (Datei-Write in target-profile.json), fuehrt das Fokus-Gedaechtnis der Sitzung und ruft generationStep mit dem Graphen der Arbeitskopie. Beleg: src/loop/suggest.ts, graph_generate.
 
-io ◀ `FLOW-dashboard-tool-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-dashboard-generate-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
 
 ###### `REQ-generate-nennt-suggest` — graph_generate nennt graph_suggest bei offenem Befund mit Zug
 
@@ -6560,7 +6560,7 @@ Verification ◀ `TEST-umbau-ausloeser` (integration) · satisfy ◀ `FUNC-graph
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-generate-call` · `FLOW-dashboard-metrics-call` · `FLOW-dashboard-readiness-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -6584,7 +6584,7 @@ Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-socket
 
 MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857, CR-GC-861)
 
-io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-metrics-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-metrics-call` · `FLOW-module-metrics` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
 
@@ -6656,7 +6656,7 @@ Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-module-metrics
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-readiness-call` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-readiness-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-readiness-call` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -7062,7 +7062,7 @@ Nach jeder Gate-Mutation ruft das Gate den Hook makeUpdateEventHook mit dem Urte
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -7310,7 +7310,7 @@ Verification ◀ `TEST-audit-rules-passed` (integration) · `TEST-audit-skill-un
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -7408,7 +7408,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -7432,7 +7432,7 @@ Verification ◀ `TEST-import-rejected-traces` (integration) · satisfy ◀ `FUN
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -7620,7 +7620,7 @@ Verification ◀ `TEST-import-code-verb` (integration) · satisfy ◀ `FUNC-impo
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -7918,7 +7918,7 @@ Der Agent liest den Skill se:import-code und ruft danach das CLI-Verb import-cod
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -8006,7 +8006,7 @@ Verification ◀ `TEST-werkzeug-eingang-geparst` (integration) · satisfy ◀ `F
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -8302,7 +8302,7 @@ Eine zweite Sitzung im selben Repo verliert die Store-Wahl und bedient ihre Abla
 
 Die Ablaufsteuerung des Agenten: nimmt einen Auftrag an, waehlt den naechsten Schritt, ruft einen Skill auf und fuehrt dessen Anleitung aus, indem sie die Werkzeuge ruft; ihre Ergebnisse gehen an den Auftraggeber zurueck. Eine Ereignisschleife, nicht deterministisch, wenn ein LLM sie ausfuehrt. Ob ein LLM oder klassischer Code die Schleife faehrt, ist Entwurf; realisiert im Agent-Host (Claude Code, OpenCode).
 
-io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
+io ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-audit-entries` · `FLOW-audit-report` · `FLOW-auftrag` · `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory` · `FLOW-export-answer` · `FLOW-formatE-artifact-read-tools` · `FLOW-generate-answer` · `FLOW-help-answer` · `FLOW-merge-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer` · `FLOW-readiness-report` · `FLOW-reseed-answer` · `FLOW-rules-answer` · `FLOW-suggest-answer` · `FLOW-test-ingest-answer` · `FLOW-test-selection` · `FLOW-tool-surface` · io ▶ `FLOW-authoring-guide-call` · `FLOW-branch-log` · `FLOW-cli-invocation-import-code` · `FLOW-context-call` · `FLOW-elements-call` · `FLOW-ergebnis` · `FLOW-expand-call` · `FLOW-export-call` · `FLOW-formatE-artifact-agent` · `FLOW-get-edges-call` · `FLOW-get-node-call` · `FLOW-help-call` · `FLOW-impact-call` · `FLOW-metrics-call` · `FLOW-query-request-agent` · `FLOW-readiness-call` · `FLOW-rules-evaluate-call` · `FLOW-rules-get-violations-call` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-suggest-call` · `FLOW-target-profile-file` · `FLOW-test-ingest-call-agent` · `FLOW-tests-call` · allocate ▶ `MOD-agent-surface`
 
 ###### `REQ-agent-loop-executes-skill` — Ablaufsteuerung fuehrt Anleitung ueber Werkzeuge aus
 
@@ -8374,7 +8374,7 @@ Verification ◀ `TEST-roundtrip` (conformance) · satisfy ◀ `FUNC-decode` · 
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-generate-call` · `FLOW-dashboard-metrics-call` · `FLOW-dashboard-readiness-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -8922,7 +8922,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-generate-call` · `FLOW-dashboard-metrics-call` · `FLOW-dashboard-readiness-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -9338,7 +9338,7 @@ Verification ◀ `TEST-single-measurement-path` (unit) · satisfy ◀ `FUNC-grap
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -9482,7 +9482,7 @@ Verification ◀ `TEST-gve-supervision` (integration) · satisfy ◀ `FUNC-gve-s
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-generate-call` · `FLOW-dashboard-metrics-call` · `FLOW-dashboard-readiness-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -9982,7 +9982,7 @@ Verification ◀ `TEST-host-shim` (integration) · satisfy ◀ `FUNC-host-proxy`
 
 Der Socket, ueber den eine angedockte Sitzung jeden Werkzeugaufruf an den Besitzer des Stores weiterreicht, statt ein zweites Datenbank-Handle zu oeffnen; beide Seiten in host-shim.ts (startHostSocket, buildProxyRegistry). Endet der Besitzer, versucht die Sitzung genau einmal, selbst Besitzer zu werden, und arbeitet danach lokal weiter.
 
-io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-tool-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
+io ◀ `FLOW-dashboard-call` · `FLOW-generate-answer` · `FLOW-metrics-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-proxy-call` · `FLOW-readiness-report` · `FLOW-socket-close` · `FLOW-socket-start` · io ▶ `FLOW-dashboard-answer` · `FLOW-dashboard-generate-call` · `FLOW-dashboard-metrics-call` · `FLOW-dashboard-readiness-call` · `FLOW-mutate-cmd-host-socket` · allocate ▶ `MOD-surface`
 
 ###### `REQ-docked-session-reelects-once` — Angedockte Sitzung versucht genau eine Neuwahl
 
@@ -10280,7 +10280,7 @@ Verification ◀ `TEST-impact-subgraph` (integration) · `TEST-inject-graph-slic
 
 MCP-Oberflaeche der Kennzahlen: liefert in einer Antwort die Modulkennzahlen mit Policy, die Kritikalitaet je Funktion, die Kennzahlen je Wirkkette mit Bewertbarkeitsquote, den Ist-Vektor und die Risikotraeger; auf Anfrage den Betrachtungsumfang einer Menge von Funktionen oder Ketten und die Traeger jedes Constraints. Rechnet nicht selbst, sondern reicht die Ableitungen aus contracts und dem Messwerk durch. Eine Kennung im Umfang, die keine Funktion oder Kette des Modells ist, lehnt es benannt ab. (CR-GC-326, CR-GC-767, CR-GC-787, CR-GC-857, CR-GC-861)
 
-io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-tool-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-module-metrics` · `FLOW-query-request-agent` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-chain-metrics` · `FLOW-dashboard-metrics-call` · `FLOW-function-criticality` · `FLOW-graph-state` · `FLOW-metrics-call` · `FLOW-module-metrics` · io ▶ `FLOW-metrics-answer` · `FLOW-metrics-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-metrics-constraint-carriers` — graph_metrics liefert die Traeger der Constraints auf Anfrage
 
@@ -10304,7 +10304,7 @@ Verification ◀ `TEST-graph-metrics` (unit) · satisfy ◀ `FUNC-graph-metrics`
 
 MCP-Oberflaeche der Messung: liefert Dimensions- und Phasen-Readiness, Verstoesse je Regel, Kongruenz (importCoverage, skipped) und am Seed zurueckgehaltene Kanten in einem Bericht. Rechnet nicht selbst — projiziert, was das Messwerk liefert. (CR-GC-129, CR-GC-402, CR-GC-532)
 
-io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-tool-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-readiness-call` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-conformance-findings` · `FLOW-dashboard-readiness-call` · `FLOW-dimension-readiness` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-readiness-call` · `FLOW-rule-findings` · `FLOW-steering-snapshot` · `FLOW-target-profile` · `FLOW-verlauf-report` · `FLOW-work-set` · io ▶ `FLOW-held-back-request-readiness` · `FLOW-readiness-report` · `FLOW-readiness-request` · `FLOW-snapshot-request-readiness` · `FLOW-verlauf-request` · allocate ▶ `MOD-projections`
 
 ###### `REQ-held-back-edges-in-readiness` — Zurueckgehaltene Kanten stehen im Stand-Bericht
 
@@ -11142,7 +11142,7 @@ Verification ◀ `TEST-graph-time-travel` (integration) · `TEST-path-containmen
 
 Materialisiert den kanonischen, deterministischen Graph-Snapshot docs/graph/<system>.graph.json plus die Markdown-Views und loescht den Drift-Marker EXPORT_PENDING. Der einzige Sync-Pfad Graph zu committeten Docs; verweigert das Clobbern (leerer Graph, fremder Drop) und nennt dabei fehlende Elemente und Kanten, bei am Seed zurueckgehaltenen Kanten auch den Reparaturweg delete-edge. (CR-GC-113, CR-GC-217, CR-GC-532)
 
-io ◀ `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
+io ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-graph-state` · `FLOW-held-back-traces` · `FLOW-markdown-text` · `FLOW-query-request-auto-export` · io ▶ `FLOW-export-answer` · `FLOW-export-write-slot` · `FLOW-graph-snapshot-file` · `FLOW-held-back-request` · `FLOW-markdown-docs` · `FLOW-marker-clear` · `FLOW-query-export` · allocate ▶ `MOD-projections`
 
 ###### `REQ-export-no-clobber` — Export refuse-to-clobber
 
@@ -11490,7 +11490,7 @@ Verification ◀ `TEST-skill-cr-ueber-aise` (conformance) · satisfy ◀ `FUNC-s
 
 Rangt die Umbau-Kandidaten aus suggestEdits: je Kandidat ein Probelauf durch das Gate (mutateWithStates), der Bericht zum Zug aus mitBericht, danach zurueck auf den gespeicherten Stand. Das Zielprofil rankt seit CR-GC-483 nichts mehr. Beleg: src/loop/suggest.ts, graph_suggest.
 
-io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-query-request-agent` · `FLOW-rule-findings` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-gate-verdict` · `FLOW-graph-state` · `FLOW-rule-findings` · `FLOW-suggest-call` · `FLOW-zug-bericht` · `FLOW-zug-staende` · io ▶ `FLOW-mcp-tool` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-suggest-answer` · `FLOW-write-slot` · `FLOW-zug-anfrage-suggest` · allocate ▶ `MOD-loop`
 
 ###### `REQ-applied-suggestion-moves-target` — Eine angewandte Suggestion bewegt den Zielvektor in Zielrichtung
 
@@ -11906,7 +11906,7 @@ Verification ◀ `TEST-steering-promise-one-owner` · satisfy ◀ `FUNC-generati
 
 Die Werkzeugschicht des Generierungstreibers: laedt das Zielprofil, setzt beim ersten Aufruf die Intent-Anker (Datei-Write in target-profile.json), fuehrt das Fokus-Gedaechtnis der Sitzung und ruft generationStep mit dem Graphen der Arbeitskopie. Beleg: src/loop/suggest.ts, graph_generate.
 
-io ◀ `FLOW-dashboard-tool-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
+io ◀ `FLOW-dashboard-generate-call` · `FLOW-graph-state` · `FLOW-next-step-advice` · `FLOW-steering-trigger-agent` · `FLOW-target-profile` · io ▶ `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-generate-answer` · `FLOW-generation-request` · allocate ▶ `MOD-loop`
 
 ###### `REQ-generate-nennt-suggest` — graph_generate nennt graph_suggest bei offenem Befund mit Zug
 
@@ -13028,1213 +13028,1243 @@ Ein Werkzeugaufruf des Dashboards ueber host.sock: graph_metrics, graph_readines
 
 io ◀ `ACTOR-dashboard` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.79  `FLOW-dashboard-tool-call` — Werkzeugaufruf (Socket an Werkzeug)
+###### 3.3.4.1.79  `FLOW-dashboard-generate-call` — Werkzeugaufruf graph_generate (Socket)
 
-Der Werkzeugaufruf des Dashboards, den der Host-Socket an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine.
+Der Aufruf von graph_generate, den der Host-Socket fuer das Dashboard an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine. (CR-GC-1016)
 
-io ◀ `FUNC-host-socket` · io ▶ `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-readiness` · schema ▶ `SCHEMA-query-params`
+io ◀ `FUNC-host-socket` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-generate-input`
 
-###### 3.3.4.1.80  `FLOW-dimension-readiness` — Dimensions-Readiness (8 Scores)
+###### 3.3.4.1.80  `FLOW-dashboard-metrics-call` — Werkzeugaufruf graph_metrics (Socket)
+
+Der Aufruf von graph_metrics, den der Host-Socket fuer das Dashboard an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine. (CR-GC-1016)
+
+io ◀ `FUNC-host-socket` · io ▶ `FUNC-graph-metrics` · schema ▶ `SCHEMA-metrics-input`
+
+###### 3.3.4.1.81  `FLOW-dashboard-readiness-call` — Werkzeugaufruf graph_readiness (Socket)
+
+Der Aufruf von graph_readiness, den der Host-Socket fuer das Dashboard an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine. (CR-GC-1016)
+
+io ◀ `FUNC-host-socket` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-readiness-input`
+
+###### 3.3.4.1.82  `FLOW-dimension-readiness` — Dimensions-Readiness (8 Scores)
 
 Marken und Befunde je Regel aus readinessOf, an graph_readiness.
 
 io ◀ `FUNC-compute-readiness` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-readiness-report`
 
-###### 3.3.4.1.81  `FLOW-eingangs-befund` — Eingangs-Befund
+###### 3.3.4.1.83  `FLOW-eingangs-befund` — Eingangs-Befund
 
 Fremde und fehlende Eingaenge eines Elements, wie eingaengeNurAus sie meldet. Der Constraint-Test macht daraus rot oder gruen, und ueber vitest kommt das Ergebnis bei der Modell-Spur an. (CR-GC-851)
 
 io ◀ `FUNC-eingaenge-nur-aus` · io ▶ `FUNC-verify-lane-model` · schema ▶ `SCHEMA-eingangs-befund`
 
-###### 3.3.4.1.82  `FLOW-element-slice` — Element-Scheibe
+###### 3.3.4.1.84  `FLOW-element-slice` — Element-Scheibe
 
 Die Elemente, die listElements an graph_elements zurueckgibt.
 
 io ◀ `FUNC-list-elements` · io ▶ `FUNC-health-endpoint` · `FUNC-read-tools` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.83  `FLOW-elements-call` — Aufruf graph_elements
+###### 3.3.4.1.85  `FLOW-elements-call` — Aufruf graph_elements
 
 Der Aufruf von graph_elements durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/surface/read.ts. (CR-GC-1015)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-elements-input`
 
-###### 3.3.4.1.84  `FLOW-ergebnis` — Ergebnis
+###### 3.3.4.1.86  `FLOW-ergebnis` — Ergebnis
 
 Das Ergebnis eines Auftrags an den Auftraggeber: Bericht, gerenderte Sicht oder Zugbericht als Text.
 
 io ◀ `FUNC-agent-loop` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-markdown-view`
 
-###### 3.3.4.1.85  `FLOW-expand-call` — Aufruf graph_expand
+###### 3.3.4.1.87  `FLOW-expand-call` — Aufruf graph_expand
 
 Der Aufruf von graph_expand durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/surface/read.ts. (CR-GC-1015)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-expand-input`
 
-###### 3.3.4.1.86  `FLOW-expand-subgraph` — Vertiefter Teilgraph
+###### 3.3.4.1.88  `FLOW-expand-subgraph` — Vertiefter Teilgraph
 
 Rueckgabewert von harness.subgraph an das Lese-Werkzeug graph_expand (read.ts:402): ein Graph aus dem Store, den das Werkzeug nach Zweig filtert. (CR-GC-505)
 
 io ◀ `FUNC-graph-expand` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.87  `FLOW-export-answer` — Antwort graph_export
+###### 3.3.4.1.89  `FLOW-export-answer` — Antwort graph_export
 
 Die Antwort von graph_export: Pfade und Groessen der geschriebenen Dateien, Platzhalter, ungefuetterte Mutationen. Beleg: src/projections/export.ts.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-export-answer`
 
-###### 3.3.4.1.88  `FLOW-export-cleared` — Export aktuell
+###### 3.3.4.1.90  `FLOW-export-call` — Aufruf graph_export
+
+Der Aufruf von graph_export durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/export.ts. (CR-GC-1016)
+
+io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-export-input`
+
+###### 3.3.4.1.91  `FLOW-export-cleared` — Export aktuell
 
 Die fehlende Drift-Marke unter .graphcode: der committete Snapshot ist so weit wie der lebende Store. Der pre-commit-Hook liest die Abwesenheit der Datei, ohne den Kuzu-Store zu oeffnen. (CR-GC-843)
 
 io ◀ `FUNC-export-marker-clear` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-export-pending`
 
-###### 3.3.4.1.89  `FLOW-export-flush` — Export nachziehen
+###### 3.3.4.1.92  `FLOW-export-flush` — Export nachziehen
 
 Der Auftrag beim Sitzungsende, den entprellten Auto-Export sofort zu fahren. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-auto-export` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.90  `FLOW-export-pending` — Export-Rueckstand
+###### 3.3.4.1.93  `FLOW-export-pending` — Export-Rueckstand
 
 Die Drift-Marke unter .graphcode: sagt, dass und wie weit der committete Snapshot dem lebenden Store nachlaeuft. Der pre-commit-Hook liest sie, ohne den Kuzu-Store zu oeffnen.
 
 io ◀ `FUNC-export-marker` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-export-pending`
 
-###### 3.3.4.1.91  `FLOW-export-request-import-code` — Export-Anfrage (import-code)
+###### 3.3.4.1.94  `FLOW-export-request-import-code` — Export-Anfrage (import-code)
 
 Der Export nach dem Code-Import (graph_export-Werkzeug). Beleg: src/surface/import-code-verb.ts.
 
-io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-query-params`
+io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-export-input`
 
-###### 3.3.4.1.92  `FLOW-export-write-slot` — Schreibplatz (Export)
+###### 3.3.4.1.95  `FLOW-export-write-slot` — Schreibplatz (Export)
 
 Der Export, den graph_export in die Schreibreihenfolge des Werkzeug-Kontexts stellt (serializeToolWrite): er laeuft erst nach jedem laufenden Schreibzug samt Feed-Eintrag und liefert die Export-Antwort zurueck. Beleg: src/projections/export.ts. (CR-GC-911)
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-tool-context` · schema ▶ `SCHEMA-export-answer`
 
-###### 3.3.4.1.93  `FLOW-fingerprint-request` — Fingerabdruck-Anfrage
+###### 3.3.4.1.96  `FLOW-fingerprint-request` — Fingerabdruck-Anfrage
 
 Der Deskriptor des laufenden Meta-Modells und das Marker-Verzeichnis, die GraphStore.open an den Schema-Guard gibt. Beleg: src/kernel/graph-store.ts.
 
 io ◀ `FUNC-open-store` · io ▶ `FUNC-schema-guard` · schema ▶ `SCHEMA-schema-fingerprint`
 
-###### 3.3.4.1.94  `FLOW-fit-advisory` — Fit-Advisory (Richtung im Metrikraum)
+###### 3.3.4.1.97  `FLOW-fit-advisory` — Fit-Advisory (Richtung im Metrikraum)
 
 Richtung und Regressionen eines Kandidaten im R^6-Metrikraum. Reine Messung: rankt, urteilt nicht.
 
 io ◀ `FUNC-fit-advisory` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-fit-advisory`
 
-###### 3.3.4.1.95  `FLOW-fit-anfrage` — Graphpaar (an das Architekturmass)
+###### 3.3.4.1.98  `FLOW-fit-anfrage` — Graphpaar (an das Architekturmass)
 
 Das Graphpaar vorher und nachher, das mitBericht im Probelauf an das Architekturmass gibt. Beleg: src/loop/zug-bericht.ts.
 
 io ◀ `FUNC-zug-bericht` · io ▶ `FUNC-fit-advisory` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.96  `FLOW-fitness-anfrage` — Graphpaar (an die Messung)
+###### 3.3.4.1.99  `FLOW-fitness-anfrage` — Graphpaar (an die Messung)
 
 Das Graphpaar, das fitAdvisory an die Messung der Architektur gibt. Beleg: src/loop/fit-advisory.ts.
 
 io ◀ `FUNC-fit-advisory` · io ▶ `FUNC-arch-fitness` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.97  `FLOW-formatE-artifact-agent` — Format-E-Artefakt (Agent)
+###### 3.3.4.1.100  `FLOW-formatE-artifact-agent` — Format-E-Artefakt (Agent)
 
 Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-agent-loop → FUNC-graph-mutate-tool, FUNC-host-socket; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510, Quelle korrigiert CR-GC-815).
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-mutate-tool` · `FUNC-host-proxy` · schema ▶ `SCHEMA-format-e`
 
-###### 3.3.4.1.98  `FLOW-formatE-artifact-read-tools` — Format-E-Artefakt (read-tools)
+###### 3.3.4.1.101  `FLOW-formatE-artifact-read-tools` — Format-E-Artefakt (read-tools)
 
 Kompaktes Format-E-Artefakt: Snapshot, Diff oder Impact-Slice. Verbindung FUNC-read-tools → FUNC-agent-loop; aufgetrennt aus FLOW-formatE-artifact (CR-GC-510, Ziel korrigiert CR-GC-815).
 
 io ◀ `FUNC-read-tools` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-format-e`
 
-###### 3.3.4.1.99  `FLOW-formatE-tool` — Format-E an den Decoder
+###### 3.3.4.1.102  `FLOW-formatE-tool` — Format-E an den Decoder
 
 Der Format-E-Text, den die Werkzeugschicht an den Decoder gibt, dazu der aktuelle Graph, gegen den der Decoder die Praefixe aufloest. Beleg: src/surface/write.ts, der graph_mutate-Handler holt harness.getGraph und ruft formatEToCommands. (CR-GC-843)
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-decode` · schema ▶ `SCHEMA-format-e`
 
-###### 3.3.4.1.100  `FLOW-function-criticality` — Kritikalitaet je FUNC
+###### 3.3.4.1.103  `FLOW-function-criticality` — Kritikalitaet je FUNC
 
 Ketten und Use Cases je Funktion, von der Rechnung in contracts an graph_metrics, das sie in seine Antwort FLOW-metrics-answer legt. EIGENER Fluss statt eines breiteren SCHEMA-module-metrics: MOD ist der Abhaengigkeitsbaum, FUNC der Wertbaum, sie spiegeln einander ausdruecklich nicht. (CR-GC-817)
 
 io ◀ `FUNC-function-criticality` · io ▶ `FUNC-graph-metrics` · schema ▶ `SCHEMA-function-criticality`
 
-###### 3.3.4.1.101  `FLOW-gate-candidate` — Kandidat (im Speicher)
+###### 3.3.4.1.104  `FLOW-gate-candidate` — Kandidat (im Speicher)
 
 Der Kandidat des Gates: der Graph nach den Befehlen, nur im Speicher. mutate gibt ihn an die Regelpruefung und wartet auf deren Befunde, bevor es das Delta an den Store gibt. Beleg: src/kernel/gate.ts, apply ruft this.evaluate(candidate). CR-GC-827.
 
 io ◀ `FUNC-mutate` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.102  `FLOW-gate-verdict` — Gate-Verdikt (Antwort im Aufruf)
+###### 3.3.4.1.105  `FLOW-gate-verdict` — Gate-Verdikt (Antwort im Aufruf)
 
 Das Urteil des Apply-Gates ueber eine angewendete oder probierte Mutation, als Antwort im Aufruf: success, tier, Violations, Confidence; beim Probelauf dazu fitAdvisory, steeringDelta und steerAdvisory. Erzeugt nur mutate. Abnehmer sind die Werkzeuge, die das Gate rufen (graph_mutate, graph_suggest, graph_test_ingest, replayBranchLog) und die Post-Apply-Hooks (Live-Ereignis, Auto-Export). Den Auftraggeber erreicht es nur ueber die Antwort von graph_mutate. Wer das Urteil spaeter aus dem Log liest, bezieht FLOW-audit-record. (CR-GC-501, CR-GC-823, CR-GC-840)
 
 io ◀ `FUNC-mutate` · io ▶ `FUNC-auto-export` · `FUNC-emit-update-event` · `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · `FUNC-merge-nodes` · `FUNC-test-ingest` · schema ▶ `SCHEMA-mutate-result`
 
-###### 3.3.4.1.103  `FLOW-generate-answer` — Antwort graph_generate
+###### 3.3.4.1.106  `FLOW-generate-answer` — Antwort graph_generate
 
 Die Antwort von graph_generate: der naechste Schritt (seed, expand, handoff) mit Anweisung, an die Ablaufsteuerung oder ueber den Host-Socket an das Dashboard (peek). Beleg: src/loop/suggest.ts.
 
 io ◀ `FUNC-graph-generate-tool` · io ▶ `FUNC-agent-loop` · `FUNC-host-socket` · schema ▶ `SCHEMA-generation-step`
 
-###### 3.3.4.1.104  `FLOW-generation-request` — Generierungsanfrage
+###### 3.3.4.1.107  `FLOW-generation-request` — Generierungsanfrage
 
 Was graph_generate an generationStep gibt: Graph der Arbeitskopie, Metrikpolitik, Intention, Schwelle, Zurueckgestelltes, Zielprofil, Task. Beleg: src/loop/suggest.ts.
 
 io ◀ `FUNC-graph-generate-tool` · io ▶ `FUNC-generation-step` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.105  `FLOW-generation-step-vorschlag` — Generierungsschritt zum Vorschlag an den Nutzer
+###### 3.3.4.1.108  `FLOW-generation-step-vorschlag` — Generierungsschritt zum Vorschlag an den Nutzer
 
 Der gerechnete Schritt auf dem Weg zum Satz an den Nutzer. Beleg: src/loop/next-step.ts, vorschlagNachAnwendung ruft generationStep. (CR-GC-770)
 
 io ◀ `FUNC-generation-step` · io ▶ `FUNC-vorschlag` · schema ▶ `SCHEMA-generation-step`
 
-###### 3.3.4.1.106  `FLOW-get-edges-call` — Aufruf graph_get_edges
+###### 3.3.4.1.109  `FLOW-get-edges-call` — Aufruf graph_get_edges
 
 Der Aufruf von graph_get_edges durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/surface/read.ts. (CR-GC-1015)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-get-edges-input`
 
-###### 3.3.4.1.107  `FLOW-get-node-call` — Aufruf graph_get_node
+###### 3.3.4.1.110  `FLOW-get-node-call` — Aufruf graph_get_node
 
 Der Aufruf von graph_get_node durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/surface/read.ts. (CR-GC-1015)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-get-node-input`
 
-###### 3.3.4.1.108  `FLOW-graph-delta` — Angenommenes Delta
+###### 3.3.4.1.111  `FLOW-graph-delta` — Angenommenes Delta
 
 Der Kandidat, den das Gate angenommen hat, samt Persistenz-Delta. Nur mutate liefert ihn, nur der GraphStore uebernimmt ihn: erst auf Platte, dann als Arbeitskopie. (CR-GC-503)
 
 io ◀ `FUNC-mutate` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-graph-delta`
 
-###### 3.3.4.1.109  `FLOW-graph-snapshot-file` — Graph-Snapshot-Datei
+###### 3.3.4.1.112  `FLOW-graph-snapshot-file` — Graph-Snapshot-Datei
 
 Der kanonische Snapshot docs/graph als Datei im Repo, die der Owner committet. Beleg: src/projections/export.ts, graph_export schreibt die Datei. (CR-GC-768)
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `ACTOR-auftraggeber` · `FUNC-ein-adapter-je-akteur` · `FUNC-eingaenge-nur-aus` · `FUNC-grenze-nur-mit-schema` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.110  `FLOW-graph-state` — Graph-State
+###### 3.3.4.1.113  `FLOW-graph-state` — Graph-State
 
 Der Graph als EIN Wert, in jedem seiner Zustaende: in-memory geladen, als Entwurf appliziert, persistiert samt Version-Counter, aus Format-E rekonstruiert, migriert, aus zwei Branch-Fassungen gemergt, aus dem Snapshot auf Platte wiederhergestellt. Der Zustand ist kein zweiter Datenvertrag.
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-check-code-conformance` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-metrics` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-import-code-verb` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.111  `FLOW-graph-state-eval` — Graph-State (Regelauswertung)
+###### 3.3.4.1.114  `FLOW-graph-state-eval` — Graph-State (Regelauswertung)
 
 Der aktuelle Graph, den harness.evaluateRules aus dem Store liest und an die Regelauswertung gibt, wenn ein Werkzeug die Befunde ohne Mutation verlangt. Uebergabe: harness.evaluateRules liest GraphStore.current und ruft gate.evaluate. (CR-GC-843)
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.112  `FLOW-grenz-befund` — Grenz-Befund
+###### 3.3.4.1.115  `FLOW-grenz-befund` — Grenz-Befund
 
 Befund von grenzeNurMitSchema an den Constraint-Test des Aufrufers.
 
 io ◀ `FUNC-grenze-nur-mit-schema` · io ▶ `FUNC-verify-lane-model` · schema ▶ `SCHEMA-grenz-befund`
 
-###### 3.3.4.1.113  `FLOW-gve-attach` — Dashboard anhaengen
+###### 3.3.4.1.116  `FLOW-gve-attach` — Dashboard anhaengen
 
 Die Repo-Wurzel, mit der serveStdio das Dashboard anhaengt (attachGve), in beiden Zweigen der Wahl. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-repo-pfad`
 
-###### 3.3.4.1.114  `FLOW-gve-stop` — Dashboard abmelden
+###### 3.3.4.1.117  `FLOW-gve-stop` — Dashboard abmelden
 
 Der Auftrag beim Sitzungsende, das angehaengte Dashboard abzumelden. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-aufruf-ohne-daten`
 
-###### 3.3.4.1.115  `FLOW-harness-handle` — Harness-Griff
+###### 3.3.4.1.118  `FLOW-harness-handle` — Harness-Griff
 
 Der fertig verdrahtete Harness, den die Fabrik liefert: Store geoeffnet, Lock beansprucht, Regelwerk geladen. Alles, was auf dem Graphen arbeitet, holt ihn hier ab.
 
 io ◀ `FUNC-create-harness` · io ▶ `FUNC-import-code-verb` · `FUNC-own-kuzu-host` · `FUNC-rewind` · `FUNC-serve-stdio` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.116  `FLOW-harness-handle-host` — Harness-Griff (Host)
+###### 3.3.4.1.119  `FLOW-harness-handle-host` — Harness-Griff (Host)
 
 Der Harness des Store-Besitzers, wie ihn der Host-Prozess fuer seine Routen haelt. Beleg: src/surface/host.ts, serveHost ruft ownKuzu und liest owned.harness. (CR-GC-768)
 
 io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-serve-sse` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.117  `FLOW-harness-request` — Harness-Anfrage (serveStdio)
+###### 3.3.4.1.120  `FLOW-harness-request` — Harness-Anfrage (serveStdio)
 
 Repo-Wurzel, Scope und die zwei Rueckrufe (Aenderungsereignis, Lock verloren), mit denen serveStdio createHarness ruft. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-create-harness` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.118  `FLOW-harness-request-import-code` — Harness-Anfrage (import-code)
+###### 3.3.4.1.121  `FLOW-harness-request-import-code` — Harness-Anfrage (import-code)
 
 Repo-Wurzel und Scope, mit denen import-code createHarness ruft. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-create-harness` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.119  `FLOW-harness-request-own-kuzu` — Harness-Anfrage (ownKuzu)
+###### 3.3.4.1.122  `FLOW-harness-request-own-kuzu` — Harness-Anfrage (ownKuzu)
 
 Repo-Wurzel und Ereignis-Senke, mit denen ownKuzu im Modus graphcode host createHarness ruft. Beleg: src/kernel/own-kuzu.ts.
 
 io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-create-harness` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.120  `FLOW-harness-request-render` — Harness-Anfrage (render)
+###### 3.3.4.1.123  `FLOW-harness-request-render` — Harness-Anfrage (render)
 
 Repo-Wurzel und Scope, mit denen graphcode render createHarness ruft. Beleg: src/surface/render-verb.ts. (CR-GC-909)
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-create-harness` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.121  `FLOW-harness-request-rewind` — Harness-Anfrage (rewind)
+###### 3.3.4.1.124  `FLOW-harness-request-rewind` — Harness-Anfrage (rewind)
 
 Repo-Wurzel und Scope, mit denen rewind createHarness ruft. Beleg: src/surface/rewind.ts.
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-create-harness` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.122  `FLOW-health-eval-request` — Regellauf (Health)
+###### 3.3.4.1.125  `FLOW-health-eval-request` — Regellauf (Health)
 
 Der Regellauf, mit dem der Health-Check prueft, ob die Regeln laufen. Beleg: src/surface/host.ts, health.
 
 io ◀ `FUNC-health-endpoint` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.123  `FLOW-health-report` — Health-Report
+###### 3.3.4.1.126  `FLOW-health-report` — Health-Report
 
 Der gemessene Funktionszustand des Hosts: Store erreichbar, Gate arbeitsfaehig, Knotenzahl, die geltenden Ontologie-/Regel-/Meta-Modell-Versionen und die Zahl der angehaengten Viewer. BENANNTE OFFENE DIFFERENZ: graph-view-edit liest /health heute nicht, es rechnet den Zustand aus der Snapshot-Datei; Ziel von CR-GC-809. (CR-GC-822)
 
 io ◀ `FUNC-health-endpoint` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-health-report`
 
-###### 3.3.4.1.124  `FLOW-health-request` — Health-Anfrage
+###### 3.3.4.1.127  `FLOW-health-request` — Health-Anfrage
 
 Die Anfrage GET /health an die read-only-Bruecke. Beleg: src/surface/host.ts, route.
 
 io ◀ `ACTOR-dashboard` · io ▶ `FUNC-health-endpoint` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.125  `FLOW-held-back-request` — Anfrage zurueckgehaltene Kanten (graph_export)
+###### 3.3.4.1.128  `FLOW-held-back-request` — Anfrage zurueckgehaltene Kanten (graph_export)
 
 Repo-Wurzel, Systemname und Live-Graph, mit denen graph_export die zurueckgehaltenen Kanten erfragt. Beleg: src/projections/export.ts.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-held-back-traces` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.126  `FLOW-held-back-request-readiness` — Anfrage zurueckgehaltene Kanten (graph_readiness)
+###### 3.3.4.1.129  `FLOW-held-back-request-readiness` — Anfrage zurueckgehaltene Kanten (graph_readiness)
 
 Repo-Wurzel, Systemname und Live-Graph, mit denen graph_readiness die zurueckgehaltenen Kanten erfragt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-held-back-traces` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.127  `FLOW-held-back-traces` — Zurueckgehaltene Kanten
+###### 3.3.4.1.130  `FLOW-held-back-traces` — Zurueckgehaltene Kanten
 
 Die Liste der committeten Kanten, die im Live-Graphen fehlen, weil kein Muster sie zulaesst. Geht in den Readiness-Report und in die Export-Verweigerung.
 
 io ◀ `FUNC-held-back-traces` · io ▶ `FUNC-graph-export-snapshot` · `FUNC-graph-readiness` · schema ▶ `SCHEMA-rejected-trace`
 
-###### 3.3.4.1.128  `FLOW-help-answer` — Antwort graph_help
+###### 3.3.4.1.131  `FLOW-help-answer` — Antwort graph_help
 
 Die Antwort von graph_help: die Erklaerung genau eines Tokens (HelpEntry). Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-help` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-skill-text`
 
-###### 3.3.4.1.129  `FLOW-help-call` — Aufruf graph_help
+###### 3.3.4.1.132  `FLOW-help-call` — Aufruf graph_help
 
 Der Aufruf von graph_help durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/report.ts. (CR-GC-1014)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-help` · schema ▶ `SCHEMA-help-input`
 
-###### 3.3.4.1.130  `FLOW-host-ready` — Host bereit
+###### 3.3.4.1.133  `FLOW-host-ready` — Host bereit
 
 Die laufende Bruecke mit Port, die serveHost an die CLI zurueckgibt. Beleg: src/cli.ts, src/surface/host.ts.
 
 io ◀ `FUNC-serve-sse` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-health-report`
 
-###### 3.3.4.1.131  `FLOW-http-route` — Weitergeleitete HTTP-Anfrage
+###### 3.3.4.1.134  `FLOW-http-route` — Weitergeleitete HTTP-Anfrage
 
 Die HTTP-Anfrage, die der Host-Router an den zustaendigen Endpunkt weitergibt; er wartet auf dessen Antwort. Beleg: src/surface/host.ts, route. (CR-GC-849)
 
 io ◀ `FUNC-serve-sse` · io ▶ `FUNC-graph-expand` · `FUNC-health-endpoint` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.132  `FLOW-impact-call` — Aufruf graph_impact
+###### 3.3.4.1.135  `FLOW-impact-call` — Aufruf graph_impact
 
 Der Aufruf von graph_impact durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/surface/read.ts. (CR-GC-1015)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-impact-input`
 
-###### 3.3.4.1.133  `FLOW-impact-slice` — Impact-Scheibe
+###### 3.3.4.1.136  `FLOW-impact-slice` — Impact-Scheibe
 
 Rueckgabewert von harness.impact an das Lese-Werkzeug graph_impact (read.ts:349): die Scheibe mit Rollen, noch kein Text. (CR-GC-505)
 
 io ◀ `FUNC-graph-impact` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-impact-slice`
 
-###### 3.3.4.1.134  `FLOW-impacted-tests` — Betroffene Tests
+###### 3.3.4.1.137  `FLOW-impacted-tests` — Betroffene Tests
 
 Der gerichtete Auswahl-Teilgraph einer Aenderung: erreichte Knoten und Kanten plus die getrennt gefuehrten Anker- und TEST-uids. Uebergabe von der Aufloesung an das Werkzeug.
 
 io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-deduce-tests` · `FUNC-test-ingest` · schema ▶ `SCHEMA-impacted-tests`
 
-###### 3.3.4.1.135  `FLOW-import-summary` — Import-Zusammenfassung
+###### 3.3.4.1.138  `FLOW-import-summary` — Import-Zusammenfassung
 
 Die Zusammenfassung des Code-Imports an die CLI. Beleg: src/surface/import-code-verb.ts, src/cli.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-import-summary`
 
-###### 3.3.4.1.136  `FLOW-import-target` — Import-Zugang
+###### 3.3.4.1.139  `FLOW-import-target` — Import-Zugang
 
 Der Import-Zugang, den reseed beim Store holt, um ihn applyReseed zu geben. Beleg: src/kernel/harness.ts, reseed ruft store.importTarget. (CR-GC-849)
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-import-access`
 
-###### 3.3.4.1.137  `FLOW-imported-graph` — Importierter Graph
+###### 3.3.4.1.140  `FLOW-imported-graph` — Importierter Graph
 
 Ein vollstaendiger Graph aus dem Bulk-Import, der die Arbeitskopie ersetzt — am Gate vorbei, deshalb mit ausgewiesenen unverifizierten REQs. (CR-GC-503)
 
 io ◀ `FUNC-import` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.138  `FLOW-install-result-collect-status` — Lifecycle-Result (collect-status)
+###### 3.3.4.1.141  `FLOW-install-result-collect-status` — Lifecycle-Result (collect-status)
 
 Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-collect-status → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).
 
 io ◀ `FUNC-collect-status` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-repo-status`
 
-###### 3.3.4.1.139  `FLOW-install-result-harness-cli` — Lifecycle-Result (harness-cli)
+###### 3.3.4.1.142  `FLOW-install-result-harness-cli` — Lifecycle-Result (harness-cli)
 
 Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-harness-cli → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).
 
 io ◀ `FUNC-harness-cli` · io ▶ `FUNC-cli-dispatch` · `FUNC-init-verb` · schema ▶ `SCHEMA-install-result`
 
-###### 3.3.4.1.140  `FLOW-install-result-init` — Init-Bericht
+###### 3.3.4.1.143  `FLOW-install-result-init` — Init-Bericht
 
 Bericht von init an den Menschen: geschriebene Dateien, Ergebnis der Installation, naechste Schritte.
 
 io ◀ `FUNC-init-verb` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-init-report`
 
-###### 3.3.4.1.141  `FLOW-install-result-upgrade` — Lifecycle-Result (upgrade)
+###### 3.3.4.1.144  `FLOW-install-result-upgrade` — Lifecycle-Result (upgrade)
 
 Ergebnis eines CLI-Lifecycle-Verbs an den Auftraggeber: Scaffold-, Update-, Remove-, Status- oder Upgrade-Ausgang. Verbindung FUNC-upgrade → ACTOR-auftraggeber; aufgetrennt aus FLOW-install-result (CR-GC-510, CR-GC-815).
 
 io ◀ `FUNC-upgrade` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-upgrade-report`
 
-###### 3.3.4.1.142  `FLOW-lane-output` — Spur-Ausgabe (verify:code)
+###### 3.3.4.1.145  `FLOW-lane-output` — Spur-Ausgabe (verify:code)
 
 Plan, Bindungsgrad und Ergebnis der Code-Spur auf stderr. Beleg: scripts/verify-code.mjs.
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-code-lane-plan`
 
-###### 3.3.4.1.143  `FLOW-lane-output-full` — Spur-Ausgabe (verify:full)
+###### 3.3.4.1.146  `FLOW-lane-output-full` — Spur-Ausgabe (verify:full)
 
 Plan, Bindungsgrad, Ergebnis und Schlupf der vollen Spur auf stderr. Beleg: scripts/verify-full.mjs.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-code-lane-plan`
 
-###### 3.3.4.1.144  `FLOW-lane-output-model` — Spur-Ausgabe (verify:model)
+###### 3.3.4.1.147  `FLOW-lane-output-model` — Spur-Ausgabe (verify:model)
 
 Zahl der Testdateien, die ausgelassenen mit Grund und das Ergebnis der Modell-Spur auf stderr. Beleg: scripts/verify-model.mjs.
 
 io ◀ `FUNC-verify-lane-model` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-code-lane-plan`
 
-###### 3.3.4.1.145  `FLOW-lauf-urteil` — Lauf-Urteil
+###### 3.3.4.1.148  `FLOW-lauf-urteil` — Lauf-Urteil
 
 Das Urteil ueber den Lauf: Beleg mit roten Dateien und Gesamtzahl, oder kein Beleg mit Grund.
 
 io ◀ `FUNC-lauf-urteil` · io ▶ `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · schema ▶ `SCHEMA-lauf-urteil`
 
-###### 3.3.4.1.146  `FLOW-lifecycle-create` — Abraeumschritte anmelden
+###### 3.3.4.1.149  `FLOW-lifecycle-create` — Abraeumschritte anmelden
 
 Die Abraeumschritte, die serveStdio beim Start im SessionLifecycle anmeldet. Beleg: src/surface/mcp-server.ts. (CR-GC-849)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-session-shutdown` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.147  `FLOW-live-event` — Live-Update-Event
+###### 3.3.4.1.150  `FLOW-live-event` — Live-Update-Event
 
 Der versionierte Aenderungsereignis-Strom an den Verteiler des Hosts: welche Bereiche (graph, rules, readiness) neu zu lesen sind. Der Hook ruft den Verteiler direkt.
 
 io ◀ `FUNC-emit-update-event` · io ▶ `FUNC-broadcast-diff` · schema ▶ `SCHEMA-update-event`
 
-###### 3.3.4.1.148  `FLOW-lock-file` — Besitzer-Datei
+###### 3.3.4.1.151  `FLOW-lock-file` — Besitzer-Datei
 
 Die Datei owner.lock mit pid des laufenden Hosts, die upgrade liest, um ihn zu beenden. Beleg: src/surface/upgrade.ts.
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-upgrade` · schema ▶ `SCHEMA-lock-owner`
 
-###### 3.3.4.1.149  `FLOW-lock-lost` — Lock verloren
+###### 3.3.4.1.152  `FLOW-lock-lost` — Lock verloren
 
 Die Meldung des Store-Locks, dass ein anderer Host den Store uebernommen hat (onLockLost). Beleg: src/kernel/store-lock.ts, src/surface/mcp-server.ts.
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-session-shutdown` · schema ▶ `SCHEMA-lock-owner`
 
-###### 3.3.4.1.150  `FLOW-lock-release` — Lock-Freigabe
+###### 3.3.4.1.153  `FLOW-lock-release` — Lock-Freigabe
 
 Die Freigabe des Store-Locks am Sitzungsende, als letzter Abraeumschritt. Beleg: src/surface/mcp-server.ts, lifecycle.add store lock ruft harness.close. (CR-GC-768)
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-claim-store-lock` · schema ▶ `SCHEMA-lock-owner`
 
-###### 3.3.4.1.151  `FLOW-lock-release-close` — Lock-Freigabe beim Schliessen
+###### 3.3.4.1.154  `FLOW-lock-release-close` — Lock-Freigabe beim Schliessen
 
 Die Freigabe des Store-Locks, die GraphStore.close nach dem Schliessen des Store-Griffs ruft. Beleg: src/kernel/graph-store.ts, close ruft lock.release. (CR-GC-849)
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-claim-store-lock` · schema ▶ `SCHEMA-lock-owner`
 
-###### 3.3.4.1.152  `FLOW-lock-request` — Lock-Anspruch
+###### 3.3.4.1.155  `FLOW-lock-request` — Lock-Anspruch
 
 Der Anspruch auf den Store, den GraphStore.open vor dem Oeffnen stellt (lock.acquire). Beleg: src/kernel/graph-store.ts.
 
 io ◀ `FUNC-open-store` · io ▶ `FUNC-claim-store-lock` · schema ▶ `SCHEMA-lock-owner`
 
-###### 3.3.4.1.153  `FLOW-markdown-docs` — Exportierte Sichten
+###### 3.3.4.1.156  `FLOW-markdown-docs` — Exportierte Sichten
 
 Die Markdown-Sichten unter docs/views, die graph_export schreibt.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-markdown-view`
 
-###### 3.3.4.1.154  `FLOW-markdown-text` — Markdown einer Sicht
+###### 3.3.4.1.157  `FLOW-markdown-text` — Markdown einer Sicht
 
 Der gerenderte Markdown-Text einer Sicht, den exportMarkdown an graph_export zurueckgibt. Beleg: src/projections/export.ts.
 
 io ◀ `FUNC-export-markdown` · io ▶ `FUNC-graph-export-snapshot` · `FUNC-render-verb` · schema ▶ `SCHEMA-markdown-text`
 
-###### 3.3.4.1.155  `FLOW-marker-clear` — Marker loeschen
+###### 3.3.4.1.158  `FLOW-marker-clear` — Marker loeschen
 
 Der Auftrag von graph_export, nach dem Schreiben den Drift-Marker zu loeschen (clearExportPending). Beleg: src/projections/export.ts.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-export-marker-clear` · schema ▶ `SCHEMA-export-pending`
 
-###### 3.3.4.1.156  `FLOW-marker-clear-reseed` — Marker loeschen (Reseed)
+###### 3.3.4.1.159  `FLOW-marker-clear-reseed` — Marker loeschen (Reseed)
 
 Der Auftrag von applyReseed, nach dem Wiedereinlesen den Drift-Marker zu loeschen: Store und Snapshot sind wieder gleich. Beleg: src/kernel/harness-import.ts, applyReseed ruft clearExportPending. (CR-GC-843)
 
 io ◀ `FUNC-apply-reseed` · io ▶ `FUNC-export-marker-clear` · schema ▶ `SCHEMA-export-pending`
 
-###### 3.3.4.1.157  `FLOW-marker-set` — Marker setzen
+###### 3.3.4.1.160  `FLOW-marker-set` — Marker setzen
 
 Der Auftrag des Gates, nach einer angenommenen Mutation den Drift-Marker zu setzen (setExportPending). Beleg: src/kernel/gate.ts.
 
 io ◀ `FUNC-mutate` · io ▶ `FUNC-export-marker` · schema ▶ `SCHEMA-export-pending`
 
-###### 3.3.4.1.158  `FLOW-mcp-tool` — Werkzeug
+###### 3.3.4.1.161  `FLOW-mcp-tool` — Werkzeug
 
 Traegt MCPTool ueber die Modulgrenze.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-mcp-tool`
 
-###### 3.3.4.1.159  `FLOW-meldung` — Meldung an die Spur
+###### 3.3.4.1.162  `FLOW-meldung` — Meldung an die Spur
 
 Die Antwort von graph_test_ingest, an die aufrufende Spur zurueckgegeben.
 
 io ◀ `FUNC-aenderung-melden` · io ▶ `FUNC-verify-lane-code` · `FUNC-verify-lane-full` · schema ▶ `SCHEMA-test-ingest-answer`
 
-###### 3.3.4.1.160  `FLOW-merge-answer` — Merge-Antwort
+###### 3.3.4.1.163  `FLOW-merge-answer` — Merge-Antwort
 
 Die Antwort von graph_merge an die Ablaufsteuerung: der Merge-Bericht mit graphVersion. Beleg: src/surface/write.ts, graph_merge.
 
 io ◀ `FUNC-graph-merge-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-branch-merge-report`
 
-###### 3.3.4.1.161  `FLOW-merge-report` — Merge-Bericht
+###### 3.3.4.1.164  `FLOW-merge-report` — Merge-Bericht
 
 Der Bericht von replayBranchLog an das graph_merge-Werkzeug: angewendete und uebersprungene Chargen. Beleg: src/kernel/merge.ts.
 
 io ◀ `FUNC-merge-nodes` · io ▶ `FUNC-graph-merge-tool` · schema ▶ `SCHEMA-branch-merge-report`
 
-###### 3.3.4.1.162  `FLOW-metric-policy` — Urteils-Policy
+###### 3.3.4.1.165  `FLOW-metric-policy` — Urteils-Policy
 
 Die geltenden Urteilsschwellen, wie sie nach dem Auffuellen mit DEFAULT_METRIC_POLICY gelten: vollstaendig, jede Schwelle gesetzt. Erzeugt von load-config aus der Rohform. Keine Schwelle steht als Literal im Regelcode.
 
 io ◀ `FUNC-load-config` · io ▶ `FUNC-evaluate-rules` · schema ▶ `SCHEMA-metric-policy`
 
-###### 3.3.4.1.163  `FLOW-metrics-answer` — Antwort von graph_metrics
+###### 3.3.4.1.166  `FLOW-metrics-answer` — Antwort von graph_metrics
 
 Die Antwort des Werkzeugs graph_metrics an jeden, der es aufruft: die Ablaufsteuerung und das Dashboard ueber host.sock. Ein Aufruf, eine Antwort mit Modulkennzahlen, Kritikalitaet je Funktion, Kennzahlen je Wirkkette mit Bewertbarkeitsquote, riskCarriers und scope. Eigener Fluss, weil ein Fluss genau einen Erzeuger hat: die Teilfluesse kommen aus den Rechnungen in contracts, dieser aus dem Werkzeug, das sie buendelt. BENANNTE OFFENE DIFFERENZ: das Dashboard rendert modules und functions, chains noch nicht. (CR-GC-817, CR-GC-821)
 
 io ◀ `FUNC-graph-metrics` · io ▶ `FUNC-agent-loop` · `FUNC-host-socket` · schema ▶ `SCHEMA-metrics-answer`
 
-###### 3.3.4.1.164  `FLOW-metrics-request` — Kennzahl-Anfrage
+###### 3.3.4.1.167  `FLOW-metrics-call` — Aufruf graph_metrics
+
+Der Aufruf von graph_metrics durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/metrics.ts. (CR-GC-1016)
+
+io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-metrics` · schema ▶ `SCHEMA-metrics-input`
+
+###### 3.3.4.1.168  `FLOW-metrics-request` — Kennzahl-Anfrage
 
 Der Graph der Arbeitskopie, den graph_metrics an die Kennzahl-Rechnungen gibt. Beleg: src/projections/metrics.ts.
 
 io ◀ `FUNC-graph-metrics` · io ▶ `FUNC-chain-metrics` · `FUNC-function-criticality` · `FUNC-module-metrics` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.165  `FLOW-module-metrics` — Modulkennzahlen je MOD
+###### 3.3.4.1.169  `FLOW-module-metrics` — Modulkennzahlen je MOD
 
 Instabilitaet, LCOM4, Kohaesion je Modul plus die geltende Urteils-Policy und ihre Herkunft. Wert und Schwelle verlassen den Host zusammen, damit die Anzeige keinen eigenen Zielwert braucht (CR-GC-329).
 
 io ◀ `FUNC-module-metrics` · io ▶ `FUNC-graph-metrics` · schema ▶ `SCHEMA-module-metrics`
 
-###### 3.3.4.1.166  `FLOW-mutate-answer` — graph_mutate-Antwort (Agent)
+###### 3.3.4.1.170  `FLOW-mutate-answer` — graph_mutate-Antwort (Agent)
 
 Die Antwort von graph_mutate an die Ablaufsteuerung: Gate-Urteil, im Probelauf mit Steuerungsdelta und Berichten zum Zug, dazu der Vorschlag an den Nutzer. Uebergabe: der MCP-Server ruft den Handler aus der Registry und gibt das Ergebnis zurueck.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mutate-answer`
 
-###### 3.3.4.1.167  `FLOW-mutate-answer-host-socket` — graph_mutate-Antwort (host-socket)
+###### 3.3.4.1.171  `FLOW-mutate-answer-host-socket` — graph_mutate-Antwort (host-socket)
 
 Die Antwort von graph_mutate an den Host-Socket, der sie ueber host.sock an die angedockte Sitzung zurueckgibt. Uebergabe: handleLine ruft den Handler aus der Registry. (CR-GC-843)
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-answer`
 
-###### 3.3.4.1.168  `FLOW-mutate-answer-import-code-verb` — graph_mutate-Antwort (import-code)
+###### 3.3.4.1.172  `FLOW-mutate-answer-import-code-verb` — graph_mutate-Antwort (import-code)
 
 Die Antwort von graph_mutate an den Code-Import: das Gate-Urteil des Reseed-Batches. Uebergabe: executeImportCode ruft registry graph_mutate handler. (CR-GC-843)
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-import-code-verb` · schema ▶ `SCHEMA-mutate-answer`
 
-###### 3.3.4.1.169  `FLOW-mutate-cmd-decode` — Mutate-Command (decode)
+###### 3.3.4.1.173  `FLOW-mutate-cmd-decode` — Mutate-Command (decode)
 
 Die aus Format-E gelesenen Kommandos, zurueck an das graph_mutate-Werkzeug, das sie dem Gate gibt. Beleg: src/surface/write.ts, graph_mutate ruft formatEToCommands.
 
 io ◀ `FUNC-decode` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.170  `FLOW-mutate-cmd-graph-suggest` — Mutate-Command (graph-suggest)
+###### 3.3.4.1.174  `FLOW-mutate-cmd-graph-suggest` — Mutate-Command (graph-suggest)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-graph-suggest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.171  `FLOW-mutate-cmd-host-socket` — Mutate-Command (host-socket)
+###### 3.3.4.1.175  `FLOW-mutate-cmd-host-socket` — Mutate-Command (host-socket)
 
 Der Schreibaufruf eines zweiten Prozesses, vom Socket an das Werkzeug des Besitzers weitergereicht. Beleg: src/surface/host-shim.ts, startHostSocket ruft tool.handler mit der geparsten Eingabe. (CR-GC-768)
 
 io ◀ `FUNC-host-socket` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.172  `FLOW-mutate-cmd-import-code-verb` — Mutate-Command (import-code-verb)
+###### 3.3.4.1.176  `FLOW-mutate-cmd-import-code-verb` — Mutate-Command (import-code-verb)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-import-code-verb → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.173  `FLOW-mutate-cmd-merge-nodes` — Mutate-Command (merge-nodes)
+###### 3.3.4.1.177  `FLOW-mutate-cmd-merge-nodes` — Mutate-Command (merge-nodes)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-merge-nodes → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-merge-nodes` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.174  `FLOW-mutate-cmd-test-ingest` — Mutate-Command (test-ingest)
+###### 3.3.4.1.178  `FLOW-mutate-cmd-test-ingest` — Mutate-Command (test-ingest)
 
 Schreibabsicht am Gate als MutateCommand-Batch. Verbindung FUNC-test-ingest → FUNC-mutate; aufgetrennt aus FLOW-mutate-cmd (CR-GC-510).
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.175  `FLOW-mutate-cmd-tool` — Mutate-Commands (Werkzeug an Gate)
+###### 3.3.4.1.179  `FLOW-mutate-cmd-tool` — Mutate-Commands (Werkzeug an Gate)
 
 Die Kommandos, die das graph_mutate-Werkzeug nach dem Lesen an das Gate gibt (harness.mutateWithStates). Beleg: src/surface/write.ts, graph_mutate.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-mutate` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.176  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
+###### 3.3.4.1.180  `FLOW-next-step-advice` — Naechster Schritt (Advisory)
 
 Der Schritt, den generationStep an graph_generate zurueckgibt.
 
 io ◀ `FUNC-generation-step` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-generation-step`
 
-###### 3.3.4.1.177  `FLOW-ontology-json` — Graph-Datei (Snapshot)
+###### 3.3.4.1.181  `FLOW-ontology-json` — Graph-Datei (Snapshot)
 
 Der Inhalt der committeten Graph-Datei, gelesen fuer Seed und Reseed und an den Import uebergeben. (CR-GC-503)
 
 io ◀ `FUNC-seed-from-json` · io ▶ `FUNC-import` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.178  `FLOW-own-kuzu-request` — Kuzu-Besitz anfordern
+###### 3.3.4.1.182  `FLOW-own-kuzu-request` — Kuzu-Besitz anfordern
 
 Repo-Wurzel und Ereignis-Senke, mit denen serveHost ownKuzu ruft. Beleg: src/surface/host.ts.
 
 io ◀ `FUNC-serve-sse` · io ▶ `FUNC-own-kuzu-host` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.179  `FLOW-own-kuzu-request-stdio` — Bruecke starten (stdio-Host)
+###### 3.3.4.1.183  `FLOW-own-kuzu-request-stdio` — Bruecke starten (stdio-Host)
 
 Der Auftrag des stdio-Hosts, die Live-Bruecke zu starten, die den Store selbst besitzt (maybeStartBridge). Beleg: src/surface/mcp-server.ts. (CR-GC-849)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-own-kuzu-host` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.180  `FLOW-plan-request` — Spur-Anfrage (verify:code)
+###### 3.3.4.1.184  `FLOW-plan-request` — Spur-Anfrage (verify:code)
 
 Die geaenderten Dateien und der Kontext, mit denen verify:code planCodeLane ruft. Beleg: scripts/verify-code.mjs.
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-plan-code-lane` · schema ▶ `SCHEMA-code-lane-plan`
 
-###### 3.3.4.1.181  `FLOW-plan-request-full` — Spur-Anfrage (verify:full)
+###### 3.3.4.1.185  `FLOW-plan-request-full` — Spur-Anfrage (verify:full)
 
 Die geaenderten Dateien und der Kontext, mit denen verify:full planCodeLane ruft. Beleg: scripts/verify-full.mjs.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-plan-code-lane` · schema ▶ `SCHEMA-code-lane-plan`
 
-###### 3.3.4.1.182  `FLOW-proxy-build` — Stellvertreter bauen
+###### 3.3.4.1.186  `FLOW-proxy-build` — Stellvertreter bauen
 
 Der Auftrag an buildProxyRegistry, die Stellvertreter-Werkzeuge fuer eine angedockte Sitzung zu bauen. Beleg: src/surface/mcp-server.ts. (CR-GC-849)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-host-proxy` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.183  `FLOW-proxy-call` — Werkzeugaufruf (Stellvertreter an Host)
+###### 3.3.4.1.187  `FLOW-proxy-call` — Werkzeugaufruf (Stellvertreter an Host)
 
 Ein Werkzeugaufruf einer angedockten Sitzung an den Host, ueber host.sock (callHost). Traegt jeden Werkzeugaufruf, nicht nur graph_mutate. Beleg: src/surface/host-shim.ts.
 
 io ◀ `FUNC-host-proxy` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.184  `FLOW-query-export` — Sichtauftrag an den Renderer
+###### 3.3.4.1.188  `FLOW-query-export` — Sichtauftrag an den Renderer
 
 Graph, Sicht und Systemname, mit denen graph_export je Sicht exportMarkdown ruft.
 
 io ◀ `FUNC-graph-export-snapshot` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.185  `FLOW-query-request-agent` — Query-Request (Agent)
+###### 3.3.4.1.189  `FLOW-query-request-agent` — Query-Request (Agent)
 
 Die parametrisierte Leseanfrage an den Graphen: Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern. Verbindung FUNC-agent-loop → FUNC-read-tools, FUNC-list-elements, FUNC-graph-impact, FUNC-graph-expand, FUNC-deduce-tests, FUNC-resolve-tests-from-code, FUNC-graph-readiness, FUNC-graph-metrics, FUNC-rules-tool, FUNC-authoring-guide, FUNC-graph-export-snapshot; aufgetrennt aus FLOW-query-request (CR-GC-510, Quelle korrigiert CR-GC-815).
 
-io ◀ `FUNC-agent-loop` · io ▶ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-query-params`
+io ◀ `FUNC-agent-loop` · io ▶ `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-graph-reseed-tool` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.186  `FLOW-query-request-auto-export` — Query-Request (auto-export)
+###### 3.3.4.1.190  `FLOW-query-request-auto-export` — Query-Request (auto-export)
 
 Der entprellte Aufruf des graph_export-Werkzeugs nach einer angenommenen Mutation (250 ms, single-flight).
 
-io ◀ `FUNC-auto-export` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-query-params`
+io ◀ `FUNC-auto-export` · io ▶ `FUNC-graph-export-snapshot` · schema ▶ `SCHEMA-export-input`
 
-###### 3.3.4.1.187  `FLOW-read-bind` — Lese-Werkzeuge binden
+###### 3.3.4.1.191  `FLOW-read-bind` — Lese-Werkzeuge binden
 
 Der Werkzeug-Kontext, mit dem bindToolsToHarness die Lese-Werkzeuge bindet (bindReadTools). Beleg: src/surface/mcp-tools.ts. (CR-GC-849)
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-read-tools` · schema ▶ `SCHEMA-tool-context`
 
-###### 3.3.4.1.188  `FLOW-read-request` — Leseanfrage (Werkzeug an Kern)
+###### 3.3.4.1.192  `FLOW-read-request` — Leseanfrage (Werkzeug an Kern)
 
 Die Leseanfrage, die ein Lesewerkzeug (graph_impact, graph_expand, graph_elements) an den Kern gibt: Knoten, Tiefe, Filter. Beleg: src/surface/read.ts.
 
 io ◀ `FUNC-read-tools` · io ▶ `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.189  `FLOW-readiness-call` — Aufruf graph_readiness
+###### 3.3.4.1.193  `FLOW-readiness-call` — Aufruf graph_readiness
 
 Der Aufruf von graph_readiness durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/report.ts. (CR-GC-1014)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-readiness-input`
 
-###### 3.3.4.1.190  `FLOW-readiness-report` — Readiness-Report
+###### 3.3.4.1.194  `FLOW-readiness-report` — Readiness-Report
 
 Der Bericht von graph_readiness an jeden, der ihn ueber das Werkzeug abfragt: die Ablaufsteuerung und das Dashboard ueber host.sock (detail:true, mit den rohen Verstoessen). Scores mit Nenner, Verstoesse je Regel, Kongruenzlage und zurueckgehaltene Kanten. (CR-GC-822)
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-agent-loop` · `FUNC-code-urteil` · `FUNC-host-socket` · schema ▶ `SCHEMA-readiness-report`
 
-###### 3.3.4.1.191  `FLOW-readiness-request` — Befunde (an die Marken)
+###### 3.3.4.1.195  `FLOW-readiness-request` — Befunde (an die Marken)
 
 Die Befunde einer Erhebung (evaluateAll), die graph_readiness an readinessOf gibt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-compute-readiness` · schema ▶ `SCHEMA-rule-violation`
 
-###### 3.3.4.1.192  `FLOW-render-file` — Sicht als Datei
+###### 3.3.4.1.196  `FLOW-render-file` — Sicht als Datei
 
 Die geschriebene Datei der Sicht (md, docx oder pdf) samt Zusammenfassung an den Auftraggeber.
 
 io ◀ `FUNC-render-verb` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-render-summary`
 
-###### 3.3.4.1.193  `FLOW-render-view-request` — Sichtauftrag (render)
+###### 3.3.4.1.197  `FLOW-render-view-request` — Sichtauftrag (render)
 
 Die angeforderte Sicht aus graphcode render, geprueft gegen MarkdownViewSchema, an den Renderer.
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-markdown-view`
 
-###### 3.3.4.1.194  `FLOW-reseed-answer` — Antwort graph_reseed
+###### 3.3.4.1.198  `FLOW-reseed-answer` — Antwort graph_reseed
 
 Die Antwort von graph_reseed: Zahl der Knoten und Kanten nach dem Neuaufbau. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-reseed-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.195  `FLOW-reseed-order` — Reseed-Auftrag
+###### 3.3.4.1.199  `FLOW-reseed-order` — Reseed-Auftrag
 
 Der serialisierte Auftrag, den Store aus dem Snapshot neu aufzusetzen. Beleg: src/kernel/harness.ts, reseed ruft applyReseed hinter dem Single-Writer. (CR-GC-768)
 
 io ◀ `FUNC-reseed` · io ▶ `FUNC-apply-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.196  `FLOW-reseed-order-open` — Neuaufbau-Auftrag (Store oeffnen)
+###### 3.3.4.1.200  `FLOW-reseed-order-open` — Neuaufbau-Auftrag (Store oeffnen)
 
 Der Neuaufbau aus der committeten SSOT, den GraphStore.open bei Schema-Abweichung anstoesst (applyReseed). Beleg: src/kernel/graph-store.ts.
 
 io ◀ `FUNC-open-store` · io ▶ `FUNC-apply-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.197  `FLOW-reseed-request` — Reseed-Anfrage (Werkzeug)
+###### 3.3.4.1.201  `FLOW-reseed-request` — Reseed-Anfrage (Werkzeug)
 
 Der Aufruf harness.reseed aus dem Werkzeug graph_reseed, mit optionalem Pfad. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-reseed-tool` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.198  `FLOW-reseed-snapshot` — Snapshot zum Reseed
+###### 3.3.4.1.202  `FLOW-reseed-snapshot` — Snapshot zum Reseed
 
 Der bereitgestellte Snapshot eines Commits auf dem Weg zum Neuaufsetzen. Beleg: src/surface/rewind.ts, executeRewind ruft harness.reseed. (CR-GC-768)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-reseed` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.199  `FLOW-reseeded-graph` — Snapshot zum Neuaufsetzen
+###### 3.3.4.1.203  `FLOW-reseeded-graph` — Snapshot zum Neuaufsetzen
 
 Der Pfad des bereitgestellten Snapshots, den applyReseed nach dem Leeren des Stores an seedFromJsonFile gibt. Beleg: src/kernel/harness-import.ts:240-241.
 
 io ◀ `FUNC-apply-reseed` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.200  `FLOW-rewind-summary` — Rewind-Zusammenfassung
+###### 3.3.4.1.204  `FLOW-rewind-summary` — Rewind-Zusammenfassung
 
 Die Zusammenfassung von graphcode rewind auf der Schale: Ref, Snapshot, wiederhergestellter Stand. Beleg: src/cli.ts schreibt executeRewind nach stderr (CR-GC-311, CR-GC-823)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-rewind-summary`
 
-###### 3.3.4.1.201  `FLOW-rule-findings` — Regelbefunde
+###### 3.3.4.1.205  `FLOW-rule-findings` — Regelbefunde
 
 Die Befunde des Gate-Katalogs ueber den aktuellen Graphen (harness.evaluateRules). Das Gate urteilt damit, der Health-Endpunkt prueft damit, dass das Gate verdrahtet ist. Kein Urteil ueber eine Mutation, das traegt FLOW-gate-verdict. (CR-GC-501)
 
 io ◀ `FUNC-evaluate-rules` · io ▶ `FUNC-graph-merge-tool` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-mutate` · `FUNC-rules-tool` · schema ▶ `SCHEMA-rule-violation`
 
-###### 3.3.4.1.202  `FLOW-rules-answer` — Regelbefunde (Antwort)
+###### 3.3.4.1.206  `FLOW-rules-answer` — Regelbefunde (Antwort)
 
 Die Regelbefunde, wie rules_evaluate oder rules_get_violations sie der Ablaufsteuerung geben.
 
 io ◀ `FUNC-rules-tool` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-rule-violation`
 
-###### 3.3.4.1.203  `FLOW-rules-evaluate-call` — Aufruf rules_evaluate
+###### 3.3.4.1.207  `FLOW-rules-evaluate-call` — Aufruf rules_evaluate
 
 Der Aufruf von rules_evaluate durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/report.ts. (CR-GC-1014)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-rules-tool` · schema ▶ `SCHEMA-rules-evaluate-input`
 
-###### 3.3.4.1.204  `FLOW-rules-get-violations-call` — Aufruf rules_get_violations
+###### 3.3.4.1.208  `FLOW-rules-get-violations-call` — Aufruf rules_get_violations
 
 Der Aufruf von rules_get_violations durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/report.ts. (CR-GC-1014)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-rules-tool` · schema ▶ `SCHEMA-rules-get-violations-input`
 
-###### 3.3.4.1.205  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
+###### 3.3.4.1.209  `FLOW-schema-fingerprint` — Schema-Fingerabdruck
 
 Der aktuelle und der gespeicherte Fingerabdruck der DDL, an GraphStore.open.
 
 io ◀ `FUNC-schema-guard` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-schema-fingerprint`
 
-###### 3.3.4.1.206  `FLOW-schlupf-request` — Schlupf-Anfrage
+###### 3.3.4.1.210  `FLOW-schlupf-request` — Schlupf-Anfrage
 
 Rote Tests, Auswahl und reine Graph-Treffer, die verify:full an schlupfVon gibt. Beleg: scripts/verify-full.mjs.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-measure-test-schlupf` · schema ▶ `SCHEMA-schlupf-zeile`
 
-###### 3.3.4.1.207  `FLOW-schlupf-result` — Schlupf
+###### 3.3.4.1.211  `FLOW-schlupf-result` — Schlupf
 
 Der Schlupf, den schlupfVon an verify:full zurueckgibt. Beleg: src/projections/test-schlupf.ts.
 
 io ◀ `FUNC-measure-test-schlupf` · io ▶ `FUNC-verify-lane-full` · schema ▶ `SCHEMA-schlupf-zeile`
 
-###### 3.3.4.1.208  `FLOW-schlupf-zeile` — Schlupf-Zeile
+###### 3.3.4.1.212  `FLOW-schlupf-zeile` — Schlupf-Zeile
 
 Die Zeile in docs/messung/testauswahl.jsonl und auf stderr, die verify:full je Lauf schreibt.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-schlupf-zeile`
 
-###### 3.3.4.1.209  `FLOW-seed-request` — Erstbefuellung (Hoststart)
+###### 3.3.4.1.213  `FLOW-seed-request` — Erstbefuellung (Hoststart)
 
 Die Erstbefuellung eines leeren Stores beim Hoststart (harness.seedFromJson). Beleg: src/surface/mcp-server.ts, bootHost.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.210  `FLOW-seed-request-import-code` — Erstbefuellung (import-code)
+###### 3.3.4.1.214  `FLOW-seed-request-import-code` — Erstbefuellung (import-code)
 
 Die Erstbefuellung eines leeren Stores vor dem Code-Import. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.211  `FLOW-seed-request-render` — Erstbefuellung (render)
+###### 3.3.4.1.215  `FLOW-seed-request-render` — Erstbefuellung (render)
 
 Die Erstbefuellung eines leeren Stores, bevor graphcode render die Sicht rendert. Beleg: src/surface/render-verb.ts. (CR-GC-909)
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-ontology-json`
 
-###### 3.3.4.1.212  `FLOW-select-request` — Auswahl-Anfrage (testImpact)
+###### 3.3.4.1.216  `FLOW-select-request` — Auswahl-Anfrage (testImpact)
 
 Graph und Aenderungsmenge, die testImpact an impactedTests gibt. Beleg: src/kernel/harness.ts.
 
 io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.213  `FLOW-select-request-lane` — Auswahl-Anfrage (Code-Spur)
+###### 3.3.4.1.217  `FLOW-select-request-lane` — Auswahl-Anfrage (Code-Spur)
 
 Committeter Graph und Knoten der Aenderung, die planCodeLane an impactedTests gibt. Beleg: src/projections/test-selection-audit.ts.
 
 io ◀ `FUNC-plan-code-lane` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.214  `FLOW-selected-tests` — Gewaehlte Tests
+###### 3.3.4.1.218  `FLOW-selected-tests` — Gewaehlte Tests
 
 Die betroffenen TEST-Knoten, die impactedTests an den Aufrufer zurueckgibt. Beleg: src/kernel/measure/test-selection.ts.
 
 io ◀ `FUNC-select-tests` · io ▶ `FUNC-plan-code-lane` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-impacted-tests`
 
-###### 3.3.4.1.215  `FLOW-session-end` — Sitzungsende
+###### 3.3.4.1.219  `FLOW-session-end` — Sitzungsende
 
 Das Ende der Sitzung: der stdio-Client schliesst, ein Signal kommt oder der Store-Lock geht verloren. Der Grund ist ein Wert aus SCHEMA-sitzungsende. Beleg: src/surface/session-lifecycle.ts, installTriggers und end. (CR-GC-989)
 
 io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-session-shutdown` · schema ▶ `SCHEMA-sitzungsende`
 
-###### 3.3.4.1.216  `FLOW-session-entry` — Sitzungseintrag
+###### 3.3.4.1.220  `FLOW-session-entry` — Sitzungseintrag
 
 Der Eintrag, den eine Sitzung beim Anhaengen unter .graphcode/sessions fuer sich selbst schreibt: PID, Rechner, Startzeit.
 
 io ◀ `FUNC-gve-supervise` · io ▶ `FUNC-gve-sessions` · schema ▶ `SCHEMA-session-registry`
 
-###### 3.3.4.1.217  `FLOW-session-registry` — Sitzungsregister
+###### 3.3.4.1.221  `FLOW-session-registry` — Sitzungsregister
 
 Die noch lebenden Sitzungen eines Repos: aus den Eintraegen unter .graphcode/sessions gefiltert, tote PIDs entfernt. Darauf entscheidet das Anhaengen, ob noch ein Viewer gebraucht wird.
 
 io ◀ `FUNC-gve-sessions` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-session-registry`
 
-###### 3.3.4.1.218  `FLOW-skill-request` — Skill-Aufruf
+###### 3.3.4.1.222  `FLOW-skill-request` — Skill-Aufruf
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-bau` · `FUNC-se-cdr` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.219  `FLOW-skill-sync-result-sync-skills` — Skill-Sync-Bericht (cli-dispatch)
+###### 3.3.4.1.223  `FLOW-skill-sync-result-sync-skills` — Skill-Sync-Bericht (cli-dispatch)
 
 Der Bericht des Skill-Abgleichs an den Einsprung: Pfad der Repo-Wurzel und die Listen added, updated, unchanged, removed. Verbindung FUNC-sync-skills zu FUNC-cli-dispatch. Beleg: src/cli.ts, syncSkills(process.cwd()).
 
 io ◀ `FUNC-sync-skills` · io ▶ `FUNC-cli-dispatch` · schema ▶ `SCHEMA-skill-sync-result`
 
-###### 3.3.4.1.220  `FLOW-skill-sync-result-upgrade` — Skill-Sync-Bericht (upgrade)
+###### 3.3.4.1.224  `FLOW-skill-sync-result-upgrade` — Skill-Sync-Bericht (upgrade)
 
 Der Bericht des Trockenlaufs von syncSkills an upgrade: added und removed werden zu missingSkills und staleSkills. Verbindung FUNC-sync-skills zu FUNC-upgrade. Beleg: src/surface/upgrade.ts, syncImpl(repoRoot, { dry: true }).
 
 io ◀ `FUNC-sync-skills` · io ▶ `FUNC-upgrade` · schema ▶ `SCHEMA-skill-sync-result`
 
-###### 3.3.4.1.221  `FLOW-snapshot-request` — Messanfrage (generationStep)
+###### 3.3.4.1.225  `FLOW-snapshot-request` — Messanfrage (generationStep)
 
 Graph und Metrikpolitik, die generationStep an takeSteeringSnapshot gibt. Beleg: src/loop/generate.ts.
 
 io ◀ `FUNC-generation-step` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.222  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
+###### 3.3.4.1.226  `FLOW-snapshot-request-mutate` — Messanfrage (graph_mutate)
 
 Graph und Metrikpolitik, die graph_mutate im Probelauf vor und nach dem Zug an takeSteeringSnapshot gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.223  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
+###### 3.3.4.1.227  `FLOW-snapshot-request-readiness` — Messanfrage (graph_readiness)
 
 Graph und Metrikpolitik, die graph_readiness an takeSteeringSnapshot gibt. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.224  `FLOW-socket-close` — Host-Socket schliessen
+###### 3.3.4.1.228  `FLOW-socket-close` — Host-Socket schliessen
 
 Der Auftrag beim Sitzungsende, den Host-Socket zu schliessen und die Socket-Datei zu entfernen. Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-session-shutdown` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.225  `FLOW-socket-start` — Host-Socket starten
+###### 3.3.4.1.229  `FLOW-socket-start` — Host-Socket starten
 
 Die Werkzeug-Registry, mit der bootHost den Host-Socket startet. Beleg: src/surface/mcp-server.ts, bootHost.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-host-socket` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.226  `FLOW-sse-frame` — SSE-Frame (versioniert)
+###### 3.3.4.1.230  `FLOW-sse-frame` — SSE-Frame (versioniert)
 
 Das Live-Update-Event auf der Leitung zum Viewer: broadcast vergibt die fortlaufende id, damit ein Viewer per Last-Event-ID wieder aufsetzen kann. Inhalt wie FLOW-live-event, plus Version. (CR-GC-501) BENANNTE OFFENE DIFFERENZ: graph-view-edit abonniert /events heute nicht, es beobachtet die Snapshot-Datei; das Abo ist Ziel von CR-GC-809. (CR-GC-822)
 
 io ◀ `FUNC-broadcast-diff` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-update-event`
 
-###### 3.3.4.1.227  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
+###### 3.3.4.1.231  `FLOW-steering-delta` — Steering-Delta (vor/nach Kandidat)
 
 Blockierende Fehler vorher und nachher plus Score-Delta je Dimension. Das erste Sachkriterium der Kandidaten-Rangfolge.
 
 io ◀ `FUNC-compute-steering-delta` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-steering-delta`
 
-###### 3.3.4.1.228  `FLOW-steering-pair` — Snapshot-Paar
+###### 3.3.4.1.232  `FLOW-steering-pair` — Snapshot-Paar
 
 Die zwei Steuerungs-Snapshots vor und nach dem Probelauf, die graph_mutate an computeSteeringDelta gibt. Beleg: src/surface/write.ts.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-compute-steering-delta` · schema ▶ `SCHEMA-steering-snapshot`
 
-###### 3.3.4.1.229  `FLOW-steering-snapshot` — Steering-Snapshot
+###### 3.3.4.1.233  `FLOW-steering-snapshot` — Steering-Snapshot
 
 Das Ergebnis der EINEN Messung: gemappter Graph, voller Regelstrom, blockierende Fehler, Readiness-Report. Alles Weitere ist Projektion davon.
 
 io ◀ `FUNC-take-steering-snapshot` · io ▶ `FUNC-generation-step` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · schema ▶ `SCHEMA-steering-snapshot`
 
-###### 3.3.4.1.230  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
+###### 3.3.4.1.234  `FLOW-steering-trigger-agent` — Runden-Ausloeser (Agent)
 
 Der Aufruf von graph_generate durch die Ablaufsteuerung: Intention, defer, task, peek.
 
-io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-query-params`
+io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-generate-tool` · schema ▶ `SCHEMA-generate-input`
 
-###### 3.3.4.1.231  `FLOW-store-build` — Store und Lock anlegen
+###### 3.3.4.1.235  `FLOW-store-build` — Store und Lock anlegen
 
 Store und Lock, die die Harness-Fabrik beim Bau des Harness anlegt. Beleg: src/kernel/harness.ts, GraphCodeHarness legt GraphStore und StoreLock an. (CR-GC-849)
 
 io ◀ `FUNC-create-harness` · io ▶ `FUNC-claim-store-lock` · `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.232  `FLOW-store-close` — Store schliessen
+###### 3.3.4.1.236  `FLOW-store-close` — Store schliessen
 
 Das Schliessen des Stores am Sitzungsende: serveStdio ruft harness.close, das GraphStore.close ruft. Beleg: src/surface/mcp-server.ts. (CR-GC-849)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.233  `FLOW-store-close-cli` — Store schliessen (CLI)
+###### 3.3.4.1.237  `FLOW-store-close-cli` — Store schliessen (CLI)
 
 Das Schliessen des Stores beim CLI-Abschluss: shutdown ruft harness.close, das GraphStore.close ruft. Beleg: src/cli.ts. (CR-GC-849)
 
 io ◀ `FUNC-cli-dispatch` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.234  `FLOW-store-close-render` — Store schliessen (render)
+###### 3.3.4.1.238  `FLOW-store-close-render` — Store schliessen (render)
 
 Das Schliessen des Stores am Ende von graphcode render: harness.close ruft GraphStore.close. Beleg: src/surface/render-verb.ts. (CR-GC-909)
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.235  `FLOW-store-close-rewind` — Store schliessen (rewind)
+###### 3.3.4.1.239  `FLOW-store-close-rewind` — Store schliessen (rewind)
 
 Das Schliessen des Stores am Ende von rewind: executeRewind ruft harness.close, das GraphStore.close ruft. Beleg: src/surface/rewind.ts. (CR-GC-849)
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-graph-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.236  `FLOW-store-load` — Geladener Graph
+###### 3.3.4.1.240  `FLOW-store-load` — Geladener Graph
 
 Der aus Kuzu geladene Graph, den open() beim Oeffnen von load() bekommt. Beleg: src/kernel/graph-store.ts. (CR-GC-849)
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.237  `FLOW-store-open` — Store oeffnen (serveStdio)
+###### 3.3.4.1.241  `FLOW-store-open` — Store oeffnen (serveStdio)
 
 Der Aufruf harness.initialize, der den Store oeffnet; serveStdio wartet darauf, er ist die Store-Wahl (CR-GC-218). Beleg: src/surface/mcp-server.ts.
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.238  `FLOW-store-open-import-code` — Store oeffnen (import-code)
+###### 3.3.4.1.242  `FLOW-store-open-import-code` — Store oeffnen (import-code)
 
 Der Aufruf harness.initialize aus import-code. Beleg: src/surface/import-code-verb.ts.
 
 io ◀ `FUNC-import-code-verb` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.239  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
+###### 3.3.4.1.243  `FLOW-store-open-own-kuzu` — Store oeffnen (ownKuzu)
 
 Der Aufruf harness.initialize aus ownKuzu. Beleg: src/kernel/own-kuzu.ts.
 
 io ◀ `FUNC-own-kuzu-host` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.240  `FLOW-store-open-render` — Store oeffnen (render)
+###### 3.3.4.1.244  `FLOW-store-open-render` — Store oeffnen (render)
 
 Der Aufruf harness.initialize aus graphcode render. Beleg: src/surface/render-verb.ts. (CR-GC-909)
 
 io ◀ `FUNC-render-verb` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.241  `FLOW-store-open-rewind` — Store oeffnen (rewind)
+###### 3.3.4.1.245  `FLOW-store-open-rewind` — Store oeffnen (rewind)
 
 Der Aufruf harness.initialize aus rewind. Beleg: src/surface/rewind.ts.
 
 io ◀ `FUNC-rewind` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-harness-handle`
 
-###### 3.3.4.1.242  `FLOW-store-ownership` — Store-Besitzanspruch
+###### 3.3.4.1.246  `FLOW-store-ownership` — Store-Besitzanspruch
 
 Der zugesprochene Store-Besitz an GraphStore.open; ohne ihn wirft open StoreOwnershipError (Wahl verloren).
 
 io ◀ `FUNC-claim-store-lock` · io ▶ `FUNC-open-store` · schema ▶ `SCHEMA-lock-owner`
 
-###### 3.3.4.1.243  `FLOW-store-query` — Store-Abfrage
+###### 3.3.4.1.247  `FLOW-store-query` — Store-Abfrage
 
 Die Antwort des Kuzu-Adapters auf eine Leseanfrage: Teilgraph, Elementliste oder ganzer Graph aus dem persistierten Store. Die Lesewege des Harness fragen den Adapter direkt, nicht ueber GraphStore. Uebergabe: createHarness gibt denselben Adapter an GraphStore und an den Harness. (CR-GC-843)
 
 io ◀ `FUNC-graph-store` · io ▶ `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.244  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
+###### 3.3.4.1.248  `FLOW-store-rebuild-notice` — Store-Neuaufbau-Meldung
 
 Der GraphStore meldet beim Start, dass er den Store nach einem Schemawechsel aus der SSOT neu befuellt hat; was vorher nur im Store stand und nicht exportiert war, ist fort. Beleg: src/kernel/graph-store.ts, open schreibt formatStoreRebuildNotice auf stderr (CR-GC-831).
 
 io ◀ `FUNC-open-store` · io ▶ `ACTOR-auftraggeber` · schema ▶ `SCHEMA-store-rebuild-notice`
 
-###### 3.3.4.1.245  `FLOW-suggest-answer` — Antwort graph_suggest
+###### 3.3.4.1.249  `FLOW-suggest-answer` — Antwort graph_suggest
 
 Die Antwort von graph_suggest an die Ablaufsteuerung: die gerankten Kandidaten mit Urteil und Bericht je Probelauf. Beleg: src/loop/suggest.ts.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-suggest-answer`
 
-###### 3.3.4.1.246  `FLOW-target-profile` — Zielprofil
+###### 3.3.4.1.250  `FLOW-suggest-call` — Aufruf graph_suggest
+
+Der Aufruf von graph_suggest durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/loop/suggest.ts. (CR-GC-1016)
+
+io ◀ `FUNC-agent-loop` · io ▶ `FUNC-graph-suggest` · schema ▶ `SCHEMA-suggest-input`
+
+###### 3.3.4.1.251  `FLOW-target-profile` — Zielprofil
 
 Das geladene und gepruefte Profil: die 3-7 Themen der Intention. Erzeugt von target-profile-load aus der Rohform. (CR-GC-861: ohne Gewichte und Zielkonflikte)
 
 io ◀ `FUNC-target-profile-load` · io ▶ `FUNC-graph-generate-tool` · `FUNC-graph-readiness` · `FUNC-vorschlag` · schema ▶ `SCHEMA-target-profile`
 
-###### 3.3.4.1.247  `FLOW-target-profile-file` — Zielprofil (Rohform)
+###### 3.3.4.1.252  `FLOW-target-profile-file` — Zielprofil (Rohform)
 
 Die Profildatei, wie der Skill se:target-profile oder ein Hand-Edit sie nach .graphcode/target-profile.json schreibt: ungeprueft, die Themen der Intention.
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-target-profile-load` · schema ▶ `SCHEMA-target-profile`
 
-###### 3.3.4.1.248  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
+###### 3.3.4.1.253  `FLOW-test-impact-request` — Testauswahl-Anfrage (graph_tests)
 
 Die Aenderungsmenge und Tiefe, mit denen graph_tests harness.testImpact ruft. Beleg: src/projections/report.ts.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.249  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
+###### 3.3.4.1.254  `FLOW-test-impact-request-ingest` — Testauswahl-Anfrage (graph_test_ingest)
 
 Die Aenderungsmenge, mit der graph_test_ingest harness.testImpact ruft. Beleg: src/projections/testreport.ts.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-resolve-tests-from-code` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.250  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
+###### 3.3.4.1.255  `FLOW-test-ingest-answer` — graph_test_ingest-Antwort
 
 Die Antwort von graph_test_ingest: zugeordnete Ergebnisse, zurueckgenommene Ergebnisse, Knoten ohne Lauf.
 
 io ◀ `FUNC-test-ingest` · io ▶ `FUNC-aenderung-melden` · `FUNC-agent-loop` · schema ▶ `SCHEMA-test-ingest-answer`
 
-###### 3.3.4.1.251  `FLOW-test-ingest-call` — Aufruf graph_test_ingest
+###### 3.3.4.1.256  `FLOW-test-ingest-call` — Aufruf graph_test_ingest
 
 Der Aufruf von graph_test_ingest ueber MCP-stdio mit Bericht und Changeset der Aenderung.
 
 io ◀ `FUNC-aenderung-melden` · io ▶ `FUNC-test-ingest` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.252  `FLOW-test-ingest-call-agent` — Aufruf graph_test_ingest (Agent)
+###### 3.3.4.1.257  `FLOW-test-ingest-call-agent` — Aufruf graph_test_ingest (Agent)
 
 Der Aufruf von graph_test_ingest durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/testreport.ts. (CR-GC-1014)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-test-ingest` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.253  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
+###### 3.3.4.1.258  `FLOW-test-run-report-code` — Testlauf-Bericht (Spur CODE)
 
 Der vitest-Bericht der Code-Spur mit der Aenderungsmenge, den verify:code ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-aenderung-melden` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.254  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
+###### 3.3.4.1.259  `FLOW-test-run-report-full` — Testlauf-Bericht (Spur VOLL)
 
 Der vitest-Bericht der vollen Suite mit der Aenderungsmenge, den verify:full ueber graph_test_ingest zurueckmeldet (meldeZurueck).
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-aenderung-melden` · schema ▶ `SCHEMA-test-ingest-input`
 
-###### 3.3.4.1.255  `FLOW-test-selection` — Selektive Testauswahl
+###### 3.3.4.1.260  `FLOW-test-selection` — Selektive Testauswahl
 
 Das minimale selektive Laufkommando mit den aufgeloesten TESTs, den Coverage-Zahlen und dem, was unaufloesbar blieb.
 
 io ◀ `FUNC-deduce-tests` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-test-selection`
 
-###### 3.3.4.1.256  `FLOW-tests-call` — Aufruf graph_tests
+###### 3.3.4.1.261  `FLOW-tests-call` — Aufruf graph_tests
 
 Der Aufruf von graph_tests durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/report.ts. (CR-GC-1014)
 
 io ◀ `FUNC-agent-loop` · io ▶ `FUNC-deduce-tests` · schema ▶ `SCHEMA-tests-input`
 
-###### 3.3.4.1.257  `FLOW-tool-context` — Werkzeug-Kontext
+###### 3.3.4.1.262  `FLOW-tool-context` — Werkzeug-Kontext
 
 Der je Prozess einmal gepraegte Kontext, den jeder Werkzeugaufruf liest: Graphversion, Sitzungskennung, Aufrufer, Repo-Wurzel.
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-bind-tools` · schema ▶ `SCHEMA-tool-context`
 
-###### 3.3.4.1.258  `FLOW-tool-registry` — Werkzeug-Register
+###### 3.3.4.1.263  `FLOW-tool-registry` — Werkzeug-Register
 
 Das gebundene Werkzeugregister, das der Server ueber stdio anbietet: je Werkzeug Name, Eingabeschema und Handler.
 
 io ◀ `FUNC-bind-tools` · io ▶ `FUNC-serve-stdio` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.259  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
+###### 3.3.4.1.264  `FLOW-tool-surface` — Werkzeug-Oberflaeche am Agenten
 
 Die gebundenen Werkzeuge, wie der Agent sie ueber stdio sieht und ruft. Beleg: src/surface/mcp-server.ts, serveStdio verbindet den Server mit dem stdio-Transport. (CR-GC-768)
 
 io ◀ `FUNC-serve-stdio` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-mcp-tool-registry`
 
-###### 3.3.4.1.260  `FLOW-trajectory` — Trajectory/Outcome
+###### 3.3.4.1.265  `FLOW-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission.
 
 io ◀ `FUNC-emit-trajectory` · io ▶ `ACTOR-learning-engine` · schema ▶ `SCHEMA-trajectory`
 
-###### 3.3.4.1.261  `FLOW-trajectory-entry` — Trajektorie-Eintrag
+###### 3.3.4.1.266  `FLOW-trajectory-entry` — Trajektorie-Eintrag
 
 Der Audit-Eintrag, den recordAudit direkt an materializeTrajectory gibt; recordAudit wartet auf die Projektion. Beleg: src/surface/tool-context.ts. (CR-GC-849)
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-emit-trajectory` · schema ▶ `SCHEMA-audit-record`
 
-###### 3.3.4.1.262  `FLOW-update-hook` — Update-Hook anlegen
+###### 3.3.4.1.267  `FLOW-update-hook` — Update-Hook anlegen
 
 Der Update-Hook, den die Harness-Fabrik beim Bau registriert (registerEmitters ruft makeUpdateEventHook). Beleg: src/surface/create-harness.ts. (CR-GC-849)
 
 io ◀ `FUNC-create-harness` · io ▶ `FUNC-emit-update-event` · schema ▶ `SCHEMA-update-event`
 
-###### 3.3.4.1.263  `FLOW-verlauf-bereitschaft` — Verlauf-Befunde an Marken
+###### 3.3.4.1.268  `FLOW-verlauf-bereitschaft` — Verlauf-Befunde an Marken
 
 Die Befunde eines alten Stands, die die Verlaufsrechnung an die Marken-Rechnung gibt.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-compute-readiness` · schema ▶ `SCHEMA-rule-violation`
 
-###### 3.3.4.1.264  `FLOW-verlauf-konformanz` — Verlauf-Stand an Konformanz
+###### 3.3.4.1.269  `FLOW-verlauf-konformanz` — Verlauf-Stand an Konformanz
 
 Der Graph eines alten Stands, den die Verlaufsrechnung an die Konformanz-Erhebung gibt; ohne Repo-Wurzel laufen die RC-Regeln nicht.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-check-code-conformance` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.265  `FLOW-verlauf-report` — Verlauf-Bericht
+###### 3.3.4.1.270  `FLOW-verlauf-report` — Verlauf-Bericht
 
 Die Reihe der Staende mit Marken, Befunden je Stufe, Steuerwert, Tests und Ketten, die graph_readiness bei verlauf antwortet.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-verlauf`
 
-###### 3.3.4.1.266  `FLOW-verlauf-request` — Verlauf-Anfrage
+###### 3.3.4.1.271  `FLOW-verlauf-request` — Verlauf-Anfrage
 
 Die Zahl der juengsten Staende, die graph_readiness an die Verlaufsrechnung gibt.
 
 io ◀ `FUNC-graph-readiness` · io ▶ `FUNC-stand-verlauf` · schema ▶ `SCHEMA-query-params`
 
-###### 3.3.4.1.267  `FLOW-verlauf-snapshot` — Verlauf-Stand an Snapshot
+###### 3.3.4.1.272  `FLOW-verlauf-snapshot` — Verlauf-Stand an Snapshot
 
 Der Graph eines alten Stands, den die Verlaufsrechnung an den Steuerungs-Snapshot gibt.
 
 io ◀ `FUNC-stand-verlauf` · io ▶ `FUNC-take-steering-snapshot` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.268  `FLOW-vertragstest-bericht` — Vertragstest-Bericht
+###### 3.3.4.1.273  `FLOW-vertragstest-bericht` — Vertragstest-Bericht
 
 Der Bericht je SCHEMA (Faelle und verworfene Faelle oder Fehler) vom Erzeuger an das Verb
 
 io ◀ `FUNC-erzeuge-vertragstests` · io ▶ `FUNC-vertragstest-verb` · schema ▶ `SCHEMA-vertragstest-bericht`
 
-###### 3.3.4.1.269  `FLOW-vertragstest-satz` — Vertragstest-Satz
+###### 3.3.4.1.274  `FLOW-vertragstest-satz` — Vertragstest-Satz
 
 Die SCHEMA mit ihrem Zod-Symbol, im Repo oder im Paket, vom Verb an den Erzeuger
 
 io ◀ `FUNC-vertragstest-verb` · io ▶ `FUNC-erzeuge-vertragstests` · schema ▶ `SCHEMA-vertragstest-satz`
 
-###### 3.3.4.1.270  `FLOW-viewer-start` — Viewer starten
+###### 3.3.4.1.275  `FLOW-viewer-start` — Viewer starten
 
 Der Start des Viewer-Prozesses durch attachGve: spawn des Viewers mit --repo und dem Pfad der Repo-Wurzel, wenn die erste Sitzung des Repos ihn anhaengt. Das Beenden steht in FLOW-viewer-stop. Beleg: src/surface/gve.ts, ensureViewer und spawnViewer. (CR-GC-989)
 
 io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-repo-pfad`
 
-###### 3.3.4.1.271  `FLOW-viewer-stop` — Viewer beenden
+###### 3.3.4.1.276  `FLOW-viewer-stop` — Viewer beenden
 
 Das Beenden des Viewer-Prozesses durch attachGve: SIGTERM an die Prozessgruppe, wenn die letzte Sitzung des Repos sich abmeldet. Der Aufruf traegt keine Daten. Beleg: src/surface/gve.ts, stopViewerIfLastSession und killProcessGroup. (CR-GC-989)
 
 io ◀ `FUNC-gve-supervise` · io ▶ `ACTOR-dashboard` · schema ▶ `SCHEMA-aufruf-ohne-daten`
 
-###### 3.3.4.1.272  `FLOW-vitest-lauf-code` — vitest-Lauf Code-Spur
+###### 3.3.4.1.277  `FLOW-vitest-lauf-code` — vitest-Lauf Code-Spur
 
 Der beendete vitest-Lauf der Spur verify:code: Exit-Status, Signal und der JSON-Bericht, falls vitest ihn schrieb.
 
 io ◀ `FUNC-verify-lane-code` · io ▶ `FUNC-lauf-urteil` · schema ▶ `SCHEMA-vitest-lauf`
 
-###### 3.3.4.1.273  `FLOW-vitest-lauf-full` — vitest-Lauf Vollspur
+###### 3.3.4.1.278  `FLOW-vitest-lauf-full` — vitest-Lauf Vollspur
 
 Der beendete vitest-Lauf der Spur verify:full: Exit-Status, Signal und der JSON-Bericht, falls vitest ihn schrieb.
 
 io ◀ `FUNC-verify-lane-full` · io ▶ `FUNC-lauf-urteil` · schema ▶ `SCHEMA-vitest-lauf`
 
-###### 3.3.4.1.274  `FLOW-vorschlag` — Vorschlag an den Nutzer
+###### 3.3.4.1.279  `FLOW-vorschlag` — Vorschlag an den Nutzer
 
 Der eine Satz an den Nutzer, als Feld vorschlag in der Antwort auf eine angewandte Aenderung. Beleg: src/surface/write.ts, graph_mutate haengt vorschlagNachAnwendung an das Ergebnis; den Nutzer erreicht er mit FLOW-mutate-answer. (CR-GC-770, CR-GC-823)
 
 io ◀ `FUNC-vorschlag` · io ▶ `FUNC-graph-mutate-tool` · schema ▶ `SCHEMA-mutate-answer`
 
-###### 3.3.4.1.275  `FLOW-work-set` — Arbeitsmenge der Sitzung
+###### 3.3.4.1.280  `FLOW-work-set` — Arbeitsmenge der Sitzung
 
 Die Arbeitsmenge der Sitzung, die graph_readiness beim Werkzeug-Kontext abfragt, um Befunde auf die Arbeit der Sitzung zu schneiden. Beleg: src/surface/tool-context.ts, arbeitsmenge. (CR-GC-849)
 
 io ◀ `FUNC-tool-context` · io ▶ `FUNC-graph-readiness` · schema ▶ `SCHEMA-work-set`
 
-###### 3.3.4.1.276  `FLOW-write-slot` — Schreibzug einreihen
+###### 3.3.4.1.281  `FLOW-write-slot` — Schreibzug einreihen
 
 Der Schreibzug, den graph_suggest beim Anwenden in die Schreibreihenfolge des Werkzeug-Kontexts stellt (serializeToolWrite). Beleg: src/loop/suggest.ts. (CR-GC-849)
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-tool-context` · schema ▶ `SCHEMA-mutate-command`
 
-###### 3.3.4.1.277  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
+###### 3.3.4.1.282  `FLOW-zug-anfrage` — Zug mit Staenden (graph_mutate an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_mutate an mitBericht gibt. Beleg: src/surface/write.ts, graph_mutate.
 
 io ◀ `FUNC-graph-mutate-tool` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.278  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
+###### 3.3.4.1.283  `FLOW-zug-anfrage-suggest` — Zug mit Staenden (graph_suggest an den Bericht)
 
 Das Urteil des Gates samt Stand davor und danach, das graph_suggest je Kandidat an mitBericht gibt. Beleg: src/loop/suggest.ts, graph_suggest.
 
 io ◀ `FUNC-graph-suggest` · io ▶ `FUNC-zug-bericht` · schema ▶ `SCHEMA-ontology-graph`
 
-###### 3.3.4.1.279  `FLOW-zug-bericht` — Bericht zum Zug
+###### 3.3.4.1.284  `FLOW-zug-bericht` — Bericht zum Zug
 
 Die Berichte zum Zug, zurueck an das Werkzeug, das mitBericht gerufen hat: graph_mutate fuer seine Antwort an den Agenten, graph_suggest fuer seine Rangfolge. (CR-GC-778)
 
 io ◀ `FUNC-zug-bericht` · io ▶ `FUNC-graph-mutate-tool` · `FUNC-graph-suggest` · schema ▶ `SCHEMA-zug-bericht`
 
-###### 3.3.4.1.280  `FLOW-zug-staende` — Stand davor und danach
+###### 3.3.4.1.285  `FLOW-zug-staende` — Stand davor und danach
 
 Der Stand vor und nach einem angenommenen Zug, wie das Gate ihn neben seinem Urteil an das aufrufende Werkzeug zurueckgibt (mutateWithStates). Ein geblockter Zug hat kein Paar. (CR-GC-778)
 
@@ -14344,435 +14374,459 @@ Die Antwort von graph_export: graphJson (Pfad, Bytes, Knoten- und Kantenzahl), v
 
 schema ◀ `FLOW-export-answer` · `FLOW-export-write-slot`
 
-###### 3.3.4.2.18  `SCHEMA-export-pending` — ExportPending
+###### 3.3.4.2.18  `SCHEMA-export-input` — Eingabe graph_export
+
+Eingabe von graph_export: name (blosser Dateiname, optional), views (Liste der Sichten, optional), force (Wahrheitswert, Vorgabe false). (CR-GC-1016)
+
+schema ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-query-request-auto-export`
+
+###### 3.3.4.2.19  `SCHEMA-export-pending` — ExportPending
 
 Inhalt der Drift-Marke: Zeitpunkt der ersten un-exportierten Mutation und Zahl der angewandten Batches seit dem letzten Export.
 
 schema ◀ `FLOW-export-cleared` · `FLOW-export-pending` · `FLOW-marker-clear` · `FLOW-marker-clear-reseed` · `FLOW-marker-set`
 
-###### 3.3.4.2.19  `SCHEMA-fit-advisory` — FitAdvisory
+###### 3.3.4.2.20  `SCHEMA-fit-advisory` — FitAdvisory
 
 layer, dimensions, before, after, delta, regressions.
 
 schema ◀ `FLOW-fit-advisory`
 
-###### 3.3.4.2.20  `SCHEMA-format-e` — Format-E
+###### 3.3.4.2.21  `SCHEMA-format-e` — Format-E
 
 Kompaktes Snapshot-/Diff-Format, ein Familienvertrag (graph-api-core). Der geparste Vertrag ist ein Diff aus Operationen plus Fehlerliste — NICHT ein Knoten-/Kanten-Paar. Tuer: das Zod-Schema FormatEInputSchema der Familie ({text, bestand} → Diff, Codec-Fehler als Issues; CR-SM-359). Vorher an den Typ FormatEDiff gebunden und damit fuer RC-09 unsichtbar; CR-GC-641 hatte die Tuer kurz in graphcode gebaut.
 
 schema ◀ `FLOW-formatE-artifact-agent` · `FLOW-formatE-artifact-read-tools` · `FLOW-formatE-tool`
 
-###### 3.3.4.2.21  `SCHEMA-function-criticality` — FunctionCriticality
+###### 3.3.4.2.22  `SCHEMA-function-criticality` — FunctionCriticality
 
 Je FUNC funcId, funcName, chains, useCases. Vier Felder, kein Infrastruktur-Flag - ein Flag waere ein Urteil in der Messung. chains 0 ist eine AUSSAGE, kein fehlender Wert: bei einem Blatt R-30s Befund, bei einem zerlegten Block der von FC-03 erzwungene Normalzustand. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-function-criticality`
 
-###### 3.3.4.2.22  `SCHEMA-generation-step` — GenerationStep
+###### 3.3.4.2.23  `SCHEMA-generate-input` — Eingabe graph_generate
+
+Eingabe von graph_generate: intent, threshold (0 bis 1), task (ein Regel-Task), defer (Liste von focusKeys), alle optional, und peek (Vorgabe false). (CR-GC-1016)
+
+schema ◀ `FLOW-dashboard-generate-call` · `FLOW-steering-trigger-agent`
+
+###### 3.3.4.2.24  `SCHEMA-generation-step` — GenerationStep
 
 Fokus-Schluessel und -Typen, Readiness-Auszug, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
 schema ◀ `FLOW-generate-answer` · `FLOW-generation-step-vorschlag` · `FLOW-next-step-advice`
 
-###### 3.3.4.2.23  `SCHEMA-get-edges-input` — Eingabe graph_get_edges
+###### 3.3.4.2.25  `SCHEMA-get-edges-input` — Eingabe graph_get_edges
 
 Eingabe von graph_get_edges: uid und edgeType (optional), direction (in, out oder both, Vorgabe both), format (json oder formatE). (CR-GC-1015)
 
 schema ◀ `FLOW-get-edges-call`
 
-###### 3.3.4.2.24  `SCHEMA-get-node-input` — Eingabe graph_get_node
+###### 3.3.4.2.26  `SCHEMA-get-node-input` — Eingabe graph_get_node
 
 Eingabe von graph_get_node: uid (Pflicht). (CR-GC-1015)
 
 schema ◀ `FLOW-get-node-call`
 
-###### 3.3.4.2.25  `SCHEMA-graph-delta` — GraphDelta
+###### 3.3.4.2.27  `SCHEMA-graph-delta` — GraphDelta
 
 Was ein vom Gate angenommener Batch im Store aendert: upsert/delete je Knoten und Kante. Schreibreihenfolge Knoten, Kanten, Loeschungen zuletzt. (CR-GC-503)
 
 schema ◀ `FLOW-graph-delta`
 
-###### 3.3.4.2.26  `SCHEMA-grenz-befund` — Grenz-Befund
+###### 3.3.4.2.28  `SCHEMA-grenz-befund` — Grenz-Befund
 
 Vertrag des Befunds von grenzeNurMitSchema: ohneSchema (je Fluss Module und Schemas). Leer heisst erfuellt. (CR-GC-913, CR-GC-956)
 
 schema ◀ `FLOW-grenz-befund`
 
-###### 3.3.4.2.27  `SCHEMA-harness-handle` — Harness-Griff
+###### 3.3.4.2.29  `SCHEMA-harness-handle` — Harness-Griff
 
 Der Zugang zum Substrat: Store, Regelwerk und Apply-Gate hinter einer Schnittstelle. Zod-Vertrag der Form: jedes öffentliche Mitglied von GraphCodeHarness ist eine Funktion (z.function); der Griff ist ein offenes Objekt. Geparst in createHarness, zurück geht das Original.
 
 schema ◀ `FLOW-auto-export-register` · `FLOW-bind-request` · `FLOW-bind-request-import-code` · `FLOW-bind-request-proxy` · `FLOW-context-request` · `FLOW-export-flush` · `FLOW-harness-handle` · `FLOW-harness-handle-host` · `FLOW-lifecycle-create` · `FLOW-store-build` · `FLOW-store-close` · `FLOW-store-close-cli` · `FLOW-store-close-render` · `FLOW-store-close-rewind` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-render` · `FLOW-store-open-rewind`
 
-###### 3.3.4.2.28  `SCHEMA-health-report` — HealthPayload
+###### 3.3.4.2.30  `SCHEMA-health-report` — HealthPayload
 
 status, store, gate, nodeCount, versions, sseClients. Der Vertrag der GET /health-Antwort.
 
 schema ◀ `FLOW-health-report` · `FLOW-host-ready`
 
-###### 3.3.4.2.29  `SCHEMA-help-input` — Eingabe graph_help
+###### 3.3.4.2.31  `SCHEMA-help-input` — Eingabe graph_help
 
 Eingabe von graph_help: token (Pflicht), das zu erklaerende Wort, etwa eine Regel-ID, Marke, Tafel, Kennzahl, ein Werkzeug oder Elementtyp. (CR-GC-1014)
 
 schema ◀ `FLOW-help-call`
 
-###### 3.3.4.2.30  `SCHEMA-impact-input` — Eingabe graph_impact
+###### 3.3.4.2.32  `SCHEMA-impact-input` — Eingabe graph_impact
 
 Eingabe von graph_impact: id (Pflicht) und depth (ganze Zahl ab 0, Vorgabe 1). (CR-GC-1015)
 
 schema ◀ `FLOW-impact-call`
 
-###### 3.3.4.2.31  `SCHEMA-impact-slice` — ImpactSlice
+###### 3.3.4.2.33  `SCHEMA-impact-slice` — ImpactSlice
 
 Die Impact-Scheibe: Saatknoten, Tiefe, Knoten mit Rolle seed/whitebox/blackbox und Abstand, induzierte Kanten. @sigloch/graph-api-core. Die Rolle traegt Inhalt: an ihr trennt das Lese-Werkzeug den offenen Teil von der Blackbox-Front. (CR-GC-505)
 
 schema ◀ `FLOW-impact-slice`
 
-###### 3.3.4.2.32  `SCHEMA-impacted-tests` — TestImpactResult
+###### 3.3.4.2.34  `SCHEMA-impacted-tests` — TestImpactResult
 
 nodes, edges, anchors, testIds. Der Vertrag von impactedTests am Modulrand.
 
 schema ◀ `FLOW-impacted-tests` · `FLOW-selected-tests`
 
-###### 3.3.4.2.33  `SCHEMA-import-access` — Import-Zugang
+###### 3.3.4.2.35  `SCHEMA-import-access` — Import-Zugang
 
 Der Zugang des Importwegs zum Store: Repo-Wurzel und systemId als nicht leere Texte, dazu die zwei Funktionen replace und clear. Strikt: ein Zugang mit mehr Mitgliedern, etwa einem Store-Griff oder Setter, wird an der Übergabe abgelehnt. Der Erzeuger importTarget parst ihn und gibt das Original zurück. (CR-GC-1012)
 
 schema ◀ `FLOW-import-target`
 
-###### 3.3.4.2.34  `SCHEMA-import-summary` — Zusammenfassung Code-Import
+###### 3.3.4.2.36  `SCHEMA-import-summary` — Zusammenfassung Code-Import
 
 Die Zusammenfassung eines Code-Imports, die executeImportCode an die CLI gibt und die diese auf stderr schreibt: files (Anzahl gescannter Dateien, mindestens 1), extracted (Kandidaten je Element-Typ), status (success, partial oder failed, aus dem Import-Gate von graphify), applied mit nodes und edges, violations (Befunde des Gates je Element), dazu backupPath, exportPath und exportError, wenn es sie gibt. Der Erzeuger parst die Zusammenfassung. (CR-GC-986)
 
 schema ◀ `FLOW-cli-output-import-code` · `FLOW-import-summary`
 
-###### 3.3.4.2.35  `SCHEMA-init-report` — Init-Bericht
+###### 3.3.4.2.37  `SCHEMA-init-report` — Init-Bericht
 
 Bericht von graphcode init: Install-Ergebnis, Installationsbefehl, ob er lief, Fehlertext und die Agent-Programme im PATH. executeInit parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-install-result-init`
 
-###### 3.3.4.2.36  `SCHEMA-install-result` — Install-Ergebnis
+###### 3.3.4.2.38  `SCHEMA-install-result` — Install-Ergebnis
 
 Ergebnis von scaffold: action, repoRoot und die Listen created, updated, removed, preserved. scaffold parst es an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-cli-output-remove` · `FLOW-install-result-harness-cli`
 
-###### 3.3.4.2.37  `SCHEMA-lauf-urteil` — LaufUrteil
+###### 3.3.4.2.39  `SCHEMA-lauf-urteil` — LaufUrteil
 
 Vertrag des Lauf-Urteils: beleg true mit rot und gesamt, oder beleg false mit grund.
 
 schema ◀ `FLOW-lauf-urteil`
 
-###### 3.3.4.2.38  `SCHEMA-lock-owner` — LockOwner
+###### 3.3.4.2.40  `SCHEMA-lock-owner` — LockOwner
 
 Halter des Store-Locks: Host, PID, Version, Zeitstempel.
 
 schema ◀ `FLOW-lock-file` · `FLOW-lock-lost` · `FLOW-lock-release` · `FLOW-lock-release-close` · `FLOW-lock-request` · `FLOW-store-ownership`
 
-###### 3.3.4.2.39  `SCHEMA-markdown-text` — Markdown-Text
+###### 3.3.4.2.41  `SCHEMA-markdown-text` — Markdown-Text
 
 Eine gerenderte Markdown-Sicht als Text. exportMarkdown parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-markdown-text`
 
-###### 3.3.4.2.40  `SCHEMA-markdown-view` — MarkdownView
+###### 3.3.4.2.42  `SCHEMA-markdown-view` — MarkdownView
 
 Vertrag der deterministisch gerenderten Markdown-Sichten (GENERATED-Header). Bindung statt Kopie. (CR-GC-454)
 
 schema ◀ `FLOW-ergebnis` · `FLOW-markdown-docs` · `FLOW-render-view-request`
 
-###### 3.3.4.2.41  `SCHEMA-mcp-tool` — Werkzeug
+###### 3.3.4.2.43  `SCHEMA-mcp-tool` — Werkzeug
 
 Was ein Werkzeug IST: Name, Beschreibung, Eingabe-Schema, Handler. Liegt seit CR-GC-480 im Kern, damit keine Schicht das Interface ihrer Oberflaeche kennen muss.
 
 schema ◀ `FLOW-mcp-tool`
 
-###### 3.3.4.2.42  `SCHEMA-mcp-tool-registry` — Werkzeug-Register
+###### 3.3.4.2.44  `SCHEMA-mcp-tool-registry` — Werkzeug-Register
 
 Die Abbildung Name -> Werkzeug, mit der eine Schicht ihre Werkzeuge uebergibt. Der Vertrag zwischen Tool-Fabrik und Host-Bindung.
 
 schema ◀ `FLOW-proxy-build` · `FLOW-socket-close` · `FLOW-socket-start` · `FLOW-tool-registry` · `FLOW-tool-surface`
 
-###### 3.3.4.2.43  `SCHEMA-metric-policy` — MetricPolicy
+###### 3.3.4.2.45  `SCHEMA-metric-policy` — MetricPolicy
 
 Die Schwellen je Urteil: instability, lcom4, crossingFlows, riskRpn, moduleSize. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-config-request` · `FLOW-metric-policy`
 
-###### 3.3.4.2.44  `SCHEMA-metric-vector` — MetricVector
+###### 3.3.4.2.46  `SCHEMA-metric-vector` — MetricVector
 
 Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. (Herkunft korrigiert CR-GC-453)
 
 schema ◀ `FLOW-arch-fitness`
 
-###### 3.3.4.2.45  `SCHEMA-metrics-answer` — graph_metrics-Antwort
+###### 3.3.4.2.47  `SCHEMA-metrics-answer` — graph_metrics-Antwort
 
 Die Antwort von graph_metrics als EIN Vertrag: modules nach ModuleMetrics, functions nach FunctionCriticality, chains und measurability nach ChainMetrics, riskCarriers nach RiskCarriers, scope nur auf Anfrage nach RequirementScope, constraintCarriers nur auf Anfrage nach ConstraintCarriers (reqId, carriers, by), policy nach MetricPolicySchema mit policySource, fit mit MetricVector (ohne Zielmarke seit CR-GC-861), graphVersion. Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut; die Grundgesamtheiten MOD, FUNC und FCHAIN bleiben getrennte Bloecke. Der Handler parst seine Antwort vor der Rueckgabe. (CR-GC-821, CR-GC-857, CR-GC-861)
 
 schema ◀ `FLOW-dashboard-answer` · `FLOW-metrics-answer`
 
-###### 3.3.4.2.46  `SCHEMA-module-metrics` — ModuleMetrics
+###### 3.3.4.2.48  `SCHEMA-metrics-input` — Eingabe graph_metrics
+
+Eingabe von graph_metrics: scope (mindestens eine FUNC- oder FCHAIN-uid, optional) und constraintCarriers (optional); offenes Objekt. (CR-GC-1016)
+
+schema ◀ `FLOW-dashboard-metrics-call` · `FLOW-metrics-call`
+
+###### 3.3.4.2.49  `SCHEMA-module-metrics` — ModuleMetrics
 
 Je MOD allocatedFuncs, fanIn, fanOut, instability, lcom4, cohesion; null heisst nicht messbar, nie null Prozent. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-module-metrics`
 
-###### 3.3.4.2.47  `SCHEMA-mutate-answer` — Antwort von graph_mutate
+###### 3.3.4.2.50  `SCHEMA-mutate-answer` — Antwort von graph_mutate
 
 Die Antwort des Werkzeugs graph_mutate an den Aufrufer, nicht das Ergebnis des Gates im Prozess (das ist SCHEMA-mutate-result). Felder des Gate-Urteils: success, appliedCommands, mutations, tier, trajectoryId, stale und staleDelta bei OCC-Ablehnung; confidence nur bei Ablehnung. Dazu graphVersion immer, violations gefaltet je Regel und Meldungsmuster (summary) oder je Element (full), Ablehnungen vor dem Gate immer je Element. Berichte zum Zug: steerAdvisory und workOrder (fehlen, wenn sie nichts melden), im Probelauf metricsAfter und steeringDelta, berichtFehlt bei nicht berechenbarem Bericht. Weiter vorschlag (nur nach Anwendung, an den Nutzer), refs (Bindungsreport), nameWarning, occWarning. Der Erzeuger graph_mutate parst jede Antwort. (CR-GC-985)
 
 schema ◀ `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-vorschlag`
 
-###### 3.3.4.2.48  `SCHEMA-mutate-command` — MutateCommand
+###### 3.3.4.2.51  `SCHEMA-mutate-command` — MutateCommand
 
 Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-proxy-call` · `FLOW-write-slot`
 
-###### 3.3.4.2.49  `SCHEMA-mutate-result` — MutateResult
+###### 3.3.4.2.52  `SCHEMA-mutate-result` — MutateResult
 
 Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-gate-verdict`
 
-###### 3.3.4.2.50  `SCHEMA-ontology-graph` — OntologyGraph
+###### 3.3.4.2.53  `SCHEMA-ontology-graph` — OntologyGraph
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se.
 
 schema ◀ `FLOW-commit-check-request` · `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-fit-anfrage` · `FLOW-fitness-anfrage` · `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · `FLOW-imported-graph` · `FLOW-metrics-request` · `FLOW-select-request` · `FLOW-select-request-lane` · `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-store-load` · `FLOW-store-query` · `FLOW-verlauf-konformanz` · `FLOW-verlauf-snapshot` · `FLOW-zug-anfrage` · `FLOW-zug-anfrage-suggest` · `FLOW-zug-staende`
 
-###### 3.3.4.2.51  `SCHEMA-ontology-json` — OntologyJson
+###### 3.3.4.2.54  `SCHEMA-ontology-json` — OntologyJson
 
 Die materialisierte Graph-Datei docs/graph/<systemId>.graph.json: elements und traces. Eingang von Seed und Reseed. (CR-GC-503)
 
 schema ◀ `FLOW-graph-snapshot-file` · `FLOW-ontology-json` · `FLOW-reseed-answer` · `FLOW-reseed-order` · `FLOW-reseed-order-open` · `FLOW-reseed-request` · `FLOW-reseed-snapshot` · `FLOW-reseeded-graph` · `FLOW-seed-request` · `FLOW-seed-request-import-code` · `FLOW-seed-request-render`
 
-###### 3.3.4.2.52  `SCHEMA-query-params` — QueryParams
+###### 3.3.4.2.55  `SCHEMA-query-params` — QueryParams
 
 Der gemeinsame Nenner der Leseanfragen: elementId, depth, branch, cursor, view. Bewusst ohne Zod-Symbol — im Code traegt JEDES MCP-Tool sein eigenes Input-Schema, ein zusammengefasstes QueryParams gibt es nicht und soll es nicht geben (ein Sammel-Schema waere ein paralleler Pfad zu den Tool-Signaturen). Der Knoten steht fuer den Kanal, nicht fuer einen Code-Datenvertrag; concept-only. (Begruendung nachgetragen CR-GC-454)
 
-schema ◀ `FLOW-auftrag` · `FLOW-dashboard-call` · `FLOW-dashboard-tool-call` · `FLOW-export-request-import-code` · `FLOW-generation-request` · `FLOW-harness-request` · `FLOW-harness-request-import-code` · `FLOW-harness-request-own-kuzu` · `FLOW-harness-request-render` · `FLOW-harness-request-rewind` · `FLOW-health-request` · `FLOW-http-route` · `FLOW-own-kuzu-request` · `FLOW-own-kuzu-request-stdio` · `FLOW-query-export` · `FLOW-query-request-agent` · `FLOW-query-request-auto-export` · `FLOW-read-request` · `FLOW-skill-request` · `FLOW-steering-trigger-agent` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · `FLOW-verlauf-request`
+schema ◀ `FLOW-auftrag` · `FLOW-dashboard-call` · `FLOW-generation-request` · `FLOW-harness-request` · `FLOW-harness-request-import-code` · `FLOW-harness-request-own-kuzu` · `FLOW-harness-request-render` · `FLOW-harness-request-rewind` · `FLOW-health-request` · `FLOW-http-route` · `FLOW-own-kuzu-request` · `FLOW-own-kuzu-request-stdio` · `FLOW-query-export` · `FLOW-query-request-agent` · `FLOW-read-request` · `FLOW-skill-request` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest` · `FLOW-verlauf-request`
 
-###### 3.3.4.2.53  `SCHEMA-readiness-input` — Eingabe graph_readiness
+###### 3.3.4.2.56  `SCHEMA-readiness-input` — Eingabe graph_readiness
 
 Eingabe von graph_readiness: detail (Wahrheitswert, Vorgabe false) und verlauf (ganze Zahl 1 bis 1000, optional: die juengsten N committeten Staende). (CR-GC-1014)
 
-schema ◀ `FLOW-readiness-call`
+schema ◀ `FLOW-dashboard-readiness-call` · `FLOW-readiness-call`
 
-###### 3.3.4.2.54  `SCHEMA-readiness-report` — ReadinessReportType
+###### 3.3.4.2.57  `SCHEMA-readiness-report` — ReadinessReportType
 
 Je Dimension score, violations, applicable, coreApplicable — eine reine Messung ohne Urteil (kein ready seit CR-SM-310). Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-dimension-readiness` · `FLOW-readiness-report`
 
-###### 3.3.4.2.55  `SCHEMA-real-ref` — realRef (Realisierungsbindung)
+###### 3.3.4.2.58  `SCHEMA-real-ref` — realRef (Realisierungsbindung)
 
 Attributvertrag realRef an FUNC, SCHEMA und MOD: Realisierungsdatei, Symbol, Sprache. Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readRealRef (absent, invalid, bound; CR-SM-360).
 
-###### 3.3.4.2.56  `SCHEMA-rejected-trace` — RejectedTrace
+###### 3.3.4.2.59  `SCHEMA-rejected-trace` — RejectedTrace
 
 Eine am Seed zurueckgehaltene Kante: source, target, type und der Grund no-pattern. Traeger zwischen Seed-Pruefung, Readiness-Report und Export-Verweigerung. (CR-GC-530)
 
 schema ◀ `FLOW-held-back-traces`
 
-###### 3.3.4.2.57  `SCHEMA-render-summary` — Zusammenfassung Render
+###### 3.3.4.2.60  `SCHEMA-render-summary` — Zusammenfassung Render
 
 Die Zusammenfassung eines Renders, die executeRender an die CLI gibt und die diese auf stderr schreibt: view (die Sicht), format (md, docx oder pdf), out (absoluter Pfad der geschriebenen Datei), bytes (Größe der Datei) und vorlage (die Vorlage des Repos für PDF, sonst null). Die Datei selbst hat keine Datenform. Der Erzeuger parst die Zusammenfassung. (CR-GC-986)
 
 schema ◀ `FLOW-render-file`
 
-###### 3.3.4.2.58  `SCHEMA-repo-pfad` — Repo-Pfad
+###### 3.3.4.2.61  `SCHEMA-repo-pfad` — Repo-Pfad
 
 Der Pfad der Repo-Wurzel als nicht leerer Text. serveStdio gibt ihn an attachGve, der Start des Viewers uebergibt ihn als --repo. Ein leerer Pfad zeigt kein Repo. Der Erzeuger parst an der Grenze. (CR-GC-989)
 
 schema ◀ `FLOW-gve-attach` · `FLOW-viewer-start`
 
-###### 3.3.4.2.59  `SCHEMA-repo-status` — Repo-Status
+###### 3.3.4.2.62  `SCHEMA-repo-status` — Repo-Status
 
 Bericht von graphcode status: repoRoot, member, Zustand von Host, Dashboard und Versionen. collectStatus parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-cli-output-status` · `FLOW-install-result-collect-status`
 
-###### 3.3.4.2.60  `SCHEMA-rewind-summary` — RewindSummary
+###### 3.3.4.2.63  `SCHEMA-rewind-summary` — RewindSummary
 
 Ergebnis von executeRewind, das die CLI ausgibt: ref, commit, snapshot, restored, forced. executeRewind prueft es beim Erzeugen (CR-GC-823).
 
 schema ◀ `FLOW-cli-output-rewind` · `FLOW-rewind-summary`
 
-###### 3.3.4.2.61  `SCHEMA-rule-violation` — RuleViolation
+###### 3.3.4.2.64  `SCHEMA-rule-violation` — RuleViolation
 
 Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. (CR-GC-501)
 
 schema ◀ `FLOW-commit-check-verdict` · `FLOW-completeness-request` · `FLOW-conformance-findings` · `FLOW-readiness-request` · `FLOW-rule-findings` · `FLOW-rules-answer` · `FLOW-verlauf-bereitschaft`
 
-###### 3.3.4.2.62  `SCHEMA-rules-evaluate-input` — Eingabe rules_evaluate
+###### 3.3.4.2.65  `SCHEMA-rules-evaluate-input` — Eingabe rules_evaluate
 
 Eingabe von rules_evaluate: detail (summary, full oder grouped, Vorgabe full). (CR-GC-1014)
 
 schema ◀ `FLOW-rules-evaluate-call`
 
-###### 3.3.4.2.63  `SCHEMA-rules-get-violations-input` — Eingabe rules_get_violations
+###### 3.3.4.2.66  `SCHEMA-rules-get-violations-input` — Eingabe rules_get_violations
 
 Eingabe von rules_get_violations: severity (error, warning oder info, optional) und detail (summary, full oder grouped, Vorgabe full). (CR-GC-1014)
 
 schema ◀ `FLOW-rules-get-violations-call`
 
-###### 3.3.4.2.64  `SCHEMA-schema-fingerprint` — SchemaFingerprint
+###### 3.3.4.2.67  `SCHEMA-schema-fingerprint` — SchemaFingerprint
 
 Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist Teil des Vertrags: sie unterscheidet einen aelteren Schemastand von einer kaputten Datei.
 
 schema ◀ `FLOW-fingerprint-request` · `FLOW-schema-fingerprint`
 
-###### 3.3.4.2.65  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
+###### 3.3.4.2.68  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
 
 Vertrag der Schlupf-Zeile: cr, at, code, spur, ausgewaehlt, ausGraph, gesamt, rot, schlupf, schlupfNurGraph, zusage (blackbox, schnittstelle). Optional, in alten Zeilen nicht erfasst (nie 0): linkModus, umgebung (rote Dateien, im Link-Modus erwartet, nicht im Schlupf), dauer (auswahlMs, vollMs), grenzmenge (FUNC und SCHEMA je pflicht und da). (CR-GC-947)
 
 schema ◀ `FLOW-schlupf-request` · `FLOW-schlupf-result` · `FLOW-schlupf-zeile`
 
-###### 3.3.4.2.66  `SCHEMA-session-registry` — SessionEntry
+###### 3.3.4.2.69  `SCHEMA-session-registry` — SessionEntry
 
 pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
 
 schema ◀ `FLOW-session-entry` · `FLOW-session-registry`
 
-###### 3.3.4.2.67  `SCHEMA-sitzungsende` — Sitzungsende
+###### 3.3.4.2.70  `SCHEMA-sitzungsende` — Sitzungsende
 
 Die Ereignisse, die eine Host-Sitzung beenden: SIGINT, SIGTERM, SIGHUP, das Ende des stdio-Clients und der Verlust des Store-Locks. installTriggers bindet die Signale aus dieser Aufzaehlung, end parst jeden Grund dagegen. Es gibt keine zweite Liste. (CR-GC-989)
 
 schema ◀ `FLOW-session-end`
 
-###### 3.3.4.2.68  `SCHEMA-skill-sync-result` — Skill-Sync-Ergebnis
+###### 3.3.4.2.71  `SCHEMA-skill-sync-result` — Skill-Sync-Ergebnis
 
 Bericht von graphcode skills sync: repoRoot und die Listen added, updated, unchanged, removed (Pfade relativ zum Repo). syncSkills parst ihn an der Grenze. (CR-GC-999)
 
 schema ◀ `FLOW-cli-output-skills-sync` · `FLOW-skill-sync-result-sync-skills` · `FLOW-skill-sync-result-upgrade`
 
-###### 3.3.4.2.69  `SCHEMA-skill-text` — Skill-Text
+###### 3.3.4.2.72  `SCHEMA-skill-text` — Skill-Text
 
 Kopf einer Skill-Datei (Frontmatter name, description, version), wie graphcode ihn beim Ausliefern und Synchronisieren liest. Der Rumpf der Datei ist Prompt-Text; sein Format legt der Agent-Host fest, der Vertrag bindet ihn nicht. version ist ganzzahlig ab 0; version 0 heisst Entwurf und wird nicht ausgeliefert. (CR-GC-1013)
 
 schema ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-help-answer`
 
-###### 3.3.4.2.70  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
+###### 3.3.4.2.73  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
 
 Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts, am FLOW als Attribut channelRank gespiegelt — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht. Der Rang steht deshalb am Knoten: ohne ihn sind zwei Kanaele mit gleichem Produzenten und Konsumenten im Graphen ununterscheidbar, und der Optimizer schlaegt sie zum Merge vor. Bewusst ohne Zod-Symbol und ohne Vertragstest: informationeller Prompt-Kontext, kein Wire-Format; im Code faehrt jeder Kanal auf einer bestehenden Antwort mit (mutate-Antwort, Generierungsschritt, Authoring Guide), deren Vertrag dort gebunden und getestet ist. Die Befunde R-26 und R-32 bleiben bewusst stehen (Entscheidung des Autors 2026-11-23). (CR-GC-573)
 
 schema ◀ `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory`
 
-###### 3.3.4.2.71  `SCHEMA-steering-delta` — SteeringDelta
+###### 3.3.4.2.74  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-###### 3.3.4.2.72  `SCHEMA-steering-snapshot` — SteeringSnapshot
+###### 3.3.4.2.75  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph, Violations des vollen Katalogs, Fokusmenge, Zahl der blockierenden Fehler, Befunde je Stufe. Beschreibt die Form des Messpunkts; den Bestand prueft die Regel R-08, nicht dieses Schema. (CR-GC-786)
 
 schema ◀ `FLOW-steering-pair` · `FLOW-steering-snapshot`
 
-###### 3.3.4.2.73  `SCHEMA-store-rebuild-notice` — Store-Neuaufbau-Meldung
+###### 3.3.4.2.76  `SCHEMA-store-rebuild-notice` — Store-Neuaufbau-Meldung
 
 Meldung an den Nutzer nach einem Store-Neuaufbau, mit Grund: cause schema traegt alten und neuen Schema-Fingerabdruck, cause unreadable die Meldung, mit der das Oeffnen scheiterte (CR-GC-796); beide die SSOT-Datei, aus der neu befuellt wurde. Eine Zeile auf stderr beim Start (CR-GC-831).
 
 schema ◀ `FLOW-store-rebuild-notice`
 
-###### 3.3.4.2.74  `SCHEMA-suggest-answer` — Antwort graph_suggest
+###### 3.3.4.2.77  `SCHEMA-suggest-answer` — Antwort graph_suggest
 
 Die Antwort von graph_suggest. Im Code ohne Zod-Schema: der Handler gibt ein freies Objekt zurueck.
 
 schema ◀ `FLOW-suggest-answer`
 
-###### 3.3.4.2.75  `SCHEMA-target-profile` — TargetProfile
+###### 3.3.4.2.78  `SCHEMA-suggest-input` — Eingabe graph_suggest
+
+Eingabe von graph_suggest: k (ganze Zahl 1 bis 20, Vorgabe 5) und layer (all oder arch, Vorgabe arch). (CR-GC-1016)
+
+schema ◀ `FLOW-suggest-call`
+
+###### 3.3.4.2.79  `SCHEMA-target-profile` — TargetProfile
 
 intentAnchors (3-7 Strings), sonst kein Feld (strikt). Der Vertrag der Profildatei, die zwei Schreiber und einen Leser hat. Gewichte und Zielwerte sind zurueckgebaut (CR-GC-861); eine Datei, die sie noch traegt, scheitert laut beim Laden.
 
 schema ◀ `FLOW-target-profile` · `FLOW-target-profile-file`
 
-###### 3.3.4.2.76  `SCHEMA-test-ingest-answer` — GraphTestIngestAnswer
+###### 3.3.4.2.80  `SCHEMA-test-ingest-answer` — GraphTestIngestAnswer
 
 Antwort von graph_test_ingest: applied, assignments, bindings (neu gebundene Dateien), unresolved, withdrawn, success, tier, violations, graphVersion. Der Handler parst sie beim Erzeugen.
 
 schema ◀ `FLOW-meldung` · `FLOW-test-ingest-answer`
 
-###### 3.3.4.2.77  `SCHEMA-test-ingest-input` — GraphTestIngestInput
+###### 3.3.4.2.81  `SCHEMA-test-ingest-input` — GraphTestIngestInput
 
 Eingang von graph_test_ingest: ein Objekt mit consumerId, dryRun und dem Pflichtfeld ingest. ingest traegt genau eine von drei Varianten, gewaehlt ueber art: report (roher vitest-JSON, changeSet optional), results (Liste mit file, result, tool, evidence, changeSet optional) oder withdraw (nur changeSet, Pflicht). Zwei Quellen zugleich und keine Eingabe sind nicht ausdrueckbar. (CR-GC-992)
 
 schema ◀ `FLOW-test-ingest-call` · `FLOW-test-ingest-call-agent` · `FLOW-test-run-report-code` · `FLOW-test-run-report-full`
 
-###### 3.3.4.2.78  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
+###### 3.3.4.2.82  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
 
 Attributvertrag testRefs am TEST: Liste der Laufdateien (file, case, tool, level, result). Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readTestRefs (absent, invalid, bound; CR-SM-360).
 
-###### 3.3.4.2.79  `SCHEMA-test-selection` — TestSelection
+###### 3.3.4.2.83  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-###### 3.3.4.2.80  `SCHEMA-tests-input` — Eingabe graph_tests
+###### 3.3.4.2.84  `SCHEMA-tests-input` — Eingabe graph_tests
 
 Eingabe von graph_tests: changeSet (mindestens eine uid) und depth (ganze Zahl ab 0, Vorgabe 1). (CR-GC-1014)
 
 schema ◀ `FLOW-tests-call`
 
-###### 3.3.4.2.81  `SCHEMA-tool-context` — Werkzeug-Kontext
+###### 3.3.4.2.85  `SCHEMA-tool-context` — Werkzeug-Kontext
 
 Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Graphversion, Sitzung, Aufrufer. Zod-Vertrag der Form: Träger und Funktionen, geparst in createToolContext, zurück geht das Original. Die genauen Signaturen stehen an der Schnittstelle ToolContext, die ToolPort erweitert.
 
 schema ◀ `FLOW-read-bind` · `FLOW-tool-context`
 
-###### 3.3.4.2.82  `SCHEMA-trajectory` — Trajectory/Outcome
+###### 3.3.4.2.86  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-trajectory`
 
-###### 3.3.4.2.83  `SCHEMA-update-event` — UpdateEvent
+###### 3.3.4.2.87  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-broadcast-hook` · `FLOW-broadcast-hook-sse` · `FLOW-live-event` · `FLOW-sse-frame` · `FLOW-update-hook`
 
-###### 3.3.4.2.84  `SCHEMA-upgrade-report` — Upgrade-Bericht
+###### 3.3.4.2.88  `SCHEMA-upgrade-report` — Upgrade-Bericht
 
 Bericht von graphcode upgrade: Zielversion, Drift, fehlende und veraltete Skills und Policy-Felder, veraltete Familienpakete, Schritte. executeUpgrade parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-cli-output-upgrade` · `FLOW-install-result-upgrade`
 
-###### 3.3.4.2.85  `SCHEMA-verlauf` — Verlauf
+###### 3.3.4.2.89  `SCHEMA-verlauf` — Verlauf
 
 Je committetem Stand Commit, Datum, Marken, Befunde je Stufe, Fehler, Steuerwert je Regel, Testergebnisse und bewertbare Ketten; dazu die nicht ausgewerteten Regeln und die Zahl der uebersprungenen Staende.
 
 schema ◀ `FLOW-verlauf-report`
 
-###### 3.3.4.2.86  `SCHEMA-vertragstest-bericht` — VertragstestBerichtSchema
+###### 3.3.4.2.90  `SCHEMA-vertragstest-bericht` — VertragstestBerichtSchema
 
 Je SCHEMA die erzeugte Datei mit Zahl der Faelle, den verworfenen Faellen und den Stellen, an denen die Tiefe oder ein z.lazy den Umfang begrenzte (begrenzt), oder der Fehler. erzeugeVertragstests parst ihn, bevor es ihn zurueckgibt. (CR-GC-962, CR-GC-980)
 
 schema ◀ `FLOW-cli-output-vertragstest` · `FLOW-vertragstest-bericht`
 
-###### 3.3.4.2.87  `SCHEMA-vertragstest-satz` — VertragstestSatzSchema
+###### 3.3.4.2.91  `SCHEMA-vertragstest-satz` — VertragstestSatzSchema
 
 Je SCHEMA uid, Datei und Zod-Symbol, oder uid, Datei unter packages/<name>/src, Symbol und Paket @sigloch/<name> (external), oder uid und Vertragsdatei (.md ohne Symbol). erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962, CR-GC-965, CR-GC-981)
 
 schema ◀ `FLOW-vertragstest-satz`
 
-###### 3.3.4.2.88  `SCHEMA-vitest-lauf` — VitestLauf
+###### 3.3.4.2.92  `SCHEMA-vitest-lauf` — VitestLauf
 
 Vertrag des vitest-Laufs: status, signal, bericht (JSON-Text, optional).
 
 schema ◀ `FLOW-vitest-lauf-code` · `FLOW-vitest-lauf-full`
 
-###### 3.3.4.2.89  `SCHEMA-work-set` — Arbeitsmenge
+###### 3.3.4.2.93  `SCHEMA-work-set` — Arbeitsmenge
 
 Die uids, die die laufende Sitzung geschrieben hat, abgeleitet aus dem Audit-Log; schneidet Befundlisten auf die Arbeit der Sitzung. Felder: uids (sortiert, leer heisst: noch kein Schreibzug) und zuege (Zahl der angewandten Stapel). Der Werkzeug-Kontext parst sie beim Erzeugen.
 
 schema ◀ `FLOW-work-set`
 
-###### 3.3.4.2.90  `SCHEMA-zug-bericht` — Bericht zum Zug
+###### 3.3.4.2.94  `SCHEMA-zug-bericht` — Bericht zum Zug
 
 Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass und metricsAfter nur im Probelauf. metricsAfter traegt die geaenderten Zeilen im Stand danach in chains, modules, functions und riskCarriers mit risks und surface, dazu removed mit den entfallenen Kennungen je Liste; leere Listen heissen keine Kennzahl geaendert. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778, CR-GC-790)
 
@@ -16502,481 +16556,505 @@ Vertragstest SCHEMA-export-answer, erzeugt aus dem Zod-Schema: gültiges Beispie
 
 verify ▶ `SCHEMA-export-answer` · testRefs: `tests/vertrag/SCHEMA-export-answer.vertrag.test.ts`
 
-#### 3.4.209  `TEST-vertrag-export-pending` — Vertragstest ExportPending
+#### 3.4.209  `TEST-vertrag-export-input` — Vertragstest Eingabe graph_export
+
+Erzeugter Vertragstest SCHEMA-export-input: name, views und force, Ablehnung eines Namens mit Pfadtrenner, einer fremden Sicht und falscher Typen. (CR-GC-1016)
+
+verify ▶ `SCHEMA-export-input` · testRefs: `tests/vertrag/SCHEMA-export-input.vertrag.test.ts`
+
+#### 3.4.210  `TEST-vertrag-export-pending` — Vertragstest ExportPending
 
 Vertragstest SCHEMA-export-pending, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-export-pending` · testRefs: `tests/vertrag/SCHEMA-export-pending.vertrag.test.ts`
 
-#### 3.4.210  `TEST-vertrag-fit-advisory` — Vertragstest FitAdvisory
+#### 3.4.211  `TEST-vertrag-fit-advisory` — Vertragstest FitAdvisory
 
 Vertragstest SCHEMA-fit-advisory, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-fit-advisory` · testRefs: `tests/vertrag/SCHEMA-fit-advisory.vertrag.test.ts`
 
-#### 3.4.211  `TEST-vertrag-format-e` — Vertragstest Format-E-Eingabe
+#### 3.4.212  `TEST-vertrag-format-e` — Vertragstest Format-E-Eingabe
 
 Vertragstest SCHEMA-format-e, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-format-e` · testRefs: `tests/vertrag/SCHEMA-format-e.vertrag.test.ts`
 
-#### 3.4.212  `TEST-vertrag-function-criticality` — Vertragstest Funktionskritikalität
+#### 3.4.213  `TEST-vertrag-function-criticality` — Vertragstest Funktionskritikalität
 
 Vertragstest SCHEMA-function-criticality gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-function-criticality` · testRefs: `tests/vertrag/SCHEMA-function-criticality.vertrag.test.ts`
 
-#### 3.4.213  `TEST-vertrag-generation-step` — Vertragstest GenerationStep
+#### 3.4.214  `TEST-vertrag-generate-input` — Vertragstest Eingabe graph_generate
+
+Erzeugter Vertragstest SCHEMA-generate-input: jedes Feld und jeder Task, Ablehnung einer Schwelle ausserhalb 0 bis 1 und eines fremden Tasks. (CR-GC-1016)
+
+verify ▶ `SCHEMA-generate-input` · testRefs: `tests/vertrag/SCHEMA-generate-input.vertrag.test.ts`
+
+#### 3.4.215  `TEST-vertrag-generation-step` — Vertragstest GenerationStep
 
 Vertragstest SCHEMA-generation-step, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-generation-step` · testRefs: `tests/vertrag/SCHEMA-generation-step.vertrag.test.ts`
 
-#### 3.4.214  `TEST-vertrag-get-edges-input` — Vertragstest Eingabe graph_get_edges
+#### 3.4.216  `TEST-vertrag-get-edges-input` — Vertragstest Eingabe graph_get_edges
 
 Erzeugter Vertragstest SCHEMA-get-edges-input: jede Richtung und jedes Format, Ablehnung fremder Werte. (CR-GC-1015)
 
 verify ▶ `SCHEMA-get-edges-input` · testRefs: `tests/vertrag/SCHEMA-get-edges-input.vertrag.test.ts`
 
-#### 3.4.215  `TEST-vertrag-get-node-input` — Vertragstest Eingabe graph_get_node
+#### 3.4.217  `TEST-vertrag-get-node-input` — Vertragstest Eingabe graph_get_node
 
 Erzeugter Vertragstest SCHEMA-get-node-input: uid als Pflicht, Ablehnung ohne uid und mit falschem Typ. (CR-GC-1015)
 
 verify ▶ `SCHEMA-get-node-input` · testRefs: `tests/vertrag/SCHEMA-get-node-input.vertrag.test.ts`
 
-#### 3.4.216  `TEST-vertrag-graph-delta` — Vertragstest GraphDelta
+#### 3.4.218  `TEST-vertrag-graph-delta` — Vertragstest GraphDelta
 
 Vertragstest SCHEMA-graph-delta, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-graph-delta` · testRefs: `tests/vertrag/SCHEMA-graph-delta.vertrag.test.ts`
 
-#### 3.4.217  `TEST-vertrag-grenz-befund` — Vertragstest Grenz-Befund
+#### 3.4.219  `TEST-vertrag-grenz-befund` — Vertragstest Grenz-Befund
 
 Vertragstest SCHEMA-grenz-befund, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-grenz-befund` · testRefs: `tests/vertrag/SCHEMA-grenz-befund.vertrag.test.ts`
 
-#### 3.4.218  `TEST-vertrag-harness-handle` — Vertragstest Harness-Griff
+#### 3.4.220  `TEST-vertrag-harness-handle` — Vertragstest Harness-Griff
 
 Erzeugter Vertragstest SCHEMA-harness-handle: Beispiel mit allen Funktionen, Ablehnung je fehlendem Mitglied und je Nicht-Funktion. (CR-GC-991)
 
 verify ▶ `SCHEMA-harness-handle` · testRefs: `tests/vertrag/SCHEMA-harness-handle.vertrag.test.ts`
 
-#### 3.4.219  `TEST-vertrag-health-report` — Vertragstest HealthPayload
+#### 3.4.221  `TEST-vertrag-health-report` — Vertragstest HealthPayload
 
 Vertragstest SCHEMA-health-report, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-health-report` · testRefs: `tests/vertrag/SCHEMA-health-report.vertrag.test.ts`
 
-#### 3.4.220  `TEST-vertrag-help-input` — Vertragstest Eingabe graph_help
+#### 3.4.222  `TEST-vertrag-help-input` — Vertragstest Eingabe graph_help
 
 Erzeugter Vertragstest SCHEMA-help-input: token als Pflicht, Ablehnung ohne token und mit falschem Typ. (CR-GC-1014)
 
 verify ▶ `SCHEMA-help-input` · testRefs: `tests/vertrag/SCHEMA-help-input.vertrag.test.ts`
 
-#### 3.4.221  `TEST-vertrag-impact-input` — Vertragstest Eingabe graph_impact
+#### 3.4.223  `TEST-vertrag-impact-input` — Vertragstest Eingabe graph_impact
 
 Erzeugter Vertragstest SCHEMA-impact-input: id und depth, Ablehnung negativer und gebrochener Tiefe. (CR-GC-1015)
 
 verify ▶ `SCHEMA-impact-input` · testRefs: `tests/vertrag/SCHEMA-impact-input.vertrag.test.ts`
 
-#### 3.4.222  `TEST-vertrag-impact-slice` — Vertragstest Wirkungsausschnitt
+#### 3.4.224  `TEST-vertrag-impact-slice` — Vertragstest Wirkungsausschnitt
 
 Vertragstest SCHEMA-impact-slice gegen das Paket @sigloch/graph-api-core: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-impact-slice` · testRefs: `tests/vertrag/SCHEMA-impact-slice.vertrag.test.ts`
 
-#### 3.4.223  `TEST-vertrag-impacted-tests` — Vertragstest TestImpactResult
+#### 3.4.225  `TEST-vertrag-impacted-tests` — Vertragstest TestImpactResult
 
 Vertragstest SCHEMA-impacted-tests, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-impacted-tests` · testRefs: `tests/vertrag/SCHEMA-impacted-tests.vertrag.test.ts`
 
-#### 3.4.224  `TEST-vertrag-import-access` — Vertragstest Import-Zugang
+#### 3.4.226  `TEST-vertrag-import-access` — Vertragstest Import-Zugang
 
 Erzeugter Vertragstest SCHEMA-import-access: Beispiel mit beiden Texten und beiden Funktionen, Ablehnung je fehlendem Mitglied, je falschem Typ, je leerem Text und eines Zusatzfelds. (CR-GC-1012)
 
 verify ▶ `SCHEMA-import-access` · testRefs: `tests/vertrag/SCHEMA-import-access.vertrag.test.ts`
 
-#### 3.4.225  `TEST-vertrag-import-summary` — Vertragstest Zusammenfassung Code-Import
+#### 3.4.227  `TEST-vertrag-import-summary` — Vertragstest Zusammenfassung Code-Import
 
 Vertragstest SCHEMA-import-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Zähler, Zählung je Typ, Status, Befund je Element, leere Pfade). (CR-GC-986)
 
 verify ▶ `SCHEMA-import-summary` · testRefs: `tests/vertrag/SCHEMA-import-summary.vertrag.test.ts`
 
-#### 3.4.226  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
+#### 3.4.228  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
 
 Vertragstest SCHEMA-init-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-init-report` · testRefs: `tests/vertrag/SCHEMA-init-report.vertrag.test.ts`
 
-#### 3.4.227  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
+#### 3.4.229  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
 
 Vertragstest SCHEMA-install-result, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-install-result` · testRefs: `tests/vertrag/SCHEMA-install-result.vertrag.test.ts`
 
-#### 3.4.228  `TEST-vertrag-lauf-urteil` — Vertragstest LaufUrteil
+#### 3.4.230  `TEST-vertrag-lauf-urteil` — Vertragstest LaufUrteil
 
 Vertragstest SCHEMA-lauf-urteil, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-lauf-urteil` · testRefs: `tests/vertrag/SCHEMA-lauf-urteil.vertrag.test.ts`
 
-#### 3.4.229  `TEST-vertrag-lock-owner` — Vertragstest LockOwner
+#### 3.4.231  `TEST-vertrag-lock-owner` — Vertragstest LockOwner
 
 Vertragstest SCHEMA-lock-owner, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-lock-owner` · testRefs: `tests/vertrag/SCHEMA-lock-owner.vertrag.test.ts`
 
-#### 3.4.230  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
+#### 3.4.232  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
 
 Vertragstest SCHEMA-markdown-text, erzeugt aus dem Zod-Schema: Text angenommen, Nicht-Text abgelehnt. (CR-GC-959)
 
 verify ▶ `SCHEMA-markdown-text` · testRefs: `tests/vertrag/SCHEMA-markdown-text.vertrag.test.ts`
 
-#### 3.4.231  `TEST-vertrag-markdown-view` — Vertragstest MarkdownView
+#### 3.4.233  `TEST-vertrag-markdown-view` — Vertragstest MarkdownView
 
 Vertragstest SCHEMA-markdown-view, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-markdown-view` · testRefs: `tests/vertrag/SCHEMA-markdown-view.vertrag.test.ts`
 
-#### 3.4.232  `TEST-vertrag-mcp-tool` — Vertragstest Werkzeug
+#### 3.4.234  `TEST-vertrag-mcp-tool` — Vertragstest Werkzeug
 
 Erzeugter Vertragstest SCHEMA-mcp-tool: Beispiel mit Funktionen, Ablehnung je Pflichtfeld, safeParse und handler als Funktion. (CR-GC-990)
 
 verify ▶ `SCHEMA-mcp-tool` · testRefs: `tests/vertrag/SCHEMA-mcp-tool.vertrag.test.ts`
 
-#### 3.4.233  `TEST-vertrag-mcp-tool-registry` — Vertragstest Werkzeug-Register
+#### 3.4.235  `TEST-vertrag-mcp-tool-registry` — Vertragstest Werkzeug-Register
 
 Erzeugter Vertragstest SCHEMA-mcp-tool-registry: leere Registry, Werkzeug je Name, Ablehnung eines Werts, der kein Werkzeug ist. (CR-GC-990)
 
 verify ▶ `SCHEMA-mcp-tool-registry` · testRefs: `tests/vertrag/SCHEMA-mcp-tool-registry.vertrag.test.ts`
 
-#### 3.4.234  `TEST-vertrag-metric-policy` — Vertragstest Metrik-Policy
+#### 3.4.236  `TEST-vertrag-metric-policy` — Vertragstest Metrik-Policy
 
 Vertragstest SCHEMA-metric-policy, erzeugt aus dem Zod-Schema, einschliesslich der Bedingung Vergleich zweier Zahlfelder. (CR-GC-1000)
 
 verify ▶ `SCHEMA-metric-policy` · testRefs: `tests/vertrag/SCHEMA-metric-policy.vertrag.test.ts`
 
-#### 3.4.235  `TEST-vertrag-metric-vector` — Vertragstest Metrikvektor
+#### 3.4.237  `TEST-vertrag-metric-vector` — Vertragstest Metrikvektor
 
 Vertragstest SCHEMA-metric-vector gegen das Paket @sigloch/se-engine: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-metric-vector` · testRefs: `tests/vertrag/SCHEMA-metric-vector.vertrag.test.ts`
 
-#### 3.4.236  `TEST-vertrag-metrics-answer` — Vertragstest Metrik-Antwort
+#### 3.4.238  `TEST-vertrag-metrics-answer` — Vertragstest Metrik-Antwort
 
 Vertragstest SCHEMA-metrics-answer, erzeugt aus dem Zod-Schema, einschliesslich der Policy. (CR-GC-1000)
 
 verify ▶ `SCHEMA-metrics-answer` · testRefs: `tests/vertrag/SCHEMA-metrics-answer.vertrag.test.ts`
 
-#### 3.4.237  `TEST-vertrag-module-metrics` — Vertragstest Modulkennzahlen
+#### 3.4.239  `TEST-vertrag-metrics-input` — Vertragstest Eingabe graph_metrics
+
+Erzeugter Vertragstest SCHEMA-metrics-input: scope und constraintCarriers, Ablehnung einer leeren scope-Liste und falscher Typen. (CR-GC-1016)
+
+verify ▶ `SCHEMA-metrics-input` · testRefs: `tests/vertrag/SCHEMA-metrics-input.vertrag.test.ts`
+
+#### 3.4.240  `TEST-vertrag-module-metrics` — Vertragstest Modulkennzahlen
 
 Vertragstest SCHEMA-module-metrics gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-module-metrics` · testRefs: `tests/vertrag/SCHEMA-module-metrics.vertrag.test.ts`
 
-#### 3.4.238  `TEST-vertrag-mutate-answer` — Vertragstest Antwort graph_mutate
+#### 3.4.241  `TEST-vertrag-mutate-answer` — Vertragstest Antwort graph_mutate
 
 Vertragstest SCHEMA-mutate-answer: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Union-Varianten), von Hand die Wertregeln (Zähler, graphVersion, confidence, Listen, Bindungsreport, Steuerdelta, OCC) und am echten Werkzeug jede Antwortvariante von graph_mutate (Probelauf und Anwendung, summary und full, Ablehnungen, OCC, unbekannter Skill, Format-Fehler, Warnungen, refs). (CR-GC-985)
 
 verify ▶ `SCHEMA-mutate-answer` · testRefs: `tests/vertrag/SCHEMA-mutate-answer.vertrag.test.ts`, `tests/mcp.mutate-answer.test.ts`
 
-#### 3.4.239  `TEST-vertrag-mutate-command` — Vertragstest Mutate-Befehl
+#### 3.4.242  `TEST-vertrag-mutate-command` — Vertragstest Mutate-Befehl
 
 Vertragstest SCHEMA-mutate-command, erzeugt aus dem Zod-Schema, einschliesslich der Bedingung mindestens eines von N Feldern. (CR-GC-1000)
 
 verify ▶ `SCHEMA-mutate-command` · testRefs: `tests/vertrag/SCHEMA-mutate-command.vertrag.test.ts`
 
-#### 3.4.240  `TEST-vertrag-mutate-result` — Vertragstest MutateResult
+#### 3.4.243  `TEST-vertrag-mutate-result` — Vertragstest MutateResult
 
 Vertragstest SCHEMA-mutate-result, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-mutate-result` · testRefs: `tests/vertrag/SCHEMA-mutate-result.vertrag.test.ts`
 
-#### 3.4.241  `TEST-vertrag-ontology-graph` — Vertragstest Ontologie-Graph
+#### 3.4.244  `TEST-vertrag-ontology-graph` — Vertragstest Ontologie-Graph
 
 Vertragstest SCHEMA-ontology-graph gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-ontology-graph` · testRefs: `tests/vertrag/SCHEMA-ontology-graph.vertrag.test.ts`
 
-#### 3.4.242  `TEST-vertrag-ontology-json` — Vertragstest OntologyJson
+#### 3.4.245  `TEST-vertrag-ontology-json` — Vertragstest OntologyJson
 
 Vertragstest SCHEMA-ontology-json, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-ontology-json` · testRefs: `tests/vertrag/SCHEMA-ontology-json.vertrag.test.ts`
 
-#### 3.4.243  `TEST-vertrag-readiness-input` — Vertragstest Eingabe graph_readiness
+#### 3.4.246  `TEST-vertrag-readiness-input` — Vertragstest Eingabe graph_readiness
 
 Erzeugter Vertragstest SCHEMA-readiness-input: detail und verlauf, Ablehnung ausserhalb 1 bis 1000 und gebrochener Zahlen. (CR-GC-1014)
 
 verify ▶ `SCHEMA-readiness-input` · testRefs: `tests/vertrag/SCHEMA-readiness-input.vertrag.test.ts`
 
-#### 3.4.244  `TEST-vertrag-readiness-report` — Vertragstest Readiness-Bericht
+#### 3.4.247  `TEST-vertrag-readiness-report` — Vertragstest Readiness-Bericht
 
 Vertragstest SCHEMA-readiness-report, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-readiness-report` · testRefs: `tests/vertrag/SCHEMA-readiness-report.vertrag.test.ts`
 
-#### 3.4.245  `TEST-vertrag-real-ref` — Vertragstest RealRef
+#### 3.4.248  `TEST-vertrag-real-ref` — Vertragstest RealRef
 
 Vertragstest SCHEMA-real-ref, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-real-ref` · testRefs: `tests/vertrag/SCHEMA-real-ref.vertrag.test.ts`
 
-#### 3.4.246  `TEST-vertrag-rejected-trace` — Vertragstest RejectedTrace
+#### 3.4.249  `TEST-vertrag-rejected-trace` — Vertragstest RejectedTrace
 
 Vertragstest SCHEMA-rejected-trace, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-rejected-trace` · testRefs: `tests/vertrag/SCHEMA-rejected-trace.vertrag.test.ts`
 
-#### 3.4.247  `TEST-vertrag-render-summary` — Vertragstest Zusammenfassung Render
+#### 3.4.250  `TEST-vertrag-render-summary` — Vertragstest Zusammenfassung Render
 
 Vertragstest SCHEMA-render-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Format, Sicht, Größe, Pfad, Vorlage null). (CR-GC-986)
 
 verify ▶ `SCHEMA-render-summary` · testRefs: `tests/vertrag/SCHEMA-render-summary.vertrag.test.ts`
 
-#### 3.4.248  `TEST-vertrag-repo-pfad` — Vertragstest Repo-Pfad
+#### 3.4.251  `TEST-vertrag-repo-pfad` — Vertragstest Repo-Pfad
 
 Vertragstest SCHEMA-repo-pfad: erzeugt aus dem Zod-Schema (nicht leerer Text, leerer Text abgelehnt, falscher Typ). Der Parse an den Grenzen steht in tests/flow-vertraege.test.ts. (CR-GC-989)
 
 verify ▶ `SCHEMA-repo-pfad` · testRefs: `tests/vertrag/SCHEMA-repo-pfad.vertrag.test.ts`
 
-#### 3.4.249  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
+#### 3.4.252  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
 
 Vertragstest SCHEMA-repo-status, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-repo-status` · testRefs: `tests/vertrag/SCHEMA-repo-status.vertrag.test.ts`
 
-#### 3.4.250  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
+#### 3.4.253  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
 
 Vertragstest SCHEMA-rewind-summary, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-971)
 
 verify ▶ `SCHEMA-rewind-summary` · testRefs: `tests/vertrag/SCHEMA-rewind-summary.vertrag.test.ts`
 
-#### 3.4.251  `TEST-vertrag-rule-violation` — Vertragstest Regelverletzung
+#### 3.4.254  `TEST-vertrag-rule-violation` — Vertragstest Regelverletzung
 
 Vertragstest SCHEMA-rule-violation gegen das Paket @sigloch/contracts/harness: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-rule-violation` · testRefs: `tests/vertrag/SCHEMA-rule-violation.vertrag.test.ts`
 
-#### 3.4.252  `TEST-vertrag-rules-evaluate-input` — Vertragstest Eingabe rules_evaluate
+#### 3.4.255  `TEST-vertrag-rules-evaluate-input` — Vertragstest Eingabe rules_evaluate
 
 Erzeugter Vertragstest SCHEMA-rules-evaluate-input: jede detail-Form, Vorgabe full, Ablehnung eines fremden Werts. (CR-GC-1014)
 
 verify ▶ `SCHEMA-rules-evaluate-input` · testRefs: `tests/vertrag/SCHEMA-rules-evaluate-input.vertrag.test.ts`
 
-#### 3.4.253  `TEST-vertrag-rules-get-violations-input` — Vertragstest Eingabe rules_get_violations
+#### 3.4.256  `TEST-vertrag-rules-get-violations-input` — Vertragstest Eingabe rules_get_violations
 
 Erzeugter Vertragstest SCHEMA-rules-get-violations-input: jede severity und detail-Form, Ablehnung fremder Werte. (CR-GC-1014)
 
 verify ▶ `SCHEMA-rules-get-violations-input` · testRefs: `tests/vertrag/SCHEMA-rules-get-violations-input.vertrag.test.ts`
 
-#### 3.4.254  `TEST-vertrag-schema-fingerprint` — Vertragstest SchemaFingerprint
+#### 3.4.257  `TEST-vertrag-schema-fingerprint` — Vertragstest SchemaFingerprint
 
 Vertragstest SCHEMA-schema-fingerprint, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-schema-fingerprint` · testRefs: `tests/vertrag/SCHEMA-schema-fingerprint.vertrag.test.ts`
 
-#### 3.4.255  `TEST-vertrag-schlupf-zeile` — Vertragstest Schlupf-Zeile (Vertrag)
+#### 3.4.258  `TEST-vertrag-schlupf-zeile` — Vertragstest Schlupf-Zeile (Vertrag)
 
 Vertragstest SCHEMA-schlupf-zeile, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-schlupf-zeile` · testRefs: `tests/vertrag/SCHEMA-schlupf-zeile.vertrag.test.ts`
 
-#### 3.4.256  `TEST-vertrag-session-registry` — Vertragstest SessionEntry
+#### 3.4.259  `TEST-vertrag-session-registry` — Vertragstest SessionEntry
 
 Vertragstest SCHEMA-session-registry, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-session-registry` · testRefs: `tests/vertrag/SCHEMA-session-registry.vertrag.test.ts`
 
-#### 3.4.257  `TEST-vertrag-sitzungsende` — Vertragstest Sitzungsende
+#### 3.4.260  `TEST-vertrag-sitzungsende` — Vertragstest Sitzungsende
 
 Vertragstest SCHEMA-sitzungsende: erzeugt aus dem Zod-Schema (Werteliste eingefroren, jeder Wert angenommen, Fremdwert abgelehnt). Der Parse in end und die gebundenen Signale stehen in tests/flow-vertraege.test.ts. (CR-GC-989)
 
 verify ▶ `SCHEMA-sitzungsende` · testRefs: `tests/vertrag/SCHEMA-sitzungsende.vertrag.test.ts`
 
-#### 3.4.258  `TEST-vertrag-skill-sync-result` — Vertragstest Skill-Sync-Ergebnis
+#### 3.4.261  `TEST-vertrag-skill-sync-result` — Vertragstest Skill-Sync-Ergebnis
 
 Vertragstest SCHEMA-skill-sync-result, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Grenzen. (CR-GC-999)
 
 verify ▶ `SCHEMA-skill-sync-result` · testRefs: `tests/vertrag/SCHEMA-skill-sync-result.vertrag.test.ts`
 
-#### 3.4.259  `TEST-vertrag-skill-text` — Vertragstest Skill-Kopf
+#### 3.4.262  `TEST-vertrag-skill-text` — Vertragstest Skill-Kopf
 
 Erzeugter Vertragstest SCHEMA-skill-text: Beispiel mit name, description und version, Ablehnung je fehlendem Feld, je falschem Typ, version unter 0 und eines Zusatzfelds. (CR-GC-1013)
 
 verify ▶ `SCHEMA-skill-text` · testRefs: `tests/vertrag/SCHEMA-skill-text.vertrag.test.ts`
 
-#### 3.4.260  `TEST-vertrag-steering-delta` — Vertragstest SteeringDelta
+#### 3.4.263  `TEST-vertrag-steering-delta` — Vertragstest SteeringDelta
 
 Vertragstest SCHEMA-steering-delta, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-steering-delta` · testRefs: `tests/vertrag/SCHEMA-steering-delta.vertrag.test.ts`
 
-#### 3.4.261  `TEST-vertrag-steering-snapshot` — Vertragstest SteeringSnapshot
+#### 3.4.264  `TEST-vertrag-steering-snapshot` — Vertragstest SteeringSnapshot
 
 Vertragstest SCHEMA-steering-snapshot, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-steering-snapshot` · testRefs: `tests/vertrag/SCHEMA-steering-snapshot.vertrag.test.ts`
 
-#### 3.4.262  `TEST-vertrag-store-rebuild-notice` — Vertragstest Store-Neuaufbau-Meldung
+#### 3.4.265  `TEST-vertrag-store-rebuild-notice` — Vertragstest Store-Neuaufbau-Meldung
 
 Vertragstest SCHEMA-store-rebuild-notice, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-store-rebuild-notice` · testRefs: `tests/vertrag/SCHEMA-store-rebuild-notice.vertrag.test.ts`
 
-#### 3.4.263  `TEST-vertrag-target-profile` — Vertragstest TargetProfile
+#### 3.4.266  `TEST-vertrag-suggest-input` — Vertragstest Eingabe graph_suggest
+
+Erzeugter Vertragstest SCHEMA-suggest-input: k und layer, Ablehnung ausserhalb 1 bis 20 und einer fremden Ebene. (CR-GC-1016)
+
+verify ▶ `SCHEMA-suggest-input` · testRefs: `tests/vertrag/SCHEMA-suggest-input.vertrag.test.ts`
+
+#### 3.4.267  `TEST-vertrag-target-profile` — Vertragstest TargetProfile
 
 Vertragstest SCHEMA-target-profile, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-target-profile` · testRefs: `tests/vertrag/SCHEMA-target-profile.vertrag.test.ts`
 
-#### 3.4.264  `TEST-vertrag-test-ingest-answer` — Vertragstest Antwort graph_test_ingest
+#### 3.4.268  `TEST-vertrag-test-ingest-answer` — Vertragstest Antwort graph_test_ingest
 
 Vertragstest SCHEMA-test-ingest-answer, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-973)
 
 verify ▶ `SCHEMA-test-ingest-answer` · testRefs: `tests/vertrag/SCHEMA-test-ingest-answer.vertrag.test.ts`
 
-#### 3.4.265  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
+#### 3.4.269  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
 
 Vertragstest SCHEMA-test-ingest-input, aus dem Schema erzeugt (graphcode vertragstest): je Variante die Annahme, je Pflichtfeld die Ablehnung, Typ, Enum, Mindestlaenge und Zusatzfeld, dazu die Werteliste des Art-Felds. (CR-GC-992)
 
 verify ▶ `SCHEMA-test-ingest-input` · testRefs: `tests/vertrag/SCHEMA-test-ingest-input.vertrag.test.ts`
 
-#### 3.4.266  `TEST-vertrag-test-refs` — Vertragstest TestRefs
+#### 3.4.270  `TEST-vertrag-test-refs` — Vertragstest TestRefs
 
 Vertragstest SCHEMA-test-refs, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-test-refs` · testRefs: `tests/vertrag/SCHEMA-test-refs.vertrag.test.ts`
 
-#### 3.4.267  `TEST-vertrag-test-selection` — Vertragstest Testauswahl
+#### 3.4.271  `TEST-vertrag-test-selection` — Vertragstest Testauswahl
 
 Vertragstest SCHEMA-test-selection, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-test-selection` · testRefs: `tests/vertrag/SCHEMA-test-selection.vertrag.test.ts`
 
-#### 3.4.268  `TEST-vertrag-tests-input` — Vertragstest Eingabe graph_tests
+#### 3.4.272  `TEST-vertrag-tests-input` — Vertragstest Eingabe graph_tests
 
 Erzeugter Vertragstest SCHEMA-tests-input: changeSet und depth, Ablehnung einer leeren Liste und negativer Tiefe. (CR-GC-1014)
 
 verify ▶ `SCHEMA-tests-input` · testRefs: `tests/vertrag/SCHEMA-tests-input.vertrag.test.ts`
 
-#### 3.4.269  `TEST-vertrag-tool-context` — Vertragstest Werkzeug-Kontext
+#### 3.4.273  `TEST-vertrag-tool-context` — Vertragstest Werkzeug-Kontext
 
 Erzeugter Vertragstest SCHEMA-tool-context: Beispiel, Ablehnung je fehlendem Mitglied, fremder Schlüssel. (CR-GC-991)
 
 verify ▶ `SCHEMA-tool-context` · testRefs: `tests/vertrag/SCHEMA-tool-context.vertrag.test.ts`
 
-#### 3.4.270  `TEST-vertrag-trajectory` — Vertragstest Trajektorie
+#### 3.4.274  `TEST-vertrag-trajectory` — Vertragstest Trajektorie
 
 Vertragstest SCHEMA-trajectory gegen das Paket @sigloch/learning-core/interfaces: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-trajectory` · testRefs: `tests/vertrag/SCHEMA-trajectory.vertrag.test.ts`
 
-#### 3.4.271  `TEST-vertrag-update-event` — Vertragstest UpdateEvent
+#### 3.4.275  `TEST-vertrag-update-event` — Vertragstest UpdateEvent
 
 Vertragstest SCHEMA-update-event, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-update-event` · testRefs: `tests/vertrag/SCHEMA-update-event.vertrag.test.ts`
 
-#### 3.4.272  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
+#### 3.4.276  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
 
 Vertragstest SCHEMA-upgrade-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-upgrade-report` · testRefs: `tests/vertrag/SCHEMA-upgrade-report.vertrag.test.ts`
 
-#### 3.4.273  `TEST-vertrag-verlauf` — Vertragstest Verlauf
+#### 3.4.277  `TEST-vertrag-verlauf` — Vertragstest Verlauf
 
 Vertragstest SCHEMA-verlauf, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-verlauf` · testRefs: `tests/vertrag/SCHEMA-verlauf.vertrag.test.ts`
 
-#### 3.4.274  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
+#### 3.4.278  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
 
 Erzeugter Vertragstest SCHEMA-vertragstest-bericht
 
 verify ▶ `SCHEMA-vertragstest-bericht` · testRefs: `tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts`
 
-#### 3.4.275  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
+#### 3.4.279  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
 
 Erzeugter Vertragstest SCHEMA-vertragstest-satz
 
 verify ▶ `SCHEMA-vertragstest-satz` · testRefs: `tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts`
 
-#### 3.4.276  `TEST-vertrag-vitest-lauf` — Vertragstest VitestLauf
+#### 3.4.280  `TEST-vertrag-vitest-lauf` — Vertragstest VitestLauf
 
 Vertragstest SCHEMA-vitest-lauf, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-vitest-lauf` · testRefs: `tests/vertrag/SCHEMA-vitest-lauf.vertrag.test.ts`
 
-#### 3.4.277  `TEST-vertrag-work-set` — Vertragstest Arbeitsmenge
+#### 3.4.281  `TEST-vertrag-work-set` — Vertragstest Arbeitsmenge
 
 Vertragstest SCHEMA-work-set: das erzeugte Beispiel und die Ablehnung je Pflichtfeld, dazu von Hand die leere Menge, negative und gebrochene Zugzahl, leere uid. (CR-GC-975)
 
 verify ▶ `SCHEMA-work-set` · testRefs: `tests/vertrag/SCHEMA-work-set.vertrag.test.ts`
 
-#### 3.4.278  `TEST-vertrag-zug-bericht` — Vertragstest Bericht zum Zug
+#### 3.4.282  `TEST-vertrag-zug-bericht` — Vertragstest Bericht zum Zug
 
 Vertragstest SCHEMA-zug-bericht, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-zug-bericht` · testRefs: `tests/vertrag/SCHEMA-zug-bericht.vertrag.test.ts`
 
-#### 3.4.279  `TEST-vertragstest-generator` — Vertragstest-Generator
+#### 3.4.283  `TEST-vertragstest-generator` — Vertragstest-Generator
 
 Unit-Tests des Erzeugers (je Konstrukt ein kleines Schema: verschachteltes Objekt, Liste, Tupel, Record, Union, optional, Tiefengrenze, rekursives z.lazy) und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
 
 verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · `REQ-contract-test-manual` · testRefs: `tests/vertragstest.test.ts`
 
-#### 3.4.280  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.284  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.281  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.285  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.282  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.286  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.283  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.287  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.284  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.288  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.285  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.289  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.286  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.290  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.287  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.291  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.288  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.292  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 

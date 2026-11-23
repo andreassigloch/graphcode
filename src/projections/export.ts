@@ -129,7 +129,7 @@ export function writeFileAtomic(abs: string, content: string): void {
   }
 }
 
-const GraphExportInputSchema = z.object({
+export const GraphExportInputSchema = z.object({
   name: z
     .string()
     .regex(/^[A-Za-z0-9._-]+$/, 'name must be a bare basename: letters, digits, dot, underscore, hyphen — no path separator')
@@ -180,7 +180,8 @@ export function bindExportTools(ctx: ToolPort) {
     // zwischen Gate und Feed-Eintrag läuft (der Auto-Export unter Last), die Marke schon
     // gezählt und den Feed noch leer — und meldet eine Mutation ohne Feed-Eintrag, die es
     // nicht gibt. Der Export ist selbst ein Schreibzug: er setzt die Marke zurück.
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphExportInputSchema.parse(raw);
       return ctx.serializeToolWrite(async () => {
         const graph = harness.getGraph();
         const repoRoot = harness.getRepoRoot();

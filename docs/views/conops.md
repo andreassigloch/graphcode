@@ -207,6 +207,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-1013` | done | SCHEMA-skill-text ohne Zod-Schema und Vertragstest (R-32) | `FUNC-sync-skills` |
 | `CR-GC-1014` | done | Sammelfluss query-params: Eingaben der Bericht-Werkzeuge ohne eigenen Vertrag | `FUNC-authoring-guide` · `FUNC-deduce-tests` · `FUNC-graph-help` · `FUNC-graph-readiness` · `FUNC-rules-tool` · `FUNC-test-ingest` |
 | `CR-GC-1015` | done | Sammelfluss query-params: Eingaben der Lesewerkzeuge ohne eigenen Vertrag | `FUNC-read-tools` |
+| `CR-GC-1016` | n/a | Sammelfluss query-params: Eingaben von export, metrics, suggest, generate ohne eigenen Vertrag | `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-suggest` · `FUNC-host-socket` |
 | `CR-GC-102` | done | Hook-System | `FUNC-emit-trajectory` · `FUNC-emit-update-event` · `MOD-surface` · `REQ-auto-persist-merge` · `REQ-hook-extension-points` · `REQ-hook-order-deterministic` · `REQ-precommit-timeout` · `REQ-trajectory-emit` · `REQ-versioned-cache` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
 | `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-agent-surface` · `REQ-doc-export` |

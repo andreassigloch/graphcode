@@ -61,7 +61,7 @@ import { toOntologyGraph } from '../kernel/conformance.js';
 import { archMetrics } from '../kernel/measure/fit-advisory.js';
 import type { MCPTool, MCPToolRegistry, ToolPort } from '../kernel/tool-contract.js';
 
-const GraphMetricsInputSchema = z.looseObject({
+export const GraphMetricsInputSchema = z.looseObject({
   scope: z
     .array(z.string())
     .min(1)
@@ -132,7 +132,8 @@ export function bindMetricsTools(ctx: ToolPort) {
       'ids) what an analysis of them has to read. ' +
       '`graph_help({token:"graph_metrics"})` explains the figures. Read-only.',
     inputSchema: GraphMetricsInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphMetricsInputSchema.parse(raw);
       // CR-GC-329: Wert UND Schwelle aus EINER Antwort. Ein Konsument, der „71 % /
       // Ziel <= 70 %" zeichnet, hat beide Zahlen von hier und keinen eigenen Zielwert;
       // `policySource` sagt, ob sie aus `graphcode.config.jsonc` stammt oder der

@@ -558,11 +558,15 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // CR-GC-1015 (graphVersion 1561) — NEU GEMESSEN, nachdem die sechs Lesewerkzeuge eigene Fluesse mit eigenem
       // Eingabevertrag bekamen (Steuerwert am Start 11,00 -> 12,50): vier Zuege statt fuenf, graph_mutate wird
       // nicht mehr umgehaengt. Weiter derselbe Befund (ITEM-2026-798).
+      // CR-GC-1016 (graphVersion 1566) — NEU GEMESSEN, nachdem export, metrics, suggest und generate eigene
+      // Eingabevertraege bekamen und der Socket-Fluss FLOW-dashboard-tool-call in drei Fluesse zerfiel (Steuerwert
+      // am Start 12,50 -> 13,00): vier Zuege, Host-Sitzung vor Ruestzeug; statt Test-Ingest wandert read-tools nach
+      // agent-surface. Weiter derselbe Befund (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-abfrage -compose-> FUNC-agent-loop',
-        'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
         'FUNC-block-abfrage -compose-> FUNC-block-host-sitzung (retire FUNC-block-host-sitzung)',
-        'FUNC-test-ingest -allocate-> MOD-agent-surface (retire MOD-projections)',
+        'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
+        'FUNC-read-tools -allocate-> MOD-agent-surface (retire MOD-surface)',
       ]);
       expect(
         rest

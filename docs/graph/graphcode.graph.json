@@ -156,6 +156,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-1016",
+      "type": "CR",
+      "name": "Sammelfluss query-params: Eingaben von export, metrics, suggest, generate ohne eigenen Vertrag",
+      "description": "docs/cr/open/CR-GC-1016-sammelfluss-query-params-eingaben-von-ex.md"
+    },
+    {
       "id": "CR-GC-102",
       "type": "CR",
       "name": "Hook-System",
@@ -5711,10 +5717,34 @@
       "sync": "sync"
     },
     {
-      "id": "FLOW-dashboard-tool-call",
+      "id": "FLOW-dashboard-generate-call",
       "type": "FLOW",
-      "name": "Werkzeugaufruf (Socket an Werkzeug)",
-      "description": "Der Werkzeugaufruf des Dashboards, den der Host-Socket an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine.",
+      "name": "Werkzeugaufruf graph_generate (Socket)",
+      "description": "Der Aufruf von graph_generate, den der Host-Socket fuer das Dashboard an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine. (CR-GC-1016)",
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "handleLine",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FLOW-dashboard-metrics-call",
+      "type": "FLOW",
+      "name": "Werkzeugaufruf graph_metrics (Socket)",
+      "description": "Der Aufruf von graph_metrics, den der Host-Socket fuer das Dashboard an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine. (CR-GC-1016)",
+      "sync": "sync",
+      "realRef": {
+        "file": "src/surface/host-shim.ts",
+        "symbol": "handleLine",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FLOW-dashboard-readiness-call",
+      "type": "FLOW",
+      "name": "Werkzeugaufruf graph_readiness (Socket)",
+      "description": "Der Aufruf von graph_readiness, den der Host-Socket fuer das Dashboard an das Werkzeug weitergibt. Beleg: src/surface/host-shim.ts, handleLine. (CR-GC-1016)",
       "sync": "sync",
       "realRef": {
         "file": "src/surface/host-shim.ts",
@@ -5778,6 +5808,13 @@
       "type": "FLOW",
       "name": "Antwort graph_export",
       "description": "Die Antwort von graph_export: Pfade und Groessen der geschriebenen Dateien, Platzhalter, ungefuetterte Mutationen. Beleg: src/projections/export.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-export-call",
+      "type": "FLOW",
+      "name": "Aufruf graph_export",
+      "description": "Der Aufruf von graph_export durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/export.ts. (CR-GC-1016)",
       "sync": "sync"
     },
     {
@@ -6387,6 +6424,13 @@
       }
     },
     {
+      "id": "FLOW-metrics-call",
+      "type": "FLOW",
+      "name": "Aufruf graph_metrics",
+      "description": "Der Aufruf von graph_metrics durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/projections/metrics.ts. (CR-GC-1016)",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-metrics-request",
       "type": "FLOW",
       "name": "Kennzahl-Anfrage",
@@ -6913,7 +6957,7 @@
       "name": "Runden-Ausloeser (Agent)",
       "description": "Der Aufruf von graph_generate durch die Ablaufsteuerung: Intention, defer, task, peek.",
       "status": "reviewed",
-      "concept": true,
+      "concept": null,
       "sync": "sync"
     },
     {
@@ -7024,6 +7068,13 @@
       "type": "FLOW",
       "name": "Antwort graph_suggest",
       "description": "Die Antwort von graph_suggest an die Ablaufsteuerung: die gerankten Kandidaten mit Urteil und Bericht je Probelauf. Beleg: src/loop/suggest.ts.",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-suggest-call",
+      "type": "FLOW",
+      "name": "Aufruf graph_suggest",
+      "description": "Der Aufruf von graph_suggest durch die Ablaufsteuerung ueber MCP-stdio. Beleg: src/loop/suggest.ts. (CR-GC-1016)",
       "sync": "sync"
     },
     {
@@ -12200,6 +12251,16 @@
       }
     },
     {
+      "id": "SCHEMA-export-input",
+      "type": "SCHEMA",
+      "name": "Eingabe graph_export",
+      "description": "Eingabe von graph_export: name (blosser Dateiname, optional), views (Liste der Sichten, optional), force (Wahrheitswert, Vorgabe false). (CR-GC-1016)",
+      "realRef": {
+        "file": "src/projections/export.ts",
+        "symbol": "GraphExportInputSchema"
+      }
+    },
+    {
       "id": "SCHEMA-export-pending",
       "type": "SCHEMA",
       "name": "ExportPending",
@@ -12248,6 +12309,16 @@
         "file": "packages/contracts/src/se/function-criticality.ts",
         "symbol": "FunctionCriticality",
         "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-generate-input",
+      "type": "SCHEMA",
+      "name": "Eingabe graph_generate",
+      "description": "Eingabe von graph_generate: intent, threshold (0 bis 1), task (ein Regel-Task), defer (Liste von focusKeys), alle optional, und peek (Vorgabe false). (CR-GC-1016)",
+      "realRef": {
+        "file": "src/loop/suggest.ts",
+        "symbol": "GraphGenerateInputSchema"
       }
     },
     {
@@ -12521,6 +12592,16 @@
         "file": "src/projections/metrics.ts",
         "symbol": "GraphMetricsAnswerSchema",
         "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-metrics-input",
+      "type": "SCHEMA",
+      "name": "Eingabe graph_metrics",
+      "description": "Eingabe von graph_metrics: scope (mindestens eine FUNC- oder FCHAIN-uid, optional) und constraintCarriers (optional); offenes Objekt. (CR-GC-1016)",
+      "realRef": {
+        "file": "src/projections/metrics.ts",
+        "symbol": "GraphMetricsInputSchema"
       }
     },
     {
@@ -12854,6 +12935,16 @@
       "description": "Die Antwort von graph_suggest. Im Code ohne Zod-Schema: der Handler gibt ein freies Objekt zurueck."
     },
     {
+      "id": "SCHEMA-suggest-input",
+      "type": "SCHEMA",
+      "name": "Eingabe graph_suggest",
+      "description": "Eingabe von graph_suggest: k (ganze Zahl 1 bis 20, Vorgabe 5) und layer (all oder arch, Vorgabe arch). (CR-GC-1016)",
+      "realRef": {
+        "file": "src/loop/suggest.ts",
+        "symbol": "GraphSuggestInputSchema"
+      }
+    },
+    {
       "id": "SCHEMA-target-profile",
       "type": "SCHEMA",
       "name": "TargetProfile",
@@ -13126,7 +13217,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13202,7 +13293,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13251,7 +13342,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13399,7 +13490,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13459,7 +13550,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13489,7 +13580,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-22T21:09:27.243Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13504,7 +13595,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T08:54:14.124Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13519,7 +13610,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13541,7 +13632,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13628,7 +13719,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13669,7 +13760,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13714,7 +13805,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-22T21:09:27.243Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13795,7 +13886,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13872,7 +13963,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13890,7 +13981,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13905,7 +13996,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13936,7 +14027,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -13953,7 +14044,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14013,7 +14104,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14028,7 +14119,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14112,7 +14203,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14194,7 +14285,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14209,7 +14300,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14240,7 +14331,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14439,7 +14530,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14456,7 +14547,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14541,7 +14632,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14658,7 +14749,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T08:54:14.124Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14708,7 +14799,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14723,7 +14814,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14799,7 +14890,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14921,7 +15012,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -14939,7 +15030,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15082,7 +15173,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15102,7 +15193,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15143,7 +15234,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15158,7 +15249,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15204,7 +15295,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15237,7 +15328,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15267,7 +15358,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15298,7 +15389,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15345,7 +15436,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15502,7 +15593,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15605,7 +15696,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15702,7 +15793,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15717,7 +15808,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T08:54:14.124Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15732,7 +15823,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15923,7 +16014,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15944,7 +16035,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -15959,7 +16050,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-23T08:54:14.124Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16011,7 +16102,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16116,7 +16207,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16266,7 +16357,22 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-export-input",
+      "type": "TEST",
+      "name": "Vertragstest Eingabe graph_export",
+      "description": "Erzeugter Vertragstest SCHEMA-export-input: name, views und force, Ablehnung eines Namens mit Pfadtrenner, einer fremden Sicht und falscher Typen. (CR-GC-1016)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-export-input.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16281,7 +16387,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T21:09:27.243Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16326,7 +16432,22 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-generate-input",
+      "type": "TEST",
+      "name": "Vertragstest Eingabe graph_generate",
+      "description": "Erzeugter Vertragstest SCHEMA-generate-input: jedes Feld und jeder Task, Ablehnung einer Schwelle ausserhalb 0 bis 1 und eines fremden Tasks. (CR-GC-1016)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-generate-input.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16341,7 +16462,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16596,7 +16717,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16611,7 +16732,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16626,7 +16747,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16686,7 +16807,22 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-metrics-input",
+      "type": "TEST",
+      "name": "Vertragstest Eingabe graph_metrics",
+      "description": "Erzeugter Vertragstest SCHEMA-metrics-input: scope und constraintCarriers, Ablehnung einer leeren scope-Liste und falscher Typen. (CR-GC-1016)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-metrics-input.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16701,7 +16837,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16738,7 +16874,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T08:54:14.124Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16753,7 +16889,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T08:54:14.124Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16768,7 +16904,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16783,7 +16919,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T21:09:27.243Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16843,7 +16979,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T08:54:14.124Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -16918,7 +17054,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T08:54:14.124Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -17088,6 +17224,21 @@
       ]
     },
     {
+      "id": "TEST-vertrag-suggest-input",
+      "type": "TEST",
+      "name": "Vertragstest Eingabe graph_suggest",
+      "description": "Erzeugter Vertragstest SCHEMA-suggest-input: k und layer, Ablehnung ausserhalb 1 bis 20 und einer fremden Ebene. (CR-GC-1016)",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-suggest-input.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-23T09:22:25.465Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-vertrag-target-profile",
       "type": "TEST",
       "name": "Vertragstest TargetProfile",
@@ -17098,7 +17249,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T08:54:14.124Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -17323,7 +17474,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -17370,7 +17521,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -17415,7 +17566,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-22T16:57:09.176Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -17445,7 +17596,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-23T09:08:25.638Z"
+          "ranAt": "2026-11-23T09:22:25.465Z"
         }
       ]
     },
@@ -18158,6 +18309,31 @@
     {
       "source": "CR-GC-1015",
       "target": "FUNC-read-tools",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1016",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1016",
+      "target": "FUNC-graph-generate-tool",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1016",
+      "target": "FUNC-graph-metrics",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1016",
+      "target": "FUNC-graph-suggest",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1016",
+      "target": "FUNC-host-socket",
       "type": "relation"
     },
     {
@@ -29788,23 +29964,33 @@
       "type": "relation"
     },
     {
-      "source": "FLOW-dashboard-tool-call",
+      "source": "FLOW-dashboard-generate-call",
       "target": "FUNC-graph-generate-tool",
       "type": "io"
     },
     {
-      "source": "FLOW-dashboard-tool-call",
+      "source": "FLOW-dashboard-generate-call",
+      "target": "SCHEMA-generate-input",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-dashboard-metrics-call",
       "target": "FUNC-graph-metrics",
       "type": "io"
     },
     {
-      "source": "FLOW-dashboard-tool-call",
+      "source": "FLOW-dashboard-metrics-call",
+      "target": "SCHEMA-metrics-input",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-dashboard-readiness-call",
       "target": "FUNC-graph-readiness",
       "type": "io"
     },
     {
-      "source": "FLOW-dashboard-tool-call",
-      "target": "SCHEMA-query-params",
+      "source": "FLOW-dashboard-readiness-call",
+      "target": "SCHEMA-readiness-input",
       "type": "relation"
     },
     {
@@ -29893,6 +30079,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-export-call",
+      "target": "FUNC-graph-export-snapshot",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-export-call",
+      "target": "SCHEMA-export-input",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-export-cleared",
       "target": "ACTOR-auftraggeber",
       "type": "io"
@@ -29929,7 +30125,7 @@
     },
     {
       "source": "FLOW-export-request-import-code",
-      "target": "SCHEMA-query-params",
+      "target": "SCHEMA-export-input",
       "type": "relation"
     },
     {
@@ -30854,6 +31050,16 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-metrics-call",
+      "target": "FUNC-graph-metrics",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-metrics-call",
+      "target": "SCHEMA-metrics-input",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-metrics-request",
       "target": "FUNC-chain-metrics",
       "type": "io"
@@ -31085,22 +31291,7 @@
     },
     {
       "source": "FLOW-query-request-agent",
-      "target": "FUNC-graph-export-snapshot",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-agent",
-      "target": "FUNC-graph-metrics",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-agent",
       "target": "FUNC-graph-reseed-tool",
-      "type": "io"
-    },
-    {
-      "source": "FLOW-query-request-agent",
-      "target": "FUNC-graph-suggest",
       "type": "io"
     },
     {
@@ -31115,7 +31306,7 @@
     },
     {
       "source": "FLOW-query-request-auto-export",
-      "target": "SCHEMA-query-params",
+      "target": "SCHEMA-export-input",
       "type": "relation"
     },
     {
@@ -31750,7 +31941,7 @@
     },
     {
       "source": "FLOW-steering-trigger-agent",
-      "target": "SCHEMA-query-params",
+      "target": "SCHEMA-generate-input",
       "type": "relation"
     },
     {
@@ -31921,6 +32112,16 @@
     {
       "source": "FLOW-suggest-answer",
       "target": "SCHEMA-suggest-answer",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-suggest-call",
+      "target": "FUNC-graph-suggest",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-suggest-call",
+      "target": "SCHEMA-suggest-input",
       "type": "relation"
     },
     {
@@ -32364,6 +32565,11 @@
     },
     {
       "source": "FUNC-agent-loop",
+      "target": "FLOW-export-call",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
       "target": "FLOW-formatE-artifact-agent",
       "type": "io"
     },
@@ -32385,6 +32591,11 @@
     {
       "source": "FUNC-agent-loop",
       "target": "FLOW-impact-call",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-metrics-call",
       "type": "io"
     },
     {
@@ -32415,6 +32626,11 @@
     {
       "source": "FUNC-agent-loop",
       "target": "FLOW-steering-trigger-agent",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-agent-loop",
+      "target": "FLOW-suggest-call",
       "type": "io"
     },
     {
@@ -34442,7 +34658,17 @@
     },
     {
       "source": "FUNC-host-socket",
-      "target": "FLOW-dashboard-tool-call",
+      "target": "FLOW-dashboard-generate-call",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-host-socket",
+      "target": "FLOW-dashboard-metrics-call",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-host-socket",
+      "target": "FLOW-dashboard-readiness-call",
       "type": "io"
     },
     {
@@ -39953,6 +40179,11 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vertrag-export-input",
+      "target": "SCHEMA-export-input",
+      "type": "verify"
+    },
+    {
       "source": "TEST-vertrag-export-pending",
       "target": "SCHEMA-export-pending",
       "type": "verify"
@@ -39970,6 +40201,11 @@
     {
       "source": "TEST-vertrag-function-criticality",
       "target": "SCHEMA-function-criticality",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-generate-input",
+      "target": "SCHEMA-generate-input",
       "type": "verify"
     },
     {
@@ -40090,6 +40326,11 @@
     {
       "source": "TEST-vertrag-metrics-answer",
       "target": "SCHEMA-metrics-answer",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-metrics-input",
+      "target": "SCHEMA-metrics-input",
       "type": "verify"
     },
     {
@@ -40220,6 +40461,11 @@
     {
       "source": "TEST-vertrag-store-rebuild-notice",
       "target": "SCHEMA-store-rebuild-notice",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-suggest-input",
+      "target": "SCHEMA-suggest-input",
       "type": "verify"
     },
     {
@@ -40893,5 +41139,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1563
+  "graphVersion": 1567
 }

@@ -53,7 +53,7 @@ import { gedaempft, merkeSuggestAufruf } from './umbau-ausloeser.js';
 // Input schema
 // -------------------------------------------------------------------------
 
-const GraphSuggestInputSchema = z.object({
+export const GraphSuggestInputSchema = z.object({
   // CR-GC-483: das Feld `target` ist ERSATZLOS entfallen. Es setzte die Gewichte des ℝ⁶,
   // nach dem hier gerankt wurde — dreimal widerlegt (CR-SM-281/-287), ersetzt durch den
   // Chebyshev-Score ueber die Verstossmasse (CR-SM-292). Es gibt nichts mehr zu gewichten:
@@ -63,6 +63,47 @@ const GraphSuggestInputSchema = z.object({
     .enum(['all', 'arch'])
     .default('arch')
     .describe("Messebene für Δm: 'arch' = Architektur-Teilgraph (FUNC/FLOW/MOD/SCHEMA/ACTOR), 'all' = ganzer Graph."),
+});
+
+export const GraphGenerateInputSchema = z.object({
+  intent: z
+    .string()
+    .optional()
+    .describe(
+      'Die Systemintention als Prosa (1 Absatz). Nur beim Kaltstart nötig — sobald ein SYS existiert, ' +
+        'wird sie aus dessen description gelesen.',
+    ),
+  threshold: z
+    .number()
+    .min(0)
+    .max(1)
+    .optional()
+    .describe(
+      'Readiness-Schwelle je Dimension für den Handoff auf graph_suggest. Ohne Angabe gilt ' +
+      'die Schwelle des Hosts (graphcode.config.jsonc → focusThreshold) — CR-GC-336: ein ' +
+      'Tool-Default wäre eine zweite Antwort auf dieselbe Frage.',
+    ),
+  task: z
+    .enum(RULE_TASKS)
+    .optional()
+    .describe(
+      "CR-GC-601: den Task starten, dessen Eintrittspunkt der Kern nennt (fmea, plan, conops, trade, irr, " +
+        'anforderungsqualitaet) — dieselbe Maschine mit dem Regelset des Tasks. ' +
+        'Ohne Angabe: der Kern. Die Sitzung bleibt im Task, bis graph_generate ohne task.',
+    ),
+  defer: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Zurückgestellte focusKeys (aus GenerationStep.focusKey): diese Fund-Sets werden bei der ' +
+        'Fokus-Wahl deterministisch übersprungen; sind alle Kandidaten zurückgestellt, wird defer ignoriert.',
+    ),
+  peek: z
+    .boolean()
+    .default(false)
+    .describe(
+      'true = nur lesen: der nächste Schritt der Sitzung, ohne sie zu ändern.',
+    ),
 });
 
 // -------------------------------------------------------------------------
@@ -206,7 +247,8 @@ export function bindSuggestTools(ctx: ToolPort) {
       'graph_mutate applies. Take it when you want a move, not a diagnosis. ' +
       '`graph_help({token:"graph_suggest"})` explains the ranking and why a suggestion may carry no edit.',
     inputSchema: GraphSuggestInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphSuggestInputSchema.parse(raw);
       // CR-GC-324: der EINE Mapper statt des flachen Export-Encodings.
       const og = toOntologyGraph(harness.getGraph());
       // CR-GC-483: hier stand, dass die Config-Gewichte einspringen, wenn `target` im Input
@@ -313,46 +355,6 @@ export function bindSuggestTools(ctx: ToolPort) {
     },
   };
 
-  const GraphGenerateInputSchema = z.object({
-    intent: z
-      .string()
-      .optional()
-      .describe(
-        'Die Systemintention als Prosa (1 Absatz). Nur beim Kaltstart nötig — sobald ein SYS existiert, ' +
-          'wird sie aus dessen description gelesen.',
-      ),
-    threshold: z
-      .number()
-      .min(0)
-      .max(1)
-      .optional()
-      .describe(
-        'Readiness-Schwelle je Dimension für den Handoff auf graph_suggest. Ohne Angabe gilt ' +
-        'die Schwelle des Hosts (graphcode.config.jsonc → focusThreshold) — CR-GC-336: ein ' +
-        'Tool-Default wäre eine zweite Antwort auf dieselbe Frage.',
-      ),
-    task: z
-      .enum(RULE_TASKS)
-      .optional()
-      .describe(
-        "CR-GC-601: den Task starten, dessen Eintrittspunkt der Kern nennt (fmea, plan, conops, trade, irr, " +
-          'anforderungsqualitaet) — dieselbe Maschine mit dem Regelset des Tasks. ' +
-          'Ohne Angabe: der Kern. Die Sitzung bleibt im Task, bis graph_generate ohne task.',
-      ),
-    defer: z
-      .array(z.string())
-      .optional()
-      .describe(
-        'Zurückgestellte focusKeys (aus GenerationStep.focusKey): diese Fund-Sets werden bei der ' +
-          'Fokus-Wahl deterministisch übersprungen; sind alle Kandidaten zurückgestellt, wird defer ignoriert.',
-      ),
-    peek: z
-      .boolean()
-      .default(false)
-      .describe(
-        'true = nur lesen: der nächste Schritt der Sitzung, ohne sie zu ändern.',
-      ),
-  });
 
   const graph_generate: MCPTool<typeof GraphGenerateInputSchema, GenerationStep> = {
     name: 'graph_generate',
@@ -364,7 +366,8 @@ export function bindSuggestTools(ctx: ToolPort) {
       'Read-only und deterministisch; das Vorschlagen bleibt beim Host, das Urteil beim Gate. ' +
       'Festgefahrene Fund-Sets lassen sich per {defer:[focusKey,…]} zurückstellen (Fund-Rotation).',
     inputSchema: GraphGenerateInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphGenerateInputSchema.parse(raw);
       // Profil bei jedem Schritt frisch laden (CR-GC-295) — der Loader ist der
       // EINE Check-Pfad, ein Hand-Edit der Config wirkt ab der nächsten Runde.
       const repoRoot = harness.getRepoRoot();

@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 90 SCHEMA · 280 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 94 SCHEMA · 285 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -27,10 +27,12 @@
 | `SCHEMA-elements-input` | src/surface/read.ts#GraphElementsInputSchema | n/a |
 | `SCHEMA-expand-input` | src/surface/read.ts#GraphExpandInputSchema | n/a |
 | `SCHEMA-export-answer` | src/projections/export.ts#GraphExportAnswerSchema | n/a |
+| `SCHEMA-export-input` | src/projections/export.ts#GraphExportInputSchema | n/a |
 | `SCHEMA-export-pending` | src/kernel/export-pending-contract.ts#ExportPending | n/a |
 | `SCHEMA-fit-advisory` | src/kernel/measure/fit-advisory.ts#FitAdvisory | reviewed |
 | `SCHEMA-format-e` | packages/graph-api-core/src/format-e-door.ts#FormatEInputSchema | reviewed |
 | `SCHEMA-function-criticality` | packages/contracts/src/se/function-criticality.ts#FunctionCriticality | reviewed |
+| `SCHEMA-generate-input` | src/loop/suggest.ts#GraphGenerateInputSchema | n/a |
 | `SCHEMA-generation-step` | src/loop/generate.ts#GenerationStep | reviewed |
 | `SCHEMA-get-edges-input` | src/surface/read.ts#GraphGetEdgesInputSchema | n/a |
 | `SCHEMA-get-node-input` | src/surface/read.ts#GraphGetNodeInputSchema | n/a |
@@ -55,6 +57,7 @@
 | `SCHEMA-metric-policy` | packages/contracts/src/se/policy.ts#MetricPolicySchema | n/a |
 | `SCHEMA-metric-vector` | packages/se-engine/src/metrics.ts#MetricVector | reviewed |
 | `SCHEMA-metrics-answer` | src/projections/metrics.ts#GraphMetricsAnswerSchema | reviewed |
+| `SCHEMA-metrics-input` | src/projections/metrics.ts#GraphMetricsInputSchema | n/a |
 | `SCHEMA-module-metrics` | packages/contracts/src/se/metric-rules.ts#ModuleMetrics | reviewed |
 | `SCHEMA-mutate-answer` | src/surface/mutate-answer.ts#GraphMutateAnswerSchema | n/a |
 | `SCHEMA-mutate-command` | packages/contracts/src/harness/index.ts#MutateCommandSchema | reviewed |
@@ -84,6 +87,7 @@
 | `SCHEMA-steering-snapshot` | src/kernel/measure/steering-snapshot.ts#SteeringSnapshotSchema | reviewed |
 | `SCHEMA-store-rebuild-notice` | src/kernel/store-rebuild-notice.ts#StoreRebuildNoticeSchema | n/a |
 | `SCHEMA-suggest-answer` | ⚠ kein realRef (R-26) | n/a |
+| `SCHEMA-suggest-input` | src/loop/suggest.ts#GraphSuggestInputSchema | n/a |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
 | `SCHEMA-test-ingest-answer` | src/projections/testreport.ts#GraphTestIngestAnswerSchema | n/a |
 | `SCHEMA-test-ingest-input` | src/projections/testreport.ts#GraphTestIngestInputSchema | n/a |
@@ -183,7 +187,9 @@
 | `FLOW-cr-groups-request` | `FUNC-export-markdown` | `FUNC-cr-groups` |
 | `FLOW-dashboard-answer` | `FUNC-host-socket` | `ACTOR-dashboard` |
 | `FLOW-dashboard-call` | `ACTOR-dashboard` | `FUNC-host-socket` |
-| `FLOW-dashboard-tool-call` | `FUNC-host-socket` | `FUNC-graph-generate-tool` · `FUNC-graph-metrics` · `FUNC-graph-readiness` |
+| `FLOW-dashboard-generate-call` | `FUNC-host-socket` | `FUNC-graph-generate-tool` |
+| `FLOW-dashboard-metrics-call` | `FUNC-host-socket` | `FUNC-graph-metrics` |
+| `FLOW-dashboard-readiness-call` | `FUNC-host-socket` | `FUNC-graph-readiness` |
 | `FLOW-dimension-readiness` | `FUNC-compute-readiness` | `FUNC-graph-readiness` |
 | `FLOW-eingangs-befund` | `FUNC-eingaenge-nur-aus` | `FUNC-verify-lane-model` |
 | `FLOW-element-slice` | `FUNC-list-elements` | `FUNC-health-endpoint` · `FUNC-read-tools` |
@@ -192,6 +198,7 @@
 | `FLOW-expand-call` | `FUNC-agent-loop` | `FUNC-read-tools` |
 | `FLOW-expand-subgraph` | `FUNC-graph-expand` | `FUNC-read-tools` |
 | `FLOW-export-answer` | `FUNC-graph-export-snapshot` | `FUNC-agent-loop` |
+| `FLOW-export-call` | `FUNC-agent-loop` | `FUNC-graph-export-snapshot` |
 | `FLOW-export-cleared` | `FUNC-export-marker-clear` | `ACTOR-auftraggeber` |
 | `FLOW-export-flush` | `FUNC-session-shutdown` | `FUNC-auto-export` |
 | `FLOW-export-pending` | `FUNC-export-marker` | `ACTOR-auftraggeber` |
@@ -268,6 +275,7 @@
 | `FLOW-merge-report` | `FUNC-merge-nodes` | `FUNC-graph-merge-tool` |
 | `FLOW-metric-policy` | `FUNC-load-config` | `FUNC-evaluate-rules` |
 | `FLOW-metrics-answer` | `FUNC-graph-metrics` | `FUNC-agent-loop` · `FUNC-host-socket` |
+| `FLOW-metrics-call` | `FUNC-agent-loop` | `FUNC-graph-metrics` |
 | `FLOW-metrics-request` | `FUNC-graph-metrics` | `FUNC-chain-metrics` · `FUNC-function-criticality` · `FUNC-module-metrics` |
 | `FLOW-module-metrics` | `FUNC-module-metrics` | `FUNC-graph-metrics` |
 | `FLOW-mutate-answer` | `FUNC-graph-mutate-tool` | `FUNC-agent-loop` |
@@ -289,7 +297,7 @@
 | `FLOW-proxy-build` | `FUNC-serve-stdio` | `FUNC-host-proxy` |
 | `FLOW-proxy-call` | `FUNC-host-proxy` | `FUNC-host-socket` |
 | `FLOW-query-export` | `FUNC-graph-export-snapshot` | `FUNC-export-markdown` |
-| `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-graph-export-snapshot` · `FUNC-graph-metrics` · `FUNC-graph-reseed-tool` · `FUNC-graph-suggest` |
+| `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-graph-reseed-tool` |
 | `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-graph-export-snapshot` |
 | `FLOW-read-bind` | `FUNC-bind-tools` | `FUNC-read-tools` |
 | `FLOW-read-request` | `FUNC-read-tools` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` |
@@ -350,6 +358,7 @@
 | `FLOW-store-query` | `FUNC-graph-store` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` · `FUNC-resolve-tests-from-code` |
 | `FLOW-store-rebuild-notice` | `FUNC-open-store` | `ACTOR-auftraggeber` |
 | `FLOW-suggest-answer` | `FUNC-graph-suggest` | `FUNC-agent-loop` |
+| `FLOW-suggest-call` | `FUNC-agent-loop` | `FUNC-graph-suggest` |
 | `FLOW-target-profile` | `FUNC-target-profile-load` | `FUNC-graph-generate-tool` · `FUNC-graph-readiness` · `FUNC-vorschlag` |
 | `FLOW-target-profile-file` | `FUNC-agent-loop` | `FUNC-target-profile-load` |
 | `FLOW-test-impact-request` | `FUNC-deduce-tests` | `FUNC-resolve-tests-from-code` |
