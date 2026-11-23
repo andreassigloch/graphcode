@@ -218,7 +218,8 @@
       "id": "CR-GC-1023",
       "type": "CR",
       "name": "Probelauf-Test des Optimierers liest das lebende Modell und muss nach jeder Modellaenderung neu eingemessen werden",
-      "description": "docs/cr/open/CR-GC-1023-probelauf-test-des-optimierers-liest-das.md"
+      "description": "docs/cr/done/CR-GC-1023-probelauf-test-des-optimierers-liest-das.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-103",
@@ -41653,5 +41654,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1600
+  "graphVersion": 1601
 }
