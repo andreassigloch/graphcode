@@ -562,11 +562,20 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // Eingabevertraege bekamen und der Socket-Fluss FLOW-dashboard-tool-call in drei Fluesse zerfiel (Steuerwert
       // am Start 12,50 -> 13,00): vier Zuege, Host-Sitzung vor Ruestzeug; statt Test-Ingest wandert read-tools nach
       // agent-surface. Weiter derselbe Befund (ITEM-2026-798).
+      // CR-GC-1017 (graphVersion 1571) — NEU GEMESSEN, nachdem reseed, audit_trail und audit_stats eigene
+      // Eingabevertraege bekamen und der Sammelfluss FLOW-query-request-agent entfiel (Steuerwert am Start
+      // 13,00 -> 13,50): neun Zuege statt vier, dieselben vier vorn. Weiter derselbe Befund — Bloecke und
+      // Werkzeuge werden umgehaengt, keiner ist fachlich begruendet (ITEM-2026-798).
       expect(steps.map((s) => s.edit), 'die Zuege am Engpass haben sich geaendert — bitte neu messen').toEqual([
         'FUNC-block-abfrage -compose-> FUNC-agent-loop',
         'FUNC-block-abfrage -compose-> FUNC-block-host-sitzung (retire FUNC-block-host-sitzung)',
         'FUNC-block-abfrage -compose-> FUNC-block-ruestzeug (retire FUNC-block-ruestzeug)',
         'FUNC-read-tools -allocate-> MOD-agent-surface (retire MOD-surface)',
+        'FUNC-block-abfrage -compose-> FUNC-graph-mutate-tool (retire FUNC-graph-mutate-tool)',
+        'FUNC-test-ingest -allocate-> MOD-dev-scripts (retire MOD-projections)',
+        'FUNC-block-abfrage -compose-> FUNC-block-optimierung',
+        'FUNC-tool-context -allocate-> MOD-dev-scripts (retire MOD-surface)',
+        'FUNC-deduce-tests -allocate-> MOD-agent-surface (retire MOD-projections)',
       ]);
       expect(
         rest
@@ -629,9 +638,12 @@ describe('CR-GC-436 Nachtrag 2: Trockenübung am echten Gate (Repo-Graph, Disk-K
       // nach CR-GC-962. Sechs Eingabevertraege der Werkzeuge kamen an die Grenze von projections (32 -> 38).
       // CR-GC-1015 (graphVersion 1561) — NEU GEMESSEN: nach den vier Zuegen steht BW-02 @ FUNC-block-grounding
       // vorn, wie nach CR-GC-985. Sechs Eingabevertraege der Lesewerkzeuge kamen an die Grenze von Grounding (48 -> 54).
-      expect(dominant, 'der Engpass nach der Kette ist nicht mehr BW-02 @ FUNC-block-grounding — bitte neu messen').toEqual({
-        ruleId: 'BW-02',
-        elementId: 'FUNC-block-grounding',
+      // CR-GC-1017 (graphVersion 1571) — NEU GEMESSEN: nach den neun Zuegen steht R-04 @ MOD-agent-surface vorn.
+      // Die Zuege haengen read-tools und deduce-tests nach agent-surface; deren Eingabevertraege liegen dann an
+      // dessen Grenze.
+      expect(dominant, 'der Engpass nach der Kette ist nicht mehr R-04 @ MOD-agent-surface — bitte neu messen').toEqual({
+        ruleId: 'R-04',
+        elementId: 'MOD-agent-surface',
       });
       // Trockenübung: der produktive SSOT ist nachweislich unverändert.
       expect(sha256(REPO_GRAPH)).toBe(ssot);

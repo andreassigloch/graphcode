@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 94 SCHEMA · 285 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 97 SCHEMA · 287 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -13,6 +13,8 @@
 | `SCHEMA-adapter-befund` | src/kernel/measure/constraints.ts#AdapterBefund | n/a |
 | `SCHEMA-audit-record` | ⚠ kein realRef (R-26) | reviewed |
 | `SCHEMA-audit-stats` | src/surface/audit-stats.ts#AuditStatsSchema | reviewed |
+| `SCHEMA-audit-stats-input` | src/surface/audit.ts#AuditStatsInputSchema | n/a |
+| `SCHEMA-audit-trail-input` | src/surface/audit.ts#AuditTrailInputSchema | n/a |
 | `SCHEMA-aufruf-ohne-daten` | src/surface/aufruf-ohne-daten-contract.ts#AufrufOhneDatenSchema | reviewed |
 | `SCHEMA-authoring-guide-input` | src/projections/report.ts#GraphAuthoringGuideInputSchema | n/a |
 | `SCHEMA-branch-merge-report` | src/kernel/merge.ts#MergeReportSchema | n/a |
@@ -72,6 +74,7 @@
 | `SCHEMA-render-summary` | src/surface/render-verb.ts#RenderSummarySchema | n/a |
 | `SCHEMA-repo-pfad` | src/surface/repo-pfad-contract.ts#RepoPfadSchema | reviewed |
 | `SCHEMA-repo-status` | src/surface/status.ts#RepoStatusSchema | n/a |
+| `SCHEMA-reseed-input` | src/surface/write.ts#GraphReseedInputSchema | n/a |
 | `SCHEMA-rewind-summary` | src/surface/rewind.ts#RewindSummarySchema | n/a |
 | `SCHEMA-rule-violation` | packages/contracts/src/harness/index.ts#RuleViolationSchema | n/a |
 | `SCHEMA-rules-evaluate-input` | src/projections/report.ts#RulesEvaluateInputSchema | n/a |
@@ -144,6 +147,8 @@
 | `FLOW-audit-entry-test-ingest` | `FUNC-test-ingest` | `FUNC-tool-context` |
 | `FLOW-audit-record` | `FUNC-tool-context` | `FUNC-audit-stats` · `FUNC-audit-trail` |
 | `FLOW-audit-report` | `FUNC-audit-stats` | `FUNC-agent-loop` |
+| `FLOW-audit-stats-call` | `FUNC-agent-loop` | `FUNC-audit-stats` |
+| `FLOW-audit-trail-call` | `FUNC-agent-loop` | `FUNC-audit-trail` |
 | `FLOW-auftrag` | `ACTOR-auftraggeber` | `FUNC-agent-loop` |
 | `FLOW-authoring-guide-call` | `FUNC-agent-loop` | `FUNC-authoring-guide` |
 | `FLOW-auto-export-register` | `FUNC-serve-stdio` | `FUNC-auto-export` |
@@ -297,7 +302,6 @@
 | `FLOW-proxy-build` | `FUNC-serve-stdio` | `FUNC-host-proxy` |
 | `FLOW-proxy-call` | `FUNC-host-proxy` | `FUNC-host-socket` |
 | `FLOW-query-export` | `FUNC-graph-export-snapshot` | `FUNC-export-markdown` |
-| `FLOW-query-request-agent` | `FUNC-agent-loop` | `FUNC-audit-stats` · `FUNC-audit-trail` · `FUNC-graph-reseed-tool` |
 | `FLOW-query-request-auto-export` | `FUNC-auto-export` | `FUNC-graph-export-snapshot` |
 | `FLOW-read-bind` | `FUNC-bind-tools` | `FUNC-read-tools` |
 | `FLOW-read-request` | `FUNC-read-tools` | `FUNC-graph-expand` · `FUNC-graph-impact` · `FUNC-list-elements` |
@@ -307,6 +311,7 @@
 | `FLOW-render-file` | `FUNC-render-verb` | `ACTOR-auftraggeber` |
 | `FLOW-render-view-request` | `FUNC-render-verb` | `FUNC-export-markdown` |
 | `FLOW-reseed-answer` | `FUNC-graph-reseed-tool` | `FUNC-agent-loop` |
+| `FLOW-reseed-call` | `FUNC-agent-loop` | `FUNC-graph-reseed-tool` |
 | `FLOW-reseed-order` | `FUNC-reseed` | `FUNC-apply-reseed` |
 | `FLOW-reseed-order-open` | `FUNC-open-store` | `FUNC-apply-reseed` |
 | `FLOW-reseed-request` | `FUNC-graph-reseed-tool` | `FUNC-reseed` |

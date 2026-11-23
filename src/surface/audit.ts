@@ -28,7 +28,7 @@ import { aggregateAuditEntries, type AuditStats, type RawAuditEntry } from './au
 // Input schemas
 // -------------------------------------------------------------------------
 
-const AuditTrailInputSchema = z.object({
+export const AuditTrailInputSchema = z.object({
   consumerId: z.string().optional(),
   since: z.string().optional().describe('ISO 8601 timestamp lower bound'),
   limit: z.number().int().positive().default(50),
@@ -55,7 +55,7 @@ const AuditTrailInputSchema = z.object({
     ),
 });
 
-const AuditStatsInputSchema = z.object({
+export const AuditStatsInputSchema = z.object({
   since: z.string().optional().describe('ISO 8601 timestamp lower bound — same filter as audit_trail'),
   consumerId: z.string().optional().describe('Restrict to one consumer'),
 });
@@ -200,7 +200,8 @@ export function bindAuditTools(ctx: ToolContext) {
       'half (includeRulesPassed, CR-GC-314) are opt-in. Nothing is dropped from the log on ' +
       'disk; this is about what an agent is handed.',
     inputSchema: AuditTrailInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = AuditTrailInputSchema.parse(raw);
       const entries = await auditLog.query({
         consumerId: input.consumerId,
         since: input.since,
@@ -230,7 +231,8 @@ export function bindAuditTools(ctx: ToolContext) {
       'the skill named on graph_mutate, `skill: null` = not recorded. `topBlockingRule` is null on a ' +
       'tie. Narrow with since/consumerId.',
     inputSchema: AuditStatsInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = AuditStatsInputSchema.parse(raw);
       const all = await auditLog.query({
         since: input.since,
         consumerId: input.consumerId,

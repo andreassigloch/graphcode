@@ -201,7 +201,7 @@ Die Auswertung der Gate-Entscheidungen hat keinen Verantwortlichen. Schwellen we
 
 | Nachweis | Datei | Ergebnis | gelaufen am |
 |---|---|---|---|
-| `TEST-audit-trail-projection` | tests/audit.trail-projection.test.ts | passed | 2026-11-22 |
+| `TEST-audit-trail-projection` | tests/audit.trail-projection.test.ts | passed | 2026-11-23 |
 
 ### 10. Risiko Stufenname ohne Wertebereich (`REQ-risk-stage-name-free-text`)
 

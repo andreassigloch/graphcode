@@ -216,7 +216,7 @@ const GraphMergeInputSchema = z.object({
   consumerId: z.string().default('graph-merge'),
 });
 
-const GraphReseedInputSchema = z.object({
+export const GraphReseedInputSchema = z.object({
   path: z
     .string()
     .optional()
@@ -461,7 +461,8 @@ export function bindWriteTools(ctx: ToolContext) {
       'when the file is removed under a live handle. DISCARDS un-exported gate mutations; pairs with the ' +
       'export drift guard. Single-writer; no direct Kuzu access.',
     inputSchema: GraphReseedInputSchema,
-    async handler(input) {
+    async handler(raw) {
+      const input = GraphReseedInputSchema.parse(raw);
       const { nodes, edges } = await harness.reseed(input.path);
       return { reseeded: true as const, nodes, edges };
     },

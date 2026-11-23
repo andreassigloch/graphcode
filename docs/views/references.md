@@ -126,6 +126,10 @@
 | `CR-GC-1016` | relation | `FUNC-graph-metrics` |
 | `CR-GC-1016` | relation | `FUNC-graph-suggest` |
 | `CR-GC-1016` | relation | `FUNC-host-socket` |
+| `CR-GC-1017` | relation | `FUNC-audit-stats` |
+| `CR-GC-1017` | relation | `FUNC-audit-trail` |
+| `CR-GC-1017` | relation | `FUNC-graph-reseed-tool` |
+| `CR-GC-1017` | relation | `SCHEMA-skill-text` |
 | `CR-GC-102` | relation | `FUNC-emit-trajectory` |
 | `CR-GC-102` | relation | `FUNC-emit-update-event` |
 | `CR-GC-102` | relation | `MOD-surface` |
@@ -2278,6 +2282,10 @@
 | `FLOW-audit-record` | relation | `SCHEMA-audit-record` |
 | `FLOW-audit-report` | io | `FUNC-agent-loop` |
 | `FLOW-audit-report` | relation | `SCHEMA-audit-stats` |
+| `FLOW-audit-stats-call` | io | `FUNC-audit-stats` |
+| `FLOW-audit-stats-call` | relation | `SCHEMA-audit-stats-input` |
+| `FLOW-audit-trail-call` | io | `FUNC-audit-trail` |
+| `FLOW-audit-trail-call` | relation | `SCHEMA-audit-trail-input` |
 | `FLOW-auftrag` | io | `FUNC-agent-loop` |
 | `FLOW-auftrag` | relation | `SCHEMA-query-params` |
 | `FLOW-authoring-guide-call` | io | `FUNC-authoring-guide` |
@@ -2642,10 +2650,6 @@
 | `FLOW-proxy-call` | relation | `SCHEMA-mutate-command` |
 | `FLOW-query-export` | io | `FUNC-export-markdown` |
 | `FLOW-query-export` | relation | `SCHEMA-query-params` |
-| `FLOW-query-request-agent` | io | `FUNC-audit-stats` |
-| `FLOW-query-request-agent` | io | `FUNC-audit-trail` |
-| `FLOW-query-request-agent` | io | `FUNC-graph-reseed-tool` |
-| `FLOW-query-request-agent` | relation | `SCHEMA-query-params` |
 | `FLOW-query-request-auto-export` | io | `FUNC-graph-export-snapshot` |
 | `FLOW-query-request-auto-export` | relation | `SCHEMA-export-input` |
 | `FLOW-read-bind` | io | `FUNC-read-tools` |
@@ -2668,6 +2672,8 @@
 | `FLOW-render-view-request` | relation | `SCHEMA-markdown-view` |
 | `FLOW-reseed-answer` | io | `FUNC-agent-loop` |
 | `FLOW-reseed-answer` | relation | `SCHEMA-ontology-json` |
+| `FLOW-reseed-call` | io | `FUNC-graph-reseed-tool` |
+| `FLOW-reseed-call` | relation | `SCHEMA-reseed-input` |
 | `FLOW-reseed-order` | io | `FUNC-apply-reseed` |
 | `FLOW-reseed-order` | relation | `SCHEMA-ontology-json` |
 | `FLOW-reseed-order-open` | io | `FUNC-apply-reseed` |
@@ -2891,6 +2897,8 @@
 | `FUNC-aenderung-melden` | io | `FLOW-test-ingest-call` |
 | `FUNC-aenderung-melden` | satisfy | `REQ-spur-meldet-zurueck` |
 | `FUNC-agent-loop` | allocate | `MOD-agent-surface` |
+| `FUNC-agent-loop` | io | `FLOW-audit-stats-call` |
+| `FUNC-agent-loop` | io | `FLOW-audit-trail-call` |
 | `FUNC-agent-loop` | io | `FLOW-authoring-guide-call` |
 | `FUNC-agent-loop` | io | `FLOW-branch-log` |
 | `FUNC-agent-loop` | io | `FLOW-cli-invocation-import-code` |
@@ -2905,8 +2913,8 @@
 | `FUNC-agent-loop` | io | `FLOW-help-call` |
 | `FUNC-agent-loop` | io | `FLOW-impact-call` |
 | `FUNC-agent-loop` | io | `FLOW-metrics-call` |
-| `FUNC-agent-loop` | io | `FLOW-query-request-agent` |
 | `FUNC-agent-loop` | io | `FLOW-readiness-call` |
+| `FUNC-agent-loop` | io | `FLOW-reseed-call` |
 | `FUNC-agent-loop` | io | `FLOW-rules-evaluate-call` |
 | `FUNC-agent-loop` | io | `FLOW-rules-get-violations-call` |
 | `FUNC-agent-loop` | io | `FLOW-skill-request` |
@@ -4366,6 +4374,8 @@
 | `TEST-verify-model-set` | verify | `REQ-testspur-passt-zum-diff` |
 | `TEST-vertrag-adapter-befund` | verify | `SCHEMA-adapter-befund` |
 | `TEST-vertrag-audit-stats` | verify | `SCHEMA-audit-stats` |
+| `TEST-vertrag-audit-stats-input` | verify | `SCHEMA-audit-stats-input` |
+| `TEST-vertrag-audit-trail-input` | verify | `SCHEMA-audit-trail-input` |
 | `TEST-vertrag-aufruf-ohne-daten` | verify | `SCHEMA-aufruf-ohne-daten` |
 | `TEST-vertrag-ausdruck` | verify | `REQ-contract-test-cases` |
 | `TEST-vertrag-authoring-guide-input` | verify | `SCHEMA-authoring-guide-input` |
@@ -4425,6 +4435,7 @@
 | `TEST-vertrag-render-summary` | verify | `SCHEMA-render-summary` |
 | `TEST-vertrag-repo-pfad` | verify | `SCHEMA-repo-pfad` |
 | `TEST-vertrag-repo-status` | verify | `SCHEMA-repo-status` |
+| `TEST-vertrag-reseed-input` | verify | `SCHEMA-reseed-input` |
 | `TEST-vertrag-rewind-summary` | verify | `SCHEMA-rewind-summary` |
 | `TEST-vertrag-rule-violation` | verify | `SCHEMA-rule-violation` |
 | `TEST-vertrag-rules-evaluate-input` | verify | `SCHEMA-rules-evaluate-input` |
