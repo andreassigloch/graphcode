@@ -211,7 +211,8 @@
       "id": "CR-GC-1022",
       "type": "CR",
       "name": "generationStep: acht Positionsargumente ohne Vertrag, ein Aufrufer gibt sie verschoben",
-      "description": "docs/cr/open/CR-GC-1022-generationstep-acht-positionsargumente-o.md"
+      "description": "docs/cr/done/CR-GC-1022-generationstep-acht-positionsargumente-o.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-103",
@@ -41641,5 +41642,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1596
+  "graphVersion": 1597
 }
