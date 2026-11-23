@@ -201,6 +201,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-1021",
+      "type": "CR",
+      "name": "SCHEMA-query-params: Auftrag und Skill-Aufruf sind Prompt-Text, kein Code-Vertrag",
+      "description": "docs/cr/open/CR-GC-1021-schema-query-params-auftrag-und-skill-au.md"
+    },
+    {
       "id": "CR-GC-103",
       "type": "CR",
       "name": "Format-E Codec",
@@ -5434,7 +5440,7 @@
       "id": "FLOW-auftrag",
       "type": "FLOW",
       "name": "Auftrag",
-      "description": "Der Auftrag an die Ablaufsteuerung: Absicht, Zielausschnitt, Optionen, als Prompt oder vom Orchestrator; dazu die parametrisierte Leseanfrage (Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern). Die Werkzeuge erreicht er ueber die Ablaufsteuerung, nicht direkt (CR-GC-823).",
+      "description": "Der Auftrag an die Ablaufsteuerung: Absicht, Zielausschnitt, Optionen, als Prompt oder vom Orchestrator. Die Werkzeuge erreicht er ueber die Ablaufsteuerung, nicht direkt (CR-GC-823); jedes Werkzeug hat dafuer einen eigenen Aufruffluss (CR-GC-1014 bis 1016). (CR-GC-1021)",
       "sync": "sync"
     },
     {
@@ -12170,6 +12176,12 @@
       }
     },
     {
+      "id": "SCHEMA-auftragstext",
+      "type": "SCHEMA",
+      "name": "Auftragstext",
+      "description": "Der Text, mit dem der Auftraggeber die Ablaufsteuerung beauftragt oder einen Skill aufruft: Absicht, Zielausschnitt, Optionen, als Prompt oder vom Orchestrator. Bewusst ohne Zod-Symbol und ohne Vertragstest: Prompt-Text an den Agent-Host, kein Wire-Format; was davon ein Werkzeug erreicht, geht ueber dessen eigenen Aufruffluss mit geparstem Vertrag. Die Befunde R-26 und R-32 bleiben bewusst stehen (Entscheidung des Autors 2026-11-23, wie SCHEMA-steering-channel). (CR-GC-1021)"
+    },
+    {
       "id": "SCHEMA-authoring-guide-input",
       "type": "SCHEMA",
       "name": "Eingabe graph_authoring_guide",
@@ -18784,6 +18796,11 @@
     {
       "source": "CR-GC-1020",
       "target": "SCHEMA-suggest-answer",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1021",
+      "target": "SCHEMA-auftragstext",
       "type": "relation"
     },
     {
@@ -29852,7 +29869,7 @@
     },
     {
       "source": "FLOW-auftrag",
-      "target": "SCHEMA-query-params",
+      "target": "SCHEMA-auftragstext",
       "type": "relation"
     },
     {
@@ -32203,7 +32220,7 @@
     },
     {
       "source": "FLOW-skill-request",
-      "target": "SCHEMA-query-params",
+      "target": "SCHEMA-auftragstext",
       "type": "relation"
     },
     {
@@ -41586,5 +41603,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1589
+  "graphVersion": 1591
 }

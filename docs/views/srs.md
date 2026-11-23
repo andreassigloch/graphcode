@@ -12784,9 +12784,9 @@ io ◀ `FUNC-agent-loop` · io ▶ `FUNC-audit-trail` · schema ▶ `SCHEMA-audi
 
 ###### 3.3.4.1.38  `FLOW-auftrag` — Auftrag
 
-Der Auftrag an die Ablaufsteuerung: Absicht, Zielausschnitt, Optionen, als Prompt oder vom Orchestrator; dazu die parametrisierte Leseanfrage (Element und Tiefe, Cursor und Zweig beim Vertiefen, View-Auswahl beim Rendern). Die Werkzeuge erreicht er ueber die Ablaufsteuerung, nicht direkt (CR-GC-823).
+Der Auftrag an die Ablaufsteuerung: Absicht, Zielausschnitt, Optionen, als Prompt oder vom Orchestrator. Die Werkzeuge erreicht er ueber die Ablaufsteuerung, nicht direkt (CR-GC-823); jedes Werkzeug hat dafuer einen eigenen Aufruffluss (CR-GC-1014 bis 1016). (CR-GC-1021)
 
-io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-query-params`
+io ◀ `ACTOR-auftraggeber` · io ▶ `FUNC-agent-loop` · schema ▶ `SCHEMA-auftragstext`
 
 ###### 3.3.4.1.39  `FLOW-authoring-guide-call` — Aufruf graph_authoring_guide
 
@@ -13902,7 +13902,7 @@ io ◀ `FUNC-gve-sessions` · io ▶ `FUNC-gve-supervise` · schema ▶ `SCHEMA-
 
 Aufruf eines Skills durch den Menschen: Absicht, Zielausschnitt, Optionen. Autoren- und Berichts-Skills nehmen denselben Auftrag entgegen.
 
-io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-bau` · `FUNC-se-cdr` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-query-params`
+io ◀ `FUNC-agent-loop` · io ▶ `FUNC-author-actor` · `FUNC-author-req` · `FUNC-author-uc` · `FUNC-close-violations` · `FUNC-import-code` · `FUNC-import-doc` · `FUNC-se-bau` · `FUNC-se-cdr` · `FUNC-se-conops` · `FUNC-se-constraints` · `FUNC-se-fmea` · `FUNC-se-generate` · `FUNC-se-help` · `FUNC-se-irr` · `FUNC-se-laufzeit` · `FUNC-se-modulebene` · `FUNC-se-optimize` · `FUNC-se-plan` · `FUNC-se-retro` · `FUNC-se-review` · `FUNC-se-status` · `FUNC-se-top-level` · `FUNC-se-trade` · `FUNC-se-umbau` · `FUNC-se-vorbereitung` · `FUNC-test` · `FUNC-test-ui` · schema ▶ `SCHEMA-auftragstext`
 
 ###### 3.3.4.1.225  `FLOW-skill-sync-result-sync-skills` — Skill-Sync-Bericht (cli-dispatch)
 
@@ -14320,567 +14320,573 @@ Ein Aufruf, der nichts uebertraegt: kein Argument (z.void). gve.stop meldet die 
 
 schema ◀ `FLOW-gve-stop` · `FLOW-health-request` · `FLOW-viewer-stop`
 
-###### 3.3.4.2.7  `SCHEMA-authoring-guide-input` — Eingabe graph_authoring_guide
+###### 3.3.4.2.7  `SCHEMA-auftragstext` — Auftragstext
+
+Der Text, mit dem der Auftraggeber die Ablaufsteuerung beauftragt oder einen Skill aufruft: Absicht, Zielausschnitt, Optionen, als Prompt oder vom Orchestrator. Bewusst ohne Zod-Symbol und ohne Vertragstest: Prompt-Text an den Agent-Host, kein Wire-Format; was davon ein Werkzeug erreicht, geht ueber dessen eigenen Aufruffluss mit geparstem Vertrag. Die Befunde R-26 und R-32 bleiben bewusst stehen (Entscheidung des Autors 2026-11-23, wie SCHEMA-steering-channel). (CR-GC-1021)
+
+schema ◀ `FLOW-auftrag` · `FLOW-skill-request`
+
+###### 3.3.4.2.8  `SCHEMA-authoring-guide-input` — Eingabe graph_authoring_guide
 
 Eingabe von graph_authoring_guide: type, der Elementtyp, fuer den die legalen Kanten und ein Beispiel kommen. (CR-GC-1014)
 
 schema ◀ `FLOW-authoring-guide-call`
 
-###### 3.3.4.2.8  `SCHEMA-branch-merge-report` — MergeReport
+###### 3.3.4.2.9  `SCHEMA-branch-merge-report` — MergeReport
 
 Bericht eines Branch-Merges: Fork-Punkt, Probelauf ja/nein, wieder angewendete, in Konflikt geratene und uebersprungene Chargen, Konflikte in Gate-Sprache. Der Erzeuger replayBranchLog prueft ihn vor der Rueckgabe (CR-GC-818).
 
 schema ◀ `FLOW-merge-answer` · `FLOW-merge-report`
 
-###### 3.3.4.2.9  `SCHEMA-chain-metrics` — ChainMetrics
+###### 3.3.4.2.10  `SCHEMA-chain-metrics` — ChainMetrics
 
 chains: je FCHAIN chainId, chainName, measurable und entweder die Zahlen length, branching, moduleBoundaries, feedbackLoops, sharedFuncs, bottlenecks, syncDepth, errorPathDepth mit den Orten memberCount, fanIn, loops, shared, boundaries, imports, handovers und dem Antwortweg answerPath mit answerPathBlockedBy oder reasons mit FC-05, loose-member, no-entry, no-exit, empty. Die Zahlen sind die Laengen der Ortslisten. answerPath nennt die Glieder, auf die die Antwort an einen Akteur wartet, und ist null, wenn answerPathBlockedBy hindernde Fluesse nennt (CR-SM-408, contracts 12.4). measurability: chains, measurable, ratio; ratio ist null ohne Ketten, nie 100 Prozent. Aus @sigloch/contracts, deshalb external. Neben diesem Vertrag reisen in der graph_metrics-Antwort seit CR-GC-787 zwei Bloecke mit je eigenem Vertrag aus contracts: riskCarriers nach RiskCarriers mit risks, je Risiko riskId, carriers, satisfiers, und surface, je Traeger funcId und risks; scope nach RequirementScope mit modules, chains, requirements. Beide gehoeren nicht zum Symbol ChainMetrics.
 
 schema ◀ `FLOW-chain-metrics`
 
-###### 3.3.4.2.10  `SCHEMA-cli-command` — CliCommand
+###### 3.3.4.2.11  `SCHEMA-cli-command` — CliCommand
 
 Das Verb der CLI: eines von mcp, host, status, init, remove, import-code, render, rewind, upgrade, skills, vertragstest. main parst das erste Argument dagegen, bevor es ein Verb schaltet; ein anderes Wort lehnt es mit Exit 1 ab. Bindung statt Kopie — der Zod-Koerper steht im Code, nicht im Graphen. (CR-GC-984)
 
 schema ◀ `FLOW-cli-command` · `FLOW-cli-invocation` · `FLOW-cli-invocation-import-code` · `FLOW-cli-invocation-render`
 
-###### 3.3.4.2.11  `SCHEMA-code-lane-plan` — CodeLanePlan
+###### 3.3.4.2.12  `SCHEMA-code-lane-plan` — CodeLanePlan
 
 lane, files, command, reason, binding, unresolvedTests, lines. Der Vertrag des Spur-Plans an der Modulgrenze zum Runner.
 
 schema ◀ `FLOW-code-lane-plan` · `FLOW-lane-output` · `FLOW-lane-output-full` · `FLOW-lane-output-model` · `FLOW-plan-request` · `FLOW-plan-request-full`
 
-###### 3.3.4.2.12  `SCHEMA-code-urteil` — Code-Urteil
+###### 3.3.4.2.13  `SCHEMA-code-urteil` — Code-Urteil
 
 Das Code-Urteil: verdict (kongruent, gedriftet, nicht pruefbar), why, reach mit endpoints, assigned und pct, binding mit leafFuncs, bound und pct, rcViolations je RC-Regel.
 
 schema ◀ `FLOW-code-urteil`
 
-###### 3.3.4.2.13  `SCHEMA-completeness` — ReadinessMark
+###### 3.3.4.2.14  `SCHEMA-completeness` — ReadinessMark
 
 Eine Marke: id, Bezeichnung, erreicht, haltende Befunde. Aus @sigloch/graphcode-client, deshalb external. Der Befund RC-04 bleibt bewusst stehen: computeMarks gibt die Marken im selben Prozess an readinessOf; kein Fluss verlaesst den Prozess, und das Paket parst die Antwort, in der die Marken nach aussen gehen (SCHEMA-readiness-report). (CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-completeness`
 
-###### 3.3.4.2.14  `SCHEMA-context-input` — Eingabe graph_context
+###### 3.3.4.2.15  `SCHEMA-context-input` — Eingabe graph_context
 
 Eingabe von graph_context: id (Pflicht) und depth (positive ganze Zahl, Vorgabe 1). (CR-GC-1015)
 
 schema ◀ `FLOW-context-call`
 
-###### 3.3.4.2.15  `SCHEMA-cr-groups` — CrGroups
+###### 3.3.4.2.16  `SCHEMA-cr-groups` — CrGroups
 
 Aufrufvertrag von crGroups: hinein Graph und die offenen CRs eines Meilensteins, heraus die Gruppen in Reihenfolge und die CRs im Zyklus. Bindung statt Kopie.
 
 schema ◀ `FLOW-cr-groups` · `FLOW-cr-groups-request`
 
-###### 3.3.4.2.16  `SCHEMA-eingangs-befund` — Eingangs-Befund
+###### 3.3.4.2.17  `SCHEMA-eingangs-befund` — Eingangs-Befund
 
 Vertrag des Befunds von eingaengeNurAus: fremd (je Fluss seine Absender) und fehlend (Fluesse der Liste ohne Kante ins Element). Beide leer heisst erfuellt. (CR-GC-851)
 
 schema ◀ `FLOW-eingangs-befund`
 
-###### 3.3.4.2.17  `SCHEMA-elements-input` — Eingabe graph_elements
+###### 3.3.4.2.18  `SCHEMA-elements-input` — Eingabe graph_elements
 
 Eingabe von graph_elements: type und search (optional), limit (positive ganze Zahl, Vorgabe 100), format (json oder formatE, Vorgabe json), prosa (Vorgabe false). (CR-GC-1015)
 
 schema ◀ `FLOW-elements-call`
 
-###### 3.3.4.2.18  `SCHEMA-expand-input` — Eingabe graph_expand
+###### 3.3.4.2.19  `SCHEMA-expand-input` — Eingabe graph_expand
 
 Eingabe von graph_expand: handle (Pflicht), branch (callers, traces, tests oder all, Vorgabe all), depth (positive ganze Zahl, Vorgabe 2). (CR-GC-1015)
 
 schema ◀ `FLOW-expand-call`
 
-###### 3.3.4.2.19  `SCHEMA-export-answer` — Antwort graph_export
+###### 3.3.4.2.20  `SCHEMA-export-answer` — Antwort graph_export
 
 Die Antwort von graph_export: graphJson (Pfad, Bytes, Knoten- und Kantenzahl), views (je Sicht Pfad und Bytes), stubs (angelegte Platzhalterdateien) und, nur wenn groesser als 0, unfedMutations. Der Handler parst sie beim Erzeugen.
 
 schema ◀ `FLOW-export-answer` · `FLOW-export-write-slot`
 
-###### 3.3.4.2.20  `SCHEMA-export-input` — Eingabe graph_export
+###### 3.3.4.2.21  `SCHEMA-export-input` — Eingabe graph_export
 
 Eingabe von graph_export: name (blosser Dateiname, optional), views (Liste der Sichten, optional), force (Wahrheitswert, Vorgabe false). (CR-GC-1016)
 
 schema ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-query-request-auto-export`
 
-###### 3.3.4.2.21  `SCHEMA-export-pending` — ExportPending
+###### 3.3.4.2.22  `SCHEMA-export-pending` — ExportPending
 
 Inhalt der Drift-Marke: Zeitpunkt der ersten un-exportierten Mutation und Zahl der angewandten Batches seit dem letzten Export.
 
 schema ◀ `FLOW-export-cleared` · `FLOW-export-pending` · `FLOW-marker-clear` · `FLOW-marker-clear-reseed` · `FLOW-marker-set`
 
-###### 3.3.4.2.22  `SCHEMA-fit-advisory` — FitAdvisory
+###### 3.3.4.2.23  `SCHEMA-fit-advisory` — FitAdvisory
 
 layer, dimensions, before, after, delta, regressions.
 
 schema ◀ `FLOW-fit-advisory`
 
-###### 3.3.4.2.23  `SCHEMA-format-e` — Format-E
+###### 3.3.4.2.24  `SCHEMA-format-e` — Format-E
 
 Kompaktes Snapshot-/Diff-Format, ein Familienvertrag (graph-api-core). Der geparste Vertrag ist ein Diff aus Operationen plus Fehlerliste — NICHT ein Knoten-/Kanten-Paar. Tuer: das Zod-Schema FormatEInputSchema der Familie ({text, bestand} → Diff, Codec-Fehler als Issues; CR-SM-359). Vorher an den Typ FormatEDiff gebunden und damit fuer RC-09 unsichtbar; CR-GC-641 hatte die Tuer kurz in graphcode gebaut.
 
 schema ◀ `FLOW-formatE-artifact-agent` · `FLOW-formatE-artifact-read-tools` · `FLOW-formatE-tool`
 
-###### 3.3.4.2.24  `SCHEMA-function-criticality` — FunctionCriticality
+###### 3.3.4.2.25  `SCHEMA-function-criticality` — FunctionCriticality
 
 Je FUNC funcId, funcName, chains, useCases. Vier Felder, kein Infrastruktur-Flag - ein Flag waere ein Urteil in der Messung. chains 0 ist eine AUSSAGE, kein fehlender Wert: bei einem Blatt R-30s Befund, bei einem zerlegten Block der von FC-03 erzwungene Normalzustand. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-function-criticality`
 
-###### 3.3.4.2.25  `SCHEMA-generate-input` — Eingabe graph_generate
+###### 3.3.4.2.26  `SCHEMA-generate-input` — Eingabe graph_generate
 
 Eingabe von graph_generate: intent, threshold (0 bis 1), task (ein Regel-Task), defer (Liste von focusKeys), alle optional, und peek (Vorgabe false). (CR-GC-1016)
 
 schema ◀ `FLOW-dashboard-generate-call` · `FLOW-steering-trigger-agent`
 
-###### 3.3.4.2.26  `SCHEMA-generation-step` — GenerationStep
+###### 3.3.4.2.27  `SCHEMA-generation-step` — GenerationStep
 
 Fokus-Schluessel und -Typen, Readiness-Auszug, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
 schema ◀ `FLOW-generate-answer` · `FLOW-generation-step-vorschlag` · `FLOW-next-step-advice`
 
-###### 3.3.4.2.27  `SCHEMA-get-edges-input` — Eingabe graph_get_edges
+###### 3.3.4.2.28  `SCHEMA-get-edges-input` — Eingabe graph_get_edges
 
 Eingabe von graph_get_edges: uid und edgeType (optional), direction (in, out oder both, Vorgabe both), format (json oder formatE). (CR-GC-1015)
 
 schema ◀ `FLOW-get-edges-call`
 
-###### 3.3.4.2.28  `SCHEMA-get-node-input` — Eingabe graph_get_node
+###### 3.3.4.2.29  `SCHEMA-get-node-input` — Eingabe graph_get_node
 
 Eingabe von graph_get_node: uid (Pflicht). (CR-GC-1015)
 
 schema ◀ `FLOW-get-node-call`
 
-###### 3.3.4.2.29  `SCHEMA-graph-delta` — GraphDelta
+###### 3.3.4.2.30  `SCHEMA-graph-delta` — GraphDelta
 
 Was ein vom Gate angenommener Batch im Store aendert: upsert/delete je Knoten und Kante. Schreibreihenfolge Knoten, Kanten, Loeschungen zuletzt. (CR-GC-503)
 
 schema ◀ `FLOW-graph-delta`
 
-###### 3.3.4.2.30  `SCHEMA-grenz-befund` — Grenz-Befund
+###### 3.3.4.2.31  `SCHEMA-grenz-befund` — Grenz-Befund
 
 Vertrag des Befunds von grenzeNurMitSchema: ohneSchema (je Fluss Module und Schemas). Leer heisst erfuellt. (CR-GC-913, CR-GC-956)
 
 schema ◀ `FLOW-grenz-befund`
 
-###### 3.3.4.2.31  `SCHEMA-harness-config` — HarnessConfig
+###### 3.3.4.2.32  `SCHEMA-harness-config` — HarnessConfig
 
 Die Konfiguration, mit der ein Harness geoeffnet wird: repoRoot und scope (systemId, Modus) aus @sigloch/contracts. createHarness parst sie. Aus contracts, deshalb external. (CR-GC-1018)
 
 schema ◀ `FLOW-harness-request` · `FLOW-harness-request-import-code` · `FLOW-harness-request-own-kuzu` · `FLOW-harness-request-render` · `FLOW-harness-request-rewind`
 
-###### 3.3.4.2.32  `SCHEMA-harness-handle` — Harness-Griff
+###### 3.3.4.2.33  `SCHEMA-harness-handle` — Harness-Griff
 
 Der Zugang zum Substrat: Store, Regelwerk und Apply-Gate hinter einer Schnittstelle. Zod-Vertrag der Form: jedes öffentliche Mitglied von GraphCodeHarness ist eine Funktion (z.function); der Griff ist ein offenes Objekt. Geparst in createHarness, zurück geht das Original.
 
 schema ◀ `FLOW-auto-export-register` · `FLOW-bind-request` · `FLOW-bind-request-import-code` · `FLOW-bind-request-proxy` · `FLOW-context-request` · `FLOW-export-flush` · `FLOW-harness-handle` · `FLOW-harness-handle-host` · `FLOW-http-route` · `FLOW-lifecycle-create` · `FLOW-read-request` · `FLOW-store-build` · `FLOW-store-close` · `FLOW-store-close-cli` · `FLOW-store-close-render` · `FLOW-store-close-rewind` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-render` · `FLOW-store-open-rewind` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest`
 
-###### 3.3.4.2.33  `SCHEMA-health-report` — HealthPayload
+###### 3.3.4.2.34  `SCHEMA-health-report` — HealthPayload
 
 status, store, gate, nodeCount, versions, sseClients. Der Vertrag der GET /health-Antwort.
 
 schema ◀ `FLOW-health-report` · `FLOW-host-ready`
 
-###### 3.3.4.2.34  `SCHEMA-help-input` — Eingabe graph_help
+###### 3.3.4.2.35  `SCHEMA-help-input` — Eingabe graph_help
 
 Eingabe von graph_help: token (Pflicht), das zu erklaerende Wort, etwa eine Regel-ID, Marke, Tafel, Kennzahl, ein Werkzeug oder Elementtyp. (CR-GC-1014)
 
 schema ◀ `FLOW-help-call`
 
-###### 3.3.4.2.35  `SCHEMA-impact-input` — Eingabe graph_impact
+###### 3.3.4.2.36  `SCHEMA-impact-input` — Eingabe graph_impact
 
 Eingabe von graph_impact: id (Pflicht) und depth (ganze Zahl ab 0, Vorgabe 1). (CR-GC-1015)
 
 schema ◀ `FLOW-impact-call`
 
-###### 3.3.4.2.36  `SCHEMA-impact-slice` — ImpactSlice
+###### 3.3.4.2.37  `SCHEMA-impact-slice` — ImpactSlice
 
 Die Impact-Scheibe: Saatknoten, Tiefe, Knoten mit Rolle seed/whitebox/blackbox und Abstand, induzierte Kanten. @sigloch/graph-api-core. Die Rolle traegt Inhalt: an ihr trennt das Lese-Werkzeug den offenen Teil von der Blackbox-Front. Der Befund RC-04 bleibt bewusst stehen: die Scheibe geht im selben Prozess von harness.impact an das Lese-Werkzeug; nach aussen geht sie als Format-E-Text. (CR-GC-505, CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-impact-slice`
 
-###### 3.3.4.2.37  `SCHEMA-impacted-tests` — TestImpactResult
+###### 3.3.4.2.38  `SCHEMA-impacted-tests` — TestImpactResult
 
 nodes, edges, anchors, testIds. Der Vertrag von impactedTests am Modulrand.
 
 schema ◀ `FLOW-impacted-tests` · `FLOW-selected-tests`
 
-###### 3.3.4.2.38  `SCHEMA-import-access` — Import-Zugang
+###### 3.3.4.2.39  `SCHEMA-import-access` — Import-Zugang
 
 Der Zugang des Importwegs zum Store: Repo-Wurzel und systemId als nicht leere Texte, dazu die zwei Funktionen replace und clear. Strikt: ein Zugang mit mehr Mitgliedern, etwa einem Store-Griff oder Setter, wird an der Übergabe abgelehnt. Der Erzeuger importTarget parst ihn und gibt das Original zurück. (CR-GC-1012)
 
 schema ◀ `FLOW-import-target`
 
-###### 3.3.4.2.39  `SCHEMA-import-summary` — Zusammenfassung Code-Import
+###### 3.3.4.2.40  `SCHEMA-import-summary` — Zusammenfassung Code-Import
 
 Die Zusammenfassung eines Code-Imports, die executeImportCode an die CLI gibt und die diese auf stderr schreibt: files (Anzahl gescannter Dateien, mindestens 1), extracted (Kandidaten je Element-Typ), status (success, partial oder failed, aus dem Import-Gate von graphify), applied mit nodes und edges, violations (Befunde des Gates je Element), dazu backupPath, exportPath und exportError, wenn es sie gibt. Der Erzeuger parst die Zusammenfassung. (CR-GC-986)
 
 schema ◀ `FLOW-cli-output-import-code` · `FLOW-import-summary`
 
-###### 3.3.4.2.40  `SCHEMA-init-report` — Init-Bericht
+###### 3.3.4.2.41  `SCHEMA-init-report` — Init-Bericht
 
 Bericht von graphcode init: Install-Ergebnis, Installationsbefehl, ob er lief, Fehlertext und die Agent-Programme im PATH. executeInit parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-install-result-init`
 
-###### 3.3.4.2.41  `SCHEMA-install-result` — Install-Ergebnis
+###### 3.3.4.2.42  `SCHEMA-install-result` — Install-Ergebnis
 
 Ergebnis von scaffold: action, repoRoot und die Listen created, updated, removed, preserved. scaffold parst es an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-cli-output-remove` · `FLOW-install-result-harness-cli`
 
-###### 3.3.4.2.42  `SCHEMA-lauf-urteil` — LaufUrteil
+###### 3.3.4.2.43  `SCHEMA-lauf-urteil` — LaufUrteil
 
 Vertrag des Lauf-Urteils: beleg true mit rot und gesamt, oder beleg false mit grund.
 
 schema ◀ `FLOW-lauf-urteil`
 
-###### 3.3.4.2.43  `SCHEMA-lock-owner` — LockOwner
+###### 3.3.4.2.44  `SCHEMA-lock-owner` — LockOwner
 
 Halter des Store-Locks: Host, PID, Version, Zeitstempel.
 
 schema ◀ `FLOW-lock-file` · `FLOW-lock-lost` · `FLOW-lock-release` · `FLOW-lock-release-close` · `FLOW-lock-request` · `FLOW-store-ownership`
 
-###### 3.3.4.2.44  `SCHEMA-markdown-text` — Markdown-Text
+###### 3.3.4.2.45  `SCHEMA-markdown-text` — Markdown-Text
 
 Eine gerenderte Markdown-Sicht als Text. exportMarkdown parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-markdown-text`
 
-###### 3.3.4.2.45  `SCHEMA-markdown-view` — MarkdownView
+###### 3.3.4.2.46  `SCHEMA-markdown-view` — MarkdownView
 
 Vertrag der deterministisch gerenderten Markdown-Sichten (GENERATED-Header). Bindung statt Kopie. (CR-GC-454)
 
 schema ◀ `FLOW-ergebnis` · `FLOW-markdown-docs` · `FLOW-query-export` · `FLOW-render-view-request`
 
-###### 3.3.4.2.46  `SCHEMA-mcp-tool` — Werkzeug
+###### 3.3.4.2.47  `SCHEMA-mcp-tool` — Werkzeug
 
 Was ein Werkzeug IST: Name, Beschreibung, Eingabe-Schema, Handler. Liegt seit CR-GC-480 im Kern, damit keine Schicht das Interface ihrer Oberflaeche kennen muss. Der Befund RC-04 bleibt bewusst stehen: das Werkzeug ist ein Objekt mit Funktionen im selben Prozess; die Eingaben parst jeder Handler selbst (CR-GC-1014 bis CR-GC-1017). (CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-mcp-tool`
 
-###### 3.3.4.2.47  `SCHEMA-mcp-tool-registry` — Werkzeug-Register
+###### 3.3.4.2.48  `SCHEMA-mcp-tool-registry` — Werkzeug-Register
 
 Die Abbildung Name -> Werkzeug, mit der eine Schicht ihre Werkzeuge uebergibt. Der Vertrag zwischen Tool-Fabrik und Host-Bindung.
 
 schema ◀ `FLOW-proxy-build` · `FLOW-socket-close` · `FLOW-socket-start` · `FLOW-tool-registry` · `FLOW-tool-surface`
 
-###### 3.3.4.2.48  `SCHEMA-metric-policy` — MetricPolicy
+###### 3.3.4.2.49  `SCHEMA-metric-policy` — MetricPolicy
 
 Die Schwellen je Urteil: instability, lcom4, crossingFlows, riskRpn, moduleSize. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-config-request` · `FLOW-metric-policy`
 
-###### 3.3.4.2.49  `SCHEMA-metric-vector` — MetricVector
+###### 3.3.4.2.50  `SCHEMA-metric-vector` — MetricVector
 
 Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. Der Befund RC-04 bleibt bewusst stehen: der Vektor wird im selben Prozess gerechnet und gelesen, je Messung neu. (Herkunft korrigiert CR-GC-453; CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-arch-fitness`
 
-###### 3.3.4.2.50  `SCHEMA-metrics-answer` — graph_metrics-Antwort
+###### 3.3.4.2.51  `SCHEMA-metrics-answer` — graph_metrics-Antwort
 
 Die Antwort von graph_metrics als EIN Vertrag: modules nach ModuleMetrics, functions nach FunctionCriticality, chains und measurability nach ChainMetrics, riskCarriers nach RiskCarriers, scope nur auf Anfrage nach RequirementScope, constraintCarriers nur auf Anfrage nach ConstraintCarriers (reqId, carriers, by), policy nach MetricPolicySchema mit policySource, fit mit MetricVector (ohne Zielmarke seit CR-GC-861), graphVersion. Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut; die Grundgesamtheiten MOD, FUNC und FCHAIN bleiben getrennte Bloecke. Der Handler parst seine Antwort vor der Rueckgabe. (CR-GC-821, CR-GC-857, CR-GC-861)
 
 schema ◀ `FLOW-dashboard-answer` · `FLOW-metrics-answer`
 
-###### 3.3.4.2.51  `SCHEMA-metrics-input` — Eingabe graph_metrics
+###### 3.3.4.2.52  `SCHEMA-metrics-input` — Eingabe graph_metrics
 
 Eingabe von graph_metrics: scope (mindestens eine FUNC- oder FCHAIN-uid, optional) und constraintCarriers (optional); offenes Objekt. (CR-GC-1016)
 
 schema ◀ `FLOW-dashboard-metrics-call` · `FLOW-metrics-call`
 
-###### 3.3.4.2.52  `SCHEMA-module-metrics` — ModuleMetrics
+###### 3.3.4.2.53  `SCHEMA-module-metrics` — ModuleMetrics
 
 Je MOD allocatedFuncs, fanIn, fanOut, instability, lcom4, cohesion; null heisst nicht messbar, nie null Prozent. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-module-metrics`
 
-###### 3.3.4.2.53  `SCHEMA-mutate-answer` — Antwort von graph_mutate
+###### 3.3.4.2.54  `SCHEMA-mutate-answer` — Antwort von graph_mutate
 
 Die Antwort des Werkzeugs graph_mutate an den Aufrufer, nicht das Ergebnis des Gates im Prozess (das ist SCHEMA-mutate-result). Felder des Gate-Urteils: success, appliedCommands, mutations, tier, trajectoryId, stale und staleDelta bei OCC-Ablehnung; confidence nur bei Ablehnung. Dazu graphVersion immer, violations gefaltet je Regel und Meldungsmuster (summary) oder je Element (full), Ablehnungen vor dem Gate immer je Element. Berichte zum Zug: steerAdvisory und workOrder (fehlen, wenn sie nichts melden), im Probelauf metricsAfter und steeringDelta, berichtFehlt bei nicht berechenbarem Bericht. Weiter vorschlag (nur nach Anwendung, an den Nutzer), refs (Bindungsreport), nameWarning, occWarning. Der Erzeuger graph_mutate parst jede Antwort. (CR-GC-985)
 
 schema ◀ `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-vorschlag`
 
-###### 3.3.4.2.54  `SCHEMA-mutate-command` — MutateCommand
+###### 3.3.4.2.55  `SCHEMA-mutate-command` — MutateCommand
 
 Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-write-slot`
 
-###### 3.3.4.2.55  `SCHEMA-mutate-result` — MutateResult
+###### 3.3.4.2.56  `SCHEMA-mutate-result` — MutateResult
 
 Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). Der Befund RC-04 bleibt bewusst stehen: das Ergebnis geht im selben Prozess vom Gate an die Werkzeugschicht; nach aussen geht es als Antwort von graph_mutate, deren Vertrag dort geparst wird (SCHEMA-mutate-answer). (Kopie entfernt CR-GC-454; CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-gate-verdict`
 
-###### 3.3.4.2.56  `SCHEMA-ontology-graph` — OntologyGraph
+###### 3.3.4.2.57  `SCHEMA-ontology-graph` — OntologyGraph
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se. Der Befund RC-04 bleibt bewusst stehen: der Graph geht im selben Prozess zwischen Store, Gate und Messung; ein Parse je Aufruf hiesse, bei jeder Messung mehrere hundert Elemente erneut zu pruefen. Von der Platte liest ihn der Import mit SCHEMA-ontology-json. (CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-commit-check-request` · `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-fit-anfrage` · `FLOW-fitness-anfrage` · `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · `FLOW-imported-graph` · `FLOW-metrics-request` · `FLOW-select-request` · `FLOW-select-request-lane` · `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-store-load` · `FLOW-store-query` · `FLOW-verlauf-konformanz` · `FLOW-verlauf-snapshot` · `FLOW-zug-anfrage` · `FLOW-zug-anfrage-suggest` · `FLOW-zug-staende`
 
-###### 3.3.4.2.57  `SCHEMA-ontology-json` — OntologyJson
+###### 3.3.4.2.58  `SCHEMA-ontology-json` — OntologyJson
 
 Die materialisierte Graph-Datei docs/graph/<systemId>.graph.json: elements und traces. Eingang von Seed und Reseed. (CR-GC-503)
 
 schema ◀ `FLOW-graph-snapshot-file` · `FLOW-ontology-json` · `FLOW-reseed-answer` · `FLOW-reseed-order` · `FLOW-reseed-order-open` · `FLOW-reseed-request` · `FLOW-reseed-snapshot` · `FLOW-reseeded-graph` · `FLOW-seed-request` · `FLOW-seed-request-import-code` · `FLOW-seed-request-render`
 
-###### 3.3.4.2.58  `SCHEMA-own-kuzu-options` — Auftrag an ownKuzu
+###### 3.3.4.2.59  `SCHEMA-own-kuzu-options` — Auftrag an ownKuzu
 
 Der Auftrag an ownKuzu: die Oeffnungsfabrik open, repoRoot, scope, im ATTACH-Modus der Griff des gewaehlten Besitzers (harness) und die Ereignis-Senke onUpdateEvent (beide optional). ownKuzu parst ihn. (CR-GC-1018)
 
 schema ◀ `FLOW-own-kuzu-request` · `FLOW-own-kuzu-request-stdio`
 
-###### 3.3.4.2.59  `SCHEMA-query-params` — QueryParams
+###### 3.3.4.2.60  `SCHEMA-query-params` — QueryParams
 
 Der gemeinsame Nenner der Leseanfragen: elementId, depth, branch, cursor, view. Bewusst ohne Zod-Symbol — im Code traegt JEDES MCP-Tool sein eigenes Input-Schema, ein zusammengefasstes QueryParams gibt es nicht und soll es nicht geben (ein Sammel-Schema waere ein paralleler Pfad zu den Tool-Signaturen). Der Knoten steht fuer den Kanal, nicht fuer einen Code-Datenvertrag; concept-only. (Begruendung nachgetragen CR-GC-454)
 
-schema ◀ `FLOW-auftrag` · `FLOW-generation-request` · `FLOW-skill-request`
+schema ◀ `FLOW-generation-request`
 
-###### 3.3.4.2.60  `SCHEMA-readiness-input` — Eingabe graph_readiness
+###### 3.3.4.2.61  `SCHEMA-readiness-input` — Eingabe graph_readiness
 
 Eingabe von graph_readiness: detail (Wahrheitswert, Vorgabe false) und verlauf (ganze Zahl 1 bis 1000, optional: die juengsten N committeten Staende). (CR-GC-1014)
 
 schema ◀ `FLOW-dashboard-readiness-call` · `FLOW-readiness-call`
 
-###### 3.3.4.2.61  `SCHEMA-readiness-report` — ReadinessReportType
+###### 3.3.4.2.62  `SCHEMA-readiness-report` — ReadinessReportType
 
 Je Dimension score, violations, applicable, coreApplicable — eine reine Messung ohne Urteil (kein ready seit CR-SM-310). Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-dimension-readiness` · `FLOW-readiness-report`
 
-###### 3.3.4.2.62  `SCHEMA-real-ref` — realRef (Realisierungsbindung)
+###### 3.3.4.2.63  `SCHEMA-real-ref` — realRef (Realisierungsbindung)
 
 Attributvertrag realRef an FUNC, SCHEMA und MOD: Realisierungsdatei, Symbol, Sprache. Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readRealRef (absent, invalid, bound; CR-SM-360).
 
-###### 3.3.4.2.63  `SCHEMA-rejected-trace` — RejectedTrace
+###### 3.3.4.2.64  `SCHEMA-rejected-trace` — RejectedTrace
 
 Eine am Seed zurueckgehaltene Kante: source, target, type und der Grund no-pattern. Traeger zwischen Seed-Pruefung, Readiness-Report und Export-Verweigerung. (CR-GC-530)
 
 schema ◀ `FLOW-held-back-traces`
 
-###### 3.3.4.2.64  `SCHEMA-render-summary` — Zusammenfassung Render
+###### 3.3.4.2.65  `SCHEMA-render-summary` — Zusammenfassung Render
 
 Die Zusammenfassung eines Renders, die executeRender an die CLI gibt und die diese auf stderr schreibt: view (die Sicht), format (md, docx oder pdf), out (absoluter Pfad der geschriebenen Datei), bytes (Größe der Datei) und vorlage (die Vorlage des Repos für PDF, sonst null). Die Datei selbst hat keine Datenform. Der Erzeuger parst die Zusammenfassung. (CR-GC-986)
 
 schema ◀ `FLOW-render-file`
 
-###### 3.3.4.2.65  `SCHEMA-repo-pfad` — Repo-Pfad
+###### 3.3.4.2.66  `SCHEMA-repo-pfad` — Repo-Pfad
 
 Der Pfad der Repo-Wurzel als nicht leerer Text. serveStdio gibt ihn an attachGve, der Start des Viewers uebergibt ihn als --repo. Ein leerer Pfad zeigt kein Repo. Der Erzeuger parst an der Grenze. (CR-GC-989)
 
 schema ◀ `FLOW-gve-attach` · `FLOW-viewer-start`
 
-###### 3.3.4.2.66  `SCHEMA-repo-status` — Repo-Status
+###### 3.3.4.2.67  `SCHEMA-repo-status` — Repo-Status
 
 Bericht von graphcode status: repoRoot, member, Zustand von Host, Dashboard und Versionen. collectStatus parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-cli-output-status` · `FLOW-install-result-collect-status`
 
-###### 3.3.4.2.67  `SCHEMA-reseed-input` — Eingabe graph_reseed
+###### 3.3.4.2.68  `SCHEMA-reseed-input` — Eingabe graph_reseed
 
 Eingabe von graph_reseed: path (Pfad der committeten Graph-JSON relativ zur Repo-Wurzel, optional). (CR-GC-1017)
 
 schema ◀ `FLOW-reseed-call`
 
-###### 3.3.4.2.68  `SCHEMA-rewind-summary` — RewindSummary
+###### 3.3.4.2.69  `SCHEMA-rewind-summary` — RewindSummary
 
 Ergebnis von executeRewind, das die CLI ausgibt: ref, commit, snapshot, restored, forced. executeRewind prueft es beim Erzeugen (CR-GC-823).
 
 schema ◀ `FLOW-cli-output-rewind` · `FLOW-rewind-summary`
 
-###### 3.3.4.2.69  `SCHEMA-rule-violation` — RuleViolation
+###### 3.3.4.2.70  `SCHEMA-rule-violation` — RuleViolation
 
 Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. Der Befund RC-04 bleibt bewusst stehen: die Befunde gehen im selben Prozess von der Auswertung an Gate, Bericht und Werkzeuge; nach aussen gehen sie in Antworten mit eigenem, geparstem Vertrag. (CR-GC-501, CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-commit-check-verdict` · `FLOW-completeness-request` · `FLOW-conformance-findings` · `FLOW-readiness-request` · `FLOW-rule-findings` · `FLOW-rules-answer` · `FLOW-verlauf-bereitschaft`
 
-###### 3.3.4.2.70  `SCHEMA-rules-evaluate-input` — Eingabe rules_evaluate
+###### 3.3.4.2.71  `SCHEMA-rules-evaluate-input` — Eingabe rules_evaluate
 
 Eingabe von rules_evaluate: detail (summary, full oder grouped, Vorgabe full). (CR-GC-1014)
 
 schema ◀ `FLOW-rules-evaluate-call`
 
-###### 3.3.4.2.71  `SCHEMA-rules-get-violations-input` — Eingabe rules_get_violations
+###### 3.3.4.2.72  `SCHEMA-rules-get-violations-input` — Eingabe rules_get_violations
 
 Eingabe von rules_get_violations: severity (error, warning oder info, optional) und detail (summary, full oder grouped, Vorgabe full). (CR-GC-1014)
 
 schema ◀ `FLOW-rules-get-violations-call`
 
-###### 3.3.4.2.72  `SCHEMA-schema-fingerprint` — SchemaFingerprint
+###### 3.3.4.2.73  `SCHEMA-schema-fingerprint` — SchemaFingerprint
 
 Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist Teil des Vertrags: sie unterscheidet einen aelteren Schemastand von einer kaputten Datei.
 
 schema ◀ `FLOW-fingerprint-request` · `FLOW-schema-fingerprint`
 
-###### 3.3.4.2.73  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
+###### 3.3.4.2.74  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
 
 Vertrag der Schlupf-Zeile: cr, at, code, spur, ausgewaehlt, ausGraph, gesamt, rot, schlupf, schlupfNurGraph, zusage (blackbox, schnittstelle). Optional, in alten Zeilen nicht erfasst (nie 0): linkModus, umgebung (rote Dateien, im Link-Modus erwartet, nicht im Schlupf), dauer (auswahlMs, vollMs), grenzmenge (FUNC und SCHEMA je pflicht und da). (CR-GC-947)
 
 schema ◀ `FLOW-schlupf-request` · `FLOW-schlupf-result` · `FLOW-schlupf-zeile`
 
-###### 3.3.4.2.74  `SCHEMA-session-registry` — SessionEntry
+###### 3.3.4.2.75  `SCHEMA-session-registry` — SessionEntry
 
 pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
 
 schema ◀ `FLOW-session-entry` · `FLOW-session-registry`
 
-###### 3.3.4.2.75  `SCHEMA-shim-request` — ShimRequest
+###### 3.3.4.2.76  `SCHEMA-shim-request` — ShimRequest
 
 Ein weitergeleiteter Werkzeugaufruf auf dem Host-Socket: id, Werkzeugname und Eingabe, eine JSON-Zeile je Aufruf. ShimRequestSchema aus graphcode-client, deshalb external. Der Host parst jede Zeile. (CR-GC-1020)
 
 schema ◀ `FLOW-dashboard-call` · `FLOW-proxy-call`
 
-###### 3.3.4.2.76  `SCHEMA-sitzungsende` — Sitzungsende
+###### 3.3.4.2.77  `SCHEMA-sitzungsende` — Sitzungsende
 
 Die Ereignisse, die eine Host-Sitzung beenden: SIGINT, SIGTERM, SIGHUP, das Ende des stdio-Clients und der Verlust des Store-Locks. installTriggers bindet die Signale aus dieser Aufzaehlung, end parst jeden Grund dagegen. Es gibt keine zweite Liste. (CR-GC-989)
 
 schema ◀ `FLOW-session-end`
 
-###### 3.3.4.2.77  `SCHEMA-skill-sync-result` — Skill-Sync-Ergebnis
+###### 3.3.4.2.78  `SCHEMA-skill-sync-result` — Skill-Sync-Ergebnis
 
 Bericht von graphcode skills sync: repoRoot und die Listen added, updated, unchanged, removed (Pfade relativ zum Repo). syncSkills parst ihn an der Grenze. (CR-GC-999)
 
 schema ◀ `FLOW-cli-output-skills-sync` · `FLOW-skill-sync-result-sync-skills` · `FLOW-skill-sync-result-upgrade`
 
-###### 3.3.4.2.78  `SCHEMA-skill-text` — Skill-Text
+###### 3.3.4.2.79  `SCHEMA-skill-text` — Skill-Text
 
 Kopf einer Skill-Datei (Frontmatter name, description, version), wie graphcode ihn beim Ausliefern und Synchronisieren liest. Der Rumpf der Datei ist Prompt-Text; sein Format legt der Agent-Host fest, der Vertrag bindet ihn nicht. version ist ganzzahlig ab 0; version 0 heisst Entwurf und wird nicht ausgeliefert. Der Befund RC-04 bleibt bewusst stehen: die Fluesse fuehren von den Skill-Dateien (Markdown) zur Ablaufsteuerung im Agent-Host; keine Code-Funktion auf ihnen kann parsen. graphcode parst den Kopf in parseSkillFrontmatter beim Ausliefern (scaffold, syncSkills). (CR-GC-1013, CR-GC-1017)
 
 schema ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-help-answer`
 
-###### 3.3.4.2.79  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
+###### 3.3.4.2.80  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
 
 Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts, am FLOW als Attribut channelRank gespiegelt — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht. Der Rang steht deshalb am Knoten: ohne ihn sind zwei Kanaele mit gleichem Produzenten und Konsumenten im Graphen ununterscheidbar, und der Optimizer schlaegt sie zum Merge vor. Bewusst ohne Zod-Symbol und ohne Vertragstest: informationeller Prompt-Kontext, kein Wire-Format; im Code faehrt jeder Kanal auf einer bestehenden Antwort mit (mutate-Antwort, Generierungsschritt, Authoring Guide), deren Vertrag dort gebunden und getestet ist. Die Befunde R-26 und R-32 bleiben bewusst stehen (Entscheidung des Autors 2026-11-23). (CR-GC-573)
 
 schema ◀ `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory`
 
-###### 3.3.4.2.80  `SCHEMA-steering-delta` — SteeringDelta
+###### 3.3.4.2.81  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-###### 3.3.4.2.81  `SCHEMA-steering-snapshot` — SteeringSnapshot
+###### 3.3.4.2.82  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph, Violations des vollen Katalogs, Fokusmenge, Zahl der blockierenden Fehler, Befunde je Stufe. Beschreibt die Form des Messpunkts; den Bestand prueft die Regel R-08, nicht dieses Schema. Der Befund RC-04 bleibt bewusst stehen: der Snapshot entsteht und wird gelesen im selben Prozess, je Messung neu; ein Parse hiesse, mehrere hundert Elemente je Messung erneut zu pruefen. (CR-GC-786, CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-steering-pair` · `FLOW-steering-snapshot`
 
-###### 3.3.4.2.82  `SCHEMA-store-rebuild-notice` — Store-Neuaufbau-Meldung
+###### 3.3.4.2.83  `SCHEMA-store-rebuild-notice` — Store-Neuaufbau-Meldung
 
 Meldung an den Nutzer nach einem Store-Neuaufbau, mit Grund: cause schema traegt alten und neuen Schema-Fingerabdruck, cause unreadable die Meldung, mit der das Oeffnen scheiterte (CR-GC-796); beide die SSOT-Datei, aus der neu befuellt wurde. Eine Zeile auf stderr beim Start (CR-GC-831).
 
 schema ◀ `FLOW-store-rebuild-notice`
 
-###### 3.3.4.2.83  `SCHEMA-suggest-answer` — Antwort graph_suggest
+###### 3.3.4.2.84  `SCHEMA-suggest-answer` — Antwort graph_suggest
 
 Die Antwort von graph_suggest: Ranking-Ebene, Advisory-Ebene, Hinweis bei abweichender Ebene und die gerankten Vorschlaege, je mit Urteil des Gates. Setzt sich aus SuggestionSchema von se-engine zusammen. Der Handler parst die Antwort, bevor sie den Prozess verlaesst. (CR-GC-1020)
 
 schema ◀ `FLOW-suggest-answer`
 
-###### 3.3.4.2.84  `SCHEMA-suggest-input` — Eingabe graph_suggest
+###### 3.3.4.2.85  `SCHEMA-suggest-input` — Eingabe graph_suggest
 
 Eingabe von graph_suggest: k (ganze Zahl 1 bis 20, Vorgabe 5) und layer (all oder arch, Vorgabe arch). (CR-GC-1016)
 
 schema ◀ `FLOW-suggest-call`
 
-###### 3.3.4.2.85  `SCHEMA-target-profile` — TargetProfile
+###### 3.3.4.2.86  `SCHEMA-target-profile` — TargetProfile
 
 intentAnchors (3-7 Strings), sonst kein Feld (strikt). Der Vertrag der Profildatei, die zwei Schreiber und einen Leser hat. Gewichte und Zielwerte sind zurueckgebaut (CR-GC-861); eine Datei, die sie noch traegt, scheitert laut beim Laden.
 
 schema ◀ `FLOW-target-profile` · `FLOW-target-profile-file`
 
-###### 3.3.4.2.86  `SCHEMA-test-ingest-answer` — GraphTestIngestAnswer
+###### 3.3.4.2.87  `SCHEMA-test-ingest-answer` — GraphTestIngestAnswer
 
 Antwort von graph_test_ingest: applied, assignments, bindings (neu gebundene Dateien), unresolved, withdrawn, success, tier, violations, graphVersion. Der Handler parst sie beim Erzeugen.
 
 schema ◀ `FLOW-meldung` · `FLOW-test-ingest-answer`
 
-###### 3.3.4.2.87  `SCHEMA-test-ingest-input` — GraphTestIngestInput
+###### 3.3.4.2.88  `SCHEMA-test-ingest-input` — GraphTestIngestInput
 
 Eingang von graph_test_ingest: ein Objekt mit consumerId, dryRun und dem Pflichtfeld ingest. ingest traegt genau eine von drei Varianten, gewaehlt ueber art: report (roher vitest-JSON, changeSet optional), results (Liste mit file, result, tool, evidence, changeSet optional) oder withdraw (nur changeSet, Pflicht). Zwei Quellen zugleich und keine Eingabe sind nicht ausdrueckbar. (CR-GC-992)
 
 schema ◀ `FLOW-test-ingest-call` · `FLOW-test-ingest-call-agent` · `FLOW-test-run-report-code` · `FLOW-test-run-report-full`
 
-###### 3.3.4.2.88  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
+###### 3.3.4.2.89  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
 
 Attributvertrag testRefs am TEST: Liste der Laufdateien (file, case, tool, level, result). Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readTestRefs (absent, invalid, bound; CR-SM-360).
 
-###### 3.3.4.2.89  `SCHEMA-test-selection` — TestSelection
+###### 3.3.4.2.90  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-###### 3.3.4.2.90  `SCHEMA-tests-input` — Eingabe graph_tests
+###### 3.3.4.2.91  `SCHEMA-tests-input` — Eingabe graph_tests
 
 Eingabe von graph_tests: changeSet (mindestens eine uid) und depth (ganze Zahl ab 0, Vorgabe 1). (CR-GC-1014)
 
 schema ◀ `FLOW-tests-call`
 
-###### 3.3.4.2.91  `SCHEMA-tool-context` — Werkzeug-Kontext
+###### 3.3.4.2.92  `SCHEMA-tool-context` — Werkzeug-Kontext
 
 Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Graphversion, Sitzung, Aufrufer. Zod-Vertrag der Form: Träger und Funktionen, geparst in createToolContext, zurück geht das Original. Die genauen Signaturen stehen an der Schnittstelle ToolContext, die ToolPort erweitert.
 
 schema ◀ `FLOW-read-bind` · `FLOW-tool-context`
 
-###### 3.3.4.2.92  `SCHEMA-trajectory` — Trajectory/Outcome
+###### 3.3.4.2.93  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. materializeTrajectory parst jede Grundzeile, bevor sie nach trajectory.jsonl geht. (Kopie entfernt CR-GC-454; Parse CR-GC-1019)
 
 schema ◀ `FLOW-trajectory`
 
-###### 3.3.4.2.93  `SCHEMA-update-event` — UpdateEvent
+###### 3.3.4.2.94  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-broadcast-hook` · `FLOW-broadcast-hook-sse` · `FLOW-live-event` · `FLOW-sse-frame` · `FLOW-update-hook`
 
-###### 3.3.4.2.94  `SCHEMA-upgrade-report` — Upgrade-Bericht
+###### 3.3.4.2.95  `SCHEMA-upgrade-report` — Upgrade-Bericht
 
 Bericht von graphcode upgrade: Zielversion, Drift, fehlende und veraltete Skills und Policy-Felder, veraltete Familienpakete, Schritte. executeUpgrade parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-cli-output-upgrade` · `FLOW-install-result-upgrade`
 
-###### 3.3.4.2.95  `SCHEMA-verlauf` — Verlauf
+###### 3.3.4.2.96  `SCHEMA-verlauf` — Verlauf
 
 Je committetem Stand Commit, Datum, Marken, Befunde je Stufe, Fehler, Steuerwert je Regel, Testergebnisse und bewertbare Ketten; dazu die nicht ausgewerteten Regeln und die Zahl der uebersprungenen Staende.
 
 schema ◀ `FLOW-verlauf-report`
 
-###### 3.3.4.2.96  `SCHEMA-verlauf-request` — Verlaufsauftrag
+###### 3.3.4.2.97  `SCHEMA-verlauf-request` — Verlaufsauftrag
 
 Der Auftrag des Hosts an die Verlaufsrechnung: repoRoot, storeDir (oder null ohne Zwischenspeicher), policy (MetricPolicy), policySource und window (die juengsten N Staende, null fuer alle). graph_readiness parst ihn vor dem Aufruf. (CR-GC-1018)
 
 schema ◀ `FLOW-verlauf-request`
 
-###### 3.3.4.2.97  `SCHEMA-vertragstest-bericht` — VertragstestBerichtSchema
+###### 3.3.4.2.98  `SCHEMA-vertragstest-bericht` — VertragstestBerichtSchema
 
 Je SCHEMA die erzeugte Datei mit Zahl der Faelle, den verworfenen Faellen und den Stellen, an denen die Tiefe oder ein z.lazy den Umfang begrenzte (begrenzt), oder der Fehler. erzeugeVertragstests parst ihn, bevor es ihn zurueckgibt. (CR-GC-962, CR-GC-980)
 
 schema ◀ `FLOW-cli-output-vertragstest` · `FLOW-vertragstest-bericht`
 
-###### 3.3.4.2.98  `SCHEMA-vertragstest-satz` — VertragstestSatzSchema
+###### 3.3.4.2.99  `SCHEMA-vertragstest-satz` — VertragstestSatzSchema
 
 Je SCHEMA uid, Datei und Zod-Symbol, oder uid, Datei unter packages/<name>/src, Symbol und Paket @sigloch/<name> (external), oder uid und Vertragsdatei (.md ohne Symbol). erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962, CR-GC-965, CR-GC-981)
 
 schema ◀ `FLOW-vertragstest-satz`
 
-###### 3.3.4.2.99  `SCHEMA-vitest-lauf` — VitestLauf
+###### 3.3.4.2.100  `SCHEMA-vitest-lauf` — VitestLauf
 
 Vertrag des vitest-Laufs: status, signal, bericht (JSON-Text, optional).
 
 schema ◀ `FLOW-vitest-lauf-code` · `FLOW-vitest-lauf-full`
 
-###### 3.3.4.2.100  `SCHEMA-work-set` — Arbeitsmenge
+###### 3.3.4.2.101  `SCHEMA-work-set` — Arbeitsmenge
 
 Die uids, die die laufende Sitzung geschrieben hat, abgeleitet aus dem Audit-Log; schneidet Befundlisten auf die Arbeit der Sitzung. Felder: uids (sortiert, leer heisst: noch kein Schreibzug) und zuege (Zahl der angewandten Stapel). Der Werkzeug-Kontext parst sie beim Erzeugen.
 
 schema ◀ `FLOW-work-set`
 
-###### 3.3.4.2.101  `SCHEMA-zug-bericht` — Bericht zum Zug
+###### 3.3.4.2.102  `SCHEMA-zug-bericht` — Bericht zum Zug
 
 Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass und metricsAfter nur im Probelauf. metricsAfter traegt die geaenderten Zeilen im Stand danach in chains, modules, functions und riskCarriers mit risks und surface, dazu removed mit den entfallenen Kennungen je Liste; leere Listen heissen keine Kennzahl geaendert. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778, CR-GC-790)
 

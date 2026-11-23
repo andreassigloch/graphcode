@@ -160,6 +160,7 @@
 | `CR-GC-1020` | relation | `SCHEMA-audit-record` |
 | `CR-GC-1020` | relation | `SCHEMA-shim-request` |
 | `CR-GC-1020` | relation | `SCHEMA-suggest-answer` |
+| `CR-GC-1021` | relation | `SCHEMA-auftragstext` |
 | `CR-GC-103` | relation | `FUNC-decode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |
@@ -2307,7 +2308,7 @@
 | `FLOW-audit-trail-call` | io | `FUNC-audit-trail` |
 | `FLOW-audit-trail-call` | relation | `SCHEMA-audit-trail-input` |
 | `FLOW-auftrag` | io | `FUNC-agent-loop` |
-| `FLOW-auftrag` | relation | `SCHEMA-query-params` |
+| `FLOW-auftrag` | relation | `SCHEMA-auftragstext` |
 | `FLOW-authoring-guide-call` | io | `FUNC-authoring-guide` |
 | `FLOW-authoring-guide-call` | relation | `SCHEMA-authoring-guide-input` |
 | `FLOW-auto-export-register` | io | `FUNC-auto-export` |
@@ -2774,7 +2775,7 @@
 | `FLOW-skill-request` | io | `FUNC-se-vorbereitung` |
 | `FLOW-skill-request` | io | `FUNC-test` |
 | `FLOW-skill-request` | io | `FUNC-test-ui` |
-| `FLOW-skill-request` | relation | `SCHEMA-query-params` |
+| `FLOW-skill-request` | relation | `SCHEMA-auftragstext` |
 | `FLOW-skill-sync-result-sync-skills` | io | `FUNC-cli-dispatch` |
 | `FLOW-skill-sync-result-sync-skills` | relation | `SCHEMA-skill-sync-result` |
 | `FLOW-skill-sync-result-upgrade` | io | `FUNC-upgrade` |

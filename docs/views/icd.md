@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 101 SCHEMA · 287 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 102 SCHEMA · 287 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -16,6 +16,7 @@
 | `SCHEMA-audit-stats-input` | src/surface/audit.ts#AuditStatsInputSchema | n/a |
 | `SCHEMA-audit-trail-input` | src/surface/audit.ts#AuditTrailInputSchema | n/a |
 | `SCHEMA-aufruf-ohne-daten` | src/surface/aufruf-ohne-daten-contract.ts#AufrufOhneDatenSchema | reviewed |
+| `SCHEMA-auftragstext` | ⚠ kein realRef (R-26) | n/a |
 | `SCHEMA-authoring-guide-input` | src/projections/report.ts#GraphAuthoringGuideInputSchema | n/a |
 | `SCHEMA-branch-merge-report` | src/kernel/merge.ts#MergeReportSchema | n/a |
 | `SCHEMA-chain-metrics` | packages/contracts/src/se/chain-metrics.ts#ChainMetrics | reviewed |
