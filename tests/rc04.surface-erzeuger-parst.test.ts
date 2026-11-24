@@ -44,7 +44,7 @@ describe('CR-GC-984: das Verb der CLI ist ein Schema', () => {
     for (const verb of CliVerbSchema.options) {
       expect(checkVerbArgs(verb, ['--help']), verb).toEqual({ kind: 'help' });
     }
-    expect(CliVerbSchema.options).toHaveLength(11);
+    expect(CliVerbSchema.options).toHaveLength(12); // + typbindung (CR-GC-1026)
   });
 
   it('weist `update` und ein unbekanntes Wort ab', () => {

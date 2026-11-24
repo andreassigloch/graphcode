@@ -15,7 +15,7 @@ describe('Vertrag SCHEMA-cli-command', () => {
     expect(S.parse("mcp")).toEqual("mcp");
   });
   it("Werteliste unverändert", () => {
-    expect(Object.values(bei([])._zod.def.entries as Record<string, unknown>)).toEqual(["mcp","host","status","init","remove","import-code","render","rewind","upgrade","skills","vertragstest"]);
+    expect(Object.values(bei([])._zod.def.entries as Record<string, unknown>)).toEqual(["mcp","host","status","init","remove","import-code","render","rewind","upgrade","skills","vertragstest","typbindung"]);
   });
   it("nimmt mcp an", () => {
     expect(S.parse("mcp")).toEqual("mcp");
@@ -49,6 +49,9 @@ describe('Vertrag SCHEMA-cli-command', () => {
   });
   it("nimmt vertragstest an", () => {
     expect(S.parse("vertragstest")).toEqual("vertragstest");
+  });
+  it("nimmt typbindung an", () => {
+    expect(S.parse("typbindung")).toEqual("typbindung");
   });
   it("lehnt einen Wert außerhalb ab", () => {
     expect(S.safeParse("__ausserhalb__").success).toBe(false);

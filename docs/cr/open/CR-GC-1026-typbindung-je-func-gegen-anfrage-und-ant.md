@@ -188,6 +188,31 @@ Quelle der Richtung je FLOW und Partner: Code 348, Kette 134, offen 21.
 
 **Go** für den Bau. Bekannte Grenze: Ein FLOW an einen Akteur gilt als Rückgabe; bei einem Server, der über HTTP antwortet, ist das falsch (Artefaktklasse aus M2).
 
+## Bau
+
+### Abhängigkeit von contracts (CR-SM-459)
+
+Die Richtung aus dem Code braucht die Zuordnung „Aufrufstelle → FUNC“ aus contracts. Sie war nicht exportiert; der Spike hatte sie kopiert. Nach FAQ `zuordnung-nicht-nachbauen` kommt sie aus contracts (Entscheidung des Autors 2026-11-24, umgesetzt von Smeagol in sigloch-modules): `funcCalls(graph, facts)` (Bedeutung von RC-13: direkter Aufruf, innerster Anker) und `ChainRoles.depth` (Abstand vom Auslöser im Aktivierungsnetz von `chainRoles`). contracts 12.18.0, nicht veröffentlicht. graphcode baut im Link-Modus dagegen; der Floor steht auf `^12.18.0`. Bis zum Publish sind `lockfile-sync` und `distribution` rot (FAQ `peer-floor-wann`).
+
+### Lauf 6 mit dem Produkt (kein neues Kriterium)
+
+Der Spike nutzte die Bedeutung von RC-12 und ein nachgebautes Aktivierungsnetz. Nachgemessen mit dem Verb (`graphcode typbindung`, 3,3 s) am selben Modell:
+
+| | Lauf 5 | Lauf 6 |
+|---|---|---|
+| gebunden, grün | 6 | 6 |
+| gebunden, rot | 42 | 41 |
+| nicht prüfbar | 40 | 41 |
+
+Die roten FUNC von Lauf 6 sind die von Lauf 5 ohne `FUNC-import` (jetzt „Richtung offen: FLOW-imported-graph“). Die 14 Signaturen der Stichprobe sind identisch; das Urteil von M2 (1 Artefakt) gilt weiter. Grün: `FUNC-arch-fitness`, `FUNC-chain-metrics`, `FUNC-collect-status`, `FUNC-cr-groups`, `FUNC-generation-step`, `FUNC-select-tests`.
+
+### Schnitt
+
+Der Floor gehört in denselben Commit wie der Import (FAQ `peer-floor-wann`). Damit hätte der Bau 12 Dateien. Er teilt sich an einer Stelle, an der beide Teile grün bleiben:
+
+- **Teil 1 (dieser CR):** `src/projections/typbindung.ts` (Generator), `src/surface/typbindung-verb.ts` (Verb, Richtung Code vor Kette), `src/cli.ts`, `src/surface/cli-args.ts` (Verb `typbindung`), `tests/typbindung.test.ts` (8 Tests), `tests/rc04.surface-erzeuger-parst.test.ts` (12 Verben), `tests/vertrag/SCHEMA-cli-command.vertrag.test.ts` (neu erzeugt), `package.json`, `package-lock.json`, diese Datei. 10 Dateien.
+- **Teil 2 (Folge-CR):** `tests/typbindung/bindungen.ts` (erzeugt), `tests/typbindung/altlast.json` (41 FUNC), Test auf Gleichstand der committeten mit der neu erzeugten Datei, README, Modellknoten.
+
 ---
 
 ## Entscheidungen

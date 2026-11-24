@@ -43,6 +43,7 @@ import { collectStatus, formatStatus, statusIsHealthy } from './surface/status.j
 import { executeUpgrade, formatUpgrade, UpgradeError } from './surface/upgrade.js';
 import { checkVerbArgs, CliVerbSchema } from './surface/cli-args.js';
 import { executeVertragstest, VertragstestAufrufFehler } from './surface/vertragstest-verb.js';
+import { executeTypbindung, TypbindungAufrufFehler } from './surface/typbindung-verb.js';
 
 const USAGE = `graphcode — governed graph substrate (MCP-stdio)
 
@@ -66,6 +67,11 @@ Usage:
                     erzeugen (CR-GC-962), Ziel tests/vertrag. Ohne uids: jedes
                     SCHEMA, dessen Datei im Repo liegt. Liest den Snapshot,
                     keinen Store. Exit 1: ein SCHEMA ohne Test; Exit 2: Aufruf.
+  graphcode typbindung [--ziel <datei>]
+                    Je Blatt-FUNC die Signatur gegen Anfrage- und Antwort-SCHEMA
+                    binden (CR-GC-1026), Ziel tests/typbindung/bindungen.ts;
+                    npm run type-check meldet jede Abweichung. Altlast in
+                    altlast.json daneben. Exit 2: Aufruf.
   graphcode rewind <ref> [--force] [--snapshot <pfad>]
                     Recall the graph state committed at <ref> (CR-GC-311).
                     Reads the snapshot from git object storage — the working
@@ -202,6 +208,23 @@ async function main(): Promise<void> {
       } catch (err) {
         if (err instanceof VertragstestAufrufFehler) {
           process.stderr.write(`graphcode vertragstest: ${err.message}\n`);
+          process.exit(2);
+        }
+        throw err;
+      }
+    }
+    case 'typbindung': {
+      // Typbindung je Blatt-FUNC (CR-GC-1026). Bericht auf stderr wie vertragstest.
+      const args = process.argv.slice(3);
+      const zi = args.indexOf('--ziel');
+      try {
+        const befunde = executeTypbindung({ repoRoot: process.cwd(), ziel: zi >= 0 ? args[zi + 1] : undefined });
+        const je = (k: string) => befunde.filter((b) => b.klasse === k).length;
+        process.stderr.write(`graphcode typbindung: gebunden ${je('gebunden')}, Altlast ${je('altlast')}, nicht prüfbar ${je('nicht prüfbar')}\n`);
+        process.exit(0);
+      } catch (err) {
+        if (err instanceof TypbindungAufrufFehler) {
+          process.stderr.write(`graphcode typbindung: ${err.message}\n`);
           process.exit(2);
         }
         throw err;

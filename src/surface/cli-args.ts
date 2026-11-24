@@ -24,6 +24,7 @@ export const CliVerbSchema = z.enum([
   'upgrade',
   'skills',
   'vertragstest',
+  'typbindung',
 ]);
 export type CliVerb = z.infer<typeof CliVerbSchema>;
 
@@ -48,6 +49,7 @@ const VERBS: Readonly<Record<CliVerb, VerbArgs>> = {
   upgrade: { flags: ['--check', '--keep-host', '--global', '--refresh-only'], valueFlags: ['--to'] },
   skills: { positionals: 1 },
   vertragstest: { valueFlags: ['--ziel'], positionals: Infinity },
+  typbindung: { valueFlags: ['--ziel'], positionals: 0 },
 };
 
 export type ArgsVerdict = { kind: 'run' } | { kind: 'help' } | { kind: 'error'; message: string };
