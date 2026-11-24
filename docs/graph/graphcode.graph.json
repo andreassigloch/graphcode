@@ -236,6 +236,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-1026",
+      "type": "CR",
+      "name": "Typbindung je FUNC gegen Anfrage- und Antwort-SCHEMA als Prüfung, Richtung aus der Wirkkette, Altlast als Ratsche (aus CR-GC-1024)",
+      "description": "docs/cr/open/CR-GC-1026-typbindung-je-func-gegen-anfrage-und-ant.md"
+    },
+    {
       "id": "CR-GC-103",
       "type": "CR",
       "name": "Format-E Codec",
@@ -41787,5 +41793,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1610
+  "graphVersion": 1611
 }
