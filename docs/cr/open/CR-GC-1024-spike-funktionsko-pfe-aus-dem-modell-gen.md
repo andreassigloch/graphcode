@@ -78,7 +78,53 @@ Regel 2 wird in zwei Varianten gerechnet; Regeln 1, 3, 4, 5 und alle Kriterien b
 
 ## Ergebnis
 
-_(nach dem Lauf)_
+**Lauf 2026-11-24**, Modell eingefroren beim Commit nach der Korrektur, 1193 Aufrufkanten aus `extractCallFacts`. Werkzeug und Rohdaten: `graphanalyze/docs/spikes/SPIKE-GC-1024/` (`werkzeug/kopf.mjs`, `werkzeug/pruefen.mjs`, `lauf/plan-2a.json`, `lauf/plan-2b.json`, `lauf/tsc-2a.json`, `lauf/tsc-2b.json`, `lauf/rc-befunde.json`).
+
+**Werkzeugfehler im Lauf, vor der ersten tsc-Zahl:**
+- Variante 2b ordnete Aufrufe zuerst über den Anfang des Symbolpfads zu. Am echten Modell lieferte das fast überall „kein Aufruf“. An bekannten Aufrufen nachgeprüft: `bindReportTools.graph_readiness.handler` ruft `readinessOf`, wurde aber nicht erkannt. Behoben durch die Zuordnung, die RC-12 nutzt (`anchorDepth`, Weg ≤ 3 Kanten, aus `call-rules.ts` übernommen, dort nicht exportiert). Danach wurde die Fixture erneut geprüft und bestand.
+- `pruefen.mjs` las grün, wenn `zod/v4` nicht auflösbar war, weil die Typen dann zu `any` wurden. Jetzt gilt eine Meldung außerhalb der Bindungsdateien als „nicht prüfbar“.
+
+### Kontrolle
+
+Fixture besteht in 2b: passende FUNC grün, Rückgabe-Mutation und Parameter-Mutation rot. In 2a ist sie wie erwartet nicht ableitbar. Ohne die Bindung bleibt `code.ts` in beiden Mutationen für tsc grün.
+
+### M1 Kopftreue
+
+| | ableitbar | grün | rot | nicht ableitbar |
+|---|---|---|---|---|
+| 2a Modell allein | 3 | 0 | 3 | 9 |
+| 2b Modell + Aufrufkanten | 6 | **0** | 6 | 6 |
+
+Gesehene Gruppe (5 FUNC): 0 grün. Ungesehene Gruppe (7 FUNC): 0 grün.
+
+**Kill greift in beiden Varianten** (< 6 von 12).
+
+**Klassen der roten FUNC (2b):**
+
+| FUNC | Modell sagt | Code hat | Klasse |
+|---|---|---|---|
+| `FUNC-ein-adapter-je-akteur`, `FUNC-eingaenge-nur-aus`, `FUNC-grenze-nur-mit-schema` | Eingang nur über den async-FLOW `FLOW-graph-snapshot-file`, also `() => Befund` | `(graph, elternMod/elementId, Liste)` | (a) Parameter, die kein FLOW sind; der Graph kommt im Speicher, nicht als Datei |
+| `FUNC-select-tests` | `(OntologyGraph) => TestImpactResult` | `(graph: Graph, changeSet, depth?)` | **(b)** `Graph` (nodes/edges) statt `OntologyGraph` (elements/traces); (a) `changeSet` |
+| `FUNC-zug-bericht` | `(OntologyGraph) => ZugBericht` | `(before: Graph, after: Graph, policy, opts) => ZugBericht \| BerichtFehlt` | **(b)** `Graph` statt `OntologyGraph`; (a) `policy`, `opts`, Fehlerfall `BerichtFehlt` |
+| `FUNC-cr-groups` | `(CrGroups) => CrGroups` | `(graph, crIds) => CrGroups` | **(b)** Der Anfrage-FLOW `FLOW-cr-groups-request` trägt das Antwort-SCHEMA |
+
+**Nicht ableitbar in 2b (6):** Der Partner liegt außerhalb der Aufrufkanten, in `scripts/*.mjs` (`FUNC-lauf-urteil`, `FUNC-measure-test-schlupf`, `FUNC-plan-code-lane`) oder in einem Nachbarpaket (`FUNC-compute-readiness` ↔ `FUNC-score-completeness`, `FUNC-chain-metrics`).
+
+**Drift, die keine Regel meldet:** Die drei Fälle der Klasse (b) widersprechen dem Code. RC-01 bis RC-13 melden zu `FUNC-cr-groups` nichts. Zu `FUNC-select-tests` und `FUNC-zug-bericht` meldet nur RC-04 „OntologyGraph wird nicht geparst“; das SCHEMA trägt diesen Befund als bewusst akzeptiert, und er nennt den falschen Typ nicht.
+
+### M2 Positivkontrolle an echter FUNC
+
+Nicht gelaufen: Keine echte FUNC hat eine grüne Bindung, an der eine Mutation rot werden könnte. Muss 1 ist damit nicht bewertbar.
+
+### M3 RC-04
+
+Am eingefrorenen Modell meldet RC-04 10 Befunde, nicht 23 wie in CR-GC-957. 7 davon tragen am SCHEMA den Vermerk „bleibt bewusst stehen“ (Übergabe im selben Prozess). Ein generierter Parse würde diese Entscheidung umkehren. 3 haben keinen Vermerk (`SCHEMA-audit-stats`, `SCHEMA-impact-slice`, `SCHEMA-skill-text`); am Code nicht geprüft.
+
+### Empfehlung
+
+**No-Go** für „Funktionsköpfe aus dem heutigen Modell generieren“. Dem Modell fehlen für einen Kopf drei Informationen: Parameter, die kein FLOW sind (Auswahl, Einstellung), die Aufrufrichtung eines FLOW-Paars und der Fehlerfall. Die ersten beiden wären eine Änderung an der Ontologie in contracts.
+
+Der Mechanismus selbst wirkt: Die Typbindung fand an 6 roten FUNC 3 Widersprüche zwischen Modell und Code, die keine Regel meldet. Ob daraus eine Regel wird, die das Anfrage-SCHEMA gegen den Parametertyp prüft, entscheidet der Autor.
 
 ---
 
