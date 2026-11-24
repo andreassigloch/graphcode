@@ -48,14 +48,14 @@ function plan(): Pick<Graph, 'nodes' | 'edges'> {
 
 describe('TEST-se-plan-groups (CR-GC-896)', () => {
   it('trennt gemeinsame Datei und Abhaengigkeit, buendelt den Rest', () => {
-    const { groups, cyclic } = crGroups(plan(), ['CR-1', 'CR-2', 'CR-3', 'CR-4', 'CR-5']);
+    const { groups, cyclic } = crGroups({ graph: plan(), crIds: ['CR-1', 'CR-2', 'CR-3', 'CR-4', 'CR-5'] });
     expect(groups).toEqual([['CR-1', 'CR-2', 'CR-5'], ['CR-3', 'CR-4']]);
     expect(cyclic).toEqual([]);
   });
 
   it('kein Paar einer Gruppe teilt Kante oder Datei; jede Voraussetzung steht frueher', () => {
     const g = plan();
-    const { groups } = crGroups(g, ['CR-1', 'CR-2', 'CR-3', 'CR-4', 'CR-5']);
+    const { groups } = crGroups({ graph: g, crIds: ['CR-1', 'CR-2', 'CR-3', 'CR-4', 'CR-5'] });
     const index = new Map(groups.flatMap((grp, i) => grp.map((c) => [c, i] as const)));
     for (const d of g.edges.filter((x) => x.attributes.label === 'depends-on')) {
       expect(index.get(d.targetId)!).toBeLessThan(index.get(d.sourceId)!);
@@ -66,7 +66,7 @@ describe('TEST-se-plan-groups (CR-GC-896)', () => {
   it('ein Zyklus wird gemeldet, nicht eingeordnet', () => {
     const g = plan();
     g.edges.push(e('CR-2', 'CR-4', 'relation', 'depends-on'));
-    const { groups, cyclic } = crGroups(g, ['CR-1', 'CR-2', 'CR-3', 'CR-4', 'CR-5']);
+    const { groups, cyclic } = crGroups({ graph: g, crIds: ['CR-1', 'CR-2', 'CR-3', 'CR-4', 'CR-5'] });
     expect(cyclic).toEqual(['CR-2', 'CR-4']);
     expect(groups.flat()).not.toContain('CR-2');
   });

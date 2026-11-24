@@ -49,7 +49,7 @@
 | `FUNC-commit-check` | FUNC | Commit-Pruefung Fluss gegen Aufruf |
 | `FUNC-compute-readiness` | FUNC | readinessOf(evaluation) |
 | `FUNC-compute-steering-delta` | FUNC | computeSteeringDelta(before, after) |
-| `FUNC-cr-groups` | FUNC | crGroups(graph, crIds) |
+| `FUNC-cr-groups` | FUNC | crGroups(anfrage) |
 | `FUNC-create-harness` | FUNC | createHarness |
 | `FUNC-decode` | FUNC | formatEToCommands(harness, text) |
 | `FUNC-deduce-tests` | FUNC | graph_tests(changeSet) |
@@ -129,7 +129,7 @@
 | `FUNC-se-umbau` | FUNC | Skill se-umbau |
 | `FUNC-se-vorbereitung` | FUNC | Skill se-vorbereitung |
 | `FUNC-seed-from-json` | FUNC | seedFromJsonFile(target, relPath) |
-| `FUNC-select-tests` | FUNC | impactedTests(graph, changeSet) |
+| `FUNC-select-tests` | FUNC | impactedTests(anfrage) |
 | `FUNC-serve-sse` | FUNC | serveSSE() |
 | `FUNC-serve-stdio` | FUNC | serveStdio() |
 | `FUNC-session-shutdown` | FUNC | SessionLifecycle |

@@ -18,7 +18,7 @@
  * @author andreas@siglochconsulting
  */
 import { z } from 'zod/v4';
-import type { Graph, GraphEdge } from '@sigloch/graph-api-core';
+import { GraphSchema, type Graph, type GraphEdge } from '@sigloch/graph-api-core';
 
 /**
  * Die REQ-Deckung des Plans (CR-GC-550) — die Zahl, die der Plan ueber sich selbst schuldet.
@@ -197,6 +197,14 @@ export const CrGroupsSchema = z.object({
 });
 export type CrGroups = z.infer<typeof CrGroupsSchema>;
 
+/** Aufrufvertrag von `crGroups` (CR-GC-1025): der Graph und die CRs, die gruppiert werden. */
+export const CrGroupsAnfrageSchema = z.strictObject({
+  graph: GraphSchema,
+  crIds: z.array(z.string()),
+});
+/** Der Graph kommt als `Graph`, gerechnet wird auf ihm. */
+export type CrGroupsAnfrage = Omit<z.input<typeof CrGroupsAnfrageSchema>, 'graph'> & { graph: Pick<Graph, 'nodes' | 'edges'> };
+
 /**
  * CR-GC-896 — welche offenen CRs eines Meilensteins gleichzeitig laufen duerfen.
  *
@@ -213,10 +221,10 @@ export type CrGroups = z.infer<typeof CrGroupsSchema>;
  * Gruppe laufen die CRs gleichzeitig. Deterministisch: Abhaengigkeit legt die fruehste Gruppe fest,
  * dann nimmt jeder CR in uid-Reihenfolge die erste Gruppe ab dort ohne gemeinsame Datei.
  */
-export function crGroups(
-  graph: Pick<Graph, 'nodes' | 'edges'>,
-  crIds: readonly string[],
-): CrGroups {
+export function crGroups(anfrage: CrGroupsAnfrage): CrGroups {
+  const { crIds } = CrGroupsAnfrageSchema.parse(anfrage);
+  // Geprueft ist der Graph; gerechnet wird auf dem Original, die Kopie des Schemas verloere Felder.
+  const { graph } = anfrage;
   const byId = new Map(graph.nodes.map((n) => [n.uid, n]));
   const ids = [...crIds].sort();
   const inSet = new Set(ids);

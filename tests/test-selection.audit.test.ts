@@ -83,7 +83,7 @@ const fixtureGraph = (): Graph => snapshotToGraph(fixture);
 
 describe('impactedTests: die Kantensemantik der Auswahl', () => {
   it('erreicht vom geänderten MOD über allocate → satisfy → verify den TEST', () => {
-    const result = impactedTests(fixtureGraph(), ['MOD-1']);
+    const result = impactedTests({ graph: fixtureGraph(), changeSet: ['MOD-1'] });
 
     expect(result.testIds).toEqual(['TEST-CODE']);
     expect(result.anchors).toContain('FUNC-1'); // MOD ← FUNC (allocate, eingehend)
@@ -91,14 +91,14 @@ describe('impactedTests: die Kantensemantik der Auswahl', () => {
   });
 
   it('lässt den unbeteiligten Zweig draußen', () => {
-    const result = impactedTests(fixtureGraph(), ['MOD-1']);
+    const result = impactedTests({ graph: fixtureGraph(), changeSet: ['MOD-1'] });
 
     expect(result.testIds).not.toContain('TEST-OTHER');
     expect(result.nodes.map((n) => n.uid)).not.toContain('REQ-2');
   });
 
   it('degeneriert bei einem REQ-ChangeSet auf dessen verify-Abhängige', () => {
-    const result = impactedTests(fixtureGraph(), ['REQ-1']);
+    const result = impactedTests({ graph: fixtureGraph(), changeSet: ['REQ-1'] });
 
     expect(result.testIds).toEqual(['TEST-CODE']);
     // Kein Abstieg in die Realisierung: FUNC-1 zeigt AUF REQ-1, wird also nicht Anker.
@@ -106,7 +106,7 @@ describe('impactedTests: die Kantensemantik der Auswahl', () => {
   });
 
   it('gibt nur Kanten zurück, deren beide Enden im Ergebnis stehen', () => {
-    const result = impactedTests(fixtureGraph(), ['MOD-1']);
+    const result = impactedTests({ graph: fixtureGraph(), changeSet: ['MOD-1'] });
     const kept = new Set(result.nodes.map((n) => n.uid));
 
     for (const edge of result.edges) {
@@ -160,7 +160,7 @@ const contractFixture = {
 
 describe('impactedTests: der Vertragspfad FUNC → FLOW → SCHEMA → TEST (CR-GC-521)', () => {
   it('wählt für die geänderte Produzenten-FUNC den Vertragstest ihres FLOW-SCHEMAs', () => {
-    const result = impactedTests(snapshotToGraph(contractFixture), ['FUNC-A']);
+    const result = impactedTests({ graph: snapshotToGraph(contractFixture), changeSet: ['FUNC-A'] });
 
     expect(result.testIds).toEqual(['TEST-CONTRACT-A']);
     expect(result.anchors).toContain('FLOW-A'); // FUNC → FLOW (io, ausgehend)
@@ -168,7 +168,7 @@ describe('impactedTests: der Vertragspfad FUNC → FLOW → SCHEMA → TEST (CR-
   });
 
   it('läuft NICHT über den FLOW in die Konsumenten-FUNC und deren Vertrag', () => {
-    const result = impactedTests(snapshotToGraph(contractFixture), ['FUNC-A']);
+    const result = impactedTests({ graph: snapshotToGraph(contractFixture), changeSet: ['FUNC-A'] });
 
     expect(result.testIds).not.toContain('TEST-CONTRACT-B');
     expect(result.anchors).not.toContain('FUNC-B');
@@ -176,15 +176,15 @@ describe('impactedTests: der Vertragspfad FUNC → FLOW → SCHEMA → TEST (CR-
   });
 
   it('wählt für die Konsumenten-FUNC beide Verträge: den Eingang und den Ausgang', () => {
-    const result = impactedTests(snapshotToGraph(contractFixture), ['FUNC-B']);
+    const result = impactedTests({ graph: snapshotToGraph(contractFixture), changeSet: ['FUNC-B'] });
 
     expect([...result.testIds].sort()).toEqual(['TEST-CONTRACT-A', 'TEST-CONTRACT-B']);
     expect(result.anchors).not.toContain('FUNC-A'); // FLOW-A → FUNC-A wäre der Rückweg
   });
 
   it('ist deterministisch: gleiche Eingabe, gleiche Reihenfolge', () => {
-    const a = impactedTests(snapshotToGraph(contractFixture), ['FUNC-B']);
-    const b = impactedTests(snapshotToGraph(contractFixture), ['FUNC-B']);
+    const a = impactedTests({ graph: snapshotToGraph(contractFixture), changeSet: ['FUNC-B'] });
+    const b = impactedTests({ graph: snapshotToGraph(contractFixture), changeSet: ['FUNC-B'] });
 
     expect(a.testIds).toEqual(b.testIds);
     expect(a.anchors).toEqual(b.anchors);
@@ -216,7 +216,7 @@ describe('Parität: Store-Pfad und Snapshot-Pfad sehen dasselbe', () => {
   it('harness.testImpact() liefert denselben Knotensatz wie impactedTests() über den geladenen Graphen', async () => {
     const viaStore = await harness.testImpact(['MOD-1'], 1);
     const loaded = await harness.getStore().loadGraph(harness.getScope());
-    const viaFunction = impactedTests(loaded, ['MOD-1'], 1);
+    const viaFunction = impactedTests({ graph: loaded, changeSet: ['MOD-1'], depth: 1 });
 
     const uids = (g: { nodes: Array<{ uid: string }> }): string[] => g.nodes.map((n) => n.uid).sort();
     expect(uids(viaStore)).toEqual(uids(viaFunction));
@@ -231,7 +231,7 @@ describe('Parität: Store-Pfad und Snapshot-Pfad sehen dasselbe', () => {
   // ---------------------------------------------------------------------------
   it('FLOW-impacted-tests: der Resolver-Output erfüllt SCHEMA-impacted-tests', async () => {
     const loaded = await harness.getStore().loadGraph(harness.getScope());
-    const parsed = TestImpactResultSchema.parse(impactedTests(loaded, ['MOD-1'], 1));
+    const parsed = TestImpactResultSchema.parse(impactedTests({ graph: loaded, changeSet: ['MOD-1'], depth: 1 }));
 
     expect(parsed.testIds).toEqual(['TEST-CODE']);
     expect(parsed.anchors).toContain('REQ-1');

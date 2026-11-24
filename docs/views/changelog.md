@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 627 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 628 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 627 CR · 616 done · 1 open.
+Total: 628 CR · 616 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -247,6 +247,7 @@ Total: 627 CR · 616 done · 1 open.
 | `CR-GC-1021` | done | SCHEMA-query-params: Auftrag und Skill-Aufruf sind Prompt-Text, kein Code-Vertrag |
 | `CR-GC-1022` | done | generationStep: acht Positionsargumente ohne Vertrag, ein Aufrufer gibt sie verschoben |
 | `CR-GC-1023` | done | Probelauf-Test des Optimierers liest das lebende Modell und muss nach jeder Modellaenderung neu eingemessen werden |
+| `CR-GC-1025` | n/a | Aufrufvertrag als ein Objekt: crGroups, impactedTests, zugBericht weichen vom Anfrage-SCHEMA ab (aus CR-GC-1024) |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |

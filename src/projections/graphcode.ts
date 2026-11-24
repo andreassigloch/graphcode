@@ -503,7 +503,7 @@ export function renderImplPlan(graph: Graph, name: string): string {
     // gemeinsame Datei); Gruppe n+1 beginnt nach Gruppe n.
     const open = crs.filter((c) => status(idx.get(c)!) !== 'done');
     const gruppe = new Map<string, number | string>();
-    const { groups, cyclic } = crGroups(graph, open);
+    const { groups, cyclic } = crGroups({ graph, crIds: open });
     groups.forEach((g, i) => g.forEach((c) => gruppe.set(c, i + 1)));
     cyclic.forEach((c) => gruppe.set(c, 'Zyklus'));
     lines.push('| CR | status | Gruppe | name |', '|---|---|---|---|');

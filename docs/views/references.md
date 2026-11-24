@@ -164,6 +164,11 @@
 | `CR-GC-1022` | relation | `FUNC-generation-step` |
 | `CR-GC-1022` | relation | `SCHEMA-generation-request` |
 | `CR-GC-1023` | relation | `FUNC-graph-suggest` |
+| `CR-GC-1025` | relation | `FUNC-cr-groups` |
+| `CR-GC-1025` | relation | `FUNC-select-tests` |
+| `CR-GC-1025` | relation | `SCHEMA-cr-groups` |
+| `CR-GC-1025` | relation | `SCHEMA-cr-groups-anfrage` |
+| `CR-GC-1025` | relation | `SCHEMA-test-impact-anfrage` |
 | `CR-GC-103` | relation | `FUNC-decode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |
@@ -2408,7 +2413,7 @@
 | `FLOW-cr-groups` | io | `FUNC-export-markdown` |
 | `FLOW-cr-groups` | relation | `SCHEMA-cr-groups` |
 | `FLOW-cr-groups-request` | io | `FUNC-cr-groups` |
-| `FLOW-cr-groups-request` | relation | `SCHEMA-cr-groups` |
+| `FLOW-cr-groups-request` | relation | `SCHEMA-cr-groups-anfrage` |
 | `FLOW-dashboard-answer` | io | `ACTOR-dashboard` |
 | `FLOW-dashboard-answer` | relation | `SCHEMA-metrics-answer` |
 | `FLOW-dashboard-call` | io | `FUNC-host-socket` |
@@ -2739,9 +2744,9 @@
 | `FLOW-seed-request-render` | io | `FUNC-seed-from-json` |
 | `FLOW-seed-request-render` | relation | `SCHEMA-ontology-json` |
 | `FLOW-select-request` | io | `FUNC-select-tests` |
-| `FLOW-select-request` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-select-request` | relation | `SCHEMA-test-impact-anfrage` |
 | `FLOW-select-request-lane` | io | `FUNC-select-tests` |
-| `FLOW-select-request-lane` | relation | `SCHEMA-ontology-graph` |
+| `FLOW-select-request-lane` | relation | `SCHEMA-test-impact-anfrage` |
 | `FLOW-selected-tests` | io | `FUNC-plan-code-lane` |
 | `FLOW-selected-tests` | io | `FUNC-resolve-tests-from-code` |
 | `FLOW-selected-tests` | relation | `SCHEMA-impacted-tests` |
@@ -4412,6 +4417,7 @@
 | `TEST-vertrag-completeness` | verify | `SCHEMA-completeness` |
 | `TEST-vertrag-context-input` | verify | `SCHEMA-context-input` |
 | `TEST-vertrag-cr-groups` | verify | `SCHEMA-cr-groups` |
+| `TEST-vertrag-cr-groups-anfrage` | verify | `SCHEMA-cr-groups-anfrage` |
 | `TEST-vertrag-eingangs-befund` | verify | `SCHEMA-eingangs-befund` |
 | `TEST-vertrag-elements-input` | verify | `SCHEMA-elements-input` |
 | `TEST-vertrag-expand-input` | verify | `SCHEMA-expand-input` |
@@ -4481,6 +4487,7 @@
 | `TEST-vertrag-suggest-answer` | verify | `SCHEMA-suggest-answer` |
 | `TEST-vertrag-suggest-input` | verify | `SCHEMA-suggest-input` |
 | `TEST-vertrag-target-profile` | verify | `SCHEMA-target-profile` |
+| `TEST-vertrag-test-impact-anfrage` | verify | `SCHEMA-test-impact-anfrage` |
 | `TEST-vertrag-test-ingest-answer` | verify | `SCHEMA-test-ingest-answer` |
 | `TEST-vertrag-test-ingest-input` | verify | `SCHEMA-test-ingest-input` |
 | `TEST-vertrag-test-refs` | verify | `SCHEMA-test-refs` |

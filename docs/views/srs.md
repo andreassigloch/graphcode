@@ -2120,7 +2120,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` (integration) · satisfy ◀ `FUNC-agent-loop` · allocate ▶ `MOD-agent-surface`
 
-###### 3.3.1.3.1.5  `FUNC-select-tests` — impactedTests(graph, changeSet)
+###### 3.3.1.3.1.5  `FUNC-select-tests` — impactedTests(anfrage)
 
 > auch in: `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-messwerk`
 
@@ -2378,7 +2378,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-kernel`
 
-###### 3.3.1.3.3.7  `FUNC-select-tests` — impactedTests(graph, changeSet)
+###### 3.3.1.3.3.7  `FUNC-select-tests` — impactedTests(anfrage)
 
 > auch in: `FCHAIN-impact-testing` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-messwerk`
 
@@ -2464,7 +2464,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.3.4.4  `FUNC-select-tests` — impactedTests(graph, changeSet)
+###### 3.3.1.3.4.4  `FUNC-select-tests` — impactedTests(anfrage)
 
 > auch in: `FCHAIN-impact-testing` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane-full` · `FUNC-block-messwerk`
 
@@ -2716,7 +2716,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.3.5.4  `FUNC-select-tests` — impactedTests(graph, changeSet)
+###### 3.3.1.3.5.4  `FUNC-select-tests` — impactedTests(anfrage)
 
 > auch in: `FCHAIN-impact-testing` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FUNC-block-messwerk`
 
@@ -4750,7 +4750,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.5.6.5  `FUNC-cr-groups` — crGroups(graph, crIds)
+###### 3.3.1.5.6.5  `FUNC-cr-groups` — crGroups(anfrage)
 
 Rechnet die Gruppen offener CRs eines Meilensteins: Abhaengigkeit legt die fruehste Gruppe fest, gemeinsame realRef-Datei trennt; CRs in einem Zyklus werden gemeldet, nicht eingeordnet. (CR-GC-896)
 
@@ -4902,7 +4902,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` (integration) · satisfy ◀ `FUNC-agent-loop` · allocate ▶ `MOD-agent-surface`
 
-###### 3.3.1.5.8.5  `FUNC-select-tests` — impactedTests(graph, changeSet)
+###### 3.3.1.5.8.5  `FUNC-select-tests` — impactedTests(anfrage)
 
 > auch in: `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-messwerk`
 
@@ -6236,7 +6236,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-graph-tests-operational` (integration) · satisfy ◀ `FUNC-resolve-tests-from-code` · allocate ▶ `MOD-kernel`
 
-###### 3.3.1.5.12.7  `FUNC-select-tests` — impactedTests(graph, changeSet)
+###### 3.3.1.5.12.7  `FUNC-select-tests` — impactedTests(anfrage)
 
 > auch in: `FCHAIN-impact-testing` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full` · `FUNC-block-messwerk`
 
@@ -6322,7 +6322,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-test-von-hand` (integration) · satisfy ◀ `FUNC-plan-code-lane` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.5.13.4  `FUNC-select-tests` — impactedTests(graph, changeSet)
+###### 3.3.1.5.13.4  `FUNC-select-tests` — impactedTests(anfrage)
 
 > auch in: `FCHAIN-impact-testing` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane-full` · `FUNC-block-messwerk`
 
@@ -7474,7 +7474,7 @@ priority: must · status: n/a · kinds: functional
 
 Verification ◀ `TEST-doc-export` (conformance) · satisfy ◀ `FUNC-export-markdown` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.8.1.5  `FUNC-cr-groups` — crGroups(graph, crIds)
+###### 3.3.1.8.1.5  `FUNC-cr-groups` — crGroups(anfrage)
 
 Rechnet die Gruppen offener CRs eines Meilensteins: Abhaengigkeit legt die fruehste Gruppe fest, gemeinsame realRef-Datei trennt; CRs in einem Zyklus werden gemeldet, nicht eingeordnet. (CR-GC-896)
 
@@ -10946,7 +10946,7 @@ priority: must · status: reviewed · kinds: functional
 
 Verification ◀ `TEST-readiness-completeness` (acceptance) · satisfy ◀ `FUNC-score-completeness` · allocate ▶ `MOD-projections`
 
-###### 3.3.1.10.2.5.12  `FUNC-select-tests` — impactedTests(graph, changeSet)
+###### 3.3.1.10.2.5.12  `FUNC-select-tests` — impactedTests(anfrage)
 
 > auch in: `FCHAIN-impact-testing` · `FCHAIN-test-ingest` · `FCHAIN-verify-lane` · `FCHAIN-verify-lane-full`
 
@@ -13026,7 +13026,7 @@ io ◀ `FUNC-cr-groups` · io ▶ `FUNC-export-markdown` · schema ▶ `SCHEMA-c
 
 Graph und die offenen CRs eines Meilensteins, die renderImplPlan an crGroups gibt.
 
-io ◀ `FUNC-export-markdown` · io ▶ `FUNC-cr-groups` · schema ▶ `SCHEMA-cr-groups`
+io ◀ `FUNC-export-markdown` · io ▶ `FUNC-cr-groups` · schema ▶ `SCHEMA-cr-groups-anfrage`
 
 ###### 3.3.4.1.79  `FLOW-dashboard-answer` — Werkzeugantwort (an das Dashboard)
 
@@ -13866,13 +13866,13 @@ io ◀ `FUNC-render-verb` · io ▶ `FUNC-seed-from-json` · schema ▶ `SCHEMA-
 
 Graph und Aenderungsmenge, die testImpact an impactedTests gibt. Beleg: src/kernel/harness.ts.
 
-io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-resolve-tests-from-code` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-test-impact-anfrage`
 
 ###### 3.3.4.1.219  `FLOW-select-request-lane` — Auswahl-Anfrage (Code-Spur)
 
 Committeter Graph und Knoten der Aenderung, die planCodeLane an impactedTests gibt. Beleg: src/projections/test-selection-audit.ts.
 
-io ◀ `FUNC-plan-code-lane` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-ontology-graph`
+io ◀ `FUNC-plan-code-lane` · io ▶ `FUNC-select-tests` · schema ▶ `SCHEMA-test-impact-anfrage`
 
 ###### 3.3.4.1.220  `FLOW-selected-tests` — Gewaehlte Tests
 
@@ -14376,517 +14376,529 @@ schema ◀ `FLOW-context-call`
 
 ###### 3.3.4.2.16  `SCHEMA-cr-groups` — CrGroups
 
-Aufrufvertrag von crGroups: hinein Graph und die offenen CRs eines Meilensteins, heraus die Gruppen in Reihenfolge und die CRs im Zyklus. Bindung statt Kopie.
+Antwort von crGroups: die Gruppen in Reihenfolge und die CRs im Zyklus. Die Anfrage traegt SCHEMA-cr-groups-anfrage (CR-GC-1025). Bindung statt Kopie.
 
-schema ◀ `FLOW-cr-groups` · `FLOW-cr-groups-request`
+schema ◀ `FLOW-cr-groups`
 
-###### 3.3.4.2.17  `SCHEMA-eingangs-befund` — Eingangs-Befund
+###### 3.3.4.2.17  `SCHEMA-cr-groups-anfrage` — CR-Gruppen-Anfrage
+
+Aufrufvertrag von crGroups: der Graph und die CRs, die gruppiert werden. Bindung statt Kopie. (CR-GC-1025)
+
+schema ◀ `FLOW-cr-groups-request`
+
+###### 3.3.4.2.18  `SCHEMA-eingangs-befund` — Eingangs-Befund
 
 Vertrag des Befunds von eingaengeNurAus: fremd (je Fluss seine Absender) und fehlend (Fluesse der Liste ohne Kante ins Element). Beide leer heisst erfuellt. (CR-GC-851)
 
 schema ◀ `FLOW-eingangs-befund`
 
-###### 3.3.4.2.18  `SCHEMA-elements-input` — Eingabe graph_elements
+###### 3.3.4.2.19  `SCHEMA-elements-input` — Eingabe graph_elements
 
 Eingabe von graph_elements: type und search (optional), limit (positive ganze Zahl, Vorgabe 100), format (json oder formatE, Vorgabe json), prosa (Vorgabe false). (CR-GC-1015)
 
 schema ◀ `FLOW-elements-call`
 
-###### 3.3.4.2.19  `SCHEMA-expand-input` — Eingabe graph_expand
+###### 3.3.4.2.20  `SCHEMA-expand-input` — Eingabe graph_expand
 
 Eingabe von graph_expand: handle (Pflicht), branch (callers, traces, tests oder all, Vorgabe all), depth (positive ganze Zahl, Vorgabe 2). (CR-GC-1015)
 
 schema ◀ `FLOW-expand-call`
 
-###### 3.3.4.2.20  `SCHEMA-export-answer` — Antwort graph_export
+###### 3.3.4.2.21  `SCHEMA-export-answer` — Antwort graph_export
 
 Die Antwort von graph_export: graphJson (Pfad, Bytes, Knoten- und Kantenzahl), views (je Sicht Pfad und Bytes), stubs (angelegte Platzhalterdateien) und, nur wenn groesser als 0, unfedMutations. Der Handler parst sie beim Erzeugen.
 
 schema ◀ `FLOW-export-answer` · `FLOW-export-write-slot`
 
-###### 3.3.4.2.21  `SCHEMA-export-input` — Eingabe graph_export
+###### 3.3.4.2.22  `SCHEMA-export-input` — Eingabe graph_export
 
 Eingabe von graph_export: name (blosser Dateiname, optional), views (Liste der Sichten, optional), force (Wahrheitswert, Vorgabe false). (CR-GC-1016)
 
 schema ◀ `FLOW-export-call` · `FLOW-export-request-import-code` · `FLOW-query-request-auto-export`
 
-###### 3.3.4.2.22  `SCHEMA-export-pending` — ExportPending
+###### 3.3.4.2.23  `SCHEMA-export-pending` — ExportPending
 
 Inhalt der Drift-Marke: Zeitpunkt der ersten un-exportierten Mutation und Zahl der angewandten Batches seit dem letzten Export.
 
 schema ◀ `FLOW-export-cleared` · `FLOW-export-pending` · `FLOW-marker-clear` · `FLOW-marker-clear-reseed` · `FLOW-marker-set`
 
-###### 3.3.4.2.23  `SCHEMA-fit-advisory` — FitAdvisory
+###### 3.3.4.2.24  `SCHEMA-fit-advisory` — FitAdvisory
 
 layer, dimensions, before, after, delta, regressions.
 
 schema ◀ `FLOW-fit-advisory`
 
-###### 3.3.4.2.24  `SCHEMA-format-e` — Format-E
+###### 3.3.4.2.25  `SCHEMA-format-e` — Format-E
 
 Kompaktes Snapshot-/Diff-Format, ein Familienvertrag (graph-api-core). Der geparste Vertrag ist ein Diff aus Operationen plus Fehlerliste — NICHT ein Knoten-/Kanten-Paar. Tuer: das Zod-Schema FormatEInputSchema der Familie ({text, bestand} → Diff, Codec-Fehler als Issues; CR-SM-359). Vorher an den Typ FormatEDiff gebunden und damit fuer RC-09 unsichtbar; CR-GC-641 hatte die Tuer kurz in graphcode gebaut.
 
 schema ◀ `FLOW-formatE-artifact-agent` · `FLOW-formatE-artifact-read-tools` · `FLOW-formatE-tool`
 
-###### 3.3.4.2.25  `SCHEMA-function-criticality` — FunctionCriticality
+###### 3.3.4.2.26  `SCHEMA-function-criticality` — FunctionCriticality
 
 Je FUNC funcId, funcName, chains, useCases. Vier Felder, kein Infrastruktur-Flag - ein Flag waere ein Urteil in der Messung. chains 0 ist eine AUSSAGE, kein fehlender Wert: bei einem Blatt R-30s Befund, bei einem zerlegten Block der von FC-03 erzwungene Normalzustand. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-function-criticality`
 
-###### 3.3.4.2.26  `SCHEMA-generate-input` — Eingabe graph_generate
+###### 3.3.4.2.27  `SCHEMA-generate-input` — Eingabe graph_generate
 
 Eingabe von graph_generate: intent, threshold (0 bis 1), task (ein Regel-Task), defer (Liste von focusKeys), alle optional, und peek (Vorgabe false). (CR-GC-1016)
 
 schema ◀ `FLOW-dashboard-generate-call` · `FLOW-steering-trigger-agent`
 
-###### 3.3.4.2.27  `SCHEMA-generation-request` — GenerationRequest
+###### 3.3.4.2.28  `SCHEMA-generation-request` — GenerationRequest
 
 Was ein Aufrufer an generationStep gibt: Graph, Metrikpolitik, Intention, Schwelle, Zurueckgestelltes, Zielprofil, Task und Steuer-Optimum, als ein Objekt. Setzt sich aus GraphSchema, MetricPolicySchema, TargetProfileSchema und SteerOptimumSchema zusammen. generationStep parst die Anfrage und rechnet auf dem Original des Graphen. (CR-GC-1022)
 
 schema ◀ `FLOW-generation-request`
 
-###### 3.3.4.2.28  `SCHEMA-generation-step` — GenerationStep
+###### 3.3.4.2.29  `SCHEMA-generation-step` — GenerationStep
 
 Fokus-Schluessel und -Typen, Readiness-Auszug, Fund-Fenster, Gate-Protokoll, Handoff-Bedingung.
 
 schema ◀ `FLOW-generate-answer` · `FLOW-generation-step-vorschlag` · `FLOW-next-step-advice`
 
-###### 3.3.4.2.29  `SCHEMA-get-edges-input` — Eingabe graph_get_edges
+###### 3.3.4.2.30  `SCHEMA-get-edges-input` — Eingabe graph_get_edges
 
 Eingabe von graph_get_edges: uid und edgeType (optional), direction (in, out oder both, Vorgabe both), format (json oder formatE). (CR-GC-1015)
 
 schema ◀ `FLOW-get-edges-call`
 
-###### 3.3.4.2.30  `SCHEMA-get-node-input` — Eingabe graph_get_node
+###### 3.3.4.2.31  `SCHEMA-get-node-input` — Eingabe graph_get_node
 
 Eingabe von graph_get_node: uid (Pflicht). (CR-GC-1015)
 
 schema ◀ `FLOW-get-node-call`
 
-###### 3.3.4.2.31  `SCHEMA-graph-delta` — GraphDelta
+###### 3.3.4.2.32  `SCHEMA-graph-delta` — GraphDelta
 
 Was ein vom Gate angenommener Batch im Store aendert: upsert/delete je Knoten und Kante. Schreibreihenfolge Knoten, Kanten, Loeschungen zuletzt. (CR-GC-503)
 
 schema ◀ `FLOW-graph-delta`
 
-###### 3.3.4.2.32  `SCHEMA-grenz-befund` — Grenz-Befund
+###### 3.3.4.2.33  `SCHEMA-grenz-befund` — Grenz-Befund
 
 Vertrag des Befunds von grenzeNurMitSchema: ohneSchema (je Fluss Module und Schemas). Leer heisst erfuellt. (CR-GC-913, CR-GC-956)
 
 schema ◀ `FLOW-grenz-befund`
 
-###### 3.3.4.2.33  `SCHEMA-harness-config` — HarnessConfig
+###### 3.3.4.2.34  `SCHEMA-harness-config` — HarnessConfig
 
 Die Konfiguration, mit der ein Harness geoeffnet wird: repoRoot und scope (systemId, Modus) aus @sigloch/contracts. createHarness parst sie. Aus contracts, deshalb external. (CR-GC-1018)
 
 schema ◀ `FLOW-harness-request` · `FLOW-harness-request-import-code` · `FLOW-harness-request-own-kuzu` · `FLOW-harness-request-render` · `FLOW-harness-request-rewind`
 
-###### 3.3.4.2.34  `SCHEMA-harness-handle` — Harness-Griff
+###### 3.3.4.2.35  `SCHEMA-harness-handle` — Harness-Griff
 
 Der Zugang zum Substrat: Store, Regelwerk und Apply-Gate hinter einer Schnittstelle. Zod-Vertrag der Form: jedes öffentliche Mitglied von GraphCodeHarness ist eine Funktion (z.function); der Griff ist ein offenes Objekt. Geparst in createHarness, zurück geht das Original.
 
 schema ◀ `FLOW-auto-export-register` · `FLOW-bind-request` · `FLOW-bind-request-import-code` · `FLOW-bind-request-proxy` · `FLOW-context-request` · `FLOW-export-flush` · `FLOW-harness-handle` · `FLOW-harness-handle-host` · `FLOW-http-route` · `FLOW-lifecycle-create` · `FLOW-read-request` · `FLOW-store-build` · `FLOW-store-close` · `FLOW-store-close-cli` · `FLOW-store-close-render` · `FLOW-store-close-rewind` · `FLOW-store-open` · `FLOW-store-open-import-code` · `FLOW-store-open-own-kuzu` · `FLOW-store-open-render` · `FLOW-store-open-rewind` · `FLOW-test-impact-request` · `FLOW-test-impact-request-ingest`
 
-###### 3.3.4.2.35  `SCHEMA-health-report` — HealthPayload
+###### 3.3.4.2.36  `SCHEMA-health-report` — HealthPayload
 
 status, store, gate, nodeCount, versions, sseClients. Der Vertrag der GET /health-Antwort.
 
 schema ◀ `FLOW-health-report` · `FLOW-host-ready`
 
-###### 3.3.4.2.36  `SCHEMA-help-input` — Eingabe graph_help
+###### 3.3.4.2.37  `SCHEMA-help-input` — Eingabe graph_help
 
 Eingabe von graph_help: token (Pflicht), das zu erklaerende Wort, etwa eine Regel-ID, Marke, Tafel, Kennzahl, ein Werkzeug oder Elementtyp. (CR-GC-1014)
 
 schema ◀ `FLOW-help-call`
 
-###### 3.3.4.2.37  `SCHEMA-impact-input` — Eingabe graph_impact
+###### 3.3.4.2.38  `SCHEMA-impact-input` — Eingabe graph_impact
 
 Eingabe von graph_impact: id (Pflicht) und depth (ganze Zahl ab 0, Vorgabe 1). (CR-GC-1015)
 
 schema ◀ `FLOW-impact-call`
 
-###### 3.3.4.2.38  `SCHEMA-impact-slice` — ImpactSlice
+###### 3.3.4.2.39  `SCHEMA-impact-slice` — ImpactSlice
 
 Die Impact-Scheibe: Saatknoten, Tiefe, Knoten mit Rolle seed/whitebox/blackbox und Abstand, induzierte Kanten. @sigloch/graph-api-core. Die Rolle traegt Inhalt: an ihr trennt das Lese-Werkzeug den offenen Teil von der Blackbox-Front. Der Befund RC-04 bleibt bewusst stehen: die Scheibe geht im selben Prozess von harness.impact an das Lese-Werkzeug; nach aussen geht sie als Format-E-Text. (CR-GC-505, CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-impact-slice`
 
-###### 3.3.4.2.39  `SCHEMA-impacted-tests` — TestImpactResult
+###### 3.3.4.2.40  `SCHEMA-impacted-tests` — TestImpactResult
 
 nodes, edges, anchors, testIds. Der Vertrag von impactedTests am Modulrand.
 
 schema ◀ `FLOW-impacted-tests` · `FLOW-selected-tests`
 
-###### 3.3.4.2.40  `SCHEMA-import-access` — Import-Zugang
+###### 3.3.4.2.41  `SCHEMA-import-access` — Import-Zugang
 
 Der Zugang des Importwegs zum Store: Repo-Wurzel und systemId als nicht leere Texte, dazu die zwei Funktionen replace und clear. Strikt: ein Zugang mit mehr Mitgliedern, etwa einem Store-Griff oder Setter, wird an der Übergabe abgelehnt. Der Erzeuger importTarget parst ihn und gibt das Original zurück. (CR-GC-1012)
 
 schema ◀ `FLOW-import-target`
 
-###### 3.3.4.2.41  `SCHEMA-import-summary` — Zusammenfassung Code-Import
+###### 3.3.4.2.42  `SCHEMA-import-summary` — Zusammenfassung Code-Import
 
 Die Zusammenfassung eines Code-Imports, die executeImportCode an die CLI gibt und die diese auf stderr schreibt: files (Anzahl gescannter Dateien, mindestens 1), extracted (Kandidaten je Element-Typ), status (success, partial oder failed, aus dem Import-Gate von graphify), applied mit nodes und edges, violations (Befunde des Gates je Element), dazu backupPath, exportPath und exportError, wenn es sie gibt. Der Erzeuger parst die Zusammenfassung. (CR-GC-986)
 
 schema ◀ `FLOW-cli-output-import-code` · `FLOW-import-summary`
 
-###### 3.3.4.2.42  `SCHEMA-init-report` — Init-Bericht
+###### 3.3.4.2.43  `SCHEMA-init-report` — Init-Bericht
 
 Bericht von graphcode init: Install-Ergebnis, Installationsbefehl, ob er lief, Fehlertext und die Agent-Programme im PATH. executeInit parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-install-result-init`
 
-###### 3.3.4.2.43  `SCHEMA-install-result` — Install-Ergebnis
+###### 3.3.4.2.44  `SCHEMA-install-result` — Install-Ergebnis
 
 Ergebnis von scaffold: action, repoRoot und die Listen created, updated, removed, preserved. scaffold parst es an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-cli-output-remove` · `FLOW-install-result-harness-cli`
 
-###### 3.3.4.2.44  `SCHEMA-lauf-urteil` — LaufUrteil
+###### 3.3.4.2.45  `SCHEMA-lauf-urteil` — LaufUrteil
 
 Vertrag des Lauf-Urteils: beleg true mit rot und gesamt, oder beleg false mit grund.
 
 schema ◀ `FLOW-lauf-urteil`
 
-###### 3.3.4.2.45  `SCHEMA-lock-owner` — LockOwner
+###### 3.3.4.2.46  `SCHEMA-lock-owner` — LockOwner
 
 Halter des Store-Locks: Host, PID, Version, Zeitstempel.
 
 schema ◀ `FLOW-lock-file` · `FLOW-lock-lost` · `FLOW-lock-release` · `FLOW-lock-release-close` · `FLOW-lock-request` · `FLOW-store-ownership`
 
-###### 3.3.4.2.46  `SCHEMA-markdown-text` — Markdown-Text
+###### 3.3.4.2.47  `SCHEMA-markdown-text` — Markdown-Text
 
 Eine gerenderte Markdown-Sicht als Text. exportMarkdown parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-markdown-text`
 
-###### 3.3.4.2.47  `SCHEMA-markdown-view` — MarkdownView
+###### 3.3.4.2.48  `SCHEMA-markdown-view` — MarkdownView
 
 Vertrag der deterministisch gerenderten Markdown-Sichten (GENERATED-Header). Bindung statt Kopie. (CR-GC-454)
 
 schema ◀ `FLOW-ergebnis` · `FLOW-markdown-docs` · `FLOW-query-export` · `FLOW-render-view-request`
 
-###### 3.3.4.2.48  `SCHEMA-mcp-tool` — Werkzeug
+###### 3.3.4.2.49  `SCHEMA-mcp-tool` — Werkzeug
 
 Was ein Werkzeug IST: Name, Beschreibung, Eingabe-Schema, Handler. Liegt seit CR-GC-480 im Kern, damit keine Schicht das Interface ihrer Oberflaeche kennen muss. Der Befund RC-04 bleibt bewusst stehen: das Werkzeug ist ein Objekt mit Funktionen im selben Prozess; die Eingaben parst jeder Handler selbst (CR-GC-1014 bis CR-GC-1017). (CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-mcp-tool`
 
-###### 3.3.4.2.49  `SCHEMA-mcp-tool-registry` — Werkzeug-Register
+###### 3.3.4.2.50  `SCHEMA-mcp-tool-registry` — Werkzeug-Register
 
 Die Abbildung Name -> Werkzeug, mit der eine Schicht ihre Werkzeuge uebergibt. Der Vertrag zwischen Tool-Fabrik und Host-Bindung.
 
 schema ◀ `FLOW-proxy-build` · `FLOW-socket-close` · `FLOW-socket-start` · `FLOW-tool-registry` · `FLOW-tool-surface`
 
-###### 3.3.4.2.50  `SCHEMA-metric-policy` — MetricPolicy
+###### 3.3.4.2.51  `SCHEMA-metric-policy` — MetricPolicy
 
 Die Schwellen je Urteil: instability, lcom4, crossingFlows, riskRpn, moduleSize. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-config-request` · `FLOW-metric-policy`
 
-###### 3.3.4.2.51  `SCHEMA-metric-vector` — MetricVector
+###### 3.3.4.2.52  `SCHEMA-metric-vector` — MetricVector
 
 Sechs Topologiedimensionen: modifiability, faultTolerance, flowEfficiency, coherence, viability, scalability. Aus @sigloch/se-engine, deshalb external. Der Befund RC-04 bleibt bewusst stehen: der Vektor wird im selben Prozess gerechnet und gelesen, je Messung neu. (Herkunft korrigiert CR-GC-453; CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-arch-fitness`
 
-###### 3.3.4.2.52  `SCHEMA-metrics-answer` — graph_metrics-Antwort
+###### 3.3.4.2.53  `SCHEMA-metrics-answer` — graph_metrics-Antwort
 
 Die Antwort von graph_metrics als EIN Vertrag: modules nach ModuleMetrics, functions nach FunctionCriticality, chains und measurability nach ChainMetrics, riskCarriers nach RiskCarriers, scope nur auf Anfrage nach RequirementScope, constraintCarriers nur auf Anfrage nach ConstraintCarriers (reqId, carriers, by), policy nach MetricPolicySchema mit policySource, fit mit MetricVector (ohne Zielmarke seit CR-GC-861), graphVersion. Zusammengesetzt aus den Vertraegen der Bloecke, nicht nachgebaut; die Grundgesamtheiten MOD, FUNC und FCHAIN bleiben getrennte Bloecke. Der Handler parst seine Antwort vor der Rueckgabe. (CR-GC-821, CR-GC-857, CR-GC-861)
 
 schema ◀ `FLOW-dashboard-answer` · `FLOW-metrics-answer`
 
-###### 3.3.4.2.53  `SCHEMA-metrics-input` — Eingabe graph_metrics
+###### 3.3.4.2.54  `SCHEMA-metrics-input` — Eingabe graph_metrics
 
 Eingabe von graph_metrics: scope (mindestens eine FUNC- oder FCHAIN-uid, optional) und constraintCarriers (optional); offenes Objekt. (CR-GC-1016)
 
 schema ◀ `FLOW-dashboard-metrics-call` · `FLOW-metrics-call`
 
-###### 3.3.4.2.54  `SCHEMA-module-metrics` — ModuleMetrics
+###### 3.3.4.2.55  `SCHEMA-module-metrics` — ModuleMetrics
 
 Je MOD allocatedFuncs, fanIn, fanOut, instability, lcom4, cohesion; null heisst nicht messbar, nie null Prozent. Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-module-metrics`
 
-###### 3.3.4.2.55  `SCHEMA-mutate-answer` — Antwort von graph_mutate
+###### 3.3.4.2.56  `SCHEMA-mutate-answer` — Antwort von graph_mutate
 
 Die Antwort des Werkzeugs graph_mutate an den Aufrufer, nicht das Ergebnis des Gates im Prozess (das ist SCHEMA-mutate-result). Felder des Gate-Urteils: success, appliedCommands, mutations, tier, trajectoryId, stale und staleDelta bei OCC-Ablehnung; confidence nur bei Ablehnung. Dazu graphVersion immer, violations gefaltet je Regel und Meldungsmuster (summary) oder je Element (full), Ablehnungen vor dem Gate immer je Element. Berichte zum Zug: steerAdvisory und workOrder (fehlen, wenn sie nichts melden), im Probelauf metricsAfter und steeringDelta, berichtFehlt bei nicht berechenbarem Bericht. Weiter vorschlag (nur nach Anwendung, an den Nutzer), refs (Bindungsreport), nameWarning, occWarning. Der Erzeuger graph_mutate parst jede Antwort. (CR-GC-985)
 
 schema ◀ `FLOW-mutate-answer` · `FLOW-mutate-answer-host-socket` · `FLOW-mutate-answer-import-code-verb` · `FLOW-vorschlag`
 
-###### 3.3.4.2.56  `SCHEMA-mutate-command` — MutateCommand
+###### 3.3.4.2.57  `SCHEMA-mutate-command` — MutateCommand
 
 Edit-Operation durch das Gate: eine discriminatedUnion ueber op mit sieben Operationen (add-node, update-node, delete-node, add-edge, delete-edge, update-edge, merge-nodes). Knoten reisen als node-Objekt, Kanten als edge-Objekt — NICHT als flache Felder. @sigloch/contracts harness (D1). (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-mutate-cmd-decode` · `FLOW-mutate-cmd-graph-suggest` · `FLOW-mutate-cmd-host-socket` · `FLOW-mutate-cmd-import-code-verb` · `FLOW-mutate-cmd-merge-nodes` · `FLOW-mutate-cmd-test-ingest` · `FLOW-mutate-cmd-tool` · `FLOW-write-slot`
 
-###### 3.3.4.2.57  `SCHEMA-mutate-result` — MutateResult
+###### 3.3.4.2.58  `SCHEMA-mutate-result` — MutateResult
 
 Apply-Ergebnis: success, appliedCommands, mutations, violations, confidence, tier (auto-apply/suggest/block) sowie trajectoryId, graphVersion und die OCC-Felder stale/staleDelta. @sigloch/contracts harness (D1). Der Befund RC-04 bleibt bewusst stehen: das Ergebnis geht im selben Prozess vom Gate an die Werkzeugschicht; nach aussen geht es als Antwort von graph_mutate, deren Vertrag dort geparst wird (SCHEMA-mutate-answer). (Kopie entfernt CR-GC-454; CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-gate-verdict`
 
-###### 3.3.4.2.58  `SCHEMA-ontology-graph` — OntologyGraph
+###### 3.3.4.2.59  `SCHEMA-ontology-graph` — OntologyGraph
 
 Elements (13 ElementTypes) + Traces (7 TraceTypes). @sigloch/contracts/se. Der Befund RC-04 bleibt bewusst stehen: der Graph geht im selben Prozess zwischen Store, Gate und Messung; ein Parse je Aufruf hiesse, bei jeder Messung mehrere hundert Elemente erneut zu pruefen. Von der Platte liest ihn der Import mit SCHEMA-ontology-json. (CR-GC-413, CR-GC-1019)
 
-schema ◀ `FLOW-commit-check-request` · `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-fit-anfrage` · `FLOW-fitness-anfrage` · `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · `FLOW-imported-graph` · `FLOW-metrics-request` · `FLOW-select-request` · `FLOW-select-request-lane` · `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-store-load` · `FLOW-store-query` · `FLOW-verlauf-konformanz` · `FLOW-verlauf-snapshot` · `FLOW-zug-anfrage` · `FLOW-zug-anfrage-suggest` · `FLOW-zug-staende`
+schema ◀ `FLOW-commit-check-request` · `FLOW-element-slice` · `FLOW-expand-subgraph` · `FLOW-fit-anfrage` · `FLOW-fitness-anfrage` · `FLOW-gate-candidate` · `FLOW-graph-state` · `FLOW-graph-state-eval` · `FLOW-health-eval-request` · `FLOW-held-back-request` · `FLOW-held-back-request-readiness` · `FLOW-imported-graph` · `FLOW-metrics-request` · `FLOW-snapshot-request` · `FLOW-snapshot-request-mutate` · `FLOW-snapshot-request-readiness` · `FLOW-store-load` · `FLOW-store-query` · `FLOW-verlauf-konformanz` · `FLOW-verlauf-snapshot` · `FLOW-zug-anfrage` · `FLOW-zug-anfrage-suggest` · `FLOW-zug-staende`
 
-###### 3.3.4.2.59  `SCHEMA-ontology-json` — OntologyJson
+###### 3.3.4.2.60  `SCHEMA-ontology-json` — OntologyJson
 
 Die materialisierte Graph-Datei docs/graph/<systemId>.graph.json: elements und traces. Eingang von Seed und Reseed. (CR-GC-503)
 
 schema ◀ `FLOW-graph-snapshot-file` · `FLOW-ontology-json` · `FLOW-reseed-answer` · `FLOW-reseed-order` · `FLOW-reseed-order-open` · `FLOW-reseed-request` · `FLOW-reseed-snapshot` · `FLOW-reseeded-graph` · `FLOW-seed-request` · `FLOW-seed-request-import-code` · `FLOW-seed-request-render`
 
-###### 3.3.4.2.60  `SCHEMA-own-kuzu-options` — Auftrag an ownKuzu
+###### 3.3.4.2.61  `SCHEMA-own-kuzu-options` — Auftrag an ownKuzu
 
 Der Auftrag an ownKuzu: die Oeffnungsfabrik open, repoRoot, scope, im ATTACH-Modus der Griff des gewaehlten Besitzers (harness) und die Ereignis-Senke onUpdateEvent (beide optional). ownKuzu parst ihn. (CR-GC-1018)
 
 schema ◀ `FLOW-own-kuzu-request` · `FLOW-own-kuzu-request-stdio`
 
-###### 3.3.4.2.61  `SCHEMA-readiness-input` — Eingabe graph_readiness
+###### 3.3.4.2.62  `SCHEMA-readiness-input` — Eingabe graph_readiness
 
 Eingabe von graph_readiness: detail (Wahrheitswert, Vorgabe false) und verlauf (ganze Zahl 1 bis 1000, optional: die juengsten N committeten Staende). (CR-GC-1014)
 
 schema ◀ `FLOW-dashboard-readiness-call` · `FLOW-readiness-call`
 
-###### 3.3.4.2.62  `SCHEMA-readiness-report` — ReadinessReportType
+###### 3.3.4.2.63  `SCHEMA-readiness-report` — ReadinessReportType
 
 Je Dimension score, violations, applicable, coreApplicable — eine reine Messung ohne Urteil (kein ready seit CR-SM-310). Aus @sigloch/contracts, deshalb external.
 
 schema ◀ `FLOW-dimension-readiness` · `FLOW-readiness-report`
 
-###### 3.3.4.2.63  `SCHEMA-real-ref` — realRef (Realisierungsbindung)
+###### 3.3.4.2.64  `SCHEMA-real-ref` — realRef (Realisierungsbindung)
 
 Attributvertrag realRef an FUNC, SCHEMA und MOD: Realisierungsdatei, Symbol, Sprache. Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readRealRef (absent, invalid, bound; CR-SM-360).
 
-###### 3.3.4.2.64  `SCHEMA-rejected-trace` — RejectedTrace
+###### 3.3.4.2.65  `SCHEMA-rejected-trace` — RejectedTrace
 
 Eine am Seed zurueckgehaltene Kante: source, target, type und der Grund no-pattern. Traeger zwischen Seed-Pruefung, Readiness-Report und Export-Verweigerung. (CR-GC-530)
 
 schema ◀ `FLOW-held-back-traces`
 
-###### 3.3.4.2.65  `SCHEMA-render-summary` — Zusammenfassung Render
+###### 3.3.4.2.66  `SCHEMA-render-summary` — Zusammenfassung Render
 
 Die Zusammenfassung eines Renders, die executeRender an die CLI gibt und die diese auf stderr schreibt: view (die Sicht), format (md, docx oder pdf), out (absoluter Pfad der geschriebenen Datei), bytes (Größe der Datei) und vorlage (die Vorlage des Repos für PDF, sonst null). Die Datei selbst hat keine Datenform. Der Erzeuger parst die Zusammenfassung. (CR-GC-986)
 
 schema ◀ `FLOW-render-file`
 
-###### 3.3.4.2.66  `SCHEMA-repo-pfad` — Repo-Pfad
+###### 3.3.4.2.67  `SCHEMA-repo-pfad` — Repo-Pfad
 
 Der Pfad der Repo-Wurzel als nicht leerer Text. serveStdio gibt ihn an attachGve, der Start des Viewers uebergibt ihn als --repo. Ein leerer Pfad zeigt kein Repo. Der Erzeuger parst an der Grenze. (CR-GC-989)
 
 schema ◀ `FLOW-gve-attach` · `FLOW-viewer-start`
 
-###### 3.3.4.2.67  `SCHEMA-repo-status` — Repo-Status
+###### 3.3.4.2.68  `SCHEMA-repo-status` — Repo-Status
 
 Bericht von graphcode status: repoRoot, member, Zustand von Host, Dashboard und Versionen. collectStatus parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-cli-output-status` · `FLOW-install-result-collect-status`
 
-###### 3.3.4.2.68  `SCHEMA-reseed-input` — Eingabe graph_reseed
+###### 3.3.4.2.69  `SCHEMA-reseed-input` — Eingabe graph_reseed
 
 Eingabe von graph_reseed: path (Pfad der committeten Graph-JSON relativ zur Repo-Wurzel, optional). (CR-GC-1017)
 
 schema ◀ `FLOW-reseed-call`
 
-###### 3.3.4.2.69  `SCHEMA-rewind-summary` — RewindSummary
+###### 3.3.4.2.70  `SCHEMA-rewind-summary` — RewindSummary
 
 Ergebnis von executeRewind, das die CLI ausgibt: ref, commit, snapshot, restored, forced. executeRewind prueft es beim Erzeugen (CR-GC-823).
 
 schema ◀ `FLOW-cli-output-rewind` · `FLOW-rewind-summary`
 
-###### 3.3.4.2.70  `SCHEMA-rule-violation` — RuleViolation
+###### 3.3.4.2.71  `SCHEMA-rule-violation` — RuleViolation
 
 Ein Regelbefund: rule_id, severity, element_id, message, fix_hint, context. Derselbe Vertrag fuer den Gate-Katalog und die Konformanzregeln. @sigloch/contracts harness. Der Befund RC-04 bleibt bewusst stehen: die Befunde gehen im selben Prozess von der Auswertung an Gate, Bericht und Werkzeuge; nach aussen gehen sie in Antworten mit eigenem, geparstem Vertrag. (CR-GC-501, CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-commit-check-verdict` · `FLOW-completeness-request` · `FLOW-conformance-findings` · `FLOW-readiness-request` · `FLOW-rule-findings` · `FLOW-rules-answer` · `FLOW-verlauf-bereitschaft`
 
-###### 3.3.4.2.71  `SCHEMA-rules-evaluate-input` — Eingabe rules_evaluate
+###### 3.3.4.2.72  `SCHEMA-rules-evaluate-input` — Eingabe rules_evaluate
 
 Eingabe von rules_evaluate: detail (summary, full oder grouped, Vorgabe full). (CR-GC-1014)
 
 schema ◀ `FLOW-rules-evaluate-call`
 
-###### 3.3.4.2.72  `SCHEMA-rules-get-violations-input` — Eingabe rules_get_violations
+###### 3.3.4.2.73  `SCHEMA-rules-get-violations-input` — Eingabe rules_get_violations
 
 Eingabe von rules_get_violations: severity (error, warning oder info, optional) und detail (summary, full oder grouped, Vorgabe full). (CR-GC-1014)
 
 schema ◀ `FLOW-rules-get-violations-call`
 
-###### 3.3.4.2.73  `SCHEMA-schema-fingerprint` — SchemaFingerprint
+###### 3.3.4.2.74  `SCHEMA-schema-fingerprint` — SchemaFingerprint
 
 Die ersten 16 Hex-Zeichen eines SHA-256 ueber die generierte DDL. Die Laenge ist Teil des Vertrags: sie unterscheidet einen aelteren Schemastand von einer kaputten Datei.
 
 schema ◀ `FLOW-fingerprint-request` · `FLOW-schema-fingerprint`
 
-###### 3.3.4.2.74  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
+###### 3.3.4.2.75  `SCHEMA-schlupf-zeile` — Schlupf-Zeile (Vertrag)
 
 Vertrag der Schlupf-Zeile: cr, at, code, spur, ausgewaehlt, ausGraph, gesamt, rot, schlupf, schlupfNurGraph, zusage (blackbox, schnittstelle). Optional, in alten Zeilen nicht erfasst (nie 0): linkModus, umgebung (rote Dateien, im Link-Modus erwartet, nicht im Schlupf), dauer (auswahlMs, vollMs), grenzmenge (FUNC und SCHEMA je pflicht und da). (CR-GC-947)
 
 schema ◀ `FLOW-schlupf-request` · `FLOW-schlupf-result` · `FLOW-schlupf-zeile`
 
-###### 3.3.4.2.75  `SCHEMA-session-registry` — SessionEntry
+###### 3.3.4.2.76  `SCHEMA-session-registry` — SessionEntry
 
 pid, hostname, startedAt. Der Vertrag eines Sitzungseintrags, der eine Prozessgrenze quert.
 
 schema ◀ `FLOW-session-entry` · `FLOW-session-registry`
 
-###### 3.3.4.2.76  `SCHEMA-shim-request` — ShimRequest
+###### 3.3.4.2.77  `SCHEMA-shim-request` — ShimRequest
 
 Ein weitergeleiteter Werkzeugaufruf auf dem Host-Socket: id, Werkzeugname und Eingabe, eine JSON-Zeile je Aufruf. ShimRequestSchema aus graphcode-client, deshalb external. Der Host parst jede Zeile. (CR-GC-1020)
 
 schema ◀ `FLOW-dashboard-call` · `FLOW-proxy-call`
 
-###### 3.3.4.2.77  `SCHEMA-sitzungsende` — Sitzungsende
+###### 3.3.4.2.78  `SCHEMA-sitzungsende` — Sitzungsende
 
 Die Ereignisse, die eine Host-Sitzung beenden: SIGINT, SIGTERM, SIGHUP, das Ende des stdio-Clients und der Verlust des Store-Locks. installTriggers bindet die Signale aus dieser Aufzaehlung, end parst jeden Grund dagegen. Es gibt keine zweite Liste. (CR-GC-989)
 
 schema ◀ `FLOW-session-end`
 
-###### 3.3.4.2.78  `SCHEMA-skill-sync-result` — Skill-Sync-Ergebnis
+###### 3.3.4.2.79  `SCHEMA-skill-sync-result` — Skill-Sync-Ergebnis
 
 Bericht von graphcode skills sync: repoRoot und die Listen added, updated, unchanged, removed (Pfade relativ zum Repo). syncSkills parst ihn an der Grenze. (CR-GC-999)
 
 schema ◀ `FLOW-cli-output-skills-sync` · `FLOW-skill-sync-result-sync-skills` · `FLOW-skill-sync-result-upgrade`
 
-###### 3.3.4.2.79  `SCHEMA-skill-text` — Skill-Text
+###### 3.3.4.2.80  `SCHEMA-skill-text` — Skill-Text
 
 Kopf einer Skill-Datei (Frontmatter name, description, version), wie graphcode ihn beim Ausliefern und Synchronisieren liest. Der Rumpf der Datei ist Prompt-Text; sein Format legt der Agent-Host fest, der Vertrag bindet ihn nicht. version ist ganzzahlig ab 0; version 0 heisst Entwurf und wird nicht ausgeliefert. Der Befund RC-04 bleibt bewusst stehen: die Fluesse fuehren von den Skill-Dateien (Markdown) zur Ablaufsteuerung im Agent-Host; keine Code-Funktion auf ihnen kann parsen. graphcode parst den Kopf in parseSkillFrontmatter beim Ausliefern (scaffold, syncSkills). (CR-GC-1013, CR-GC-1017)
 
 schema ◀ `FLOW-anleitung-author-actor` · `FLOW-anleitung-author-req` · `FLOW-anleitung-author-uc` · `FLOW-anleitung-close-violations` · `FLOW-anleitung-import-code` · `FLOW-anleitung-import-doc` · `FLOW-anleitung-se-bau` · `FLOW-anleitung-se-cdr` · `FLOW-anleitung-se-conops` · `FLOW-anleitung-se-constraints` · `FLOW-anleitung-se-fmea` · `FLOW-anleitung-se-generate` · `FLOW-anleitung-se-help` · `FLOW-anleitung-se-irr` · `FLOW-anleitung-se-laufzeit` · `FLOW-anleitung-se-modulebene` · `FLOW-anleitung-se-optimize` · `FLOW-anleitung-se-plan` · `FLOW-anleitung-se-retro` · `FLOW-anleitung-se-review` · `FLOW-anleitung-se-status` · `FLOW-anleitung-se-top-level` · `FLOW-anleitung-se-trade` · `FLOW-anleitung-se-umbau` · `FLOW-anleitung-se-vorbereitung` · `FLOW-anleitung-test` · `FLOW-anleitung-test-ui` · `FLOW-help-answer`
 
-###### 3.3.4.2.80  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
+###### 3.3.4.2.81  `SCHEMA-steering-channel` — Kanalbeitrag zum Rundenprompt
 
 Der Beitrag EINES Steuerungskanals zu einer Runde: der Kanal — und damit sein Rang aus der Ordnung in src/loop/channel-rank.ts, am FLOW als Attribut channelRank gespiegelt — und sein Textblock. Ein Vertrag fuer alle Kanaele, weil sie sich genau darin gleichen und nur im Rang unterscheiden; ein Vertrag je Kanal waere neun Knoten fuer eine Unterscheidung, die kein Leser braucht. Der Rang steht deshalb am Knoten: ohne ihn sind zwei Kanaele mit gleichem Produzenten und Konsumenten im Graphen ununterscheidbar, und der Optimizer schlaegt sie zum Merge vor. Bewusst ohne Zod-Symbol und ohne Vertragstest: informationeller Prompt-Kontext, kein Wire-Format; im Code faehrt jeder Kanal auf einer bestehenden Antwort mit (mutate-Antwort, Generierungsschritt, Authoring Guide), deren Vertrag dort gebunden und getestet ist. Die Befunde R-26 und R-32 bleiben bewusst stehen (Entscheidung des Autors 2026-11-23). (CR-GC-573)
 
 schema ◀ `FLOW-channel-gate-verdict` · `FLOW-channel-grammar` · `FLOW-channel-guardrails` · `FLOW-channel-handoff` · `FLOW-channel-next-step` · `FLOW-channel-skill-reference` · `FLOW-channel-steer-advisory`
 
-###### 3.3.4.2.81  `SCHEMA-steering-delta` — SteeringDelta
+###### 3.3.4.2.82  `SCHEMA-steering-delta` — SteeringDelta
 
 blockingErrors vorher und nachher plus je Dimension before, after, delta.
 
 schema ◀ `FLOW-steering-delta`
 
-###### 3.3.4.2.82  `SCHEMA-steering-snapshot` — SteeringSnapshot
+###### 3.3.4.2.83  `SCHEMA-steering-snapshot` — SteeringSnapshot
 
 Gemappter OntologyGraph, Violations des vollen Katalogs, Fokusmenge, Zahl der blockierenden Fehler, Befunde je Stufe. Beschreibt die Form des Messpunkts; den Bestand prueft die Regel R-08, nicht dieses Schema. Der Befund RC-04 bleibt bewusst stehen: der Snapshot entsteht und wird gelesen im selben Prozess, je Messung neu; ein Parse hiesse, mehrere hundert Elemente je Messung erneut zu pruefen. (CR-GC-786, CR-GC-413, CR-GC-1019)
 
 schema ◀ `FLOW-steering-pair` · `FLOW-steering-snapshot`
 
-###### 3.3.4.2.83  `SCHEMA-store-rebuild-notice` — Store-Neuaufbau-Meldung
+###### 3.3.4.2.84  `SCHEMA-store-rebuild-notice` — Store-Neuaufbau-Meldung
 
 Meldung an den Nutzer nach einem Store-Neuaufbau, mit Grund: cause schema traegt alten und neuen Schema-Fingerabdruck, cause unreadable die Meldung, mit der das Oeffnen scheiterte (CR-GC-796); beide die SSOT-Datei, aus der neu befuellt wurde. Eine Zeile auf stderr beim Start (CR-GC-831).
 
 schema ◀ `FLOW-store-rebuild-notice`
 
-###### 3.3.4.2.84  `SCHEMA-suggest-answer` — Antwort graph_suggest
+###### 3.3.4.2.85  `SCHEMA-suggest-answer` — Antwort graph_suggest
 
 Die Antwort von graph_suggest: Ranking-Ebene, Advisory-Ebene, Hinweis bei abweichender Ebene und die gerankten Vorschlaege, je mit Urteil des Gates. Setzt sich aus SuggestionSchema von se-engine zusammen. Der Handler parst die Antwort, bevor sie den Prozess verlaesst. (CR-GC-1020)
 
 schema ◀ `FLOW-suggest-answer`
 
-###### 3.3.4.2.85  `SCHEMA-suggest-input` — Eingabe graph_suggest
+###### 3.3.4.2.86  `SCHEMA-suggest-input` — Eingabe graph_suggest
 
 Eingabe von graph_suggest: k (ganze Zahl 1 bis 20, Vorgabe 5) und layer (all oder arch, Vorgabe arch). (CR-GC-1016)
 
 schema ◀ `FLOW-suggest-call`
 
-###### 3.3.4.2.86  `SCHEMA-target-profile` — TargetProfile
+###### 3.3.4.2.87  `SCHEMA-target-profile` — TargetProfile
 
 intentAnchors (3-7 Strings), sonst kein Feld (strikt). Der Vertrag der Profildatei, die zwei Schreiber und einen Leser hat. Gewichte und Zielwerte sind zurueckgebaut (CR-GC-861); eine Datei, die sie noch traegt, scheitert laut beim Laden.
 
 schema ◀ `FLOW-target-profile` · `FLOW-target-profile-file`
 
-###### 3.3.4.2.87  `SCHEMA-test-ingest-answer` — GraphTestIngestAnswer
+###### 3.3.4.2.88  `SCHEMA-test-impact-anfrage` — Testauswahl-Anfrage
+
+Aufrufvertrag von impactedTests: der ganze geladene Graph, die geaenderten Knoten und die Tiefe, Untergrenze 4 Schritte. Bindung statt Kopie. (CR-GC-1025)
+
+schema ◀ `FLOW-select-request` · `FLOW-select-request-lane`
+
+###### 3.3.4.2.89  `SCHEMA-test-ingest-answer` — GraphTestIngestAnswer
 
 Antwort von graph_test_ingest: applied, assignments, bindings (neu gebundene Dateien), unresolved, withdrawn, success, tier, violations, graphVersion. Der Handler parst sie beim Erzeugen.
 
 schema ◀ `FLOW-meldung` · `FLOW-test-ingest-answer`
 
-###### 3.3.4.2.88  `SCHEMA-test-ingest-input` — GraphTestIngestInput
+###### 3.3.4.2.90  `SCHEMA-test-ingest-input` — GraphTestIngestInput
 
 Eingang von graph_test_ingest: ein Objekt mit consumerId, dryRun und dem Pflichtfeld ingest. ingest traegt genau eine von drei Varianten, gewaehlt ueber art: report (roher vitest-JSON, changeSet optional), results (Liste mit file, result, tool, evidence, changeSet optional) oder withdraw (nur changeSet, Pflicht). Zwei Quellen zugleich und keine Eingabe sind nicht ausdrueckbar. (CR-GC-992)
 
 schema ◀ `FLOW-test-ingest-call` · `FLOW-test-ingest-call-agent` · `FLOW-test-run-report-code` · `FLOW-test-run-report-full`
 
-###### 3.3.4.2.89  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
+###### 3.3.4.2.91  `SCHEMA-test-refs` — testRefs (Laufdateien eines TEST)
 
 Attributvertrag testRefs am TEST: Liste der Laufdateien (file, case, tool, level, result). Ein Familienvertrag (contracts ontology.ts); gelesen ueber den einen dreiwertigen Leser readTestRefs (absent, invalid, bound; CR-SM-360).
 
-###### 3.3.4.2.90  `SCHEMA-test-selection` — TestSelection
+###### 3.3.4.2.92  `SCHEMA-test-selection` — TestSelection
 
 command, tests mit testRefs, coverage, unresolved. Der Vertrag der graph_tests-Antwort.
 
 schema ◀ `FLOW-test-selection`
 
-###### 3.3.4.2.91  `SCHEMA-tests-input` — Eingabe graph_tests
+###### 3.3.4.2.93  `SCHEMA-tests-input` — Eingabe graph_tests
 
 Eingabe von graph_tests: changeSet (mindestens eine uid) und depth (ganze Zahl ab 0, Vorgabe 1). (CR-GC-1014)
 
 schema ◀ `FLOW-tests-call`
 
-###### 3.3.4.2.92  `SCHEMA-tool-context` — Werkzeug-Kontext
+###### 3.3.4.2.94  `SCHEMA-tool-context` — Werkzeug-Kontext
 
 Was jeder Werkzeugaufruf mitbekommt: Griff, Audit-Log, Graphversion, Sitzung, Aufrufer. Zod-Vertrag der Form: Träger und Funktionen, geparst in createToolContext, zurück geht das Original. Die genauen Signaturen stehen an der Schnittstelle ToolContext, die ToolPort erweitert.
 
 schema ◀ `FLOW-read-bind` · `FLOW-tool-context`
 
-###### 3.3.4.2.93  `SCHEMA-trajectory` — Trajectory/Outcome
+###### 3.3.4.2.95  `SCHEMA-trajectory` — Trajectory/Outcome
 
 append-only Lern-Emission: ts, consumerId, consumerType, operation, opCounts, applied, outcome und die Violation-Zaehler. @sigloch/learning-core. materializeTrajectory parst jede Grundzeile, bevor sie nach trajectory.jsonl geht. (Kopie entfernt CR-GC-454; Parse CR-GC-1019)
 
 schema ◀ `FLOW-trajectory`
 
-###### 3.3.4.2.94  `SCHEMA-update-event` — UpdateEvent
+###### 3.3.4.2.96  `SCHEMA-update-event` — UpdateEvent
 
 SSE invalidate Event: type, domains (graph/rules/readiness/suggestions), ts und optional version. Einmal in contracts definiert, damit emittierender Harness und Viewer denselben Vertrag lesen. (Kopie entfernt CR-GC-454)
 
 schema ◀ `FLOW-broadcast-hook` · `FLOW-broadcast-hook-sse` · `FLOW-live-event` · `FLOW-sse-frame` · `FLOW-update-hook`
 
-###### 3.3.4.2.95  `SCHEMA-upgrade-report` — Upgrade-Bericht
+###### 3.3.4.2.97  `SCHEMA-upgrade-report` — Upgrade-Bericht
 
 Bericht von graphcode upgrade: Zielversion, Drift, fehlende und veraltete Skills und Policy-Felder, veraltete Familienpakete, Schritte. executeUpgrade parst ihn an der Grenze. (CR-GC-959)
 
 schema ◀ `FLOW-cli-output-upgrade` · `FLOW-install-result-upgrade`
 
-###### 3.3.4.2.96  `SCHEMA-verlauf` — Verlauf
+###### 3.3.4.2.98  `SCHEMA-verlauf` — Verlauf
 
 Je committetem Stand Commit, Datum, Marken, Befunde je Stufe, Fehler, Steuerwert je Regel, Testergebnisse und bewertbare Ketten; dazu die nicht ausgewerteten Regeln und die Zahl der uebersprungenen Staende.
 
 schema ◀ `FLOW-verlauf-report`
 
-###### 3.3.4.2.97  `SCHEMA-verlauf-request` — Verlaufsauftrag
+###### 3.3.4.2.99  `SCHEMA-verlauf-request` — Verlaufsauftrag
 
 Der Auftrag des Hosts an die Verlaufsrechnung: repoRoot, storeDir (oder null ohne Zwischenspeicher), policy (MetricPolicy), policySource und window (die juengsten N Staende, null fuer alle). graph_readiness parst ihn vor dem Aufruf. (CR-GC-1018)
 
 schema ◀ `FLOW-verlauf-request`
 
-###### 3.3.4.2.98  `SCHEMA-vertragstest-bericht` — VertragstestBerichtSchema
+###### 3.3.4.2.100  `SCHEMA-vertragstest-bericht` — VertragstestBerichtSchema
 
 Je SCHEMA die erzeugte Datei mit Zahl der Faelle, den verworfenen Faellen und den Stellen, an denen die Tiefe oder ein z.lazy den Umfang begrenzte (begrenzt), oder der Fehler. erzeugeVertragstests parst ihn, bevor es ihn zurueckgibt. (CR-GC-962, CR-GC-980)
 
 schema ◀ `FLOW-cli-output-vertragstest` · `FLOW-vertragstest-bericht`
 
-###### 3.3.4.2.99  `SCHEMA-vertragstest-satz` — VertragstestSatzSchema
+###### 3.3.4.2.101  `SCHEMA-vertragstest-satz` — VertragstestSatzSchema
 
 Je SCHEMA uid, Datei und Zod-Symbol, oder uid, Datei unter packages/<name>/src, Symbol und Paket @sigloch/<name> (external), oder uid und Vertragsdatei (.md ohne Symbol). erzeugeVertragstests parst ihn an der Grenze. (CR-GC-962, CR-GC-965, CR-GC-981)
 
 schema ◀ `FLOW-vertragstest-satz`
 
-###### 3.3.4.2.100  `SCHEMA-vitest-lauf` — VitestLauf
+###### 3.3.4.2.102  `SCHEMA-vitest-lauf` — VitestLauf
 
 Vertrag des vitest-Laufs: status, signal, bericht (JSON-Text, optional).
 
 schema ◀ `FLOW-vitest-lauf-code` · `FLOW-vitest-lauf-full`
 
-###### 3.3.4.2.101  `SCHEMA-work-set` — Arbeitsmenge
+###### 3.3.4.2.103  `SCHEMA-work-set` — Arbeitsmenge
 
 Die uids, die die laufende Sitzung geschrieben hat, abgeleitet aus dem Audit-Log; schneidet Befundlisten auf die Arbeit der Sitzung. Felder: uids (sortiert, leer heisst: noch kein Schreibzug) und zuege (Zahl der angewandten Stapel). Der Werkzeug-Kontext parst sie beim Erzeugen.
 
 schema ◀ `FLOW-work-set`
 
-###### 3.3.4.2.102  `SCHEMA-zug-bericht` — Bericht zum Zug
+###### 3.3.4.2.104  `SCHEMA-zug-bericht` — Bericht zum Zug
 
 Die Berichte zu einem angenommenen Zug: Steuerwert und Dateiliste immer, das Architekturmass und metricsAfter nur im Probelauf. metricsAfter traegt die geaenderten Zeilen im Stand danach in chains, modules, functions und riskCarriers mit risks und surface, dazu removed mit den entfallenen Kennungen je Liste; leere Listen heissen keine Kennzahl geaendert. Quert die Grenze vom Messwerk zur Werkzeugschicht. (CR-GC-778, CR-GC-790)
 
@@ -16610,571 +16622,583 @@ Vertragstest SCHEMA-cr-groups, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-cr-groups` · testRefs: `tests/vertrag/SCHEMA-cr-groups.vertrag.test.ts`
 
-#### 3.4.208  `TEST-vertrag-eingangs-befund` — Vertragstest Eingangs-Befund
+#### 3.4.208  `TEST-vertrag-cr-groups-anfrage` — Vertragstest CR-Gruppen-Anfrage
+
+Vertragstest SCHEMA-cr-groups-anfrage, erzeugt aus dem Zod-Schema. (CR-GC-1025)
+
+verify ▶ `SCHEMA-cr-groups-anfrage` · testRefs: `tests/vertrag/SCHEMA-cr-groups-anfrage.vertrag.test.ts`
+
+#### 3.4.209  `TEST-vertrag-eingangs-befund` — Vertragstest Eingangs-Befund
 
 Vertragstest SCHEMA-eingangs-befund, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-eingangs-befund` · testRefs: `tests/vertrag/SCHEMA-eingangs-befund.vertrag.test.ts`
 
-#### 3.4.209  `TEST-vertrag-elements-input` — Vertragstest Eingabe graph_elements
+#### 3.4.210  `TEST-vertrag-elements-input` — Vertragstest Eingabe graph_elements
 
 Erzeugter Vertragstest SCHEMA-elements-input: alle Felder mit Vorgaben, Ablehnung je falschem Typ, nicht positiver Grenze und fremdem Format. (CR-GC-1015)
 
 verify ▶ `SCHEMA-elements-input` · testRefs: `tests/vertrag/SCHEMA-elements-input.vertrag.test.ts`
 
-#### 3.4.210  `TEST-vertrag-expand-input` — Vertragstest Eingabe graph_expand
+#### 3.4.211  `TEST-vertrag-expand-input` — Vertragstest Eingabe graph_expand
 
 Erzeugter Vertragstest SCHEMA-expand-input: jeder Zweig, Ablehnung eines fremden Zweigs und nicht positiver Tiefe. (CR-GC-1015)
 
 verify ▶ `SCHEMA-expand-input` · testRefs: `tests/vertrag/SCHEMA-expand-input.vertrag.test.ts`
 
-#### 3.4.211  `TEST-vertrag-export-answer` — Vertragstest Antwort graph_export
+#### 3.4.212  `TEST-vertrag-export-answer` — Vertragstest Antwort graph_export
 
 Vertragstest SCHEMA-export-answer, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-973)
 
 verify ▶ `SCHEMA-export-answer` · testRefs: `tests/vertrag/SCHEMA-export-answer.vertrag.test.ts`
 
-#### 3.4.212  `TEST-vertrag-export-input` — Vertragstest Eingabe graph_export
+#### 3.4.213  `TEST-vertrag-export-input` — Vertragstest Eingabe graph_export
 
 Erzeugter Vertragstest SCHEMA-export-input: name, views und force, Ablehnung eines Namens mit Pfadtrenner, einer fremden Sicht und falscher Typen. (CR-GC-1016)
 
 verify ▶ `SCHEMA-export-input` · testRefs: `tests/vertrag/SCHEMA-export-input.vertrag.test.ts`
 
-#### 3.4.213  `TEST-vertrag-export-pending` — Vertragstest ExportPending
+#### 3.4.214  `TEST-vertrag-export-pending` — Vertragstest ExportPending
 
 Vertragstest SCHEMA-export-pending, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-export-pending` · testRefs: `tests/vertrag/SCHEMA-export-pending.vertrag.test.ts`
 
-#### 3.4.214  `TEST-vertrag-fit-advisory` — Vertragstest FitAdvisory
+#### 3.4.215  `TEST-vertrag-fit-advisory` — Vertragstest FitAdvisory
 
 Vertragstest SCHEMA-fit-advisory, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-fit-advisory` · testRefs: `tests/vertrag/SCHEMA-fit-advisory.vertrag.test.ts`
 
-#### 3.4.215  `TEST-vertrag-format-e` — Vertragstest Format-E-Eingabe
+#### 3.4.216  `TEST-vertrag-format-e` — Vertragstest Format-E-Eingabe
 
 Vertragstest SCHEMA-format-e, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-format-e` · testRefs: `tests/vertrag/SCHEMA-format-e.vertrag.test.ts`
 
-#### 3.4.216  `TEST-vertrag-function-criticality` — Vertragstest Funktionskritikalität
+#### 3.4.217  `TEST-vertrag-function-criticality` — Vertragstest Funktionskritikalität
 
 Vertragstest SCHEMA-function-criticality gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-function-criticality` · testRefs: `tests/vertrag/SCHEMA-function-criticality.vertrag.test.ts`
 
-#### 3.4.217  `TEST-vertrag-generate-input` — Vertragstest Eingabe graph_generate
+#### 3.4.218  `TEST-vertrag-generate-input` — Vertragstest Eingabe graph_generate
 
 Erzeugter Vertragstest SCHEMA-generate-input: jedes Feld und jeder Task, Ablehnung einer Schwelle ausserhalb 0 bis 1 und eines fremden Tasks. (CR-GC-1016)
 
 verify ▶ `SCHEMA-generate-input` · testRefs: `tests/vertrag/SCHEMA-generate-input.vertrag.test.ts`
 
-#### 3.4.218  `TEST-vertrag-generation-request` — Vertragstest GenerationRequest
+#### 3.4.219  `TEST-vertrag-generation-request` — Vertragstest GenerationRequest
 
 Prueft GenerationRequestSchema gegen das Beispiel, jedes Pflichtfeld, jede Werteliste und jede Grenze, mit Ablehnung. Erzeugt aus dem Modell (graphcode vertragstest). (CR-GC-1022)
 
 verify ▶ `SCHEMA-generation-request` · testRefs: `tests/vertrag/SCHEMA-generation-request.vertrag.test.ts`
 
-#### 3.4.219  `TEST-vertrag-generation-step` — Vertragstest GenerationStep
+#### 3.4.220  `TEST-vertrag-generation-step` — Vertragstest GenerationStep
 
 Vertragstest SCHEMA-generation-step, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-generation-step` · testRefs: `tests/vertrag/SCHEMA-generation-step.vertrag.test.ts`
 
-#### 3.4.220  `TEST-vertrag-get-edges-input` — Vertragstest Eingabe graph_get_edges
+#### 3.4.221  `TEST-vertrag-get-edges-input` — Vertragstest Eingabe graph_get_edges
 
 Erzeugter Vertragstest SCHEMA-get-edges-input: jede Richtung und jedes Format, Ablehnung fremder Werte. (CR-GC-1015)
 
 verify ▶ `SCHEMA-get-edges-input` · testRefs: `tests/vertrag/SCHEMA-get-edges-input.vertrag.test.ts`
 
-#### 3.4.221  `TEST-vertrag-get-node-input` — Vertragstest Eingabe graph_get_node
+#### 3.4.222  `TEST-vertrag-get-node-input` — Vertragstest Eingabe graph_get_node
 
 Erzeugter Vertragstest SCHEMA-get-node-input: uid als Pflicht, Ablehnung ohne uid und mit falschem Typ. (CR-GC-1015)
 
 verify ▶ `SCHEMA-get-node-input` · testRefs: `tests/vertrag/SCHEMA-get-node-input.vertrag.test.ts`
 
-#### 3.4.222  `TEST-vertrag-graph-delta` — Vertragstest GraphDelta
+#### 3.4.223  `TEST-vertrag-graph-delta` — Vertragstest GraphDelta
 
 Vertragstest SCHEMA-graph-delta, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-graph-delta` · testRefs: `tests/vertrag/SCHEMA-graph-delta.vertrag.test.ts`
 
-#### 3.4.223  `TEST-vertrag-grenz-befund` — Vertragstest Grenz-Befund
+#### 3.4.224  `TEST-vertrag-grenz-befund` — Vertragstest Grenz-Befund
 
 Vertragstest SCHEMA-grenz-befund, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-grenz-befund` · testRefs: `tests/vertrag/SCHEMA-grenz-befund.vertrag.test.ts`
 
-#### 3.4.224  `TEST-vertrag-harness-config` — Vertragstest HarnessConfig
+#### 3.4.225  `TEST-vertrag-harness-config` — Vertragstest HarnessConfig
 
 Erzeugter Vertragstest SCHEMA-harness-config: repoRoot und scope in jeder Form, Ablehnung je fehlendem Feld und falschem Typ. (CR-GC-1018)
 
 verify ▶ `SCHEMA-harness-config` · testRefs: `tests/vertrag/SCHEMA-harness-config.vertrag.test.ts`
 
-#### 3.4.225  `TEST-vertrag-harness-handle` — Vertragstest Harness-Griff
+#### 3.4.226  `TEST-vertrag-harness-handle` — Vertragstest Harness-Griff
 
 Erzeugter Vertragstest SCHEMA-harness-handle: Beispiel mit allen Funktionen, Ablehnung je fehlendem Mitglied und je Nicht-Funktion. (CR-GC-991)
 
 verify ▶ `SCHEMA-harness-handle` · testRefs: `tests/vertrag/SCHEMA-harness-handle.vertrag.test.ts`
 
-#### 3.4.226  `TEST-vertrag-health-report` — Vertragstest HealthPayload
+#### 3.4.227  `TEST-vertrag-health-report` — Vertragstest HealthPayload
 
 Vertragstest SCHEMA-health-report, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-health-report` · testRefs: `tests/vertrag/SCHEMA-health-report.vertrag.test.ts`
 
-#### 3.4.227  `TEST-vertrag-help-input` — Vertragstest Eingabe graph_help
+#### 3.4.228  `TEST-vertrag-help-input` — Vertragstest Eingabe graph_help
 
 Erzeugter Vertragstest SCHEMA-help-input: token als Pflicht, Ablehnung ohne token und mit falschem Typ. (CR-GC-1014)
 
 verify ▶ `SCHEMA-help-input` · testRefs: `tests/vertrag/SCHEMA-help-input.vertrag.test.ts`
 
-#### 3.4.228  `TEST-vertrag-impact-input` — Vertragstest Eingabe graph_impact
+#### 3.4.229  `TEST-vertrag-impact-input` — Vertragstest Eingabe graph_impact
 
 Erzeugter Vertragstest SCHEMA-impact-input: id und depth, Ablehnung negativer und gebrochener Tiefe. (CR-GC-1015)
 
 verify ▶ `SCHEMA-impact-input` · testRefs: `tests/vertrag/SCHEMA-impact-input.vertrag.test.ts`
 
-#### 3.4.229  `TEST-vertrag-impact-slice` — Vertragstest Wirkungsausschnitt
+#### 3.4.230  `TEST-vertrag-impact-slice` — Vertragstest Wirkungsausschnitt
 
 Vertragstest SCHEMA-impact-slice gegen das Paket @sigloch/graph-api-core: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-impact-slice` · testRefs: `tests/vertrag/SCHEMA-impact-slice.vertrag.test.ts`
 
-#### 3.4.230  `TEST-vertrag-impacted-tests` — Vertragstest TestImpactResult
+#### 3.4.231  `TEST-vertrag-impacted-tests` — Vertragstest TestImpactResult
 
 Vertragstest SCHEMA-impacted-tests, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-impacted-tests` · testRefs: `tests/vertrag/SCHEMA-impacted-tests.vertrag.test.ts`
 
-#### 3.4.231  `TEST-vertrag-import-access` — Vertragstest Import-Zugang
+#### 3.4.232  `TEST-vertrag-import-access` — Vertragstest Import-Zugang
 
 Erzeugter Vertragstest SCHEMA-import-access: Beispiel mit beiden Texten und beiden Funktionen, Ablehnung je fehlendem Mitglied, je falschem Typ, je leerem Text und eines Zusatzfelds. (CR-GC-1012)
 
 verify ▶ `SCHEMA-import-access` · testRefs: `tests/vertrag/SCHEMA-import-access.vertrag.test.ts`
 
-#### 3.4.232  `TEST-vertrag-import-summary` — Vertragstest Zusammenfassung Code-Import
+#### 3.4.233  `TEST-vertrag-import-summary` — Vertragstest Zusammenfassung Code-Import
 
 Vertragstest SCHEMA-import-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Zähler, Zählung je Typ, Status, Befund je Element, leere Pfade). (CR-GC-986)
 
 verify ▶ `SCHEMA-import-summary` · testRefs: `tests/vertrag/SCHEMA-import-summary.vertrag.test.ts`
 
-#### 3.4.233  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
+#### 3.4.234  `TEST-vertrag-init-report` — Vertragstest Init-Bericht
 
 Vertragstest SCHEMA-init-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-init-report` · testRefs: `tests/vertrag/SCHEMA-init-report.vertrag.test.ts`
 
-#### 3.4.234  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
+#### 3.4.235  `TEST-vertrag-install-result` — Vertragstest Install-Ergebnis
 
 Vertragstest SCHEMA-install-result, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-install-result` · testRefs: `tests/vertrag/SCHEMA-install-result.vertrag.test.ts`
 
-#### 3.4.235  `TEST-vertrag-lauf-urteil` — Vertragstest LaufUrteil
+#### 3.4.236  `TEST-vertrag-lauf-urteil` — Vertragstest LaufUrteil
 
 Vertragstest SCHEMA-lauf-urteil, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-lauf-urteil` · testRefs: `tests/vertrag/SCHEMA-lauf-urteil.vertrag.test.ts`
 
-#### 3.4.236  `TEST-vertrag-lock-owner` — Vertragstest LockOwner
+#### 3.4.237  `TEST-vertrag-lock-owner` — Vertragstest LockOwner
 
 Vertragstest SCHEMA-lock-owner, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-lock-owner` · testRefs: `tests/vertrag/SCHEMA-lock-owner.vertrag.test.ts`
 
-#### 3.4.237  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
+#### 3.4.238  `TEST-vertrag-markdown-text` — Vertragstest Markdown-Text
 
 Vertragstest SCHEMA-markdown-text, erzeugt aus dem Zod-Schema: Text angenommen, Nicht-Text abgelehnt. (CR-GC-959)
 
 verify ▶ `SCHEMA-markdown-text` · testRefs: `tests/vertrag/SCHEMA-markdown-text.vertrag.test.ts`
 
-#### 3.4.238  `TEST-vertrag-markdown-view` — Vertragstest MarkdownView
+#### 3.4.239  `TEST-vertrag-markdown-view` — Vertragstest MarkdownView
 
 Vertragstest SCHEMA-markdown-view, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-markdown-view` · testRefs: `tests/vertrag/SCHEMA-markdown-view.vertrag.test.ts`
 
-#### 3.4.239  `TEST-vertrag-mcp-tool` — Vertragstest Werkzeug
+#### 3.4.240  `TEST-vertrag-mcp-tool` — Vertragstest Werkzeug
 
 Erzeugter Vertragstest SCHEMA-mcp-tool: Beispiel mit Funktionen, Ablehnung je Pflichtfeld, safeParse und handler als Funktion. (CR-GC-990)
 
 verify ▶ `SCHEMA-mcp-tool` · testRefs: `tests/vertrag/SCHEMA-mcp-tool.vertrag.test.ts`
 
-#### 3.4.240  `TEST-vertrag-mcp-tool-registry` — Vertragstest Werkzeug-Register
+#### 3.4.241  `TEST-vertrag-mcp-tool-registry` — Vertragstest Werkzeug-Register
 
 Erzeugter Vertragstest SCHEMA-mcp-tool-registry: leere Registry, Werkzeug je Name, Ablehnung eines Werts, der kein Werkzeug ist. (CR-GC-990)
 
 verify ▶ `SCHEMA-mcp-tool-registry` · testRefs: `tests/vertrag/SCHEMA-mcp-tool-registry.vertrag.test.ts`
 
-#### 3.4.241  `TEST-vertrag-metric-policy` — Vertragstest Metrik-Policy
+#### 3.4.242  `TEST-vertrag-metric-policy` — Vertragstest Metrik-Policy
 
 Vertragstest SCHEMA-metric-policy, erzeugt aus dem Zod-Schema, einschliesslich der Bedingung Vergleich zweier Zahlfelder. (CR-GC-1000)
 
 verify ▶ `SCHEMA-metric-policy` · testRefs: `tests/vertrag/SCHEMA-metric-policy.vertrag.test.ts`
 
-#### 3.4.242  `TEST-vertrag-metric-vector` — Vertragstest Metrikvektor
+#### 3.4.243  `TEST-vertrag-metric-vector` — Vertragstest Metrikvektor
 
 Vertragstest SCHEMA-metric-vector gegen das Paket @sigloch/se-engine: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-metric-vector` · testRefs: `tests/vertrag/SCHEMA-metric-vector.vertrag.test.ts`
 
-#### 3.4.243  `TEST-vertrag-metrics-answer` — Vertragstest Metrik-Antwort
+#### 3.4.244  `TEST-vertrag-metrics-answer` — Vertragstest Metrik-Antwort
 
 Vertragstest SCHEMA-metrics-answer, erzeugt aus dem Zod-Schema, einschliesslich der Policy. (CR-GC-1000)
 
 verify ▶ `SCHEMA-metrics-answer` · testRefs: `tests/vertrag/SCHEMA-metrics-answer.vertrag.test.ts`
 
-#### 3.4.244  `TEST-vertrag-metrics-input` — Vertragstest Eingabe graph_metrics
+#### 3.4.245  `TEST-vertrag-metrics-input` — Vertragstest Eingabe graph_metrics
 
 Erzeugter Vertragstest SCHEMA-metrics-input: scope und constraintCarriers, Ablehnung einer leeren scope-Liste und falscher Typen. (CR-GC-1016)
 
 verify ▶ `SCHEMA-metrics-input` · testRefs: `tests/vertrag/SCHEMA-metrics-input.vertrag.test.ts`
 
-#### 3.4.245  `TEST-vertrag-module-metrics` — Vertragstest Modulkennzahlen
+#### 3.4.246  `TEST-vertrag-module-metrics` — Vertragstest Modulkennzahlen
 
 Vertragstest SCHEMA-module-metrics gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-module-metrics` · testRefs: `tests/vertrag/SCHEMA-module-metrics.vertrag.test.ts`
 
-#### 3.4.246  `TEST-vertrag-mutate-answer` — Vertragstest Antwort graph_mutate
+#### 3.4.247  `TEST-vertrag-mutate-answer` — Vertragstest Antwort graph_mutate
 
 Vertragstest SCHEMA-mutate-answer: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Union-Varianten), von Hand die Wertregeln (Zähler, graphVersion, confidence, Listen, Bindungsreport, Steuerdelta, OCC) und am echten Werkzeug jede Antwortvariante von graph_mutate (Probelauf und Anwendung, summary und full, Ablehnungen, OCC, unbekannter Skill, Format-Fehler, Warnungen, refs). (CR-GC-985)
 
 verify ▶ `SCHEMA-mutate-answer` · testRefs: `tests/vertrag/SCHEMA-mutate-answer.vertrag.test.ts`, `tests/mcp.mutate-answer.test.ts`
 
-#### 3.4.247  `TEST-vertrag-mutate-command` — Vertragstest Mutate-Befehl
+#### 3.4.248  `TEST-vertrag-mutate-command` — Vertragstest Mutate-Befehl
 
 Vertragstest SCHEMA-mutate-command, erzeugt aus dem Zod-Schema, einschliesslich der Bedingung mindestens eines von N Feldern. (CR-GC-1000)
 
 verify ▶ `SCHEMA-mutate-command` · testRefs: `tests/vertrag/SCHEMA-mutate-command.vertrag.test.ts`
 
-#### 3.4.248  `TEST-vertrag-mutate-result` — Vertragstest MutateResult
+#### 3.4.249  `TEST-vertrag-mutate-result` — Vertragstest MutateResult
 
 Vertragstest SCHEMA-mutate-result, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-mutate-result` · testRefs: `tests/vertrag/SCHEMA-mutate-result.vertrag.test.ts`
 
-#### 3.4.249  `TEST-vertrag-ontology-graph` — Vertragstest Ontologie-Graph
+#### 3.4.250  `TEST-vertrag-ontology-graph` — Vertragstest Ontologie-Graph
 
 Vertragstest SCHEMA-ontology-graph gegen das Paket @sigloch/contracts/se: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-ontology-graph` · testRefs: `tests/vertrag/SCHEMA-ontology-graph.vertrag.test.ts`
 
-#### 3.4.250  `TEST-vertrag-ontology-json` — Vertragstest OntologyJson
+#### 3.4.251  `TEST-vertrag-ontology-json` — Vertragstest OntologyJson
 
 Vertragstest SCHEMA-ontology-json, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-ontology-json` · testRefs: `tests/vertrag/SCHEMA-ontology-json.vertrag.test.ts`
 
-#### 3.4.251  `TEST-vertrag-own-kuzu-options` — Vertragstest Auftrag an ownKuzu
+#### 3.4.252  `TEST-vertrag-own-kuzu-options` — Vertragstest Auftrag an ownKuzu
 
 Erzeugter Vertragstest SCHEMA-own-kuzu-options: OWN- und ATTACH-Auftrag, Ablehnung je fehlender Funktion, leerem Text und Zusatzfeld. (CR-GC-1018)
 
 verify ▶ `SCHEMA-own-kuzu-options` · testRefs: `tests/vertrag/SCHEMA-own-kuzu-options.vertrag.test.ts`
 
-#### 3.4.252  `TEST-vertrag-readiness-input` — Vertragstest Eingabe graph_readiness
+#### 3.4.253  `TEST-vertrag-readiness-input` — Vertragstest Eingabe graph_readiness
 
 Erzeugter Vertragstest SCHEMA-readiness-input: detail und verlauf, Ablehnung ausserhalb 1 bis 1000 und gebrochener Zahlen. (CR-GC-1014)
 
 verify ▶ `SCHEMA-readiness-input` · testRefs: `tests/vertrag/SCHEMA-readiness-input.vertrag.test.ts`
 
-#### 3.4.253  `TEST-vertrag-readiness-report` — Vertragstest Readiness-Bericht
+#### 3.4.254  `TEST-vertrag-readiness-report` — Vertragstest Readiness-Bericht
 
 Vertragstest SCHEMA-readiness-report, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-readiness-report` · testRefs: `tests/vertrag/SCHEMA-readiness-report.vertrag.test.ts`
 
-#### 3.4.254  `TEST-vertrag-real-ref` — Vertragstest RealRef
+#### 3.4.255  `TEST-vertrag-real-ref` — Vertragstest RealRef
 
 Vertragstest SCHEMA-real-ref, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-real-ref` · testRefs: `tests/vertrag/SCHEMA-real-ref.vertrag.test.ts`
 
-#### 3.4.255  `TEST-vertrag-rejected-trace` — Vertragstest RejectedTrace
+#### 3.4.256  `TEST-vertrag-rejected-trace` — Vertragstest RejectedTrace
 
 Vertragstest SCHEMA-rejected-trace, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-rejected-trace` · testRefs: `tests/vertrag/SCHEMA-rejected-trace.vertrag.test.ts`
 
-#### 3.4.256  `TEST-vertrag-render-summary` — Vertragstest Zusammenfassung Render
+#### 3.4.257  `TEST-vertrag-render-summary` — Vertragstest Zusammenfassung Render
 
 Vertragstest SCHEMA-render-summary: erzeugt aus dem Zod-Schema (gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum), von Hand die Wertregeln (Format, Sicht, Größe, Pfad, Vorlage null). (CR-GC-986)
 
 verify ▶ `SCHEMA-render-summary` · testRefs: `tests/vertrag/SCHEMA-render-summary.vertrag.test.ts`
 
-#### 3.4.257  `TEST-vertrag-repo-pfad` — Vertragstest Repo-Pfad
+#### 3.4.258  `TEST-vertrag-repo-pfad` — Vertragstest Repo-Pfad
 
 Vertragstest SCHEMA-repo-pfad: erzeugt aus dem Zod-Schema (nicht leerer Text, leerer Text abgelehnt, falscher Typ). Der Parse an den Grenzen steht in tests/flow-vertraege.test.ts. (CR-GC-989)
 
 verify ▶ `SCHEMA-repo-pfad` · testRefs: `tests/vertrag/SCHEMA-repo-pfad.vertrag.test.ts`
 
-#### 3.4.258  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
+#### 3.4.259  `TEST-vertrag-repo-status` — Vertragstest Repo-Status
 
 Vertragstest SCHEMA-repo-status, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Enum. (CR-GC-959)
 
 verify ▶ `SCHEMA-repo-status` · testRefs: `tests/vertrag/SCHEMA-repo-status.vertrag.test.ts`
 
-#### 3.4.259  `TEST-vertrag-reseed-input` — Vertragstest Eingabe graph_reseed
+#### 3.4.260  `TEST-vertrag-reseed-input` — Vertragstest Eingabe graph_reseed
 
 Erzeugter Vertragstest SCHEMA-reseed-input: mit und ohne path, Ablehnung eines falschen Typs. (CR-GC-1017)
 
 verify ▶ `SCHEMA-reseed-input` · testRefs: `tests/vertrag/SCHEMA-reseed-input.vertrag.test.ts`
 
-#### 3.4.260  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
+#### 3.4.261  `TEST-vertrag-rewind-summary` — Vertragstest Rewind-Summary
 
 Vertragstest SCHEMA-rewind-summary, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-971)
 
 verify ▶ `SCHEMA-rewind-summary` · testRefs: `tests/vertrag/SCHEMA-rewind-summary.vertrag.test.ts`
 
-#### 3.4.261  `TEST-vertrag-rule-violation` — Vertragstest Regelverletzung
+#### 3.4.262  `TEST-vertrag-rule-violation` — Vertragstest Regelverletzung
 
 Vertragstest SCHEMA-rule-violation gegen das Paket @sigloch/contracts/harness: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-rule-violation` · testRefs: `tests/vertrag/SCHEMA-rule-violation.vertrag.test.ts`
 
-#### 3.4.262  `TEST-vertrag-rules-evaluate-input` — Vertragstest Eingabe rules_evaluate
+#### 3.4.263  `TEST-vertrag-rules-evaluate-input` — Vertragstest Eingabe rules_evaluate
 
 Erzeugter Vertragstest SCHEMA-rules-evaluate-input: jede detail-Form, Vorgabe full, Ablehnung eines fremden Werts. (CR-GC-1014)
 
 verify ▶ `SCHEMA-rules-evaluate-input` · testRefs: `tests/vertrag/SCHEMA-rules-evaluate-input.vertrag.test.ts`
 
-#### 3.4.263  `TEST-vertrag-rules-get-violations-input` — Vertragstest Eingabe rules_get_violations
+#### 3.4.264  `TEST-vertrag-rules-get-violations-input` — Vertragstest Eingabe rules_get_violations
 
 Erzeugter Vertragstest SCHEMA-rules-get-violations-input: jede severity und detail-Form, Ablehnung fremder Werte. (CR-GC-1014)
 
 verify ▶ `SCHEMA-rules-get-violations-input` · testRefs: `tests/vertrag/SCHEMA-rules-get-violations-input.vertrag.test.ts`
 
-#### 3.4.264  `TEST-vertrag-schema-fingerprint` — Vertragstest SchemaFingerprint
+#### 3.4.265  `TEST-vertrag-schema-fingerprint` — Vertragstest SchemaFingerprint
 
 Vertragstest SCHEMA-schema-fingerprint, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-schema-fingerprint` · testRefs: `tests/vertrag/SCHEMA-schema-fingerprint.vertrag.test.ts`
 
-#### 3.4.265  `TEST-vertrag-schlupf-zeile` — Vertragstest Schlupf-Zeile (Vertrag)
+#### 3.4.266  `TEST-vertrag-schlupf-zeile` — Vertragstest Schlupf-Zeile (Vertrag)
 
 Vertragstest SCHEMA-schlupf-zeile, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-schlupf-zeile` · testRefs: `tests/vertrag/SCHEMA-schlupf-zeile.vertrag.test.ts`
 
-#### 3.4.266  `TEST-vertrag-session-registry` — Vertragstest SessionEntry
+#### 3.4.267  `TEST-vertrag-session-registry` — Vertragstest SessionEntry
 
 Vertragstest SCHEMA-session-registry, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-session-registry` · testRefs: `tests/vertrag/SCHEMA-session-registry.vertrag.test.ts`
 
-#### 3.4.267  `TEST-vertrag-shim-request` — Vertragstest ShimRequest
+#### 3.4.268  `TEST-vertrag-shim-request` — Vertragstest ShimRequest
 
 Prueft ShimRequestSchema gegen das Beispiel und jedes Pflichtfeld, mit Ablehnung. Erzeugt aus dem Modell (graphcode vertragstest). (CR-GC-1020)
 
 verify ▶ `SCHEMA-shim-request` · testRefs: `tests/vertrag/SCHEMA-shim-request.vertrag.test.ts`
 
-#### 3.4.268  `TEST-vertrag-sitzungsende` — Vertragstest Sitzungsende
+#### 3.4.269  `TEST-vertrag-sitzungsende` — Vertragstest Sitzungsende
 
 Vertragstest SCHEMA-sitzungsende: erzeugt aus dem Zod-Schema (Werteliste eingefroren, jeder Wert angenommen, Fremdwert abgelehnt). Der Parse in end und die gebundenen Signale stehen in tests/flow-vertraege.test.ts. (CR-GC-989)
 
 verify ▶ `SCHEMA-sitzungsende` · testRefs: `tests/vertrag/SCHEMA-sitzungsende.vertrag.test.ts`
 
-#### 3.4.269  `TEST-vertrag-skill-sync-result` — Vertragstest Skill-Sync-Ergebnis
+#### 3.4.270  `TEST-vertrag-skill-sync-result` — Vertragstest Skill-Sync-Ergebnis
 
 Vertragstest SCHEMA-skill-sync-result, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ, Grenzen. (CR-GC-999)
 
 verify ▶ `SCHEMA-skill-sync-result` · testRefs: `tests/vertrag/SCHEMA-skill-sync-result.vertrag.test.ts`
 
-#### 3.4.270  `TEST-vertrag-skill-text` — Vertragstest Skill-Kopf
+#### 3.4.271  `TEST-vertrag-skill-text` — Vertragstest Skill-Kopf
 
 Erzeugter Vertragstest SCHEMA-skill-text: Beispiel mit name, description und version, Ablehnung je fehlendem Feld, je falschem Typ, version unter 0 und eines Zusatzfelds. (CR-GC-1013)
 
 verify ▶ `SCHEMA-skill-text` · testRefs: `tests/vertrag/SCHEMA-skill-text.vertrag.test.ts`
 
-#### 3.4.271  `TEST-vertrag-steering-delta` — Vertragstest SteeringDelta
+#### 3.4.272  `TEST-vertrag-steering-delta` — Vertragstest SteeringDelta
 
 Vertragstest SCHEMA-steering-delta, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-steering-delta` · testRefs: `tests/vertrag/SCHEMA-steering-delta.vertrag.test.ts`
 
-#### 3.4.272  `TEST-vertrag-steering-snapshot` — Vertragstest SteeringSnapshot
+#### 3.4.273  `TEST-vertrag-steering-snapshot` — Vertragstest SteeringSnapshot
 
 Vertragstest SCHEMA-steering-snapshot, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-steering-snapshot` · testRefs: `tests/vertrag/SCHEMA-steering-snapshot.vertrag.test.ts`
 
-#### 3.4.273  `TEST-vertrag-store-rebuild-notice` — Vertragstest Store-Neuaufbau-Meldung
+#### 3.4.274  `TEST-vertrag-store-rebuild-notice` — Vertragstest Store-Neuaufbau-Meldung
 
 Vertragstest SCHEMA-store-rebuild-notice, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-store-rebuild-notice` · testRefs: `tests/vertrag/SCHEMA-store-rebuild-notice.vertrag.test.ts`
 
-#### 3.4.274  `TEST-vertrag-suggest-answer` — Vertragstest Antwort graph_suggest
+#### 3.4.275  `TEST-vertrag-suggest-answer` — Vertragstest Antwort graph_suggest
 
 Prueft GraphSuggestAnswerSchema gegen das Beispiel, jedes Pflichtfeld und jede Werteliste, mit Ablehnung. Erzeugt aus dem Modell (graphcode vertragstest). (CR-GC-1020)
 
 verify ▶ `SCHEMA-suggest-answer` · testRefs: `tests/vertrag/SCHEMA-suggest-answer.vertrag.test.ts`
 
-#### 3.4.275  `TEST-vertrag-suggest-input` — Vertragstest Eingabe graph_suggest
+#### 3.4.276  `TEST-vertrag-suggest-input` — Vertragstest Eingabe graph_suggest
 
 Erzeugter Vertragstest SCHEMA-suggest-input: k und layer, Ablehnung ausserhalb 1 bis 20 und einer fremden Ebene. (CR-GC-1016)
 
 verify ▶ `SCHEMA-suggest-input` · testRefs: `tests/vertrag/SCHEMA-suggest-input.vertrag.test.ts`
 
-#### 3.4.276  `TEST-vertrag-target-profile` — Vertragstest TargetProfile
+#### 3.4.277  `TEST-vertrag-target-profile` — Vertragstest TargetProfile
 
 Vertragstest SCHEMA-target-profile, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-target-profile` · testRefs: `tests/vertrag/SCHEMA-target-profile.vertrag.test.ts`
 
-#### 3.4.277  `TEST-vertrag-test-ingest-answer` — Vertragstest Antwort graph_test_ingest
+#### 3.4.278  `TEST-vertrag-test-impact-anfrage` — Vertragstest Testauswahl-Anfrage
+
+Vertragstest SCHEMA-test-impact-anfrage, erzeugt aus dem Zod-Schema. (CR-GC-1025)
+
+verify ▶ `SCHEMA-test-impact-anfrage` · testRefs: `tests/vertrag/SCHEMA-test-impact-anfrage.vertrag.test.ts`
+
+#### 3.4.279  `TEST-vertrag-test-ingest-answer` — Vertragstest Antwort graph_test_ingest
 
 Vertragstest SCHEMA-test-ingest-answer, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-973)
 
 verify ▶ `SCHEMA-test-ingest-answer` · testRefs: `tests/vertrag/SCHEMA-test-ingest-answer.vertrag.test.ts`
 
-#### 3.4.278  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
+#### 3.4.280  `TEST-vertrag-test-ingest-input` — Vertragstest Test-Ingest-Eingang
 
 Vertragstest SCHEMA-test-ingest-input, aus dem Schema erzeugt (graphcode vertragstest): je Variante die Annahme, je Pflichtfeld die Ablehnung, Typ, Enum, Mindestlaenge und Zusatzfeld, dazu die Werteliste des Art-Felds. (CR-GC-992)
 
 verify ▶ `SCHEMA-test-ingest-input` · testRefs: `tests/vertrag/SCHEMA-test-ingest-input.vertrag.test.ts`
 
-#### 3.4.279  `TEST-vertrag-test-refs` — Vertragstest TestRefs
+#### 3.4.281  `TEST-vertrag-test-refs` — Vertragstest TestRefs
 
 Vertragstest SCHEMA-test-refs, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-test-refs` · testRefs: `tests/vertrag/SCHEMA-test-refs.vertrag.test.ts`
 
-#### 3.4.280  `TEST-vertrag-test-selection` — Vertragstest Testauswahl
+#### 3.4.282  `TEST-vertrag-test-selection` — Vertragstest Testauswahl
 
 Vertragstest SCHEMA-test-selection, erzeugt aus dem Zod-Schema. (CR-GC-1007)
 
 verify ▶ `SCHEMA-test-selection` · testRefs: `tests/vertrag/SCHEMA-test-selection.vertrag.test.ts`
 
-#### 3.4.281  `TEST-vertrag-tests-input` — Vertragstest Eingabe graph_tests
+#### 3.4.283  `TEST-vertrag-tests-input` — Vertragstest Eingabe graph_tests
 
 Erzeugter Vertragstest SCHEMA-tests-input: changeSet und depth, Ablehnung einer leeren Liste und negativer Tiefe. (CR-GC-1014)
 
 verify ▶ `SCHEMA-tests-input` · testRefs: `tests/vertrag/SCHEMA-tests-input.vertrag.test.ts`
 
-#### 3.4.282  `TEST-vertrag-tool-context` — Vertragstest Werkzeug-Kontext
+#### 3.4.284  `TEST-vertrag-tool-context` — Vertragstest Werkzeug-Kontext
 
 Erzeugter Vertragstest SCHEMA-tool-context: Beispiel, Ablehnung je fehlendem Mitglied, fremder Schlüssel. (CR-GC-991)
 
 verify ▶ `SCHEMA-tool-context` · testRefs: `tests/vertrag/SCHEMA-tool-context.vertrag.test.ts`
 
-#### 3.4.283  `TEST-vertrag-trajectory` — Vertragstest Trajektorie
+#### 3.4.285  `TEST-vertrag-trajectory` — Vertragstest Trajektorie
 
 Vertragstest SCHEMA-trajectory gegen das Paket @sigloch/learning-core/interfaces: das erzeugte Beispiel und die Ablehnung je Pflichtfeld auf jeder Ebene. (CR-GC-981)
 
 verify ▶ `SCHEMA-trajectory` · testRefs: `tests/vertrag/SCHEMA-trajectory.vertrag.test.ts`
 
-#### 3.4.284  `TEST-vertrag-update-event` — Vertragstest UpdateEvent
+#### 3.4.286  `TEST-vertrag-update-event` — Vertragstest UpdateEvent
 
 Vertragstest SCHEMA-update-event, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-update-event` · testRefs: `tests/vertrag/SCHEMA-update-event.vertrag.test.ts`
 
-#### 3.4.285  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
+#### 3.4.287  `TEST-vertrag-upgrade-report` — Vertragstest Upgrade-Bericht
 
 Vertragstest SCHEMA-upgrade-report, erzeugt aus dem Zod-Schema: gültiges Beispiel, Ablehnung je Pflichtfeld, falscher Typ. (CR-GC-959)
 
 verify ▶ `SCHEMA-upgrade-report` · testRefs: `tests/vertrag/SCHEMA-upgrade-report.vertrag.test.ts`
 
-#### 3.4.286  `TEST-vertrag-verlauf` — Vertragstest Verlauf
+#### 3.4.288  `TEST-vertrag-verlauf` — Vertragstest Verlauf
 
 Vertragstest SCHEMA-verlauf, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-verlauf` · testRefs: `tests/vertrag/SCHEMA-verlauf.vertrag.test.ts`
 
-#### 3.4.287  `TEST-vertrag-verlauf-request` — Vertragstest Verlaufsauftrag
+#### 3.4.289  `TEST-vertrag-verlauf-request` — Vertragstest Verlaufsauftrag
 
 Erzeugter Vertragstest SCHEMA-verlauf-request: mit und ohne Zwischenspeicher und Fenster, Ablehnung eines Fensters unter 1 und einer ungueltigen Policy. (CR-GC-1018)
 
 verify ▶ `SCHEMA-verlauf-request` · testRefs: `tests/vertrag/SCHEMA-verlauf-request.vertrag.test.ts`
 
-#### 3.4.288  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
+#### 3.4.290  `TEST-vertrag-vertragstest-bericht` — Vertrag vertragstest-bericht
 
 Erzeugter Vertragstest SCHEMA-vertragstest-bericht
 
 verify ▶ `SCHEMA-vertragstest-bericht` · testRefs: `tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts`
 
-#### 3.4.289  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
+#### 3.4.291  `TEST-vertrag-vertragstest-satz` — Vertrag vertragstest-satz
 
 Erzeugter Vertragstest SCHEMA-vertragstest-satz
 
 verify ▶ `SCHEMA-vertragstest-satz` · testRefs: `tests/vertrag/SCHEMA-vertragstest-satz.vertrag.test.ts`
 
-#### 3.4.290  `TEST-vertrag-vitest-lauf` — Vertragstest VitestLauf
+#### 3.4.292  `TEST-vertrag-vitest-lauf` — Vertragstest VitestLauf
 
 Vertragstest SCHEMA-vitest-lauf, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-vitest-lauf` · testRefs: `tests/vertrag/SCHEMA-vitest-lauf.vertrag.test.ts`
 
-#### 3.4.291  `TEST-vertrag-work-set` — Vertragstest Arbeitsmenge
+#### 3.4.293  `TEST-vertrag-work-set` — Vertragstest Arbeitsmenge
 
 Vertragstest SCHEMA-work-set: das erzeugte Beispiel und die Ablehnung je Pflichtfeld, dazu von Hand die leere Menge, negative und gebrochene Zugzahl, leere uid. (CR-GC-975)
 
 verify ▶ `SCHEMA-work-set` · testRefs: `tests/vertrag/SCHEMA-work-set.vertrag.test.ts`
 
-#### 3.4.292  `TEST-vertrag-zug-bericht` — Vertragstest Bericht zum Zug
+#### 3.4.294  `TEST-vertrag-zug-bericht` — Vertragstest Bericht zum Zug
 
 Vertragstest SCHEMA-zug-bericht, erzeugt aus dem Zod-Schema. (CR-GC-1009)
 
 verify ▶ `SCHEMA-zug-bericht` · testRefs: `tests/vertrag/SCHEMA-zug-bericht.vertrag.test.ts`
 
-#### 3.4.293  `TEST-vertragstest-generator` — Vertragstest-Generator
+#### 3.4.295  `TEST-vertragstest-generator` — Vertragstest-Generator
 
 Unit-Tests des Erzeugers (je Konstrukt ein kleines Schema: verschachteltes Objekt, Liste, Tupel, Record, Union, optional, Tiefengrenze, rekursives z.lazy) und das Verb gegen ein Temp-Repo mit Parameter-Property: Datei entsteht, fremde und ungebundene SCHEMA fehlen, fehlendes Symbol im Bericht, uid ohne realRef ist Aufruffehler
 
 verify ▶ `REQ-contract-test-cases` · `REQ-contract-test-generation` · `REQ-contract-test-manual` · testRefs: `tests/vertragstest.test.ts`
 
-#### 3.4.294  `TEST-view-fmea` — Sicht FMEA zeigt Ort
+#### 3.4.296  `TEST-view-fmea` — Sicht FMEA zeigt Ort
 
 Abnahme der Datei tests/view-fmea.test.ts: die Sicht fmea sortiert nach Prioritaet und nennt je Risiko Kette, Traeger, Gegenmassnahme mit Erfueller oder fehlender Funktion, Nachweis mit Datei, Ergebnis und Datum sowie den Analyse-CR.
 
 verify ▶ `REQ-doc-export` · testRefs: `tests/view-fmea.test.ts`
 
-#### 3.4.295  `TEST-views-auditor` — Sichten fuer den Auditor
+#### 3.4.297  `TEST-views-auditor` — Sichten fuer den Auditor
 
 Abnahme der Datei tests/views.auditor.test.ts: die Nachweismatrix zeigt, auf welcher Ebene eine Anforderung sitzt, und die Verifikationsmatrix, welcher Test eine Schnittstelle zwischen zwei Funktionen abdeckt. Beides stand im Graphen und war ohne Lauf nicht lesbar.
 
 verify ▶ `REQ-doc-export` · `REQ-readiness-model` · testRefs: `tests/views.auditor.test.ts`
 
-#### 3.4.296  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
+#### 3.4.298  `TEST-views-conformance` — Eine Sicht liest nur Deklariertes
 
 Abnahme der Datei tests/views.conformance.test.ts: eine Sicht darf nur lesen, was Ontologie und Regeln deklarieren. Die Fehlerklasse dagegen ist die volle Konformitaet auf einer leeren Sicht, also ein gruener Bericht ueber nichts.
 
 verify ▶ `REQ-doc-export` · `REQ-shared-views-no-fork` · testRefs: `tests/views.conformance.test.ts`
 
-#### 3.4.297  `TEST-violation-context` — Reparatur-Kontext am Verstoss
+#### 3.4.299  `TEST-violation-context` — Reparatur-Kontext am Verstoss
 
 Abnahme der Datei tests/mcp.violation-context.test.ts: die Regel-Werkzeuge reichen den Reparatur-Kontext der Contracts durch, statt ihn flachzuklopfen. Wer einen Verstoss aufloest, bekommt Hinweis und Kandidaten aus derselben Antwort, ohne eine zweite Abfrage.
 
 verify ▶ `REQ-precise-context` · `REQ-rule-enforcement` · testRefs: `tests/mcp.violation-context.test.ts`
 
-#### 3.4.298  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
+#### 3.4.300  `TEST-vorbereitung-reads-metrics` — Vorbereitungs-Skill liest Felder statt zu rechnen
 
 Der Skill-Text nennt nur Felder, Gruende und Regeln, die die Vertraege RiskCarriers, RequirementScope, ChainMetrics und der Regelkatalog tragen, und keine Rechenvorschrift. Der dritte Schritt liest answerPath und answerPathBlockedBy so, wie chainMetrics sie rechnet: die Liste nennt nur die Hindernisse auf dem Weg.
 
 verify ▶ `REQ-vorbereitung-constraints` · `REQ-vorbereitung-reads-metrics` · testRefs: `tests/skill-vorbereitung-felder.test.ts`
 
-#### 3.4.299  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
+#### 3.4.301  `TEST-werkzeug-eingang-geparst` — Direkter Aufruf wird geparst
 
 Ein direkter handler-Aufruf bekommt die Defaults des Schemas (graph_elements limit 100) und scheitert bei ungueltiger Eingabe an der Pruefung.
 
 verify ▶ `REQ-tool-input-parsed-once` · `REQ-werkzeuge-wirken-im-repo` · testRefs: `tests/werkzeug-eingang-geparst.test.ts`
 
-#### 3.4.300  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
+#### 3.4.302  `TEST-werkzeug-register-typ` — Werkzeug-Typen bleiben erhalten
 
 Typ-Test (expectTypeOf, geprueft von tsc): ein Werkzeug der Fabrik hat sein Ergebnis statt any, das Schema bleibt am Werkzeug, ein unbekannter Name ist kein Schluessel.
 
 verify ▶ `SCHEMA-mcp-tool` · `SCHEMA-mcp-tool-registry` · testRefs: `tests/werkzeug-register-typ.test.ts`
 
-#### 3.4.301  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
+#### 3.4.303  `TEST-working-set-spezlauf` — Umfang-Ausweis waechst nicht mit der Arbeitsmenge
 
 Ein Spezifikationslauf, der in einem Zug alle Knoten anfasst, bekommt einen Umfang-Ausweis konstanter Groesse: die Scheibe als Zahl statt als uid-Liste, in allen drei Lesewerkzeugen, auf echtem Kuzu-Store.
 
 verify ▶ `REQ-token-efficiency` · testRefs: `tests/working-set.spezlauf.test.ts`
 
-#### 3.4.302  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
+#### 3.4.304  `TEST-zug-kennzahlen-danach` — Kennzahlen danach im Urteil gegen graph_metrics geprueft
 
 Faehrt an einem Modell auf Platte je Zug einen Probelauf und wendet denselben Zug danach echt an. Prueft, dass jede Zeile des Berichts die Zeile von graph_metrics nach dem Anwenden ist, dass jede nicht genannte Zeile die von davor ist und dass entfallene Kennungen stimmen. Dazu der Zug ohne Wirkung mit leeren Listen und der abgelehnte Zug ohne Bericht. (CR-GC-790)
 

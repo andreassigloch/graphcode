@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 102 SCHEMA · 287 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 104 SCHEMA · 287 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -26,6 +26,7 @@
 | `SCHEMA-completeness` | packages/graphcode-client/src/readiness.ts#ReadinessMarkSchema | reviewed |
 | `SCHEMA-context-input` | src/surface/read.ts#GraphContextInputSchema | n/a |
 | `SCHEMA-cr-groups` | src/loop/se-plan.ts#CrGroupsSchema | n/a |
+| `SCHEMA-cr-groups-anfrage` | src/loop/se-plan.ts#CrGroupsAnfrageSchema | n/a |
 | `SCHEMA-eingangs-befund` | src/kernel/measure/constraints.ts#EingangsBefund | n/a |
 | `SCHEMA-elements-input` | src/surface/read.ts#GraphElementsInputSchema | n/a |
 | `SCHEMA-expand-input` | src/surface/read.ts#GraphExpandInputSchema | n/a |
@@ -96,6 +97,7 @@
 | `SCHEMA-suggest-answer` | src/loop/suggest.ts#GraphSuggestAnswerSchema | n/a |
 | `SCHEMA-suggest-input` | src/loop/suggest.ts#GraphSuggestInputSchema | n/a |
 | `SCHEMA-target-profile` | src/loop/target-profile-contract.ts#TargetProfileSchema | n/a |
+| `SCHEMA-test-impact-anfrage` | src/kernel/measure/test-selection.ts#TestImpactAnfrageSchema | n/a |
 | `SCHEMA-test-ingest-answer` | src/projections/testreport.ts#GraphTestIngestAnswerSchema | n/a |
 | `SCHEMA-test-ingest-input` | src/projections/testreport.ts#GraphTestIngestInputSchema | n/a |
 | `SCHEMA-test-refs` | packages/contracts/src/se/ontology.ts#TestRefsSchema | reviewed |

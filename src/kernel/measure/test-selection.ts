@@ -28,7 +28,7 @@
  * @author andreas@siglochconsulting
  */
 import { z } from 'zod/v4';
-import type { Graph, GraphNode, GraphEdge } from '@sigloch/graph-api-core';
+import { GraphSchema, type Graph, type GraphNode, type GraphEdge } from '@sigloch/graph-api-core';
 import { TestRefsSchema } from '@sigloch/contracts/se';
 
 /**
@@ -41,6 +41,18 @@ import { TestRefsSchema } from '@sigloch/contracts/se';
  * is THIS module's addition: that a resolution run always separates out `anchors`
  * and `testIds`, and that both are uid lists.
  */
+/**
+ * Aufrufvertrag von `impactedTests` (CR-GC-1025): der ganze geladene Graph, die geaenderten Knoten und die
+ * Tiefe. `depth` ist eine Untergrenze von 4 Schritten (siehe `impactedTests`).
+ */
+export const TestImpactAnfrageSchema = z.strictObject({
+  graph: GraphSchema,
+  changeSet: z.array(z.string()),
+  depth: z.number().int().min(0).default(4),
+});
+/** Der Graph kommt als `Graph`, gerechnet wird auf ihm. */
+export type TestImpactAnfrage = Omit<z.input<typeof TestImpactAnfrageSchema>, 'graph'> & { graph: Graph };
+
 export const TestImpactResultSchema = z.object({
   nodes: z.array(z.unknown()),
   edges: z.array(z.unknown()),
@@ -131,7 +143,10 @@ export type CodeLanePlan = z.infer<typeof CodeLanePlanSchema>;
  * MOD→FUNC→REQ→TEST and MOD→FUNC→FLOW→SCHEMA→TEST need up to four directed turns,
  * so a smaller caller default must not cut the chain short; callers may ask for more.
  */
-export function impactedTests(graph: Graph, changeSet: string[], depth = 4): TestImpactResult {
+export function impactedTests(anfrage: TestImpactAnfrage): TestImpactResult {
+  const { changeSet, depth } = TestImpactAnfrageSchema.parse(anfrage);
+  // Geprueft ist der Graph; gerechnet wird auf dem Original, die Kopie des Schemas verloere Felder.
+  const { graph } = anfrage;
   const nodeById = new Map<string, GraphNode>(graph.nodes.map((n) => [n.uid, n]));
   const isType = (id: string, type: string): boolean => nodeById.get(id)?.type === type;
   const outgoing = new Map<string, GraphEdge[]>();

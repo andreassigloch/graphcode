@@ -317,7 +317,7 @@ export class GraphCodeHarness {
     // FLOW-impacted-tests: der Resolver-Output passiert seinen Vertrag, BEVOR er die
     // Modulgrenze verlaesst (SCHEMA-impacted-tests). Ein leises `anchors: undefined`
     // waere hier sonst erst beim Konsumenten als leere Auswahl sichtbar geworden.
-    const resolved = TestImpactResultSchema.parse(impactedTests(graph, changeSet, depth));
+    const resolved = TestImpactResultSchema.parse(impactedTests({ graph, changeSet, depth }));
     return { nodes: resolved.nodes as GraphNode[], edges: resolved.edges as GraphEdge[] };
   }
 

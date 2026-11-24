@@ -226,7 +226,7 @@ export function selectForChange(changedFiles: string[], ctx: AuditContext, opts:
     const nodes = nodesForFile(file, byFile, mods);
     if (nodes.length === 0) unresolvedFiles.push(file);
     else {
-      const resolved = testFilesOf(graph, impactedTests(graph, nodes).testIds);
+      const resolved = testFilesOf(graph, impactedTests({ graph, changeSet: nodes }).testIds);
       for (const uid of resolved.unresolved) unresolvedTests.add(uid);
       for (const uid of resolved.manuell) manuell.add(uid);
       for (const testFile of resolved.files) {
@@ -399,7 +399,7 @@ export function recall(ctx: AuditContext): Recall {
   for (const file of allSources) {
     const nodes = nodesForFile(file, byFile, mods);
     if (nodes.length === 0) continue;
-    const picked = testFilesOf(graph, impactedTests(graph, nodes).testIds).files;
+    const picked = testFilesOf(graph, impactedTests({ graph, changeSet: nodes }).testIds).files;
     const truth = [...importsByTest].filter(([, imports]) => imports.has(file)).map(([testFile]) => testFile);
     const intersection = picked.filter((f) => truth.includes(f));
     selected += picked.length;
