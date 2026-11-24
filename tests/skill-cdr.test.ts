@@ -105,17 +105,13 @@ describe('Abgleich ueber die Funktionen und Rangfolge (CR-GC-922, Probe 2026-11-
   const text = readFileSync(join(import.meta.dirname, '..', '.claude', 'commands', 'se-cdr.md'), 'utf8');
   const abgleich = text.slice(text.indexOf('## 3. Across the functions'), text.indexOf('## 4.'));
 
-  it('Version 2', () => {
-    expect(text).toMatch(/^version: 2$/m);
-  });
-
   it('ein weiterer Agent ohne Vorwissen liest alle Blattfunktionen auf einmal', () => {
     expect(abgleich.length).toBeGreaterThan(0);
     expect(abgleich).toMatch(/one more agent without prior knowledge/);
     expect(abgleich).toMatch(/reads every leaf function under review at once/);
   });
 
-  it('er sucht genau zwei Faelle: zwei Traeger und zwei Quellen', () => {
+  it('er sucht zwei Traeger und zwei Quellen', () => {
     expect(abgleich).toMatch(/\*\*Two carriers\.\*\*/);
     expect(abgleich).toMatch(/\*\*Two sources\.\*\*/);
   });
@@ -124,5 +120,34 @@ describe('Abgleich ueber die Funktionen und Rangfolge (CR-GC-922, Probe 2026-11-
     expect(text).toMatch(/\*\*Rank every question\.\*\* Mark it `behaviour`/);
     expect(text).toMatch(/The author gets the `behaviour` questions first/);
     expect(text).toMatch(/rank \(`behaviour` or `detail`\)/);
+  });
+});
+
+describe('Felder eines SCHEMA: geforderte Angabe und Leser (Entscheidung des Autors 2026-11-24)', () => {
+  // Die sigllm-Regel aus FAQ vertragsfelder-gestalten gilt fuer die Familie. Ausnahme des Autors:
+  // ein SCHEMA, das mehrere FLOW einer Kette tragen, darf Felder haben, die zwei direkte Nachbarn
+  // nicht lesen. Ein Feld ohne Leser heisst darum: kein FLOW mit diesem SCHEMA hat einen Leser.
+  const text = readFileSync(join(import.meta.dirname, '..', '.claude', 'commands', 'se-cdr.md'), 'utf8');
+  const abgleich = text.slice(text.indexOf('## 3. Across the functions'), text.indexOf('## 4.'));
+
+  it('Version 3', () => {
+    expect(text).toMatch(/^version: 3$/m);
+  });
+
+  it('der Massstab nennt die FAQ, das Feld je Angabe und das Feld ohne Leser', () => {
+    expect(text).toMatch(/FAQ `vertragsfelder-gestalten`/);
+    expect(text).toMatch(/every date a requirement asks for is its own field, and a field without a reader goes/);
+  });
+
+  it('Leser ist jede Funktion und jeder Akteur an einem FLOW mit diesem SCHEMA, nicht nur zwei Nachbarn', () => {
+    expect(text).toMatch(/A reader is any function or actor at a FLOW that carries this SCHEMA/);
+    expect(text).toMatch(/may hold fields that two direct neighbours do not read/);
+  });
+
+  it('der Abgleich ueber die Funktionen sucht genau drei Faelle, der dritte ist das Feld ohne Leser', () => {
+    expect(abgleich).toMatch(/It looks for exactly three cases:/);
+    expect(abgleich).toMatch(/\*\*Field without reader\.\*\*/);
+    expect(abgleich).toMatch(/Check every such FLOW, not only one pair/);
+    expect(abgleich).toMatch(/functions and actors at all its flows \(`graph_expand` on the SCHEMA\), including those outside the review/);
   });
 });

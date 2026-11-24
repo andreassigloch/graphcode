@@ -1,6 +1,6 @@
 ---
 name: se-cdr
-version: 2
+version: 3
 description: Review before the build plan — lint the specification in the gate, then one agent per leaf function without prior knowledge lists every question it would have to ask before building. Writes nothing into the model. Due after the Zod schema per leaf function, before se-plan.
 ---
 
@@ -9,6 +9,8 @@ description: Review before the build plan — lint the specification in the gate
 This skill **writes nothing into the model**. It reads, asks and reports. The author answers; `se:author-req` writes the answers.
 
 Order: after the Zod schema per leaf function exists, before `se-plan`. Requirement, test and Zod schema together are the "build-to" baseline.
+
+The measure for a SCHEMA (FAQ `vertragsfelder-gestalten`): every date a requirement asks for is its own field, and a field without a reader goes. A reader is any function or actor at a FLOW that carries this SCHEMA. A SCHEMA shared by several flows, for example along a chain, may hold fields that two direct neighbours do not read.
 
 ## 1. Lint in the gate
 Read the findings of the mark CDR from the tool, never from a list of your own:
@@ -42,11 +44,13 @@ A question the agent can answer from the two sources is not a question. A questi
 **Rank every question.** Mark it `behaviour` when the answer changes what the function does, what it writes, or where data lives; mark it `detail` otherwise (a field name, a format, a timeout with an obvious default). The author gets the `behaviour` questions first. Measured on immo-infra (2026-11-18): three functions gave about 170 questions, and the hits drowned in them.
 
 ## 3. Across the functions
-A gap between two functions is invisible to an agent that reads one. Start **one more agent without prior knowledge** that reads every leaf function under review at once: name, description and requirements of each, and the SCHEMA at their flows. It looks for exactly two cases:
+A gap between two functions is invisible to an agent that reads one. Start **one more agent without prior knowledge** that reads every leaf function under review at once: name, description and requirements of each, and the SCHEMA at their flows. It looks for exactly three cases:
 - **Two carriers.** Two functions carry the same task, or a requirement hangs at a function that does not read its data while another one does.
   Example: two functions both detect a change of the responsible broker; the comparison belongs to the one that reads the broker field.
 - **Two sources.** The same kind of data comes from two places (a log, a list, a status), so two truths can drift.
   Example: two functions each keep their own protocol of the runs.
+- **Field without reader.** A SCHEMA field that no function or actor reads at any FLOW carrying this SCHEMA. Check every such FLOW, not only one pair. For this case the agent also reads, per SCHEMA, the functions and actors at all its flows (`graph_expand` on the SCHEMA), including those outside the review.
+  Example: `SCHEMA-betriebsauftrag` carries `prioritaet`; neither the producer nor any reader along the chain uses it.
 
 Each finding is a `behaviour` question at both functions.
 
