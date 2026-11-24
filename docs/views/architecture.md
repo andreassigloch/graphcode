@@ -57,6 +57,7 @@
 | `FUNC-eingaenge-nur-aus` | FUNC | eingaengeNurAus |
 | `FUNC-emit-trajectory` | FUNC | materializeTrajectory() |
 | `FUNC-emit-update-event` | FUNC | emitUpdateEvent(domains) |
+| `FUNC-erzeuge-typbindung` | FUNC | Typbindung erzeugen |
 | `FUNC-erzeuge-vertragstests` | FUNC | erzeugeVertragstests |
 | `FUNC-evaluate-rules` | FUNC | evaluateRules() |
 | `FUNC-export-markdown` | FUNC | exportMarkdown(graph, view) |
@@ -141,6 +142,7 @@
 | `FUNC-test-ingest` | FUNC | graph_test_ingest |
 | `FUNC-test-ui` | FUNC | se-test-ui (UI test design) |
 | `FUNC-tool-context` | FUNC | createToolContext |
+| `FUNC-typbindung-verb` | FUNC | Typbindung-Verb |
 | `FUNC-upgrade` | FUNC | executeUpgrade(opts) |
 | `FUNC-verify-lane-code` | FUNC | npm run verify:code |
 | `FUNC-verify-lane-full` | FUNC | npm run verify:full |
@@ -208,6 +210,7 @@
 | `FUNC-eingaenge-nur-aus` | `MOD-kernel-measure` |
 | `FUNC-emit-trajectory` | `MOD-projections` |
 | `FUNC-emit-update-event` | `MOD-surface` |
+| `FUNC-erzeuge-typbindung` | `MOD-projections` |
 | `FUNC-erzeuge-vertragstests` | `MOD-projections` |
 | `FUNC-evaluate-rules` | `MOD-kernel` |
 | `FUNC-export-markdown` | `MOD-projections` |
@@ -292,6 +295,7 @@
 | `FUNC-test-ingest` | `MOD-projections` |
 | `FUNC-test-ui` | `MOD-agent-surface` |
 | `FUNC-tool-context` | `MOD-surface` |
+| `FUNC-typbindung-verb` | `MOD-surface` |
 | `FUNC-upgrade` | `MOD-surface` |
 | `FUNC-verify-lane-code` | `MOD-dev-scripts` |
 | `FUNC-verify-lane-full` | `MOD-dev-scripts` |

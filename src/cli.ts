@@ -218,7 +218,7 @@ async function main(): Promise<void> {
       const args = process.argv.slice(3);
       const zi = args.indexOf('--ziel');
       try {
-        const befunde = executeTypbindung({ repoRoot: process.cwd(), ziel: zi >= 0 ? args[zi + 1] : undefined });
+        const { befunde } = executeTypbindung({ repoRoot: process.cwd(), ...(zi >= 0 ? { ziel: args[zi + 1] } : {}) });
         const je = (k: string) => befunde.filter((b) => b.klasse === k).length;
         process.stderr.write(`graphcode typbindung: gebunden ${je('gebunden')}, Altlast ${je('altlast')}, nicht prüfbar ${je('nicht prüfbar')}\n`);
         process.exit(0);

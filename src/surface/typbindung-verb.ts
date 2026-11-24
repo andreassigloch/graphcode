@@ -5,10 +5,9 @@
  * schreibt sie in eine Datei, die `npm run type-check` prüft. Das Modell kommt aus dem committeten Snapshot
  * `docs/graph/*.graph.json` (kein Store, kein Konflikt mit einem laufenden Host).
  *
- * Die Richtung eines FLOW zwischen f und p verdrahtet dieses Verb: Ruft im Code genau eine Seite die andere
- * (`funcCalls` aus contracts, die Bedeutung von RC-13), gilt das. Sonst gilt die Wirkkette: das Glied mit dem
- * kleineren Abstand vom Auslöser (`ChainRoles.depth`), wenn alle Ketten mit beiden Gliedern einig sind.
- * Sonst ist die Richtung offen (gemessen in CR-GC-1026, Lauf 5: Code vor Kette).
+ * Das Verb liefert dem Generator die Aufrufe aus dem Code (`funcCalls` aus contracts, Bedeutung von RC-13)
+ * und je Wirkkette die Abstände vom Auslöser (`ChainRoles.depth`); die Regel „Code vor Kette“ wendet der
+ * Generator an (gemessen in CR-GC-1026, Lauf 5).
  *
  * Die Altlast steht in `<ziel-verzeichnis>/altlast.json` und wird nur von Hand geändert: Eine behobene FUNC
  * muss die Liste verlassen, weil ihr `@ts-expect-error` sonst unbenutzt ist.
@@ -18,13 +17,20 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { z } from 'zod/v4';
-import { chainRoles, funcCalls, readRealRef, type OntologyGraph } from '@sigloch/contracts/se';
+import { chainRoles, funcCalls, readRealRef } from '@sigloch/contracts/se';
 import { extractCodeFacts, toOntologyGraph } from '../kernel/conformance.js';
 import { snapshotPathOf, snapshotToGraph } from '../projections/test-selection-audit.js';
-import { typbindungen, type Aufrufer, type TypbindungErgebnis } from '../projections/typbindung.js';
+import { typbindungen, type TypbindungErgebnis } from '../projections/typbindung.js';
 
 /** Ziel ohne `--ziel`, relativ zum Repo. */
 export const TYPBINDUNG_ZIEL = 'tests/typbindung/bindungen.ts';
+
+/** Aufrufvertrag des Verbs (CR-GC-1027): das Repo und optional der Pfad der Bindungsdatei. */
+export const TypbindungOptionenSchema = z.strictObject({
+  repoRoot: z.string(),
+  ziel: z.string().optional(),
+});
+export type TypbindungOptionen = z.input<typeof TypbindungOptionenSchema>;
 
 /** Die Altlast: uids der FUNC, deren Bindung heute rot ist. */
 export const TypbindungAltlastSchema = z.array(z.string());
@@ -35,23 +41,6 @@ export class TypbindungAufrufFehler extends Error {
     super(message);
     this.name = 'TypbindungAufrufFehler';
   }
-}
-
-/** Richtung aus Code vor Kette. */
-export function aufruferAus(graph: OntologyGraph, rufe: ReadonlyArray<{ from: string; to: string }>): Aufrufer {
-  const ruft = new Set(rufe.map((c) => `${c.from}|${c.to}`));
-  const ketten = chainRoles(graph);
-  return (_flow, f, p) => {
-    const hin = ruft.has(`${f}|${p}`);
-    const her = ruft.has(`${p}|${f}`);
-    if (hin !== her) return hin ? f : p;
-    const urteile = new Set(
-      ketten
-        .filter((k) => f in k.depth && p in k.depth)
-        .map((k) => (k.depth[f] === k.depth[p] ? null : k.depth[f] < k.depth[p] ? f : p)),
-    );
-    return urteile.size === 1 ? [...urteile][0] : null;
-  };
 }
 
 /** Erzeugt den Text der Bindungsdatei aus Snapshot, Code und Altlast, ohne zu schreiben. */
@@ -83,15 +72,22 @@ export function erzeugeTypbindung(repoRoot: string, ziel = TYPBINDUNG_ZIEL): Typ
     if (existsSync(datei)) quellen[r.value.file] = readFileSync(datei, 'utf8');
   }
 
-  return typbindungen({ graph: onto, aufrufer: aufruferAus(onto, funcCalls(onto, facts)), quellen, altlast, ziel });
+  return typbindungen({
+    graph: onto,
+    rufe: funcCalls(onto, facts).map(({ from, to }) => ({ from, to })),
+    tiefen: chainRoles(onto).map((k) => k.depth),
+    quellen,
+    altlast,
+    ziel,
+  });
 }
 
-/** Erzeugt und schreibt die Bindungsdatei; liefert die Befunde für den Bericht. */
-export function executeTypbindung(opts: { repoRoot: string; ziel?: string }): TypbindungErgebnis['befunde'] {
-  const ziel = opts.ziel ?? TYPBINDUNG_ZIEL;
-  const ergebnis = erzeugeTypbindung(opts.repoRoot, ziel);
-  const datei = join(opts.repoRoot, ziel);
+/** Erzeugt und schreibt die Bindungsdatei; liefert Text und Befunde für den Bericht. */
+export function executeTypbindung(optionen: TypbindungOptionen): TypbindungErgebnis {
+  const { repoRoot, ziel = TYPBINDUNG_ZIEL } = TypbindungOptionenSchema.parse(optionen);
+  const ergebnis = erzeugeTypbindung(repoRoot, ziel);
+  const datei = join(repoRoot, ziel);
   mkdirSync(dirname(datei), { recursive: true });
   writeFileSync(datei, ergebnis.text);
-  return ergebnis.befunde;
+  return ergebnis;
 }

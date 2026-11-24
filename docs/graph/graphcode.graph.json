@@ -243,6 +243,12 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-1027",
+      "type": "CR",
+      "name": "Typbindung in die CI: erzeugte bindungen.ts, Altlast 41 FUNC, Gleichstand-Test, Modellknoten (Teil 2 aus CR-GC-1026)",
+      "description": "docs/cr/open/CR-GC-1027-typbindung-in-die-ci-erzeugte-bindungen-.md"
+    },
+    {
       "id": "CR-GC-103",
       "type": "CR",
       "name": "Format-E Codec",
@@ -5194,6 +5200,12 @@
       "description": "Der Agent meldet einen Testlauf oder eine Aenderung an graph_test_ingest; das Werkzeug fragt die betroffenen Tests ab, ordnet Ergebnisse den TEST-Knoten zu, nimmt veraltete zurueck, schreibt durch das Gate und antwortet."
     },
     {
+      "id": "FCHAIN-typbindung",
+      "type": "FCHAIN",
+      "name": "Typbindung erzeugen",
+      "description": "Der Auftraggeber ruft graphcode typbindung; das Verb laesst die Bindungen erzeugen, schreibt die Datei, die der Typpruefer in der CI prueft, und meldet die Zahlen. (CR-GC-1027)"
+    },
+    {
       "id": "FCHAIN-verify-lane",
       "type": "FCHAIN",
       "name": "Code-Test-Spur fahren (npm)",
@@ -5686,6 +5698,13 @@
       "type": "FLOW",
       "name": "CLI-Ausgabe (status)",
       "description": "Die Ausgabe von graphcode status auf stdout: der Stand des Repos (laeuft ein Host, wo ist das Dashboard). Beleg: src/cli.ts, formatStatus(status). (CR-GC-989)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-cli-output-typbindung",
+      "type": "FLOW",
+      "name": "CLI-Ausgabe (typbindung)",
+      "description": "Die Ausgabe von graphcode typbindung auf stderr: Zahl der gebundenen, der Altlast und der nicht pruefbaren FUNC. Beleg: src/cli.ts, case typbindung. (CR-GC-1027)",
       "sync": "sync"
     },
     {
@@ -7276,6 +7295,34 @@
       "sync": "sync"
     },
     {
+      "id": "FLOW-typbindung-aufruf",
+      "type": "FLOW",
+      "name": "Typbindung-Aufruf",
+      "description": "Repo und Ziel, mit denen der CLI-Dispatch das Verb typbindung ruft. Beleg: src/cli.ts, case typbindung. (CR-GC-1027)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-typbindung-bericht",
+      "type": "FLOW",
+      "name": "Typbindung-Bericht",
+      "description": "Bindungsdatei und Befunde, die das Verb an den CLI-Dispatch zurueckgibt. Beleg: src/surface/typbindung-verb.ts, executeTypbindung. (CR-GC-1027)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-typbindung-eingabe",
+      "type": "FLOW",
+      "name": "Typbindung-Anfrage",
+      "description": "Snapshot als Graph, Aufrufe, Abstaende, Quelltexte und Altlast, die das Verb typbindung an den Erzeuger gibt. Beleg: src/surface/typbindung-verb.ts, erzeugeTypbindung. (CR-GC-1027)",
+      "sync": "sync"
+    },
+    {
+      "id": "FLOW-typbindung-ergebnis",
+      "type": "FLOW",
+      "name": "Typbindung-Ergebnis",
+      "description": "Bindungsdatei und Befunde, die der Erzeuger an das Verb zurueckgibt. Beleg: src/projections/typbindung.ts, typbindungen. (CR-GC-1027)",
+      "sync": "sync"
+    },
+    {
       "id": "FLOW-update-hook",
       "type": "FLOW",
       "name": "Update-Hook anlegen",
@@ -7882,6 +7929,17 @@
       "realRef": {
         "file": "src/surface/emit.ts",
         "symbol": "makeUpdateEventHook",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-erzeuge-typbindung",
+      "type": "FUNC",
+      "name": "Typbindung erzeugen",
+      "description": "Erzeugt je Blatt-FUNC eine Zeile Typbindung gegen Anfrage- und Antwort-SCHEMA ihrer sync-FLOW, Richtung Code vor Kette; nicht pruefbare FUNC mit Grund, Altlast mit ts-expect-error. (CR-GC-1026, CR-GC-1027)",
+      "realRef": {
+        "file": "src/projections/typbindung.ts",
+        "symbol": "typbindungen",
         "lang": "ts"
       }
     },
@@ -8847,6 +8905,17 @@
       "realRef": {
         "file": "src/surface/tool-context.ts",
         "symbol": "createToolContext",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "FUNC-typbindung-verb",
+      "type": "FUNC",
+      "name": "Typbindung-Verb",
+      "description": "Das Verb graphcode typbindung: liest Snapshot, Aufrufkanten des Codes und Altlast, laesst je Blatt-FUNC die Typbindung erzeugen und schreibt tests/typbindung/bindungen.ts, die npm run type-check prueft. Exit 2 bei falschem Aufruf. (CR-GC-1026, CR-GC-1027)",
+      "realRef": {
+        "file": "src/surface/typbindung-verb.ts",
+        "symbol": "executeTypbindung",
         "lang": "ts"
       }
     },
@@ -11931,6 +12000,24 @@
       ]
     },
     {
+      "id": "REQ-typbindung",
+      "type": "REQ",
+      "name": "Typbindung je FUNC",
+      "description": "Wenn der Auftraggeber graphcode typbindung aufruft, dann steht in tests/typbindung/bindungen.ts je Blatt-FUNC mit TypeScript-realRef eine Bindung an Anfrage- und Antwort-SCHEMA oder ein Grund, warum sie nicht pruefbar ist. (CR-GC-1027)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
+      "id": "REQ-typbindung-regeln",
+      "type": "REQ",
+      "name": "Regeln der Typbindung",
+      "description": "Der Erzeuger der Typbindung leitet die Signatur einer FUNC nur aus den sync-FLOW ab, deren Partner sie aufruft (Code vor Kette); eine FUNC der Altlast bekommt ts-expect-error, sodass der Typpruefer eine behobene FUNC meldet. (CR-GC-1027)",
+      "kinds": [
+        "functional"
+      ]
+    },
+    {
       "id": "REQ-umbau-haelt-vorhersage",
       "type": "REQ",
       "name": "Umbauvorschlag haelt seine Vorhersage",
@@ -13227,6 +13314,39 @@
       }
     },
     {
+      "id": "SCHEMA-typbindung-eingabe",
+      "type": "SCHEMA",
+      "name": "Typbindung-Anfrage",
+      "description": "Aufrufvertrag des Typbindungs-Erzeugers: Graph, gerichtete Aufrufe aus dem Code (funcCalls), je Kette die Abstaende vom Ausloeser (ChainRoles.depth), Quelltexte der realRef-Dateien, Altlast und Zielpfad. typbindungen parst ihn beim Eintritt. (CR-GC-1027)",
+      "realRef": {
+        "file": "src/projections/typbindung.ts",
+        "symbol": "TypbindungEingabeSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-typbindung-ergebnis",
+      "type": "SCHEMA",
+      "name": "Typbindung-Ergebnis",
+      "description": "Text der Bindungsdatei und je Blatt-FUNC der Befund: gebunden, Altlast oder nicht pruefbar mit Grund. typbindungen parst ihn, bevor es ihn zurueckgibt. (CR-GC-1027)",
+      "realRef": {
+        "file": "src/projections/typbindung.ts",
+        "symbol": "TypbindungErgebnisSchema",
+        "lang": "ts"
+      }
+    },
+    {
+      "id": "SCHEMA-typbindung-optionen",
+      "type": "SCHEMA",
+      "name": "Typbindung-Optionen",
+      "description": "Aufrufvertrag des Verbs typbindung: das Repo und optional der Pfad der Bindungsdatei. executeTypbindung parst ihn beim Eintritt. (CR-GC-1027)",
+      "realRef": {
+        "file": "src/surface/typbindung-verb.ts",
+        "symbol": "TypbindungOptionenSchema",
+        "lang": "ts"
+      }
+    },
+    {
       "id": "SCHEMA-update-event",
       "type": "SCHEMA",
       "name": "UpdateEvent",
@@ -13491,7 +13611,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -13540,7 +13660,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -13644,7 +13764,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -13664,14 +13784,14 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         },
         {
           "file": "tests/knowledge-binding.test.ts",
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -13688,7 +13808,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -13748,7 +13868,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -13808,7 +13928,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -13830,7 +13950,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -13917,7 +14037,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -13958,7 +14078,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14161,7 +14281,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14179,7 +14299,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14194,7 +14314,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14225,7 +14345,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14242,7 +14362,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14287,7 +14407,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14302,7 +14422,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14317,7 +14437,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14401,7 +14521,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14483,7 +14603,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14498,7 +14618,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14529,7 +14649,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14728,7 +14848,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14745,7 +14865,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14830,7 +14950,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -14997,7 +15117,7 @@
           "tool": "vitest",
           "level": "e2e",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15012,7 +15132,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15088,7 +15208,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15210,7 +15330,7 @@
           "tool": "vitest",
           "level": "acceptance",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15228,7 +15348,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15371,7 +15491,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15391,7 +15511,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15432,7 +15552,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15493,7 +15613,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15526,7 +15646,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15556,7 +15676,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15587,7 +15707,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15791,7 +15911,7 @@
           "tool": "vitest",
           "level": "conformance",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15894,7 +16014,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -15991,7 +16111,7 @@
           "tool": "vitest",
           "level": "integration",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -16223,6 +16343,23 @@
       "description": "Prueft, dass eine laufende Sitzung eine geaenderte Werkzeugliste des Hosts erfaehrt."
     },
     {
+      "id": "TEST-typbindung",
+      "type": "TEST",
+      "name": "Typbindung-Test",
+      "description": "Regeln des Erzeugers an einer Kette mit Aufrufer, gerufener FUNC und Helfer; Code vor Kette; Gleichstand der committeten Bindungsdatei mit der neu erzeugten. (CR-GC-1026, CR-GC-1027)",
+      "method": "test",
+      "level": "integration",
+      "testRefs": [
+        {
+          "file": "tests/typbindung.test.ts",
+          "tool": "vitest",
+          "level": "integration",
+          "result": "passed",
+          "ranAt": "2026-11-24T17:37:49.548Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-uc-authoring-style",
       "type": "TEST",
       "name": "Stilregel fuer Use Cases als Linter",
@@ -16233,7 +16370,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -16300,7 +16437,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -16465,7 +16602,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -16826,7 +16963,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -16841,7 +16978,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -16931,7 +17068,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -16961,7 +17098,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -17328,7 +17465,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -17358,7 +17495,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -17493,7 +17630,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -17724,6 +17861,54 @@
       ]
     },
     {
+      "id": "TEST-vertrag-typbindung-eingabe",
+      "type": "TEST",
+      "name": "Vertragstest Typbindung-Anfrage",
+      "description": "Vertragstest SCHEMA-typbindung-eingabe, erzeugt aus dem Zod-Schema. (CR-GC-1027)",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-typbindung-eingabe.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-24T17:37:49.548Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-typbindung-ergebnis",
+      "type": "TEST",
+      "name": "Vertragstest Typbindung-Ergebnis",
+      "description": "Vertragstest SCHEMA-typbindung-ergebnis, erzeugt aus dem Zod-Schema. (CR-GC-1027)",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-typbindung-ergebnis.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-24T17:37:49.548Z"
+        }
+      ]
+    },
+    {
+      "id": "TEST-vertrag-typbindung-optionen",
+      "type": "TEST",
+      "name": "Vertragstest Typbindung-Optionen",
+      "description": "Vertragstest SCHEMA-typbindung-optionen, erzeugt aus dem Zod-Schema. (CR-GC-1027)",
+      "method": "test",
+      "testRefs": [
+        {
+          "file": "tests/vertrag/SCHEMA-typbindung-optionen.vertrag.test.ts",
+          "tool": "vitest",
+          "level": "unit",
+          "result": "passed",
+          "ranAt": "2026-11-24T17:37:49.548Z"
+        }
+      ]
+    },
+    {
       "id": "TEST-vertrag-update-event",
       "type": "TEST",
       "name": "Vertragstest UpdateEvent",
@@ -17749,7 +17934,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -17794,7 +17979,7 @@
           "file": "tests/vertrag/SCHEMA-vertragstest-bericht.vertrag.test.ts",
           "tool": "vitest",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -17901,7 +18086,7 @@
           "tool": "vitest",
           "level": "unit",
           "result": "passed",
-          "ranAt": "2026-11-24T17:22:15.497Z"
+          "ranAt": "2026-11-24T17:37:49.548Z"
         }
       ]
     },
@@ -18987,6 +19172,41 @@
     {
       "source": "CR-GC-1026",
       "target": "MOD-surface",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1027",
+      "target": "FUNC-erzeuge-typbindung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1027",
+      "target": "FUNC-typbindung-verb",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1027",
+      "target": "REQ-typbindung",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1027",
+      "target": "REQ-typbindung-regeln",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1027",
+      "target": "SCHEMA-typbindung-eingabe",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1027",
+      "target": "SCHEMA-typbindung-ergebnis",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1027",
+      "target": "SCHEMA-typbindung-optionen",
       "type": "relation"
     },
     {
@@ -29564,6 +29784,21 @@
       "type": "satisfy"
     },
     {
+      "source": "FCHAIN-typbindung",
+      "target": "FUNC-cli-dispatch",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-typbindung",
+      "target": "FUNC-erzeuge-typbindung",
+      "type": "compose"
+    },
+    {
+      "source": "FCHAIN-typbindung",
+      "target": "FUNC-typbindung-verb",
+      "type": "compose"
+    },
+    {
       "source": "FCHAIN-verify-lane",
       "target": "FUNC-aenderung-melden",
       "type": "compose"
@@ -30391,6 +30626,16 @@
     {
       "source": "FLOW-cli-output-status",
       "target": "SCHEMA-repo-status",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-cli-output-typbindung",
+      "target": "ACTOR-auftraggeber",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-cli-output-typbindung",
+      "target": "SCHEMA-typbindung-ergebnis",
       "type": "relation"
     },
     {
@@ -32899,6 +33144,46 @@
       "type": "relation"
     },
     {
+      "source": "FLOW-typbindung-aufruf",
+      "target": "FUNC-typbindung-verb",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-typbindung-aufruf",
+      "target": "SCHEMA-typbindung-optionen",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-typbindung-bericht",
+      "target": "FUNC-cli-dispatch",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-typbindung-bericht",
+      "target": "SCHEMA-typbindung-ergebnis",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-typbindung-eingabe",
+      "target": "FUNC-erzeuge-typbindung",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-typbindung-eingabe",
+      "target": "SCHEMA-typbindung-eingabe",
+      "type": "relation"
+    },
+    {
+      "source": "FLOW-typbindung-ergebnis",
+      "target": "FUNC-typbindung-verb",
+      "type": "io"
+    },
+    {
+      "source": "FLOW-typbindung-ergebnis",
+      "target": "SCHEMA-typbindung-ergebnis",
+      "type": "relation"
+    },
+    {
       "source": "FLOW-update-hook",
       "target": "FUNC-emit-update-event",
       "type": "io"
@@ -34175,6 +34460,11 @@
     },
     {
       "source": "FUNC-cli-dispatch",
+      "target": "FLOW-cli-output-typbindung",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-cli-dispatch",
       "target": "FLOW-cli-output-upgrade",
       "type": "io"
     },
@@ -34186,6 +34476,11 @@
     {
       "source": "FUNC-cli-dispatch",
       "target": "FLOW-store-close-cli",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-cli-dispatch",
+      "target": "FLOW-typbindung-aufruf",
       "type": "io"
     },
     {
@@ -34479,6 +34774,21 @@
       "type": "satisfy",
       "weight": 1,
       "created_at": "2026-06-16T00:00:00.000Z"
+    },
+    {
+      "source": "FUNC-erzeuge-typbindung",
+      "target": "MOD-projections",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-erzeuge-typbindung",
+      "target": "FLOW-typbindung-ergebnis",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-erzeuge-typbindung",
+      "target": "REQ-typbindung-regeln",
+      "type": "satisfy"
     },
     {
       "source": "FUNC-erzeuge-vertragstests",
@@ -36554,6 +36864,26 @@
     {
       "source": "FUNC-tool-context",
       "target": "REQ-audit-eintrag-code-stand",
+      "type": "satisfy"
+    },
+    {
+      "source": "FUNC-typbindung-verb",
+      "target": "MOD-surface",
+      "type": "allocate"
+    },
+    {
+      "source": "FUNC-typbindung-verb",
+      "target": "FLOW-typbindung-bericht",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-typbindung-verb",
+      "target": "FLOW-typbindung-eingabe",
+      "type": "io"
+    },
+    {
+      "source": "FUNC-typbindung-verb",
+      "target": "REQ-typbindung",
       "type": "satisfy"
     },
     {
@@ -40644,6 +40974,16 @@
       "type": "verify"
     },
     {
+      "source": "TEST-typbindung",
+      "target": "REQ-typbindung",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-typbindung",
+      "target": "REQ-typbindung-regeln",
+      "type": "verify"
+    },
+    {
       "source": "TEST-uc-authoring-style",
       "target": "REQ-interactive-capture-suggest",
       "type": "verify"
@@ -41169,6 +41509,21 @@
       "type": "verify"
     },
     {
+      "source": "TEST-vertrag-typbindung-eingabe",
+      "target": "SCHEMA-typbindung-eingabe",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-typbindung-ergebnis",
+      "target": "SCHEMA-typbindung-ergebnis",
+      "type": "verify"
+    },
+    {
+      "source": "TEST-vertrag-typbindung-optionen",
+      "target": "SCHEMA-typbindung-optionen",
+      "type": "verify"
+    },
+    {
       "source": "TEST-vertrag-update-event",
       "target": "SCHEMA-update-event",
       "type": "verify"
@@ -41584,6 +41939,11 @@
     },
     {
       "source": "UC-intent-to-code",
+      "target": "FCHAIN-typbindung",
+      "type": "compose"
+    },
+    {
+      "source": "UC-intent-to-code",
       "target": "FCHAIN-verify-lane",
       "type": "compose"
     },
@@ -41804,5 +42164,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1614
+  "graphVersion": 1619
 }

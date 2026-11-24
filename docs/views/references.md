@@ -177,6 +177,13 @@
 | `CR-GC-1025` | relation | `SCHEMA-test-impact-anfrage` |
 | `CR-GC-1026` | relation | `MOD-projections` |
 | `CR-GC-1026` | relation | `MOD-surface` |
+| `CR-GC-1027` | relation | `FUNC-erzeuge-typbindung` |
+| `CR-GC-1027` | relation | `FUNC-typbindung-verb` |
+| `CR-GC-1027` | relation | `REQ-typbindung` |
+| `CR-GC-1027` | relation | `REQ-typbindung-regeln` |
+| `CR-GC-1027` | relation | `SCHEMA-typbindung-eingabe` |
+| `CR-GC-1027` | relation | `SCHEMA-typbindung-ergebnis` |
+| `CR-GC-1027` | relation | `SCHEMA-typbindung-optionen` |
 | `CR-GC-103` | relation | `FUNC-decode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |
@@ -2226,6 +2233,9 @@
 | `FCHAIN-test-ingest` | compose | `FUNC-test-ingest` |
 | `FCHAIN-test-ingest` | compose | `FUNC-tool-context` |
 | `FCHAIN-test-ingest` | satisfy | `REQ-risk-stale-test-result` |
+| `FCHAIN-typbindung` | compose | `FUNC-cli-dispatch` |
+| `FCHAIN-typbindung` | compose | `FUNC-erzeuge-typbindung` |
+| `FCHAIN-typbindung` | compose | `FUNC-typbindung-verb` |
 | `FCHAIN-verify-lane` | compose | `FUNC-aenderung-melden` |
 | `FCHAIN-verify-lane` | compose | `FUNC-graph-store` |
 | `FCHAIN-verify-lane` | compose | `FUNC-lauf-urteil` |
@@ -2391,6 +2401,8 @@
 | `FLOW-cli-output-skills-sync` | relation | `SCHEMA-skill-sync-result` |
 | `FLOW-cli-output-status` | io | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-status` | relation | `SCHEMA-repo-status` |
+| `FLOW-cli-output-typbindung` | io | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-typbindung` | relation | `SCHEMA-typbindung-ergebnis` |
 | `FLOW-cli-output-upgrade` | io | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-upgrade` | relation | `SCHEMA-upgrade-report` |
 | `FLOW-cli-output-vertragstest` | io | `ACTOR-auftraggeber` |
@@ -2889,6 +2901,14 @@
 | `FLOW-trajectory` | relation | `SCHEMA-trajectory` |
 | `FLOW-trajectory-entry` | io | `FUNC-emit-trajectory` |
 | `FLOW-trajectory-entry` | relation | `SCHEMA-audit-record` |
+| `FLOW-typbindung-aufruf` | io | `FUNC-typbindung-verb` |
+| `FLOW-typbindung-aufruf` | relation | `SCHEMA-typbindung-optionen` |
+| `FLOW-typbindung-bericht` | io | `FUNC-cli-dispatch` |
+| `FLOW-typbindung-bericht` | relation | `SCHEMA-typbindung-ergebnis` |
+| `FLOW-typbindung-eingabe` | io | `FUNC-erzeuge-typbindung` |
+| `FLOW-typbindung-eingabe` | relation | `SCHEMA-typbindung-eingabe` |
+| `FLOW-typbindung-ergebnis` | io | `FUNC-typbindung-verb` |
+| `FLOW-typbindung-ergebnis` | relation | `SCHEMA-typbindung-ergebnis` |
 | `FLOW-update-hook` | io | `FUNC-emit-update-event` |
 | `FLOW-update-hook` | relation | `SCHEMA-update-event` |
 | `FLOW-verlauf-bereitschaft` | io | `FUNC-compute-readiness` |
@@ -3144,9 +3164,11 @@
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-rewind` |
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-skills-sync` |
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-status` |
+| `FUNC-cli-dispatch` | io | `FLOW-cli-output-typbindung` |
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-upgrade` |
 | `FUNC-cli-dispatch` | io | `FLOW-cli-output-vertragstest` |
 | `FUNC-cli-dispatch` | io | `FLOW-store-close-cli` |
+| `FUNC-cli-dispatch` | io | `FLOW-typbindung-aufruf` |
 | `FUNC-cli-dispatch` | satisfy | `REQ-cli-hilfe-fuehrt-nicht-aus` |
 | `FUNC-close-violations` | allocate | `MOD-agent-surface` |
 | `FUNC-close-violations` | io | `FLOW-anleitung-close-violations` |
@@ -3203,6 +3225,9 @@
 | `FUNC-emit-update-event` | allocate | `MOD-surface` |
 | `FUNC-emit-update-event` | io | `FLOW-live-event` |
 | `FUNC-emit-update-event` | satisfy | `REQ-post-emit-update-event` |
+| `FUNC-erzeuge-typbindung` | allocate | `MOD-projections` |
+| `FUNC-erzeuge-typbindung` | io | `FLOW-typbindung-ergebnis` |
+| `FUNC-erzeuge-typbindung` | satisfy | `REQ-typbindung-regeln` |
 | `FUNC-erzeuge-vertragstests` | allocate | `MOD-projections` |
 | `FUNC-erzeuge-vertragstests` | io | `FLOW-vertragstest-bericht` |
 | `FUNC-erzeuge-vertragstests` | satisfy | `REQ-contract-test-cases` |
@@ -3614,6 +3639,10 @@
 | `FUNC-tool-context` | io | `FLOW-trajectory-entry` |
 | `FUNC-tool-context` | io | `FLOW-work-set` |
 | `FUNC-tool-context` | satisfy | `REQ-audit-eintrag-code-stand` |
+| `FUNC-typbindung-verb` | allocate | `MOD-surface` |
+| `FUNC-typbindung-verb` | io | `FLOW-typbindung-bericht` |
+| `FUNC-typbindung-verb` | io | `FLOW-typbindung-eingabe` |
+| `FUNC-typbindung-verb` | satisfy | `REQ-typbindung` |
 | `FUNC-upgrade` | allocate | `MOD-surface` |
 | `FUNC-upgrade` | io | `FLOW-install-result-upgrade` |
 | `FUNC-upgrade` | satisfy | `REQ-update-traegt-policy-ein` |
@@ -4398,6 +4427,8 @@
 | `TEST-tool-contract` | verify | `SCHEMA-mcp-tool-registry` |
 | `TEST-tool-contract` | verify | `SCHEMA-tool-context` |
 | `TEST-tool-list-change-announced` | verify | `REQ-risk-client-holds-stale-tool-list` |
+| `TEST-typbindung` | verify | `REQ-typbindung` |
+| `TEST-typbindung` | verify | `REQ-typbindung-regeln` |
 | `TEST-uc-authoring-style` | verify | `REQ-interactive-capture-suggest` |
 | `TEST-umbau-ausloeser` | verify | `REQ-generate-nennt-suggest` |
 | `TEST-umbau-ausloeser` | verify | `REQ-violations-nennt-suggest` |
@@ -4503,6 +4534,9 @@
 | `TEST-vertrag-tests-input` | verify | `SCHEMA-tests-input` |
 | `TEST-vertrag-tool-context` | verify | `SCHEMA-tool-context` |
 | `TEST-vertrag-trajectory` | verify | `SCHEMA-trajectory` |
+| `TEST-vertrag-typbindung-eingabe` | verify | `SCHEMA-typbindung-eingabe` |
+| `TEST-vertrag-typbindung-ergebnis` | verify | `SCHEMA-typbindung-ergebnis` |
+| `TEST-vertrag-typbindung-optionen` | verify | `SCHEMA-typbindung-optionen` |
 | `TEST-vertrag-update-event` | verify | `SCHEMA-update-event` |
 | `TEST-vertrag-upgrade-report` | verify | `SCHEMA-upgrade-report` |
 | `TEST-vertrag-verlauf` | verify | `SCHEMA-verlauf` |
@@ -4585,6 +4619,7 @@
 | `UC-intent-to-code` | compose | `FCHAIN-model-import` |
 | `UC-intent-to-code` | compose | `FCHAIN-skill-authoring` |
 | `UC-intent-to-code` | compose | `FCHAIN-test-ingest` |
+| `UC-intent-to-code` | compose | `FCHAIN-typbindung` |
 | `UC-intent-to-code` | compose | `FCHAIN-verify-lane` |
 | `UC-intent-to-code` | compose | `REQ-code-quality` |
 | `UC-intent-to-code` | compose | `REQ-reduced-llm` |

@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 308 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 310 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 70 REQ
@@ -366,7 +366,7 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 227 REQ
+### Entwurf (SWE.3 · HWE.2) — 229 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
@@ -581,6 +581,8 @@
 | `REQ-top-level-ein-eingangsknoten-je-kette` | `TEST-skill-top-level-ausloeser` | `FUNC-se-top-level` | `MOD-agent-surface` |
 | `REQ-trade-cr-ueber-aise` | `TEST-skill-cr-ueber-aise` | `FUNC-se-trade` | `MOD-agent-surface` |
 | `REQ-trajectory-emit` | `TEST-create-harness-smoke` · `TEST-learning-emit` | `FUNC-emit-trajectory` | `MOD-projections` |
+| `REQ-typbindung` | `TEST-typbindung` | `FUNC-typbindung-verb` | `MOD-surface` |
+| `REQ-typbindung-regeln` | `TEST-typbindung` | `FUNC-erzeuge-typbindung` | `MOD-projections` |
 | `REQ-umbau-modellzug-vor-loeschen` | `TEST-skill-faq-angleich` · `TEST-skill-faq-ergaenzung` | `FUNC-se-umbau` | `MOD-agent-surface` |
 | `REQ-umfrage-bemerkt-tod` | `TEST-gve-supervision` | `FUNC-gve-supervise` | `MOD-surface` |
 | `REQ-update-behaelt-store` | `TEST-cli-scaffold` | `FUNC-harness-cli` | `MOD-surface` |

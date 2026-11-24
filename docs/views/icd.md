@@ -4,7 +4,7 @@
 
 # graphcode — Interface Control Document
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 104 SCHEMA · 287 FLOW. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 107 SCHEMA · 292 FLOW. Deterministisch generiert.
 
 ## Schemas (Zod contracts)
 
@@ -105,6 +105,9 @@
 | `SCHEMA-tests-input` | src/projections/report.ts#GraphTestsInputSchema | n/a |
 | `SCHEMA-tool-context` | src/surface/tool-context-contract.ts#ToolContext | n/a |
 | `SCHEMA-trajectory` | packages/learning-core/src/interfaces/trajectory.ts#TrajectorySchema | reviewed |
+| `SCHEMA-typbindung-eingabe` | src/projections/typbindung.ts#TypbindungEingabeSchema | n/a |
+| `SCHEMA-typbindung-ergebnis` | src/projections/typbindung.ts#TypbindungErgebnisSchema | n/a |
+| `SCHEMA-typbindung-optionen` | src/surface/typbindung-verb.ts#TypbindungOptionenSchema | n/a |
 | `SCHEMA-update-event` | packages/contracts/src/harness/index.ts#LiveUpdateEventSchema | reviewed |
 | `SCHEMA-upgrade-report` | src/surface/upgrade.ts#UpgradeReportSchema | n/a |
 | `SCHEMA-verlauf` | src/projections/verlauf.ts#VerlaufSchema | n/a |
@@ -183,6 +186,7 @@
 | `FLOW-cli-output-rewind` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-skills-sync` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-status` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
+| `FLOW-cli-output-typbindung` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-upgrade` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-cli-output-vertragstest` | `FUNC-cli-dispatch` | `ACTOR-auftraggeber` |
 | `FLOW-code-lane-plan` | `FUNC-plan-code-lane` | `FUNC-verify-lane-code` · `FUNC-verify-lane-full` |
@@ -387,6 +391,10 @@
 | `FLOW-tool-surface` | `FUNC-serve-stdio` | `FUNC-agent-loop` |
 | `FLOW-trajectory` | `FUNC-emit-trajectory` | `ACTOR-learning-engine` |
 | `FLOW-trajectory-entry` | `FUNC-tool-context` | `FUNC-emit-trajectory` |
+| `FLOW-typbindung-aufruf` | `FUNC-cli-dispatch` | `FUNC-typbindung-verb` |
+| `FLOW-typbindung-bericht` | `FUNC-typbindung-verb` | `FUNC-cli-dispatch` |
+| `FLOW-typbindung-eingabe` | `FUNC-typbindung-verb` | `FUNC-erzeuge-typbindung` |
+| `FLOW-typbindung-ergebnis` | `FUNC-erzeuge-typbindung` | `FUNC-typbindung-verb` |
 | `FLOW-update-hook` | `FUNC-create-harness` | `FUNC-emit-update-event` |
 | `FLOW-verlauf-bereitschaft` | `FUNC-stand-verlauf` | `FUNC-compute-readiness` |
 | `FLOW-verlauf-konformanz` | `FUNC-stand-verlauf` | `FUNC-check-code-conformance` |
