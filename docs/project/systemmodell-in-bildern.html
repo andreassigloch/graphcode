@@ -601,6 +601,7 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
   <div class="mcard">
     <div class="mhead"><span class="mnum">1</span><div><div class="eyebrow">Unterbinden</div><h3>Das Tor</h3></div></div>
     <p>Jede Änderung geht durch dasselbe Tor, ob Mensch oder KI sie vorschlägt. Es blockiert nur, was die Änderung <b>neu</b> an Fehlern einführt. Altlasten bleiben sichtbar, halten aber niemanden auf.</p>
+    <p class="mex">Auch Code und Modell laufen nicht still auseinander: Ruft „Code prüfen“ im Code „Fach entriegeln“ auf, ohne dass das Modell diesen Fluss kennt, bricht der Commit ab.</p>
   </div>
   <div class="mcard">
     <div class="mhead"><span class="mnum">2</span><div><div class="eyebrow">Steuern</div><h3>Das Gummiband</h3></div></div>
@@ -618,12 +619,31 @@ ol.steps .meta { font-size: 0.82rem; color: var(--muted); }
 </div>
 
 <details class="details">
-<summary>Details: der Zug, die Gestaltungsregeln, der Vergleich von Alternativen, die Constraint-Dimensionen</summary>
+<summary>Details: der Zug, Code und Modell im Gleichlauf, die Gestaltungsregeln, der Vergleich von Alternativen, die Constraint-Dimensionen</summary>
 <figure>
   <div class="eyebrow">Ein Zug im interaktiven Betrieb</div>
   <div id="loop" class="big"></div>
   <figcaption>Der Nutzer kann an jeder Stelle eine eigene Richtung einschlagen. Das Modell folgt und meldet, was dadurch offen bleibt.</figcaption>
 </figure>
+
+<h3 style="margin-top:40px">Unterbinden, zweite Seite: Code und Modell laufen nicht auseinander</h3>
+<p style="margin-top:8px">Jede Funktion, jedes Datenformat und jeder Test im Modell zeigt auf eine Datei und ein Symbol im Code. Prüfungen gleichen beide Seiten ab. Blockiert wird an drei Stellen, alles andere erscheint bei jeder Prüfung als Hinweis.</p>
+<div class="tablewrap">
+<table class="design">
+  <thead><tr><th>Was geprüft wird</th><th>Beispiel Paketstation</th><th>Wann</th><th>Folge</th></tr></thead>
+  <tbody>
+    <tr><td>Jede Modelländerung geht durch das Tor. Das gespeicherte Modell von Hand zu ändern ist gesperrt.</td><td>Ein Agent trägt „Fach entriegeln“ direkt in die Modelldatei ein: abgewiesen</td><td>jede Änderung</td><td>blockiert</td></tr>
+    <tr><td>Jede Bindung einer Funktion zeigt auf existierenden Code. Jeder Fluss zwischen zwei Funktionen hat einen Aufruf im Code, jeder Aufruf einen Fluss.</td><td>„Code prüfen“ ruft „Fach entriegeln“ auf, das Modell kennt den Fluss nicht</td><td>Commit mit Code</td><td>blockiert</td></tr>
+    <tr><td>Das gespeicherte Modell passt zu Format und Regeln.</td><td>Eine Modelldatei ohne Elemente wird nicht committet</td><td>Commit mit Modell</td><td>blockiert</td></tr>
+    <tr><td>Datenformate und Tests zeigen auf existierenden Code; ein Datenformat ist ein Zod-Schema.</td><td>„Abholcode“ zeigt auf ein Schema, das umbenannt wurde</td><td>jede Prüfung</td><td>Hinweis</td></tr>
+    <tr><td>Ein Datenformat wird an seiner Schnittstelle geprüft, und nur dort.</td><td>Der Abholcode wird beim Empfang im Bedienfeld geprüft, nicht erst in der Schließmechanik</td><td>jede Prüfung</td><td>Hinweis</td></tr>
+    <tr><td>Jede Quelldatei gehört zu einem Modul. Ein Import zwischen zwei Modulen hat eine Verbindung im Modell.</td><td>Das Bedienfeld importiert Code der Schließmechanik ohne Verbindung im Modell</td><td>jede Prüfung</td><td>Hinweis</td></tr>
+    <tr><td>Ein Test, dessen Code sich geändert hat, verliert sein „bestanden“, bis er wieder läuft.</td><td>Der Test „Fach öffnet in 2 s“ gilt nach einer Änderung an „Fach entriegeln“ als offen</td><td>nach jedem Testlauf</td><td>Ergebnis verfällt</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="muted" style="margin-top:10px;font-size:0.92rem">Aus allen Hinweisen bildet das Modell ein Urteil: <b>kongruent</b>, <b>gedriftet</b> oder <b>nicht prüfbar</b>, immer mit dem Anteil gebundener Funktionen. Regeln RC-01 bis RC-13 im Regelkatalog, dazu R-19, R-20, R-26.</p>
+<p style="margin-top:12px">Offen sind drei Lücken. Kein Hinweis meldet, wenn der Inhalt eines festgelegten Datenformats beim Programmieren still geändert wird. Keiner prüft, ob die Signatur einer Funktion zu ihren Datenformaten passt. Und ein Fluss über Datei, Ereignis oder Speicher hat keinen Aufruf, den die Prüfung sehen könnte.</p>
 
 <h3 style="margin-top:40px">Gestaltungsregeln guter Architektur, als Regeln umgesetzt</h3>
 <p style="margin-top:8px">Die klassischen Gestaltungsregeln für Architektur stehen nicht in einem Leitfaden, den jemand lesen müsste. Sie sind Regeln des Katalogs und werden bei jeder Änderung geprüft. Fünf davon liefern Messwerte mit Schwelle; aus ihnen bildet das Modell einen <b>Steuerwert</b>.</p>
