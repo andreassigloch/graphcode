@@ -183,12 +183,35 @@ Zweite Mutation, nicht im Prüfsatz: Die Funktion deklariert ihren Rückgabetyp 
 **Folge-Items:**
 - ITEM-2026-1651 (graphcode): Aufrufvertrag als ein Objekt für `crGroups`, `impactedTests` und `zugBericht`, nach dem Muster von CR-GC-1022. Die drei Constraint-Funktionen zeigen dasselbe Muster.
 - ITEM-2026-1652 (sigloch-modules): Regel, die die Signatur einer FUNC gegen Anfrage- und Antwort-SCHEMA ihrer sync-FLOW prüft.
+- ITEM-2026-1653 (graphcode): Aufrufvertrag für `zugBericht`, Fehlerfall `BerichtFehlt` als eigenes SCHEMA (Schnitt aus CR-GC-1025).
+- ITEM-2026-1658 (graphcode, sigloch-modules): Vertrag nur an Vertrauensgrenzen parsen. Gemessen: Der Parse ist 69 % der Laufzeit von `impactedTests`.
+
+### Schluss (2026-11-24)
+
+**Drift ist ohne Prüfung nicht ausgeschlossen.**
+
+| Drift | abgesichert? | wodurch |
+|---|---|---|
+| FLOW ohne Aufruf, Aufruf ohne FLOW, toter `realRef` | ja | RC-01, RC-12, RC-13; die Commit-Prüfung blockiert |
+| Signatur passt nicht zum Anfrage- oder Antwort-SCHEMA | nein | nur wo die Funktion ihre Typen per `z.infer` aus dem Vertrag ableitet; das erzwingt nichts, 9 der 12 FUNC tun es nicht |
+| Inhalt eines Vertrags still geändert | teilweise | committete Vertragstests werden rot, bis jemand sie neu erzeugt; das geht ohne CR am Modell |
+| Aufrufrichtung | ja | aus der Wirkkette; R-30 verlangt jede Blatt-FUNC in einer Kette |
+
+**Weiter (Freigabe des Autors 2026-11-24):**
+1. ITEM-2026-1652 als generierte Typbindung umsetzen: `kopf.mjs` wird eine Prüfung in graphcode, Richtung aus der Wirkkette, Lauf in der CI. Keine Typanalyse in einer RC-Regel.
+2. Die 9 roten FUNC auf einen Aufrufvertrag umstellen, damit die Prüfung grün startet; ITEM-2026-1653 gehört dazu.
+3. Schutz des Vertragsinhalts: ITEM-2026-1659 (Hash je SCHEMA, Änderung nur über einen CR am Modell).
 
 ---
 
 ## Entscheidungen
 
-keine
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Wird das Framework (Struktur, Signaturen, Verdrahtung) aus dem Modell generiert? | Nein. Generiert wird eine Prüfung: je FUNC eine Typbindung gegen Anfrage- und Antwort-SCHEMA, geprüft vom Typprüfer. | Lauf 1 und 2: Kill (0 und 3 von 12 Köpfen grün). Die Bindung fand in beiden Läufen jeden Widerspruch zwischen Signatur und Vertrag, den keine Regel meldet. Eine Funktion, die ihre Typen aus dem Vertrag ableitet, braucht keinen generierten Kopf. |
+| Wie bekommt ein Kopf seine Parameter? | Das SCHEMA am Anfrage-FLOW ist der ganze Aufrufvertrag und trägt alle Eingaben. Ein Fehlerpfad bekommt ein eigenes SCHEMA. | Entscheidung des Autors; Muster CR-GC-1022, CR-GC-1025; FAQ `vertrag-je-variante` Punkt 5. |
+| Woher kommt die Aufrufrichtung eines FLOW-Paars? | Aus der Wirkkette (Auslöser aus `chainRoles`, das nähere Glied ruft). Kein neues Attribut in der Ontologie. | Frage des Autors; gemessen: 107 von 110 Paaren entschieden, 0 Widersprüche zum Code. |
+| Bleibt der Parse im selben Prozess? | Ja, bis ITEM-2026-1658 entschieden ist. | Entscheidung des Autors 2026-11-24. |
 
 ---
 

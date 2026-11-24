@@ -164,6 +164,12 @@
 | `CR-GC-1022` | relation | `FUNC-generation-step` |
 | `CR-GC-1022` | relation | `SCHEMA-generation-request` |
 | `CR-GC-1023` | relation | `FUNC-graph-suggest` |
+| `CR-GC-1024` | relation | `FUNC-cr-groups` |
+| `CR-GC-1024` | relation | `FUNC-select-tests` |
+| `CR-GC-1024` | relation | `FUNC-zug-bericht` |
+| `CR-GC-1024` | relation | `MOD-kernel-measure` |
+| `CR-GC-1024` | relation | `MOD-loop` |
+| `CR-GC-1024` | relation | `MOD-projections` |
 | `CR-GC-1025` | relation | `FUNC-cr-groups` |
 | `CR-GC-1025` | relation | `FUNC-select-tests` |
 | `CR-GC-1025` | relation | `SCHEMA-cr-groups` |

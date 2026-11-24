@@ -18917,6 +18917,36 @@
       "type": "relation"
     },
     {
+      "source": "CR-GC-1024",
+      "target": "FUNC-cr-groups",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1024",
+      "target": "FUNC-select-tests",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1024",
+      "target": "FUNC-zug-bericht",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1024",
+      "target": "MOD-kernel-measure",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1024",
+      "target": "MOD-loop",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1024",
+      "target": "MOD-projections",
+      "type": "relation"
+    },
+    {
       "source": "CR-GC-1025",
       "target": "FUNC-cr-groups",
       "type": "relation"
@@ -41756,5 +41786,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1608
+  "graphVersion": 1609
 }

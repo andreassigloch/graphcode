@@ -215,6 +215,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-1020` | done | R-26, R-32: audit-record, suggest-answer und der Dashboard-Socket an die neuen Familien-Schemas binden | `FUNC-graph-suggest` · `FUNC-host-socket` · `FUNC-tool-context` |
 | `CR-GC-1022` | done | generationStep: acht Positionsargumente ohne Vertrag, ein Aufrufer gibt sie verschoben | `FUNC-generation-step` |
 | `CR-GC-1023` | done | Probelauf-Test des Optimierers liest das lebende Modell und muss nach jeder Modellaenderung neu eingemessen werden | `FUNC-graph-suggest` |
+| `CR-GC-1024` | n/a | Spike: Funktionsköpfe aus dem Modell generieren, Drift durch Bau verhindern | `FUNC-cr-groups` · `FUNC-select-tests` · `FUNC-zug-bericht` · `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
 | `CR-GC-1025` | done | Aufrufvertrag als ein Objekt: crGroups, impactedTests, zugBericht weichen vom Anfrage-SCHEMA ab (aus CR-GC-1024) | `FUNC-cr-groups` · `FUNC-select-tests` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
 | `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-agent-surface` · `REQ-doc-export` |
