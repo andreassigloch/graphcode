@@ -225,7 +225,8 @@
       "id": "CR-GC-1024",
       "type": "CR",
       "name": "Spike: Funktionsköpfe aus dem Modell generieren, Drift durch Bau verhindern",
-      "description": "docs/cr/open/CR-GC-1024-spike-funktionsko-pfe-aus-dem-modell-gen.md"
+      "description": "docs/cr/done/CR-GC-1024-spike-funktionsko-pfe-aus-dem-modell-gen.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-1025",
@@ -41786,5 +41787,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1609
+  "graphVersion": 1610
 }
