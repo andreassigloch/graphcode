@@ -134,6 +134,60 @@ Von 126 FLOW in Signaturen und eigenen Aufrufen der ableitbaren FUNC entscheidet
 
 Go = Kontrolle, Muss 1 und 2, kein Kill. Dann folgt der Bau wie oben beschrieben.
 
+## Lauf 5: Ergebnis
+
+Modell und Aufrufkanten wie Lauf 4 (`lauf5/`, kopiert aus `lauf4/`). Werkzeug: `kopf.mjs` Modus `mix:`.
+
+### Kontrolle
+
+Alle acht Varianten wie erwartet. Die Variante „Code vor Kette“: Die Kette allein dreht alle vier Richtungen um, mit den Aufrufkanten entsteht dieselbe Signatur wie bei der grünen Variante, grün. „mehrere Operationen“: keine Bindung, Grund `SCHEMA-ein`, `SCHEMA-stopp`. **Bestanden.**
+
+### M1 Aufteilung (88 FUNC)
+
+| Klasse | Lauf 4 | Lauf 5 |
+|---|---|---|
+| grün | 4 | 6 |
+| rot | 29 | 42 |
+| nicht prüfbar: Richtung offen | 43 | 16 |
+| nicht prüfbar: mehrere Operationen | – | 10 |
+| nicht prüfbar: MCP-Werkzeug | 10 | 10 |
+| nicht prüfbar: nicht exportiert | 2 | 4 |
+
+Quelle der Richtung je FLOW und Partner: Code 348, Kette 134, offen 21.
+
+### M2 Stichprobe (jede dritte von 42, also 14)
+
+| FUNC | Urteil | Grund |
+|---|---|---|
+| `FUNC-apply-reseed` | Drift | Vertrag `ontology-json`, Code `(target, relPath)` |
+| `FUNC-code-urteil` | Drift | `graph` außerhalb des Vertrags |
+| `FUNC-decode` | Drift | `bestand` außerhalb des Vertrags; Rückgabe ein Objekt statt eines Befehls |
+| `FUNC-emit-trajectory` | Drift | `(log, outDir)` statt `AuditRecord` |
+| `FUNC-export-marker` | Drift | `(repoRoot)` statt `ExportPending` |
+| `FUNC-function-criticality` | Drift | Liste statt Einzelwert |
+| `FUNC-harness-cli` | Drift | `(action, opts)` statt `CliCommand` |
+| `FUNC-init-verb` | Drift | `(opts, deps?)` statt `CliCommand` |
+| `FUNC-measure-test-schlupf` | Drift | Positionsargumente; die Anfrage trägt das Antwort-SCHEMA |
+| `FUNC-plan-code-lane` | Drift | Positionsargumente; die Anfrage trägt das Antwort-SCHEMA |
+| `FUNC-schema-guard` | Drift | Die Anfrage trägt das Antwort-SCHEMA |
+| `FUNC-serve-sse` | **Artefakt** | Regel 2 rechnet den FLOW an einen Akteur (`health-report`, über HTTP) als Rückgabe von `serveHost` |
+| `FUNC-stand-verlauf` | Drift | `VerlaufEingabe` verlangt zusätzlich `git` und `cache` |
+| `FUNC-vertragstest-verb` | Drift | `(opt)` statt `CliCommand` |
+
+**1 Artefakt.**
+
+### Urteil
+
+| | Ergebnis |
+|---|---|
+| Kontrolle | bestanden |
+| Muss 1 | erfüllt (1 Artefakt) |
+| Muss 2 | erfüllt |
+| Kill | greift nicht |
+| Soll | nicht erfüllt (40 von 88 nicht prüfbar) |
+
+**Go** für den Bau. Bekannte Grenze: Ein FLOW an einen Akteur gilt als Rückgabe; bei einem Server, der über HTTP antwortet, ist das falsch (Artefaktklasse aus M2).
+
 ---
 
 ## Entscheidungen
