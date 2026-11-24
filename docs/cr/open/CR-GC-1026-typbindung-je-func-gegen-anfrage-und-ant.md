@@ -107,6 +107,33 @@ Von 126 FLOW in Signaturen und eigenen Aufrufen der ableitbaren FUNC entscheidet
 
 **Offen ist vor allem die Richtung:** 43 FUNC haben einen FLOW, dessen Partner in keiner gemeinsamen Kette liegt oder dessen Ketten sich widersprechen.
 
+## Lauf 5: Prüfsatz (fest vor der ersten Zahl, Freigabe des Autors 2026-11-24)
+
+**Geänderte Regeln** (alle anderen wie Lauf 4):
+
+- **Regel 2:** Richtung je FLOW zwischen f und Partner p. Ruft im Code genau eine Seite die andere (Aufrufkanten aus `extractCallFacts`, Zuordnung wie RC-12, Weg ≤ 3 Kanten), gilt diese Richtung. Sonst gilt die Richtung aus der Kette wie in Lauf 4. Sonst ist sie offen.
+- **Regel 3a (neu):** Tragen die IN-FLOW der Signatur mehr als ein SCHEMA, ist die FUNC „nicht prüfbar: mehrere Operationen“. Das ist zugleich ein Befund ans Modell.
+
+**Klassen „nicht prüfbar“:** Richtung offen, SCHEMA ohne `realRef`, nicht exportiert, MCP-Werkzeug, mehrere Operationen.
+
+**Kontrolle:** die sechs Varianten aus Lauf 4, dazu zwei neue:
+- **Code vor Kette:** Fixture, deren Kette den Auslöser an `FUNC-helfer` setzt, also die Richtung umdreht. Die Aufrufkanten nennen die echte Richtung. Erwartet: dieselbe Signatur wie die grüne Variante, grün.
+- **mehrere Operationen:** `FUNC-f` bekommt einen zweiten Anfrage-FLOW von einem Akteur mit anderem SCHEMA. Erwartet: „nicht prüfbar: mehrere Operationen“.
+
+**Messung:** M1 und M2 wie in Lauf 4, neue Stichprobe aus der roten Liste von Lauf 5 (jede dritte, alphabetisch, höchstens 15), dieselbe Definition von Drift und Artefakt. M3 entfällt als Kriterium, weil der Code dort entscheidet, wo er kann. Berichtet wird, bei wie vielen FLOW der Code entschied, bei wie vielen die Kette und bei wie vielen niemand.
+
+**Kriterien:**
+
+| | Kriterium |
+|---|---|
+| **Kontrolle** | alle acht Varianten wie erwartet |
+| **Muss 1** | M2: höchstens 1 Artefakt in der Stichprobe |
+| **Muss 2** | M1: jede nicht prüfbare FUNC hat einen Grund aus der Liste |
+| **Kill** | M2: mehr als 3 Artefakte |
+| **Soll** | M1: höchstens 30 von 88 nicht prüfbar |
+
+Go = Kontrolle, Muss 1 und 2, kein Kill. Dann folgt der Bau wie oben beschrieben.
+
 ---
 
 ## Entscheidungen
