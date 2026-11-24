@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 630 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 630 CR · 618 done · 1 open.
+Total: 630 CR · 619 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -249,7 +249,7 @@ Total: 630 CR · 618 done · 1 open.
 | `CR-GC-1023` | done | Probelauf-Test des Optimierers liest das lebende Modell und muss nach jeder Modellaenderung neu eingemessen werden |
 | `CR-GC-1024` | done | Spike: Funktionsköpfe aus dem Modell generieren, Drift durch Bau verhindern |
 | `CR-GC-1025` | done | Aufrufvertrag als ein Objekt: crGroups, impactedTests, zugBericht weichen vom Anfrage-SCHEMA ab (aus CR-GC-1024) |
-| `CR-GC-1026` | n/a | Typbindung je FUNC gegen Anfrage- und Antwort-SCHEMA als Prüfung, Richtung aus der Wirkkette, Altlast als Ratsche (aus CR-GC-1024) |
+| `CR-GC-1026` | done | Typbindung je FUNC gegen Anfrage- und Antwort-SCHEMA als Prüfung, Richtung aus der Wirkkette, Altlast als Ratsche (aus CR-GC-1024) |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |
