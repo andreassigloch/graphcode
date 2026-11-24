@@ -147,6 +147,39 @@ Die Ontologie braucht damit kein Attribut für die Richtung. Der Generator liest
 
 Der Mechanismus selbst wirkt: Die Typbindung fand an 6 roten FUNC Widersprüche zwischen Modell und Code, die keine Regel meldet.
 
+### Lauf 2 (2026-11-24, nach CR-GC-1025)
+
+Gleicher Prüfsatz, gleiche Regeln; Modell und Code beim Commit c39dd36e (nach CR-GC-1025: `crGroups` und `impactedTests` nehmen ihren Aufrufvertrag als ein Objekt). Neu ist Variante **2c**: die Richtung eines FLOW-Paars aus der Wirkkette (`richtung-aus-kette.mjs`), nur wo alle Ketten einig sind. Rohdaten: `lauf2/`.
+
+**Werkzeugfehler, behoben vor der Wertung:** `kopf.mjs` kannte als Nachbarpaket nur contracts und schrieb für `@sigloch/graphcode-client` den Import `null`. Jetzt gilt jedes `packages/<name>/src/…` als `@sigloch/<name>`.
+
+| | grün | rot | nicht ableitbar |
+|---|---|---|---|
+| 2b Aufrufkanten des Codes | 2 (`FUNC-cr-groups`, `FUNC-select-tests`) | 4 | 6 |
+| 2c Wirkkette | 2 (`FUNC-cr-groups`, `FUNC-chain-metrics`) | 9 | 1 |
+| beide zusammen | 3 | 9 | 0 |
+
+Die Kette löst die Richtung für 11 der 12 FUNC; der Code für 6. `FUNC-select-tests` ist in 2c nicht ableitbar, weil sich die Ketten beim Paar mit `FUNC-resolve-tests-from-code` widersprechen. Keine der 12 FUNC liegt außerhalb einer Kette (R-30).
+
+**Kill greift weiter** (3 < 6). Die 9 roten FUNC zeigen alle das Muster, das CR-GC-1025 an zwei FUNC behoben hat: Positionsargumente statt Aufrufvertrag (`computeMarks(violations)`, `readinessOf(evaluation)`, `laufUrteil(eingang, relativ)`, `schlupfVon(rot, auswahl, ausGraph, linkModus)`, `planCodeLane(changedFiles, ctx, opts)`, die drei Constraint-Funktionen, `zugBericht`).
+
+### M2 an einer echten FUNC (Lauf 2)
+
+`FUNC-cr-groups` ist grün. In einem Wegwerf-Worktree bekam `CrGroupsSchema` das Pflichtfeld `zusatz`, die Funktion blieb unverändert:
+
+| | Ergebnis |
+|---|---|
+| Typbindung | grün |
+| `tsc` des Repos | grün |
+| RC-01 bis RC-13 | unverändert (RC-04 10, RC-07 1, RC-11 1) |
+| `tests/se-plan.groups.test.ts` | 4 rot: `crGroups` parst sein Ergebnis und scheitert an `zusatz` |
+
+**Muss 1 ist nicht erfüllt.** `crGroups` leitet seinen Rückgabetyp aus dem Schema ab (`z.infer`). Dann folgt der Typ jeder Schemaänderung, und die Bindung kann nicht rot werden. Den Bruch findet der Parse zur Laufzeit, also der Test.
+
+Zweite Mutation, nicht im Prüfsatz: Die Funktion deklariert ihren Rückgabetyp selbst (`{ groups, cyclic }`) und parst nicht mehr. Dann wird die Typbindung rot. RC-04 meldet zusätzlich „nicht geparst“, nicht aber den falschen Typ.
+
+**Lesart:** Die Bindung findet Drift dort, wo eine Funktion ihre Typen selbst deklariert statt aus dem Vertrag abzuleiten. Das waren in Lauf 1 alle 6 roten FUNC, in Lauf 2 alle 9. Leitet die Funktion ihre Typen aus dem Vertrag ab, gibt es an der Signatur keine Drift mehr; eine Änderung am Vertragsinhalt fängt dann der Parse mit dem Test.
+
 **Folge-Items:**
 - ITEM-2026-1651 (graphcode): Aufrufvertrag als ein Objekt für `crGroups`, `impactedTests` und `zugBericht`, nach dem Muster von CR-GC-1022. Die drei Constraint-Funktionen zeigen dasselbe Muster.
 - ITEM-2026-1652 (sigloch-modules): Regel, die die Signatur einer FUNC gegen Anfrage- und Antwort-SCHEMA ihrer sync-FLOW prüft.
