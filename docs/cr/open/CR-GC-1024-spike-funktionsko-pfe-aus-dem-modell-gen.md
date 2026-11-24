@@ -122,9 +122,19 @@ Am eingefrorenen Modell meldet RC-04 10 Befunde, nicht 23 wie in CR-GC-957. 7 da
 
 ### Empfehlung
 
-**No-Go** für „Funktionsköpfe aus dem heutigen Modell generieren“. Dem Modell fehlen für einen Kopf drei Informationen: Parameter, die kein FLOW sind (Auswahl, Einstellung), die Aufrufrichtung eines FLOW-Paars und der Fehlerfall. Die ersten beiden wären eine Änderung an der Ontologie in contracts.
+**No-Go** für „Funktionsköpfe aus dem heutigen Modell generieren“.
 
-Der Mechanismus selbst wirkt: Die Typbindung fand an 6 roten FUNC 3 Widersprüche zwischen Modell und Code, die keine Regel meldet. Ob daraus eine Regel wird, die das Anfrage-SCHEMA gegen den Parametertyp prüft, entscheidet der Autor.
+**Berichtigt nach Rückfrage des Autors (2026-11-24):** Zwei der drei Lücken, die die erste Fassung der Ontologie zuschrieb, sind Fehler in Modell und Code von graphcode, nicht in der Ontologie:
+
+- **Parameter ohne FLOW:** Das SCHEMA am Anfrage-FLOW ist der Aufrufvertrag und trägt alle Eingaben als Felder. So setzt es CR-GC-1022 um: `generationStep(eingabe: GenerationRequest)`, geparst beim Eintritt. `crGroups`, `impactedTests`, `zugBericht` und die drei Constraint-Funktionen nehmen dagegen Positionsargumente, und ihr Anfrage-SCHEMA beschreibt nur einen Teil davon. Klasse (a) dieser Zeilen ist damit Klasse (b).
+- **Fehlerfall:** Ein Fehlerpfad bekommt ein eigenes SCHEMA mit Fehlerklasse (FAQ `vertrag-je-variante`, Punkt 5). `BerichtFehlt` hat keines.
+- **Aufrufrichtung:** Sie fehlt der Ontologie wirklich. Bei einem FLOW-Paar zwischen zwei FUNC sagt das Modell nicht, welche Seite ruft.
+
+Der Mechanismus selbst wirkt: Die Typbindung fand an 6 roten FUNC Widersprüche zwischen Modell und Code, die keine Regel meldet.
+
+**Folge-Items:**
+- ITEM-2026-1651 (graphcode): Aufrufvertrag als ein Objekt für `crGroups`, `impactedTests` und `zugBericht`, nach dem Muster von CR-GC-1022. Die drei Constraint-Funktionen zeigen dasselbe Muster.
+- ITEM-2026-1652 (sigloch-modules): Regel, die die Signatur einer FUNC gegen Anfrage- und Antwort-SCHEMA ihrer sync-FLOW prüft.
 
 ---
 
