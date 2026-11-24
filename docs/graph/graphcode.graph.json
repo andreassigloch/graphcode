@@ -222,10 +222,17 @@
       "status": "done"
     },
     {
+      "id": "CR-GC-1024",
+      "type": "CR",
+      "name": "Spike: Funktionsköpfe aus dem Modell generieren, Drift durch Bau verhindern",
+      "description": "docs/cr/open/CR-GC-1024-spike-funktionsko-pfe-aus-dem-modell-gen.md"
+    },
+    {
       "id": "CR-GC-1025",
       "type": "CR",
       "name": "Aufrufvertrag als ein Objekt: crGroups, impactedTests, zugBericht weichen vom Anfrage-SCHEMA ab (aus CR-GC-1024)",
-      "description": "docs/cr/open/CR-GC-1025-aufrufvertrag-als-ein-objekt-crgroups-im.md"
+      "description": "docs/cr/done/CR-GC-1025-aufrufvertrag-als-ein-objekt-crgroups-im.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-103",
@@ -41749,5 +41756,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1606
+  "graphVersion": 1608
 }
