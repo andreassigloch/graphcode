@@ -211,7 +211,7 @@ Die roten FUNC von Lauf 6 sind die von Lauf 5 ohne `FUNC-import` (jetzt „Richt
 Der Floor gehört in denselben Commit wie der Import (FAQ `peer-floor-wann`). Damit hätte der Bau 12 Dateien. Er teilt sich an einer Stelle, an der beide Teile grün bleiben:
 
 - **Teil 1 (dieser CR):** `src/projections/typbindung.ts` (Generator), `src/surface/typbindung-verb.ts` (Verb, Richtung Code vor Kette), `src/cli.ts`, `src/surface/cli-args.ts` (Verb `typbindung`), `tests/typbindung.test.ts` (8 Tests), `tests/rc04.surface-erzeuger-parst.test.ts` (12 Verben), `tests/vertrag/SCHEMA-cli-command.vertrag.test.ts` (neu erzeugt), `package.json`, `package-lock.json`, diese Datei. 10 Dateien.
-- **Teil 2 (Folge-CR):** `tests/typbindung/bindungen.ts` (erzeugt), `tests/typbindung/altlast.json` (41 FUNC), Test auf Gleichstand der committeten mit der neu erzeugten Datei, README, Modellknoten.
+- **Teil 2 (Folge-CR aus ITEM-2026-1669):** `tests/typbindung/bindungen.ts` (erzeugt), `tests/typbindung/altlast.json` (41 FUNC), Test auf Gleichstand der committeten mit der neu erzeugten Datei, README, Modellknoten.
 
 ---
 
@@ -219,7 +219,9 @@ Der Floor gehört in denselben Commit wie der Import (FAQ `peer-floor-wann`). Da
 
 | Frage | Festlegung | Begründung |
 |---|---|---|
-| keine | | |
+| Woher kommt die Aufrufrichtung eines FLOW für die Typbindung? | Code vor Kette: `funcCalls` aus contracts (direkter Aufruf, RC-13), sonst `ChainRoles.depth`, wenn alle Ketten einig sind, sonst offen. | Lauf 4 (nur Kette): 2 Artefakte in 10; Lauf 5 (Code vor Kette): 1 in 14, Richtung offen 43 → 16. Entscheidung des Autors 2026-11-24. |
+| Wo steht die Zuordnung Aufrufstelle → FUNC? | Nur in contracts (`funcCalls`, CR-SM-459); graphcode importiert. | FAQ `zuordnung-nicht-nachbauen`; Entscheidung des Autors 2026-11-24. |
+| Wie startet die Prüfung mit 41 roten FUNC? | Als Ratsche: Altlast-Liste, `@ts-expect-error` je FUNC; eine behobene FUNC muss die Liste verlassen. | Entscheidung des Autors 2026-11-24 (Variante A), Vorbild `tests/import-boundaries.test.ts`. |
 
 ---
 

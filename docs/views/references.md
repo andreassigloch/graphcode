@@ -175,6 +175,8 @@
 | `CR-GC-1025` | relation | `SCHEMA-cr-groups` |
 | `CR-GC-1025` | relation | `SCHEMA-cr-groups-anfrage` |
 | `CR-GC-1025` | relation | `SCHEMA-test-impact-anfrage` |
+| `CR-GC-1026` | relation | `MOD-projections` |
+| `CR-GC-1026` | relation | `MOD-surface` |
 | `CR-GC-103` | relation | `FUNC-decode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |
