@@ -62,6 +62,20 @@ Die Regel wird nach dem Lauf nicht geändert.
 
 Go = Kontrolle bestanden, kein Kill, Muss 1 und 2 erfüllt. Dazwischen (6 bis 8 von 12) entscheidet der Autor anhand der Klassen aus M1. Bei Kill ist das Ergebnis die Liste der Informationen, die dem Modell für einen Kopf fehlen.
 
+## Korrektur nach der Kontrolle, vor dem ersten Lauf (2026-11-24)
+
+Die Kontrolle an der Fixture ist gescheitert, bevor eine Zahl an echten FUNC entstand. Zwei Ursachen:
+
+1. **Werkzeug:** `pruefen.mjs` ordnete die Meldungen von tsc nicht zu, weil tsc relative Pfade meldet. Behoben.
+2. **Regel 2 ist im Modell nicht entscheidbar.** Ein synchroner Aufruf sind zwei FLOW zwischen denselben zwei FUNC: Anfrage hin, Antwort zurück (FAQ `fluss-nach-veranlasser-oder-aufrufer`: Erzeuger ist der Aufrufer, die Antwort hat einen eigenen FLOW). Von der FUNC aus sieht der Aufrufer genauso aus wie der Gerufene. Kein Attribut und keine Kante sagt, wer ruft: Die FLOW tragen `sync`, `treiber` (7 von 287), `zeitpunkt` (7 von 287), sonst nichts zur Richtung. An der Fixture machte Regel 2 deshalb auch den Aufrufer zum Gerufenen, die Signatur wurde `() => void`.
+
+Regel 2 wird in zwei Varianten gerechnet; Regeln 1, 3, 4, 5 und alle Kriterien bleiben:
+
+- **2a Modell allein:** Ein FLOW-Paar in beide Richtungen mit derselben FUNC ist nicht entscheidbar. Hat eine FUNC ein solches Paar, ist ihr Kopf nicht ableitbar: M1 rot, Klasse (a) „Aufrufrichtung fehlt“.
+- **2b Modell plus Aufrufkanten des Codes:** Die Richtung kommt aus `extractCallFacts` (`dist/kernel/call-edges.js`, dieselben Aufrufkanten wie RC-12 und RC-13). Ruft die FUNC G, ist das Paar ein Aufruf. Ruft G die FUNC, ist G Aufrufer: Anfrage = Parameter, Antwort = Rückgabe. Zeigt der Code keine Richtung, ist das Paar nicht entscheidbar wie in 2a.
+
+2a beantwortet die Frage des CR (Modell allein). 2b beantwortet die Frage des Auftraggebers, ob ein Kopf an bestehendem Code Drift meldet. Die Kriterien werden je Variante ausgewertet. Die Fixture bekommt für 2b Aufrufkanten; sie muss in beiden Varianten bestehen, in 2a mit der Erwartung „nicht ableitbar“.
+
 ## Ergebnis
 
 _(nach dem Lauf)_
