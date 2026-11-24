@@ -128,7 +128,22 @@ Am eingefrorenen Modell meldet RC-04 10 Befunde, nicht 23 wie in CR-GC-957. 7 da
 
 - **Parameter ohne FLOW:** Das SCHEMA am Anfrage-FLOW ist der Aufrufvertrag und trägt alle Eingaben als Felder. So setzt es CR-GC-1022 um: `generationStep(eingabe: GenerationRequest)`, geparst beim Eintritt. `crGroups`, `impactedTests`, `zugBericht` und die drei Constraint-Funktionen nehmen dagegen Positionsargumente, und ihr Anfrage-SCHEMA beschreibt nur einen Teil davon. Klasse (a) dieser Zeilen ist damit Klasse (b).
 - **Fehlerfall:** Ein Fehlerpfad bekommt ein eigenes SCHEMA mit Fehlerklasse (FAQ `vertrag-je-variante`, Punkt 5). `BerichtFehlt` hat keines.
-- **Aufrufrichtung:** Sie fehlt der Ontologie wirklich. Bei einem FLOW-Paar zwischen zwei FUNC sagt das Modell nicht, welche Seite ruft.
+- **Aufrufrichtung:** ~~Sie fehlt der Ontologie wirklich.~~ Berichtigt im Nachtrag unten: Die Wirkkette trägt sie.
+
+### Nachtrag: Aufrufrichtung aus der Wirkkette (2026-11-24, nach dem Urteil, kein Kriterium)
+
+Frage des Autors: Wenn die Wirkkette den Fluss rechnen kann, kennt sie auch die Aufrufrichtung. Geprüft mit `werkzeug/richtung-aus-kette.mjs`: je FCHAIN die Auslöser-Glieder aus `chainRoles` (contracts), Breitensuche über die sync-Links. Der Aufrufer eines FLOW-Paars ist das Glied, das näher am Auslöser liegt: Die Anfrage aktiviert den Gerufenen, die Antwort trifft eine schon aktive FUNC. Gegenprobe: die Richtung aus den Aufrufkanten des Codes. Rohdaten: `lauf/richtung-aus-kette.json`.
+
+| FLOW-Paare in Ketten (eindeutig) | 110 |
+|---|---|
+| Kette entscheidet, Code bestätigt | 43 |
+| Kette entscheidet, Code nicht prüfbar (Skripte, Nachbarpakete) | 64 |
+| Ketten widersprechen sich | 3 |
+| Kette entscheidet, Code widerspricht | 0 |
+
+Die Kette liefert die Richtung für 107 von 110 Paaren, ohne Widerspruch zum Code. Die 3 strittigen Paare (`FUNC-bind-tools` ↔ `FUNC-serve-stdio`, `FUNC-graph-store` ↔ `FUNC-mutate`, `FUNC-resolve-tests-from-code` ↔ `FUNC-select-tests`) liegen in Ketten, in denen der Gerufene über einen anderen Weg näher am Auslöser liegt. Die Abstandsregel greift dort zu kurz; am Code nicht weiter untersucht.
+
+Die Ontologie braucht damit kein Attribut für die Richtung. Der Generator liest sie aus `chainRoles`, für eine FUNC außerhalb jeder Kette bleibt sie offen. Das Urteil No-Go ändert sich nicht: Die 6 roten FUNC in 2b scheiterten an der Signatur, nicht an der Richtung.
 
 Der Mechanismus selbst wirkt: Die Typbindung fand an 6 roten FUNC Widersprüche zwischen Modell und Code, die keine Regel meldet.
 
