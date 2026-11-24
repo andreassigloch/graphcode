@@ -51,7 +51,61 @@ Go = Kontrolle, Muss 1 bis 3, kein Kill. Dann baut dieser CR die Prüfung in gra
 
 ## Ergebnis
 
-_(nach dem Lauf)_
+**Lauf 4, 2026-11-24**, Modell beim Commit in `lauf4/commit.txt`, Werkzeug und Rohdaten: graphanalyze `docs/spikes/SPIKE-GC-1024/` (`werkzeug/kopf.mjs`, `werkzeug/richtung-aus-kette.mjs`, `lauf4/`).
+
+### Kontrolle
+
+Alle sechs Fixture-Varianten wie erwartet: grün, Rückgabe rot, Parameter rot, async grün, async rot, nicht exportiert ohne Bindung. **Bestanden.**
+
+### M1 Aufteilung (88 FUNC)
+
+| Klasse | FUNC |
+|---|---|
+| grün | 4 |
+| rot | 29 |
+| nicht prüfbar: Richtung offen | 43 |
+| nicht prüfbar: MCP-Werkzeug | 10 |
+| nicht prüfbar: nicht exportiert | 2 |
+
+### M2 Stichprobe der roten (jede dritte von 29, also 10)
+
+| FUNC | Urteil | Grund |
+|---|---|---|
+| `FUNC-audit-trail` | Drift | Die FUNC holt laut Modell selbst; `projectAuditEntries(entries, opts?)` bekommt die Einträge übergeben |
+| `FUNC-compute-steering-delta` | Drift | Das SCHEMA beschreibt einen Snapshot, der Code nimmt `(before, after)` |
+| `FUNC-eingaenge-nur-aus` | Drift | `(graph, elementId, erlaubt)` außerhalb des Vertrags |
+| `FUNC-export-markdown` | Drift | `(graph, view, name?)` statt `MarkdownView` |
+| `FUNC-function-criticality` | Drift | Liste statt Einzelwert |
+| `FUNC-gve-supervise` | **Artefakt** | Regel 3 macht aus zwei Operationen (anhängen, stoppen) zwei Parameter |
+| `FUNC-lauf-urteil` | Drift | Funktionsparameter `relativ` außerhalb des Vertrags |
+| `FUNC-merge-nodes` | Drift | `(harness, entries, opts)` statt `AuditRecord` |
+| `FUNC-schema-guard` | Drift | Die Anfrage trägt das Antwort-SCHEMA |
+| `FUNC-vorschlag` | **Artefakt** | Die Kette nennt `FUNC-generation-step` als Aufrufer; im Code ruft `vorschlagNachAnwendung` selbst `generationStep` |
+
+**2 Artefakte. Muss 1 (höchstens 1) ist nicht erfüllt.** Kill (mehr als 3) greift nicht.
+
+### M3 Richtung gegen Code
+
+Von 126 FLOW in Signaturen und eigenen Aufrufen der ableitbaren FUNC entscheidet der Code bei 79: 76 gleich, 3 anders, **96,2 %**. Muss 3 erfüllt. Die 3 Abweichungen: `FUNC-host-proxy` (`FLOW-proxy-build`), `FUNC-vorschlag` (`FLOW-generation-step-vorschlag`, `FLOW-target-profile`).
+
+### Urteil
+
+| | Ergebnis |
+|---|---|
+| Kontrolle | bestanden |
+| Muss 1 | **nicht erfüllt** (2 Artefakte) |
+| Muss 2 | erfüllt (jede nicht prüfbare FUNC hat einen Grund aus der Liste) |
+| Muss 3 | erfüllt (96,2 %) |
+| Kill | greift nicht |
+| Soll | **nicht erfüllt** (55 von 88 nicht prüfbar) |
+
+**Kein Go, kein Kill.** Die Prüfung wird in diesem Stand nicht gebaut.
+
+**Artefaktklassen:**
+1. Eine FUNC mit mehreren Operationen (verschiedene Anfrage-FLOW mit verschiedenem SCHEMA, eine `realRef`). Regel 3 macht daraus Parameter einer Signatur.
+2. Die Richtung aus der Kette widerspricht dem Code (3 von 79 FLOW). Wo der Code entscheidet, wäre seine Richtung die sichere Quelle.
+
+**Offen ist vor allem die Richtung:** 43 FUNC haben einen FLOW, dessen Partner in keiner gemeinsamen Kette liegt oder dessen Ketten sich widersprechen.
 
 ---
 
