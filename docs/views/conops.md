@@ -219,7 +219,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-1024` | done | Spike: Funktionsköpfe aus dem Modell generieren, Drift durch Bau verhindern | `FUNC-cr-groups` · `FUNC-select-tests` · `FUNC-zug-bericht` · `MOD-kernel-measure` · `MOD-loop` · `MOD-projections` |
 | `CR-GC-1025` | done | Aufrufvertrag als ein Objekt: crGroups, impactedTests, zugBericht weichen vom Anfrage-SCHEMA ab (aus CR-GC-1024) | `FUNC-cr-groups` · `FUNC-select-tests` |
 | `CR-GC-1026` | done | Typbindung je FUNC gegen Anfrage- und Antwort-SCHEMA als Prüfung, Richtung aus der Wirkkette, Altlast als Ratsche (aus CR-GC-1024) | `MOD-projections` · `MOD-surface` |
-| `CR-GC-1027` | n/a | Typbindung in die CI: erzeugte bindungen.ts, Altlast 41 FUNC, Gleichstand-Test, Modellknoten (Teil 2 aus CR-GC-1026) | `FUNC-erzeuge-typbindung` · `FUNC-typbindung-verb` · `REQ-typbindung` · `REQ-typbindung-regeln` |
+| `CR-GC-1027` | done | Typbindung in die CI: erzeugte bindungen.ts, Altlast 41 FUNC, Gleichstand-Test, Modellknoten (Teil 2 aus CR-GC-1026) | `FUNC-erzeuge-typbindung` · `FUNC-typbindung-verb` · `REQ-typbindung` · `REQ-typbindung-regeln` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
 | `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-agent-surface` · `REQ-doc-export` |
 | `CR-GC-105` | done | Architektur-Verfeinerung | `MOD-surface` · `REQ-impact-based-testing` · `REQ-interface-change-escalation` · `REQ-small-model-viable` |

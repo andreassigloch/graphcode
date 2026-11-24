@@ -246,7 +246,8 @@
       "id": "CR-GC-1027",
       "type": "CR",
       "name": "Typbindung in die CI: erzeugte bindungen.ts, Altlast 41 FUNC, Gleichstand-Test, Modellknoten (Teil 2 aus CR-GC-1026)",
-      "description": "docs/cr/open/CR-GC-1027-typbindung-in-die-ci-erzeugte-bindungen-.md"
+      "description": "docs/cr/done/CR-GC-1027-typbindung-in-die-ci-erzeugte-bindungen-.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-103",
@@ -42164,5 +42165,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1619
+  "graphVersion": 1620
 }
