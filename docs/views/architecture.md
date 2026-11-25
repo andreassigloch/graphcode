@@ -103,6 +103,7 @@
 | `FUNC-open-store` | FUNC | GraphStore.open() |
 | `FUNC-own-kuzu-host` | FUNC | ownKuzu() |
 | `FUNC-plan-code-lane` | FUNC | Code-Spur planen |
+| `FUNC-push-check` | FUNC | Push-Pruefung oeffentliches Repo |
 | `FUNC-read-tools` | FUNC | bindReadTools(ctx) |
 | `FUNC-render-verb` | FUNC | executeRender |
 | `FUNC-reseed` | FUNC | reseed(relPath) |
@@ -257,6 +258,7 @@
 | `FUNC-open-store` | `MOD-kernel` |
 | `FUNC-own-kuzu-host` | `MOD-kernel` |
 | `FUNC-plan-code-lane` | `MOD-projections` |
+| `FUNC-push-check` | `MOD-dev-scripts` |
 | `FUNC-read-tools` | `MOD-surface` |
 | `FUNC-render-verb` | `MOD-surface` |
 | `FUNC-reseed` | `MOD-kernel` |

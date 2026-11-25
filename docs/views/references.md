@@ -196,6 +196,9 @@
 | `CR-GC-103` | relation | `REQ-formatE-diff-dialect` |
 | `CR-GC-103` | relation | `REQ-formatE-parity` |
 | `CR-GC-103` | relation | `REQ-roundtrip-conformance` |
+| `CR-GC-1031` | relation | `FUNC-push-check` |
+| `CR-GC-1031` | relation | `MOD-dev-scripts` |
+| `CR-GC-1031` | relation | `REQ-push-check-public` |
 | `CR-GC-104` | relation | `MOD-agent-surface` |
 | `CR-GC-104` | relation | `MS-1-specification` |
 | `CR-GC-104` | relation | `REQ-doc-export` |
@@ -2387,6 +2390,7 @@
 | `FLOW-cli-command` | relation | `SCHEMA-cli-command` |
 | `FLOW-cli-invocation` | io | `FUNC-cli-dispatch` |
 | `FLOW-cli-invocation` | io | `FUNC-commit-check` |
+| `FLOW-cli-invocation` | io | `FUNC-push-check` |
 | `FLOW-cli-invocation` | io | `FUNC-verify-lane-code` |
 | `FLOW-cli-invocation` | io | `FUNC-verify-lane-full` |
 | `FLOW-cli-invocation` | io | `FUNC-verify-lane-model` |
@@ -3471,6 +3475,8 @@
 | `FUNC-plan-code-lane` | satisfy | `REQ-planmodus-meldet-nichts` |
 | `FUNC-plan-code-lane` | satisfy | `REQ-selective-code-lane` |
 | `FUNC-plan-code-lane` | satisfy | `REQ-test-von-hand-spur` |
+| `FUNC-push-check` | allocate | `MOD-dev-scripts` |
+| `FUNC-push-check` | satisfy | `REQ-push-check-public` |
 | `FUNC-read-tools` | allocate | `MOD-surface` |
 | `FUNC-read-tools` | io | `FLOW-formatE-artifact-read-tools` |
 | `FUNC-read-tools` | io | `FLOW-read-request` |
@@ -4269,6 +4275,7 @@
 | `TEST-phase-gate-not-skippable` | verify | `REQ-phase-gate-not-skippable` |
 | `TEST-prompt-provenance` | verify | `REQ-prompt-provenance` |
 | `TEST-published-counts-match-code` | verify | `REQ-published-counts-match-code` |
+| `TEST-push-check` | verify | `REQ-push-check-public` |
 | `TEST-read-format-param` | verify | `REQ-formatE-parity` |
 | `TEST-read-format-param` | verify | `REQ-query-precision` |
 | `TEST-readiness-altbestand` | verify | `REQ-element-contract-finding` |

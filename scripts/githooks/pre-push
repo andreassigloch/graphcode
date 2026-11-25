@@ -1,0 +1,8 @@
+#!/bin/bash
+# CR-GC-1031 — pre-push: kein verbotener Pfad, keine personenbezogenen Daten im Push.
+# graphcode ist öffentlich; was hochgeht, ist veröffentlicht. Die Prüfung steht in
+# scripts/push-pruefung.mjs, die Ausnahmen in scripts/push-pruefung.config.json.
+# Install once per clone:  git config core.hooksPath scripts/githooks
+set -eu
+repo_root=$(git rev-parse --show-toplevel)
+exec node "$repo_root/scripts/push-pruefung.mjs" "$@"

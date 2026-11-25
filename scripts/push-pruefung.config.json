@@ -1,0 +1,17 @@
+{
+  "verbotenePfade": [
+    "^docs/(.*/)?spikes?/",
+    "^docs/(.*/)?SPIKE-",
+    "^scripts/spike-",
+    "^docs/messung/(?!stand\\.(json|md)$)",
+    "gespraech|interview",
+    "^docs/records/",
+    "^CLAUDE\\.local\\.md$",
+    "(^|/)\\.env(\\.local)?$"
+  ],
+  "erlaubtePfade": [],
+  "erlaubteTreffer": [
+    "noreply@anthropic.com",
+    "a@b.de"
+  ]
+}
