@@ -277,7 +277,8 @@
       "id": "CR-GC-1030",
       "type": "CR",
       "name": "Spikes und Expertengespräch aus dem öffentlichen Repo nach graphanalyze",
-      "description": "docs/cr/open/CR-GC-1030-spikes-und-expertengespra-ch-aus-dem-o-f.md"
+      "description": "docs/cr/done/CR-GC-1030-spikes-und-expertengespra-ch-aus-dem-o-f.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-104",
@@ -42270,5 +42271,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1630
+  "graphVersion": 1631
 }
