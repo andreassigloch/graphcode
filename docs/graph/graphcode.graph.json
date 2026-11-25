@@ -253,7 +253,8 @@
       "id": "CR-GC-1028",
       "type": "CR",
       "name": "Änderungs-Heatmap: Nacharbeit, Themenbreite, Mitänderung über graphcode, SM und GVE",
-      "description": "docs/cr/open/CR-GC-1028-a-nderungs-heatmap-nacharbeit-themenbrei.md"
+      "description": "docs/cr/done/CR-GC-1028-a-nderungs-heatmap-nacharbeit-themenbrei.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-103",
@@ -42251,5 +42252,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1624
+  "graphVersion": 1625
 }
