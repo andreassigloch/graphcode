@@ -187,6 +187,7 @@
 | `CR-GC-1028` | relation | `FUNC-aenderungs-heatmap` |
 | `CR-GC-1028` | relation | `MOD-dev-scripts` |
 | `CR-GC-1028` | relation | `REQ-aenderungs-hotspots` |
+| `CR-GC-1029` | relation | `FUNC-aenderungs-heatmap` |
 | `CR-GC-103` | relation | `FUNC-decode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |

@@ -1,15 +1,17 @@
 #!/usr/bin/env node
-// aenderungs-heatmap — wo sich Code wiederholt ändert, über mehrere Repos (CR-GC-1028).
+// aenderungs-heatmap — wo sich Code wiederholt ändert, über mehrere Repos (CR-GC-1028, CR-GC-1029).
 //
 // Liest `git log -p` der Repos aus scripts/aenderungs-heatmap.config.json und misst je Einheit
 // (MOD oder Verzeichnis), je Datei und je Symbol:
 //   Nacharbeit   — Anteil der geschriebenen Zeilen, die ein anderer CR binnen `nachfassTage`
-//                  wieder entfernt oder umschreibt (Zeilen ohne CR-Nummer zählen nicht)
+//                  wieder entfernt oder umschreibt (Zeilen ohne Auftrag zählen nicht)
 //   Fix-Anteil   — Anteil der Commits mit Typ fix:
-//   Themenbreite — Anzahl verschiedener CRs, die den Ort ändern
-//   Mitänderung  — Anteil der CRs des Orts, die zugleich eine andere Einheit ändern
+//   Themenbreite — Anzahl verschiedener Aufträge, die den Ort ändern
+//   Mitänderung  — Anteil der Aufträge des Orts, die zugleich eine andere Einheit ändern
 // Dazu ein Pareto der meistgeänderten Symbole (Funktion, Klasse, Konstante, Typ), die es heute noch gibt.
-// Ein CR ist die erste CR-Nummer im Commit-Betreff; Commits ohne Nummer zählen als eigene Gruppe.
+// Ein Symbol ist eine Definition auf oberster Ebene oder ein Teilsymbol nach `teilsymbole` der Config
+// (z. B. ein Tool in einer bind-Funktion). Der Auftrag ist die erste CR-Nummer im Commit-Betreff, sonst
+// die erste ITEM-Nummer; ein Commit ohne Auftrag zählt als eigene Gruppe.
 //
 // Usage: node scripts/aenderungs-heatmap.mjs [--config <json>] [--out <html>] [--json <json>]
 // @author andreas@siglochconsulting
@@ -29,14 +31,21 @@ export const XFUNC =
 const DEF = new RegExp(XFUNC);
 const NAME = /^(?:export\s+)?(?:default\s+)?(?:declare\s+)?(?:async\s+)?(?:function\*?|class|const|let|var|type|interface|enum|abstract\s+class)\s+([\w$]+)/;
 const CR = /\b(?:BOK-)?CR-[A-Z]{2,}-\d+\b/g;
+const ITEM = /\bITEM-\d{4}-\d+\b/g;
 export const MODULEBENE = '(Modulebene)';
 export const DATEI = '(Datei)';
 
-/** Name der Definition in einer Codezeile, sonst null. */
-export function symbolName(line) {
-  if (!DEF.test(line)) return null;
-  const m = line.match(NAME);
-  return m ? m[1] : null;
+/** Name der Definition in einer Codezeile: oberste Ebene, sonst Teilsymbol (Gruppe 1), sonst null. */
+export function symbolName(line, teil = []) {
+  const m = DEF.test(line) ? line.match(NAME) : null;
+  if (m) return m[1];
+  for (const re of teil) { const t = line.match(re); if (t) return t[1]; }
+  return null;
+}
+
+/** git-xfuncname aus XFUNC und den Teilsymbol-Mustern; git zeigt Gruppe 1, hier die ganze Zeile. */
+export function gitXfunc(teilsymbole = []) {
+  return [XFUNC, ...teilsymbole.map((p) => `^(${p.replace(/^\^/, '')}.*)$`)].join('\n');
 }
 
 /** `git log -p -U0 --format=%x01%h%x09%aI%x09%s` → Commits mit Dateien und Hunks. */
@@ -66,10 +75,10 @@ export function parseLog(text) {
 }
 
 /** Symbol je geänderter Zeile: die letzte Definition davor im Hunk, sonst die umschließende aus dem Hunk-Kopf. */
-export function lineSymbols(path, hunk) {
+export function lineSymbols(path, hunk, teil = []) {
   if (path.endsWith('.md')) return hunk.lines.map(() => DATEI);
-  let cur = symbolName(hunk.header) ?? MODULEBENE;
-  return hunk.lines.map((l) => (cur = symbolName(l.slice(1)) ?? cur));
+  let cur = symbolName(hunk.header, teil) ?? MODULEBENE;
+  return hunk.lines.map((l) => (cur = symbolName(l.slice(1), teil) ?? cur));
 }
 
 /** Einheit eines Pfads: Config-Präfix, dann längster MOD-Pfad im Modell, sonst Verzeichnis. */
@@ -91,20 +100,21 @@ export function toEvents(commits, repo, mods, cfg) {
   const alias = {};
   const cur = (p) => alias[p] ?? p;
   const ausschluss = new RegExp(cfg.ausschluss);
+  const teil = (cfg.teilsymbole ?? []).map((p) => new RegExp(p));
   const events = [];
   for (const c of commits) {
-    const crs = c.subject.match(CR) ?? [];
+    const auftrag = (c.subject.match(CR) ?? c.subject.match(ITEM) ?? [])[0] ?? null;
     const type = (c.subject.match(/^(\w+)[:(!]/) ?? [])[1] ?? 'other';
     for (const f of c.files) {
       if (f.oldPath) alias[f.oldPath] = cur(f.path);
       const path = cur(f.path);
       if (!cfg.endungen.some((e) => path.endsWith(e)) || ausschluss.test(path)) continue;
       const lines = f.hunks.flatMap((h) => {
-        const syms = lineSymbols(path, h);
+        const syms = lineSymbols(path, h, teil);
         return h.lines.map((l, i) => ({ s: l[0], t: l.slice(1).trim(), sym: syms[i] }));
       });
       events.push({
-        repo: repo.name, hash: c.hash, date: Date.parse(c.date), type, cr: crs[0] ?? null,
+        repo: repo.name, hash: c.hash, date: Date.parse(c.date), type, auftrag,
         file: path, unit: unitOf(path, repo, mods), lines,
       });
     }
@@ -113,7 +123,7 @@ export function toEvents(commits, repo, mods, cfg) {
 }
 
 /**
- * Nacharbeit je Zeile: eine entfernte Zeile, deren Text ein anderer CR binnen `tage` geschrieben hat.
+ * Nacharbeit je Zeile: eine entfernte Zeile, deren Text ein anderer Auftrag binnen `tage` geschrieben hat.
  * Setzt an jedem Ereignis `added` und `reworked` je Symbol ({sym: [added, reworked]}).
  */
 export function markRework(events, tage) {
@@ -121,7 +131,7 @@ export function markRework(events, tage) {
   for (const e of events) { const k = `${e.repo}:${e.file}`; (byFile.get(k) ?? byFile.set(k, []).get(k)).push(e); }
   for (const list of byFile.values()) {
     list.sort((a, b) => a.date - b.date);
-    const recent = new Map(); // Text → [{date, cr, hash}]
+    const recent = new Map(); // Text → [{date, auftrag, hash}]
     for (const e of list) {
       e.bySym = {};
       const part = (sym) => (e.bySym[sym] ??= [0, 0]);
@@ -131,12 +141,12 @@ export function markRework(events, tage) {
         const i = cand?.findIndex((a) => e.date - a.date <= tage * TAG && a.hash !== e.hash) ?? -1;
         if (i < 0) continue;
         const [a] = cand.splice(i, 1);
-        if (a.cr && e.cr && a.cr !== e.cr) part(l.sym)[1]++;
+        if (a.auftrag && e.auftrag && a.auftrag !== e.auftrag) part(l.sym)[1]++;
       }
       for (const l of e.lines) {
         if (l.s !== '+' || !zaehlt(l.t)) continue;
         part(l.sym)[0]++;
-        (recent.get(l.t) ?? recent.set(l.t, []).get(l.t)).push({ date: e.date, cr: e.cr, hash: e.hash });
+        (recent.get(l.t) ?? recent.set(l.t, []).get(l.t)).push({ date: e.date, auftrag: e.auftrag, hash: e.hash });
       }
       e.added = Object.values(e.bySym).reduce((a, p) => a + p[0], 0);
       e.reworked = Object.values(e.bySym).reduce((a, p) => a + p[1], 0);
@@ -149,23 +159,23 @@ export function markRework(events, tage) {
 export function aggregate(events, keysOf) {
   const out = new Map();
   for (const e of events) for (const [k, added, reworked] of keysOf(e)) {
-    const s = out.get(k) ?? { hashes: new Set(), fixes: new Set(), crs: new Set(), added: 0, reworked: 0 };
+    const s = out.get(k) ?? { hashes: new Set(), fixes: new Set(), auftraege: new Set(), added: 0, reworked: 0 };
     s.hashes.add(e.hash);
     if (e.type === 'fix') s.fixes.add(e.hash);
-    if (e.cr) s.crs.add(e.cr);
+    if (e.auftrag) s.auftraege.add(e.auftrag);
     s.added += added; s.reworked += reworked;
     out.set(k, s);
   }
   return new Map([...out].map(([k, s]) => [k, {
-    changes: s.hashes.size, fix: s.fixes.size, crs: s.crs.size, added: s.added, reworked: s.reworked,
+    changes: s.hashes.size, fix: s.fixes.size, auftraege: s.auftraege.size, added: s.added, reworked: s.reworked,
   }]));
 }
 
-/** Gruppen (CR, sonst Commit) → Einheiten; Paarzählung und Mitänderung je Einheit. */
+/** Gruppen (Auftrag, sonst Commit) → Einheiten; Paarzählung und Mitänderung je Einheit. */
 export function coChange(events) {
   const groups = new Map();
   for (const e of events) {
-    const g = e.cr ?? `${e.repo}:${e.hash}`;
+    const g = e.auftrag ?? `${e.repo}:${e.hash}`;
     (groups.get(g) ?? groups.set(g, new Set()).get(g)).add(`${e.repo}:${e.unit}`);
   }
   const pairs = new Map(), own = new Map(), shared = new Map(), crossRepo = new Map();
@@ -212,7 +222,7 @@ export function readRepos(cfg, root, sinceIso) {
       const graphPath = join(dir, repo.graph);
       const elements = existsSync(graphPath) ? JSON.parse(readFileSync(graphPath, 'utf8')).elements : [];
       for (const [k, v] of funcIndex(repo.name, elements)) funcs.set(k, v);
-      const log = git('-c', 'core.quotepath=off', '-c', `core.attributesFile=${attr}`, '-c', `diff.gcfn.xfuncname=${XFUNC}`,
+      const log = git('-c', 'core.quotepath=off', '-c', `core.attributesFile=${attr}`, '-c', `diff.gcfn.xfuncname=${gitXfunc(cfg.teilsymbole)}`,
         'log', '--no-merges', '-M', '-p', '-U0', '--no-color', `--since=${sinceIso}`,
         '--format=%x01%h%x09%aI%x09%s', '--', ...repo.quellen);
       const ev = toEvents(parseLog(log), repo, elements.filter((e) => e.type === 'MOD'), cfg);
@@ -249,10 +259,11 @@ export function analyse(cfg, root, now = new Date()) {
     .map(([k, s]) => ({ ...row(k, s), unit: fileUnit.get(k), loc: loc(k), funcs: funcsOfFile(k) }))
     .sort((a, b) => b.changes - a.changes);
 
+  const teil = (cfg.teilsymbole ?? []).map((p) => new RegExp(p));
   const alive = (file, sym) => {
     const src = existing.get(file);
     if (src === undefined) return false;
-    return sym === DATEI || src.split('\n').some((l) => symbolName(l) === sym);
+    return sym === DATEI || src.split('\n').some((l) => symbolName(l, teil) === sym);
   };
   const symAgg = aggregate(events, (e) => Object.entries(e.bySym).map(([sym, [a, r]]) => [`${e.repo}:${e.file}#${sym}`, a, r]));
   const symbols = [...symAgg].map(([k, s]) => {
@@ -271,7 +282,9 @@ export function analyse(cfg, root, now = new Date()) {
     units, files: files.slice(0, 40), pareto, symbolChanges: total, symbolCount: symbols.length,
     matrix: { units: topUnits, cells: topUnits.map((a) => topUnits.map((b) => co.pair(a, b))) },
     grenzen: {
-      ereignisse: events.length, ohneCr: events.filter((e) => !e.cr).length, gruppen: co.groupCount,
+      ereignisse: events.length, gruppen: co.groupCount,
+      ohneAuftrag: events.filter((e) => !e.auftrag).length,
+      item: events.filter((e) => e.auftrag?.startsWith('ITEM-')).length,
       zeilen: events.reduce((a, e) => a + e.added, 0),
       modulebene: events.reduce((a, e) => a + (e.bySym[MODULEBENE]?.[0] ?? 0), 0),
     },

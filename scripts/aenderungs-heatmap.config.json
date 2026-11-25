@@ -3,6 +3,7 @@
   "nachfassTage": 14,
   "paretoTop": 10,
   "kopplungTop": 16,
+  "teilsymbole": ["^  const ([A-Za-z0-9_$]+): MCPTool<"],
   "endungen": [".ts", ".tsx", ".mjs", ".js", ".md"],
   "ausschluss": "(^|/)(tests?|dist|node_modules|__tests__|fixtures?)/|\\.(test|spec)\\.|\\.d\\.ts$|(^|/)CHANGELOG\\.md$",
   "repos": [

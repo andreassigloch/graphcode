@@ -1,9 +1,10 @@
 /**
- * TEST-aenderungs-heatmap (CR-GC-1028) — Änderungs-Hotspots aus echter git-Historie.
+ * TEST-aenderungs-heatmap (CR-GC-1028, CR-GC-1029) — Änderungs-Hotspots aus echter git-Historie.
  *
- * Baut ein Wegwerf-Repo mit fünf datierten Commits und prüft die Rechnung von
- * scripts/aenderungs-heatmap.mjs: Symbol je Zeile, Nacharbeit nur durch einen anderen CR
- * binnen der Frist, Umbenennung auf den heutigen Pfad, Mitänderung je CR, Pareto.
+ * Baut ein Wegwerf-Repo mit acht datierten Commits und prüft die Rechnung von
+ * scripts/aenderungs-heatmap.mjs: Symbol je Zeile, Teilsymbol in einer Funktion, Nacharbeit nur
+ * durch einen anderen Auftrag (CR, sonst ITEM) binnen der Frist, Commits ohne Auftrag,
+ * Umbenennung auf den heutigen Pfad, Mitänderung je Auftrag, Pareto.
  * Echte git-Operationen, keine Mocks.
  */
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
@@ -28,10 +29,14 @@ const commit = (subject: string, date: string) => { git(['add', '-A']); git(['co
 const X = (word: string, list: string[]) =>
   `export function alpha() {\n  return '${word}';\n}\n\nexport const LISTE = [\n${list.map((e) => `  '${e}',`).join('\n')}\n];\n`;
 const Y = (word: string) => `export function beta() {\n  return '${word}';\n}\n`;
+const W = (eins: string, zwei: string) =>
+  `export function bindTools() {\n  const t_eins: MCPTool<X> = {\n    description: '${eins}',\n  };\n` +
+  `  const t_zwei: MCPTool<X> = {\n    description: '${zwei}',\n  };\n  return [t_eins, t_zwei];\n}\n`;
+const TEIL = '^  const ([A-Za-z0-9_$]+): MCPTool<';
 
 const cfg = {
   monate: 6, nachfassTage: 14, paretoTop: 10, kopplungTop: 16,
-  endungen: ['.ts'], ausschluss: '(^|/)tests?/',
+  endungen: ['.ts'], ausschluss: '(^|/)tests?/', teilsymbole: [TEIL],
   repos: [{ name: 'R', pfad: '', graph: 'docs/graph/r.graph.json', quellen: ['src/'], einheiten: {}, tiefe: 2 }],
 };
 let data: any;
@@ -53,6 +58,12 @@ beforeAll(() => {
   commit('refactor: umbenennen (CR-XX-3)', '2026-10-06T10:00:00Z');
   write('src/a/x.ts', X('vier', ['eintrag-a', 'eintrag-b']));
   commit('feat: spaet (CR-XX-4)', '2026-11-20T10:00:00Z');
+  write('src/c/tools.ts', W('alt-eins', 'alt-zwei'));
+  commit('feat: werkzeuge (ITEM-2026-7)', '2026-11-21T10:00:00Z');
+  write('src/c/tools.ts', W('neu-eins', 'alt-zwei'));
+  commit('fix: eins nachbessern (CR-XX-5)', '2026-11-22T10:00:00Z');
+  write('src/c/tools.ts', W('neu-eins', 'neu-zwei'));
+  commit('chore: paket 1.0.1', '2026-11-23T10:00:00Z');
   data = analyse({ ...cfg, repos: [{ ...cfg.repos[0], pfad: dir }] }, dir, new Date('2026-11-25T00:00:00Z'));
 });
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
@@ -69,9 +80,24 @@ describe('aenderungs-heatmap', () => {
     expect(symbolName("import { a } from './a';")).toBeNull();
   });
 
-  it('zählt Änderungen, fix: und CRs je Einheit', () => {
-    expect(unit('src/a')).toMatchObject({ changes: 3, fix: 0, crs: 3 });
-    expect(unit('src/b')).toMatchObject({ changes: 4, fix: 1, crs: 3 });
+  it('erkennt ein Teilsymbol nur mit konfiguriertem Muster', () => {
+    expect(symbolName('  const t_eins: MCPTool<X> = {')).toBeNull();
+    expect(symbolName('  const t_eins: MCPTool<X> = {', [new RegExp(TEIL)])).toBe('t_eins');
+    expect(symbolName('export function bindTools() {', [new RegExp(TEIL)])).toBe('bindTools');
+  });
+
+  it('zählt Änderungen, fix: und Aufträge je Einheit', () => {
+    expect(unit('src/a')).toMatchObject({ changes: 3, fix: 0, auftraege: 3 });
+    expect(unit('src/b')).toMatchObject({ changes: 4, fix: 1, auftraege: 3 });
+  });
+
+  it('ordnet Zeilen dem Teilsymbol zu; ITEM ist Auftrag, ein Commit ohne Nummer nicht', () => {
+    // CR-XX-5 schreibt die Zeile von ITEM-2026-7 in t_eins nach 1 Tag um → Nacharbeit 1.
+    // Der Commit ohne Nummer ändert t_zwei, trägt keinen Auftrag → keine Nacharbeit.
+    expect(sym('src/c/tools.ts#t_eins')).toMatchObject({ changes: 2, reworked: 1 });
+    expect(sym('src/c/tools.ts#t_zwei')).toMatchObject({ changes: 2, reworked: 0 });
+    expect(unit('src/c')).toMatchObject({ changes: 3, auftraege: 2 });
+    expect(data.grenzen).toMatchObject({ ohneAuftrag: 1, item: 1 });
   });
 
   it('Nacharbeit: anderer CR binnen 14 Tagen zählt, derselbe CR und spätere Änderungen nicht', () => {

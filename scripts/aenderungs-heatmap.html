@@ -87,7 +87,7 @@ dd { margin: 0; color: var(--muted); }
 
   <section>
     <h2>Welche Einheiten zusammen geändert werden</h2>
-    <p class="sub">Zelle = Anzahl der CRs, die beide Einheiten ändern. Diagonale = alle CRs der Einheit. Gezeigt sind die Einheiten mit den meisten geteilten CRs.</p>
+    <p class="sub">Zelle = Anzahl der Aufträge, die beide Einheiten ändern. Diagonale = alle Aufträge der Einheit. Gezeigt sind die Einheiten mit den meisten geteilten Aufträgen.</p>
     <div class="legend" id="leg-matrix"></div>
     <div class="scroll"><table id="t-matrix"></table></div>
   </section>
@@ -130,11 +130,11 @@ $('meta').textContent = `Stand ${D.stand}, Zeitraum ab ${D.seit} (${D.parameter.
 // Messgrößen einer Zeile
 const metrics = [
   { k: 'changes', l: 'Änderungen', v: (r) => r.changes, f: (v) => fmt(v), tip: 'Commits, die den Ort ändern' },
-  { k: 'na', l: 'Nacharbeit', v: (r) => pct(r.reworked, r.added), f: (v) => v + ' %', tip: 'Anteil geschriebener Zeilen, die ein anderer CR binnen ' + D.parameter.nachfassTage + ' Tagen wieder umschreibt' },
+  { k: 'na', l: 'Nacharbeit', v: (r) => pct(r.reworked, r.added), f: (v) => v + ' %', tip: 'Anteil geschriebener Zeilen, die ein anderer Auftrag binnen ' + D.parameter.nachfassTage + ' Tagen wieder umschreibt' },
   { k: 'fix', l: 'Fix-Anteil', v: (r) => pct(r.fix, r.changes), f: (v) => v + ' %', tip: 'Anteil der fix:-Commits' },
-  { k: 'crs', l: 'Themenbreite', v: (r) => r.crs, f: (v) => fmt(v), tip: 'verschiedene CRs am Ort' },
-  { k: 'mit', l: 'Mitänderung', v: (r) => pct(r.mit, r.gruppen), f: (v) => v + ' %', tip: 'Anteil der CRs, die zugleich eine andere Einheit ändern', unitOnly: true },
-  { k: 'partner', l: 'Partner', v: (r) => r.partner, f: (v) => fmt(v), tip: 'Einheiten, mit denen mindestens 2 CRs geteilt sind', unitOnly: true },
+  { k: 'auftraege', l: 'Themenbreite', v: (r) => r.auftraege, f: (v) => fmt(v), tip: 'verschiedene Aufträge am Ort' },
+  { k: 'mit', l: 'Mitänderung', v: (r) => pct(r.mit, r.gruppen), f: (v) => v + ' %', tip: 'Anteil der Aufträge, die zugleich eine andere Einheit ändern', unitOnly: true },
+  { k: 'partner', l: 'Partner', v: (r) => r.partner, f: (v) => fmt(v), tip: 'Einheiten, mit denen mindestens 2 Aufträge geteilt sind', unitOnly: true },
   { k: 'loc', l: 'Zeilen heute', v: (r) => r.loc, f: (v) => fmt(v), tip: 'Zeilen der heutigen Dateien', plain: true },
 ];
 const MIN = 10;
@@ -185,7 +185,7 @@ rankTable($('t-files'), D.files, metrics.filter((m) => !m.unitOnly), 'Datei · F
     const name = p.symbol === '(Datei)' ? rest.split('/').pop() : p.symbol;
     const sub = `${repo} · ${rest}${p.funcs.length ? ' · ' + p.funcs.map(short).join(', ') : ''}`;
     const na = pct(p.reworked, p.added);
-    s += `<g data-tip="${esc(name)}<br>${esc(sub)}<br>${p.changes} Änderungen in ${p.crs} CRs · Nacharbeit ${na ?? '–'} %">` +
+    s += `<g data-tip="${esc(name)}<br>${esc(sub)}<br>${p.changes} Änderungen in ${p.auftraege} Aufträgen · Nacharbeit ${na ?? '–'} %">` +
       `<text x="${left - 10}" y="${y + 13}" text-anchor="end" class="mono" font-size="12">${esc(name.length > 34 ? name.slice(0, 33) + '…' : name)}</text>` +
       `<text x="${left - 10}" y="${y + 27}" text-anchor="end" class="t2">${esc(sub.length > 52 ? '…' + sub.slice(-51) : sub)}</text>` +
       `<rect x="${left}" y="${y + 4}" width="${Math.max(2, x(p.changes))}" height="20" rx="3" fill="var(--bar)"></rect>` +
@@ -203,13 +203,13 @@ rankTable($('t-files'), D.files, metrics.filter((m) => !m.unitOnly), 'Datei · F
   const off = cells.flatMap((row, i) => row.filter((_, j) => j !== i));
   const max = Math.max(1, ...off);
   const lvl = (v) => (v <= 0 ? 0 : 1 + Math.min(5, Math.floor((v / max) * 6)));
-  $('leg-matrix').innerHTML = '0 ' + [1, 2, 3, 4, 5, 6].map((s) => `<i style="background:var(--c${s})"></i>`).join('') + ` ${max} geteilte CRs`;
+  $('leg-matrix').innerHTML = '0 ' + [1, 2, 3, 4, 5, 6].map((s) => `<i style="background:var(--c${s})"></i>`).join('') + ` ${max} geteilte Aufträge`;
   const lab = (k) => { const [r, u] = splitKey(k); return `${r} · ${short(u)}`; };
   $('t-matrix').innerHTML = '<thead><tr><th></th>' + units.map((u) => `<th class="mh">${esc(lab(u))}</th>`).join('') + '</tr></thead><tbody>' +
     units.map((a, i) => `<tr><td class="name"><span class="f">${esc(lab(a))}</span></td>` + cells[i].map((v, j) => {
-      if (i === j) return `<td class="m diag" data-tip="${esc(lab(a))}: ${v} CRs">${v}</td>`;
+      if (i === j) return `<td class="m diag" data-tip="${esc(lab(a))}: ${v} Aufträge">${v}</td>`;
       const l = lvl(v);
-      return `<td class="m${l >= 4 ? ' dark' : ''}" style="background:var(--c${l})" data-tip="${esc(lab(a))} + ${esc(lab(units[j]))}: ${v} gemeinsame CRs">${v || ''}</td>`;
+      return `<td class="m${l >= 4 ? ' dark' : ''}" style="background:var(--c${l})" data-tip="${esc(lab(a))} + ${esc(lab(units[j]))}: ${v} gemeinsame Aufträge">${v || ''}</td>`;
     }).join('') + '</tr>').join('') + '</tbody>';
 }
 
@@ -223,10 +223,10 @@ rankTable($('t-files'), D.files, metrics.filter((m) => !m.unitOnly), 'Datei · F
   const p = D.pareto.slice(0, 3);
   const lab = (k) => { const [r, u] = splitKey(k); return `${r} ${short(u)}`; };
   const items = [
-    [`Nacharbeit am höchsten: ${lab(naTop.key)}`, `${pct(naTop.reworked, naTop.added)} % der geschriebenen Zeilen schreibt ein anderer CR binnen ${D.parameter.nachfassTage} Tagen wieder um. Zum Vergleich ${lab(naLow.key)}: ${pct(naLow.reworked, naLow.added)} %.`],
+    [`Nacharbeit am höchsten: ${lab(naTop.key)}`, `${pct(naTop.reworked, naTop.added)} % der geschriebenen Zeilen schreibt ein anderer Auftrag binnen ${D.parameter.nachfassTage} Tagen wieder um. Zum Vergleich ${lab(naLow.key)}: ${pct(naLow.reworked, naLow.added)} %.`],
     [`Dateien, deren Code nicht hält`, fileNa.map((f) => `${splitKey(f.key)[1].split('/').pop()} (${pct(f.reworked, f.added)} %)`).join(', ') + '.'],
     [`Meistgeänderte Symbole`, p.map((x) => `${x.symbol} (${x.changes})`).join(', ') + '. Jeder neue Fall zieht hier eine Änderung nach sich.'],
-    [`Stärkste Kopplung: ${lab(mitTop.key)}`, `${pct(mitTop.mit, mitTop.gruppen)} % ihrer CRs ändern zugleich eine andere Einheit; ${mitTop.partner} feste Partner.`],
+    [`Stärkste Kopplung: ${lab(mitTop.key)}`, `${pct(mitTop.mit, mitTop.gruppen)} % ihrer Aufträge ändern zugleich eine andere Einheit; ${mitTop.partner} feste Partner.`],
   ];
   $('findings').innerHTML = items.map(([h, t]) => `<div class="finding"><b>${esc(h)}</b><span>${esc(t)}</span></div>`).join('');
 }
@@ -236,13 +236,13 @@ rankTable($('t-files'), D.files, metrics.filter((m) => !m.unitOnly), 'Datei · F
   const g = D.grenzen;
   const defs = [
     ['Änderung', 'Ein Commit, der den Ort ändert; Merges zählen nicht. Umbenennungen sind auf den heutigen Pfad gezogen.'],
-    ['CR', 'Die erste CR-Nummer im Commit-Betreff. Ein CR mit Nummer aus einem anderen Repo verbindet beide Repos.'],
-    ['Nacharbeit', `Anteil der geschriebenen Zeilen, die ein anderer CR binnen ${D.parameter.nachfassTage} Tagen wieder entfernt oder umschreibt. Zeilen desselben CR und Zeilen ohne CR-Nummer zählen nicht. Leere Zeilen und reine Klammern zählen nicht.`],
+    ['Auftrag', 'Die erste CR-Nummer im Commit-Betreff, sonst die erste ITEM-Nummer. Ein Auftrag mit Nummer aus einem anderen Repo verbindet beide Repos.'],
+    ['Nacharbeit', `Anteil der geschriebenen Zeilen, die ein anderer Auftrag binnen ${D.parameter.nachfassTage} Tagen wieder entfernt oder umschreibt. Zeilen desselben Auftrags und Zeilen ohne Auftrag zählen nicht. Leere Zeilen und reine Klammern zählen nicht.`],
     ['Fix-Anteil', 'Anteil der Commits mit Typ fix:.'],
-    ['Themenbreite', 'Anzahl verschiedener CRs, die den Ort ändern.'],
-    ['Mitänderung', 'Anteil der CRs der Einheit, die zugleich eine andere Einheit ändern. Partner = Einheiten mit mindestens 2 gemeinsamen CRs.'],
-    ['Symbol', 'Definition auf oberster Ebene: function, class, const, let, type, interface, enum. Geänderte Zeilen zählen zum Symbol, das sie umschließt oder das sie definieren.'],
-    ['Grenzen', `${fmt(g.ohneCr)} von ${fmt(g.ereignisse)} Datei-Änderungen tragen keine CR-Nummer. ${fmt(g.modulebene)} von ${fmt(g.zeilen)} geschriebenen Zeilen liegen außerhalb eines Symbols (Importe, Kopfkommentare) und fehlen im Pareto. Einheiten ohne MOD-Pfad im Modell sind Verzeichnisse.`],
+    ['Themenbreite', 'Anzahl verschiedener Aufträge, die den Ort ändern.'],
+    ['Mitänderung', 'Anteil der Aufträge der Einheit, die zugleich eine andere Einheit ändern. Partner = Einheiten mit mindestens 2 gemeinsamen Aufträgen.'],
+    ['Symbol', 'Definition auf oberster Ebene (function, class, const, let, type, interface, enum) oder ein Teilsymbol nach Config, etwa ein Tool in einer bind-Funktion. Geänderte Zeilen zählen zum Symbol, das sie umschließt oder das sie definieren.'],
+    ['Grenzen', `Von ${fmt(g.ereignisse)} Datei-Änderungen tragen ${fmt(g.item)} nur eine ITEM-Nummer und ${fmt(g.ohneAuftrag)} keinen Auftrag; sie zählen nicht als Nacharbeit. ${fmt(g.modulebene)} von ${fmt(g.zeilen)} geschriebenen Zeilen liegen außerhalb eines Symbols (Importe, Kopfkommentare) und fehlen im Pareto. Einheiten ohne MOD-Pfad im Modell sind Verzeichnisse.`],
   ];
   $('defs').innerHTML = defs.map(([t, d]) => `<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join('');
 }
