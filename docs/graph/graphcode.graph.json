@@ -274,6 +274,12 @@
       "commitRef": "1a0c108"
     },
     {
+      "id": "CR-GC-1030",
+      "type": "CR",
+      "name": "Spikes und Expertengespräch aus dem öffentlichen Repo nach graphanalyze",
+      "description": "docs/cr/open/CR-GC-1030-spikes-und-expertengespra-ch-aus-dem-o-f.md"
+    },
+    {
       "id": "CR-GC-104",
       "type": "CR",
       "name": "Skills/Prompts-Modul",
@@ -42264,5 +42270,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1629
+  "graphVersion": 1630
 }

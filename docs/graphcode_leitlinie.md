@@ -61,7 +61,7 @@ Nachweisbarkeit vor Detailtiefe. **Implementiert** wird nur Code.
 Test- und Integrationsplan, Change Log …) ist kompatibel zum **Dokumentanteil** der gängigen
 Systems-Engineering-Normen: ISO/IEC/IEEE 29148, ISO/IEC/IEEE 15288 und Automotive SPICE. Welche
 Anforderungen dokument-belegbar sind und welche davon graphcode heute erfüllt, steht in
-[`SPIKE-GC-norm-dokumentanteil-RESULTS`](spikes/SPIKE-GC-norm-dokumentanteil-RESULTS.md).
+`SPIKE-GC-norm-dokumentanteil-RESULTS` (privates Messarchiv).
 
 Added Value ( Claim): Traceability und die Konsistenz Modell ↔ Code sind **deterministisch** aus demselben Modell belegt, aus dem die Dokumente gerendert werden. Ein frei laufendes Frontier-Modell kann Dokumente schreiben, diese Nachweise
 aber nach Einschätzung des Autors nicht sicher erbringen (T-N3).
@@ -342,7 +342,7 @@ Den Stand der S1-Tests nennt `docs/messung/stand.md`, erzeugt von `npm run messu
 
 | Test | Frage | Aufbau | Kriterium |
 |---|---|---|---|
-| **T-N1** Dokumentanteil der Normen | Welche Norm-Anforderungen sind dokument-belegbar, und deckt graphcode sie? | [`SPIKE-GC-norm-dokumentanteil-RESULTS`](spikes/SPIKE-GC-norm-dokumentanteil-RESULTS.md) | jede der 10 Anforderungsklassen ist `ja` oder als Lücke benannt |
+| **T-N1** Dokumentanteil der Normen | Welche Norm-Anforderungen sind dokument-belegbar, und deckt graphcode sie? | `SPIKE-GC-norm-dokumentanteil-RESULTS` (privates Messarchiv) | jede der 10 Anforderungsklassen ist `ja` oder als Lücke benannt |
 | **T-N2** Nachweis deterministisch | Werden Traceability und Konsistenz aus dem Modell geprüft statt behauptet? | R-18, R-02/R-05/UC-01/R-21, R-19/R-20, RC-01…09, `graph_test_ingest` | RTM und VCRM ohne Lücke; Bindung 100 %; Ergebnisse aus echten Läufen |
 | **T-N3** Gegenprobe freies Frontier-Modell | Kann ein frei laufendes Modell dieselben Nachweise erbringen? | freier Arm mit Auftrag RTM und VCRM, per `se:import-doc` gegen dieselben Regeln | Traceability und Konsistenz sind aus seinen Artefakten deterministisch prüfbar |
 

@@ -8,7 +8,7 @@
 ---
 
 **Bezug:** Analyse des Fachgespraechs vom 2026-11-10 („Traceability versteht man nicht mehr");
-[`SPIKE-GC-ein-erfueller-je-req-RESULTS.md`](../../archive/spikes/SPIKE-GC-ein-erfueller-je-req-RESULTS.md).
+`SPIKE-GC-ein-erfueller-je-req-RESULTS` (graphanalyze/docs/spikes).
 Entscheidung des Autors 2026-11-12: die Ebene einer Anforderung muss eindeutig sein.
 
 ## Befund

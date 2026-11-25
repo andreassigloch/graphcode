@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 633 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 634 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 633 CR · 622 done · 1 open.
+Total: 634 CR · 622 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -253,6 +253,7 @@ Total: 633 CR · 622 done · 1 open.
 | `CR-GC-1027` | done | Typbindung in die CI: erzeugte bindungen.ts, Altlast 41 FUNC, Gleichstand-Test, Modellknoten (Teil 2 aus CR-GC-1026) |
 | `CR-GC-1028` | done | Änderungs-Heatmap: Nacharbeit, Themenbreite, Mitänderung über graphcode, SM und GVE |
 | `CR-GC-1029` | done | Änderungs-Heatmap schärfen: Tool-Definitionen als eigene Symbole, Commits ohne CR-Nummer nach ITEM und Release einordnen |
+| `CR-GC-1030` | n/a | Spikes und Expertengespräch aus dem öffentlichen Repo nach graphanalyze |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |

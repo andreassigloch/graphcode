@@ -113,4 +113,4 @@ hand-edited.
 ---
 
 *Repo: <https://github.com/andreassigloch/graphcode>. Constraints:
-[`README.md`](../../README.md). Benchmark detail: [`docs/archive/spikes/`](../archive/spikes/).*
+[`README.md`](../../README.md).*
