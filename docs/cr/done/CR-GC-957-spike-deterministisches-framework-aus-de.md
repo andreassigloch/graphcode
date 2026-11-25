@@ -4,7 +4,7 @@
 **Status:** Done, 2026-11-19, No-Go
 **Erstellt:** 2026-11-19
 **Item:** bok/items/ITEM-2026-1453.json (Lane: graph)
-**Vorlage:** `docs/project/Spike Deterministisches Framework aus dem Modell.md`
+**Vorlage:** im privaten Repo graphanalyze, `docs/spikes/SPIKE-GC-957/`
 
 ---
 
