@@ -260,7 +260,8 @@
       "id": "CR-GC-1029",
       "type": "CR",
       "name": "Änderungs-Heatmap schärfen: Tool-Definitionen als eigene Symbole, Commits ohne CR-Nummer nach ITEM und Release einordnen",
-      "description": "docs/cr/open/CR-GC-1029-a-nderungs-heatmap-scha-rfen-tool-defini.md"
+      "description": "docs/cr/done/CR-GC-1029-a-nderungs-heatmap-scha-rfen-tool-defini.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-103",
@@ -42263,5 +42264,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1628
+  "graphVersion": 1629
 }
