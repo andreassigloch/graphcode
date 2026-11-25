@@ -25,7 +25,7 @@ import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { ALL_RULE_DEFS } from '@sigloch/contracts/se';
-import { RULE_CLAUSE, GENERATION_TEMPLATE } from '../src/loop/generate.js';
+import { RULE_CLAUSE, GENERATION_TEMPLATE } from '../src/loop/generate-klauseln.js';
 
 const KATALOG = new Set(ALL_RULE_DEFS.map((r) => r.id));
 
@@ -114,7 +114,7 @@ describe('TEST-skill-rule-ids (d): Kanaele, Tasks und Abnahmen passen zusammen (
   });
 
   it('jeder Task hat einen Skill, und der Skill liegt ausgeliefert vor', async () => {
-    const { TASK_SKILL } = await import('../src/loop/generate.js');
+    const { TASK_SKILL } = await import('../src/loop/generate-klauseln.js');
     const { RULE_TASKS } = await import('@sigloch/contracts/se');
     const dateien = markdownDateien(join(__dirname, '..', '.claude', 'commands')).map((p) =>
       p.split('/.claude/commands/')[1].replace(/\.md$/, '').replace('/', ':'),
@@ -178,7 +178,7 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
 
   it('TASK_SKILL ist die Hilfe des Eintrittspunkts — eine Zuordnung, nicht zwei', async () => {
     const { RULE_HELP, TASK_ENTRY } = await import('@sigloch/contracts/se');
-    const { TASK_SKILL } = await import('../src/loop/generate.js');
+    const { TASK_SKILL } = await import('../src/loop/generate-klauseln.js');
     for (const [task, entry] of Object.entries(TASK_ENTRY)) {
       if (entry === null) continue;
       expect((TASK_SKILL as Record<string, string>)[task], `${task} ↔ ${entry}`).toBe(RULE_HELP[entry].prompt);
@@ -187,7 +187,7 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
 
   it('Kern-Regel: Hilfe-Prompt und Skill der Stufe stimmen ueberein — oder die Abweichung steht hier mit Grund (Ratsche)', async () => {
     const { RULE_HELP, ALL_RULE_DEFS, STAGE_SETS, TASK_ENTRY, taskOf } = await import('@sigloch/contracts/se');
-    const { SKILL_FOR_STAGE } = await import('../src/loop/generate.js');
+    const { SKILL_FOR_STAGE } = await import('../src/loop/generate-klauseln.js');
     // CR-GC-757: der Skill haengt an der STUFE der Regel (vorher: an ihrer Dimension).
     const stufenName = (id: string): string | undefined => {
       const st = ALL_RULE_DEFS.find((r) => r.id === id)?.stage;
@@ -205,7 +205,7 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
     // CR-GC-748: eine Regel, deren Hilfe einen Analyse-Skill nennt (FM-01..03, TR-01, IR-01 — seit
     // contracts 11 Kern-Regeln), nimmt die Stufe gar nicht: der Schritt nennt den Skill der Analyse
     // (`analyseSkill`, Fall darunter). Sie ist deshalb keine Abweichung und steht nicht in der Ratsche.
-    const { analyseSkill } = await import('../src/loop/generate.js');
+    const { analyseSkill } = await import('../src/loop/generate-klauseln.js');
     const abweichend = Object.entries(RULE_HELP)
       .filter(([id, e]) => e.prompt && taskOf(id) === 'kern' && !eintritte.has(id) && analyseSkill(id) === undefined)
       .filter(([id, e]) => {
@@ -220,7 +220,8 @@ describe('TEST-skill-rule-ids (e): Empfehlungen passen zu Regeln und Skills (CR-
 
   it('CR-GC-748: steht eine Regel einer Analyse im Kern-Fokus, nennt der Schritt den Skill der Analyse — nicht den der Stufe', async () => {
     const { DEFAULT_METRIC_POLICY, RULE_HELP } = await import('@sigloch/contracts/se');
-    const { generationStep, analyseSkill, SKILL_FOR_STAGE } = await import('../src/loop/generate.js');
+    const { generationStep } = await import('../src/loop/generate.js');
+    const { analyseSkill, SKILL_FOR_STAGE } = await import('../src/loop/generate-klauseln.js');
     // Eine Risiko-Anforderung ohne Bewertung: FM-01 meldet — eine Regel der Fehlerbetrachtung, im Kern sichtbar.
     const n = (uid: string, type: string, description: string, attributes: Record<string, unknown> = {}) =>
       ({ uid, type, name: uid, description, attributes });

@@ -37,7 +37,7 @@ const { TASK_SKILL, SKILL_FOR_STAGE, analyseSkill, stufenRang } = await import(j
 
 const gate = new Set((SE_DESCRIPTOR.rules ?? []).map((r) => r.id));
 const defs = new Map(se.ALL_RULE_DEFS.map((r) => [r.id, r]));
-// Reihenfolge wie beim Schritt (generate.ts): Stufe, in der Stufe die Existenz-Regel vorn, dann die ID.
+// Reihenfolge wie beim Schritt (generate-step-core.ts): Stufe, in der Stufe die Existenz-Regel vorn, dann die ID.
 const ids = [...defs.keys()].sort((a, b) =>
   stufenRang(a) - stufenRang(b) ||
   Number(defs.get(b).role === 'existence') - Number(defs.get(a).role === 'existence') ||
@@ -57,7 +57,7 @@ const nennt = (id) => skillTexte
   .map(([n]) => n);
 
 const bedarf = (id) => gate.has(id) ? 'Gate' : id.startsWith('ND-') ? 'Aehnlichkeit (ND)' : id.startsWith('RC-') ? 'CodeFacts (RC)' : 'nur Steuerung';
-// Wie generate.ts (CR-GC-604/748): im Task der Task-Skill, an einem Eintrittspunkt der Skill des Tasks,
+// Wie generationStep in generate.ts (CR-GC-604/748): im Task der Task-Skill, an einem Eintrittspunkt der Skill des Tasks,
 // an einer Regel einer Analyse deren Skill, sonst der der Stufe.
 /**
  * CR-GC-616 — was die Fix-Vorlage der Regel auf ihrem Ausloese-Fixture tatsaechlich tut. Gemessen

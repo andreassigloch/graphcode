@@ -19,7 +19,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { ALL_RULE_DEFS, DEFAULT_METRIC_POLICY, STAGE_SETS } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
-import { generationStep, SEED_RULE } from '../src/loop/generate.js';
+import { generationStep } from '../src/loop/generate.js';
+import { SEED_RULE } from '../src/loop/generate-step-core.js';
 import { takeSteeringSnapshot } from '../src/kernel/measure/steering-snapshot.js';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));

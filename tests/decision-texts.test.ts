@@ -30,7 +30,7 @@ function ausgelieferteTexte(): { pfad: string; text: string }[] {
     }
   };
   walk(join(ROOT, '.claude', 'commands'));
-  for (const f of ['src/loop/generate.ts', 'src/surface/scaffold-docs.ts']) {
+  for (const f of ['src/loop/generate.ts', 'src/loop/generate-klauseln.ts', 'src/loop/generate-step-core.ts', 'src/surface/scaffold-docs.ts']) {
     out.push({ pfad: f, text: readFileSync(join(ROOT, f), 'utf8') });
   }
   return out;

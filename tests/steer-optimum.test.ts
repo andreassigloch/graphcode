@@ -13,7 +13,8 @@ import { fileURLToPath } from 'node:url';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import { STEER_RULES } from '@sigloch/se-engine';
 import { lokalesOptimum, stepWithMemory, type FocusMemory, type SteerOptimum, type SteerState } from '../src/loop/stagnation.js';
-import { generationStep, steuerVermerk, type GenerationStep } from '../src/loop/generate.js';
+import { generationStep, type GenerationStep } from '../src/loop/generate.js';
+import { steuerVermerk } from '../src/loop/generate-klauseln.js';
 
 const z = (key: string, sum: number): SteerState => ({ key, sum, terms: key ? key.split('|') : [] });
 

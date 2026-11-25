@@ -6,7 +6,7 @@
 
 > GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 637 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 637 CR · 623 done · 1 open.
+Total: 637 CR · 624 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -254,7 +254,7 @@ Total: 637 CR · 623 done · 1 open.
 | `CR-GC-1028` | done | Änderungs-Heatmap: Nacharbeit, Themenbreite, Mitänderung über graphcode, SM und GVE |
 | `CR-GC-1029` | done | Änderungs-Heatmap schärfen: Tool-Definitionen als eigene Symbole, Commits ohne CR-Nummer nach ITEM und Release einordnen |
 | `CR-GC-1030` | done | Spikes und Expertengespräch aus dem öffentlichen Repo nach graphanalyze |
-| `CR-GC-1031` | n/a | Pre-push-Hook: PII-Filter und verbotene Pfade |
+| `CR-GC-1031` | done | Pre-push-Hook: PII-Filter und verbotene Pfade |
 | `CR-GC-1032` | n/a | generate.ts nach Zuständigkeit teilen: Klauseln/Vorlagen, stepCore, generationStep — je Datei unter 500 Zeilen (Heatmap: MOD-loop 34 % Fixes) |
 | `CR-GC-1033` | n/a | Änderungs-Heatmap: Folgeänderungen (Versionskonstanten, erzeugter Snapshot) aus dem Pareto nehmen |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |

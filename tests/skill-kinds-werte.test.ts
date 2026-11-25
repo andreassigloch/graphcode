@@ -18,7 +18,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { ReqKind, RULE_HELP, TRACE_PATTERNS, ElementType as ElementTypes, isValidTrace, type ElementType } from '@sigloch/contracts/se';
 import { attributesFor, formatEExampleFor } from '../src/projections/authoring-example.js';
-import { RULE_CLAUSE, GENERATION_TEMPLATE } from '../src/loop/generate.js';
+import { RULE_CLAUSE, GENERATION_TEMPLATE } from '../src/loop/generate-klauseln.js';
 
 const WERTE = new Set<string>(ReqKind.options);
 

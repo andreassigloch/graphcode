@@ -34,7 +34,10 @@ describe('CR-GC-307: the anchor vocabulary never reaches a human-facing string',
   it('the generate prompts carry no steering vocabulary', async () => {
     // Source-level grep: a review comment would let the term creep back on the next
     // edit. This is the enforcement.
-    const src = readFileSync(new URL('../src/loop/generate.ts', import.meta.url), 'utf8');
+    // CR-GC-1032: die Prompt-Literale stehen in drei Dateien — alle lesen, sonst prüft der Test weniger.
+    const src = ['generate.ts', 'generate-klauseln.ts', 'generate-step-core.ts']
+      .map((f) => readFileSync(new URL(`../src/loop/${f}`, import.meta.url), 'utf8'))
+      .join('\n');
     // Kommentare ZUERST entfernen (CR-GC-358): der Literal-Match unten ist ein naiver
     // Quote-Scanner, und ein einzelnes Apostroph in deutscher Kommentar-Prosa ("don't",
     // "das Modell's") verschiebt seine Paarbildung um eins — danach ist jedes gemeldete

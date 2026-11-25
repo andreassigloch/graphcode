@@ -284,7 +284,8 @@
       "id": "CR-GC-1031",
       "type": "CR",
       "name": "Pre-push-Hook: PII-Filter und verbotene Pfade",
-      "description": "docs/cr/open/CR-GC-1031-pre-push-hook-pii-filter-und-verbotene-p.md"
+      "description": "docs/cr/done/CR-GC-1031-pre-push-hook-pii-filter-und-verbotene-p.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-1032",
@@ -19406,6 +19407,11 @@
     {
       "source": "CR-GC-1031",
       "target": "REQ-push-check-public",
+      "type": "relation"
+    },
+    {
+      "source": "CR-GC-1032",
+      "target": "FUNC-generation-step",
       "type": "relation"
     },
     {
@@ -42359,5 +42365,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1637
+  "graphVersion": 1639
 }

@@ -39,7 +39,7 @@ import {
 } from '../kernel/evaluation.js';
 import { countByStage, groupViolations, type ViolationGroup } from '@sigloch/graphcode-client';
 import { loadTargetProfile, intentCoverage, type AnchorCoverage } from '../loop/target-profile.js';
-import { stufenRang } from '../loop/generate.js';
+import { stufenRang } from '../loop/generate-step-core.js';
 import { helpEntry, type HelpEntry } from './help.js';
 import { attributesFor, formatEExampleFor, type AttributeHint } from './authoring-example.js';
 import { MANUELL, TestSelectionSchema, type TestSelection } from '../kernel/measure/test-selection.js';

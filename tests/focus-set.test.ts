@@ -48,7 +48,7 @@ describe('CR-GC-598: eine Fokusmenge, und blockingErrors kennt die Abnahme', () 
   });
 
   it('CR-GC-599: keine Regel-Klausel fuer FM-01 — der Loop setzt keine Bewertungen', async () => {
-    const { RULE_CLAUSE } = await import('../src/loop/generate.js');
+    const { RULE_CLAUSE } = await import('../src/loop/generate-klauseln.js');
     expect(RULE_CLAUSE['FM-01']).toBeUndefined();
   });
 

@@ -16,7 +16,8 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DEFAULT_METRIC_POLICY, evaluateAllRules, taskOf } from '@sigloch/contracts/se';
 import { focusViolations } from '../src/kernel/measure/focus-set.js';
-import { generationStep, TASK_SKILL, type GenerationRequest } from '../src/loop/generate.js';
+import { generationStep, type GenerationRequest } from '../src/loop/generate.js';
+import { TASK_SKILL } from '../src/loop/generate-klauseln.js';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
 import { alsFormatE } from './helpers/format-e.js';
 

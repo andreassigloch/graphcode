@@ -16,7 +16,8 @@ import { join } from 'node:path';
 import { createHarness, bindToolsToHarness, type GraphCodeHarness } from '../src/index.js';
 import { DEFAULT_METRIC_POLICY, RULE_HELP } from '@sigloch/contracts/se';
 import { VORSCHLAG_SEED, vorschlagAusSchritt, vorschlagNachAnwendung, vorschlagOffeneAnalyse } from '../src/loop/next-step.js';
-import { SEED_STAGES, generationStep, type GenerationStep } from '../src/loop/generate.js';
+import { generationStep, type GenerationStep } from '../src/loop/generate.js';
+import { SEED_STAGES } from '../src/loop/generate-step-core.js';
 import { focusMemoryOf } from '../src/loop/stagnation.js';
 import { alsFormatE } from './helpers/format-e.js';
 

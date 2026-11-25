@@ -15,7 +15,8 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { CHANNEL_ORDER, rankOf, outranks, winner } from '../src/loop/channel-rank.js';
-import { generationStep, RULE_CLAUSE, GENERATION_TEMPLATE, STAGE_FOCUS_TYPES } from '../src/loop/generate.js';
+import { generationStep } from '../src/loop/generate.js';
+import { RULE_CLAUSE, GENERATION_TEMPLATE, STAGE_FOCUS_TYPES } from '../src/loop/generate-klauseln.js';
 import { DEFAULT_METRIC_POLICY } from '@sigloch/contracts/se';
 import type { Graph } from '@sigloch/graph-api-core';
 
@@ -93,9 +94,9 @@ describe('die Ordnung wird angewandt, nicht ein zweites Mal entschieden (CR-GC-5
 
   it('die anwendende Stelle bezieht die Ordnung aus channel-rank, statt sie zu wiederholen', () => {
     // Kriterium 1 der CR: "an genau einer Stelle im Code, nicht in fuenf Bedingungen".
-    // Prueflicher Stellvertreter: `generate.ts` importiert die Ordnung und traegt keine
-    // eigene Vorrang-Verzweigung auf `klausel` mehr.
-    const generate = readFileSync(new URL('../src/loop/generate.ts', import.meta.url), 'utf8');
+    // Prueflicher Stellvertreter: die Zustandsmaschine (seit CR-GC-1032 `generate-step-core.ts`)
+    // importiert die Ordnung und traegt keine eigene Vorrang-Verzweigung auf `klausel` mehr.
+    const generate = readFileSync(new URL('../src/loop/generate-step-core.ts', import.meta.url), 'utf8');
     expect(generate).toContain("from './channel-rank.js'");
     // Der alte Ternaer: `klausel ? [...klausel.types] : ...` — die zweite Entscheidung
     // derselben Frage. Sie darf nicht zurueckkehren.
