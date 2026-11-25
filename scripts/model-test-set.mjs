@@ -151,6 +151,9 @@ export const INCLUDED = [
  * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
  */
 export const EXCLUDED = {
+  'tests/aenderungs-heatmap.test.ts':
+    'CR-GC-1028: nennt `docs/graph/r.graph.json` nur als Config-Pfad eines TEMP-Repos ohne Graph-Datei.\n' +
+    'graphcodes eigene SSOT liest er nie — eine Modellaenderung kann ihn nicht rot machen (Spur CODE).',
   'tests/vertragstest.test.ts':
     'CR-GC-962: schreibt einen eigenen Snapshot nach docs/graph/ eines TEMP-Repos und erzeugt daraus Vertragstests.\n' +
     'graphcodes eigene SSOT liest er nie — eine Modellaenderung kann ihn nicht rot machen (Spur CODE).',

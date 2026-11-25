@@ -1,0 +1,249 @@
+<title>Änderungs-Hotspots</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: eine Spalte; Befunde, Einheiten × Messgrößen, Pareto, Mitänderung, Dateien, Definitionen */
+:root {
+  --bg: #fbfbfa; --panel: #ffffff; --fg: #18191b; --muted: #5a5b5f; --faint: #8b8c90; --line: #e3e3e0;
+  --c0: #f1f2f1; --c1: #cde2fb; --c2: #9ec5f4; --c3: #6da7ec; --c4: #3987e5; --c5: #256abf; --c6: #104281;
+  --on-dark: #ffffff; --bar: #2a78d6;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #161616; --panel: #1d1d1d; --fg: #eeeeec; --muted: #b5b5b0; --faint: #85857f; --line: #2f2f2d;
+  --c0: #242423; --c1: #0d366b; --c2: #184f95; --c3: #256abf; --c4: #3987e5; --c5: #6da7ec; --c6: #b7d3f6;
+  --on-dark: #0b0b0b; --bar: #3987e5; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #161616; --panel: #1d1d1d; --fg: #eeeeec; --muted: #b5b5b0; --faint: #85857f; --line: #2f2f2d;
+  --c0: #242423; --c1: #0d366b; --c2: #184f95; --c3: #256abf; --c4: #3987e5; --c5: #6da7ec; --c6: #b7d3f6;
+  --on-dark: #0b0b0b; --bar: #3987e5; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 14px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 48px; }
+main { max-width: 1180px; margin: 0 auto; display: grid; gap: 40px; }
+h1 { font-size: 26px; font-weight: 600; margin: 0; text-wrap: balance; }
+h2 { font-size: 18px; font-weight: 600; margin: 0; text-wrap: balance; }
+p { margin: 0; max-width: 76ch; }
+.sub { color: var(--muted); }
+.mono { font-family: var(--mono); font-size: 12px; }
+header, section { display: grid; gap: 12px; min-width: 0; }
+.findings { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+.finding { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; display: grid; gap: 4px; align-content: start; }
+.finding b { font-weight: 600; }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+table { border-collapse: separate; border-spacing: 2px; font-variant-numeric: tabular-nums; }
+th, td { white-space: nowrap; }
+thead th { font-size: 11px; font-weight: 500; color: var(--faint); padding: 6px 8px; text-align: right; vertical-align: bottom; }
+thead th:first-child { text-align: left; }
+th button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: inherit; }
+th button.on { color: var(--fg); font-weight: 600; }
+th button:focus-visible { outline: 2px solid var(--c4); outline-offset: 2px; }
+td.name { text-align: left; padding: 3px 10px; position: sticky; left: 0; background: var(--panel); max-width: 360px; overflow: hidden; text-overflow: ellipsis; }
+td.name .f { font-family: var(--mono); font-size: 12px; }
+td.name .fn { font-size: 11px; color: var(--faint); display: block; overflow: hidden; text-overflow: ellipsis; }
+td.v { text-align: right; padding: 3px 8px; font-size: 13px; border-radius: 3px; min-width: 52px; }
+td.v.dark { color: var(--on-dark); }
+td.v.na { color: var(--faint); background: transparent; }
+td.m { width: 30px; height: 26px; text-align: center; font-size: 11px; border-radius: 3px; }
+td.m.dark { color: var(--on-dark); }
+td.m.diag { background: transparent; color: var(--faint); outline: 1px solid var(--line); }
+th.mh { writing-mode: vertical-rl; transform: rotate(180deg); text-align: left; font-family: var(--mono); font-size: 10px; height: 150px; padding: 4px 0; }
+.legend { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+.legend i { width: 18px; height: 12px; border-radius: 2px; display: inline-block; }
+.repo { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .05em; color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; margin-right: 6px; }
+svg text { fill: var(--fg); font-family: var(--sans); }
+svg .t2 { fill: var(--muted); font-size: 11px; }
+svg .mono { font-family: var(--mono); }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; max-width: 90ch; }
+dt { font-weight: 600; }
+dd { margin: 0; color: var(--muted); }
+#tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 12px; padding: 6px 9px; border-radius: 4px; z-index: 20; max-width: 340px; }
+@media (max-width: 600px) { dl { grid-template-columns: 1fr; } }
+</style>
+
+<main>
+  <header>
+    <h1>Änderungs-Hotspots: graphcode, SM und GVE</h1>
+    <p class="sub" id="meta"></p>
+  </header>
+
+  <section>
+    <h2>Was auffällt</h2>
+    <div class="findings" id="findings"></div>
+  </section>
+
+  <section>
+    <h2>Module und Verzeichnisse</h2>
+    <p class="sub">Farbe = Rang innerhalb der Spalte; dunkler heißt auffälliger. Einheiten mit weniger als 10 Änderungen sind nicht eingefärbt. Spaltenkopf klicken sortiert.</p>
+    <div class="legend" id="leg-rank"></div>
+    <div class="scroll"><table id="t-units"></table></div>
+  </section>
+
+  <section>
+    <h2>Meistgeänderte Funktionen und Konstanten</h2>
+    <p class="sub" id="pareto-sub"></p>
+    <div class="scroll" style="padding:12px"><svg id="pareto" role="img" aria-label="Pareto der meistgeänderten Funktionen"></svg></div>
+  </section>
+
+  <section>
+    <h2>Welche Einheiten zusammen geändert werden</h2>
+    <p class="sub">Zelle = Anzahl der CRs, die beide Einheiten ändern. Diagonale = alle CRs der Einheit. Gezeigt sind die Einheiten mit den meisten geteilten CRs.</p>
+    <div class="legend" id="leg-matrix"></div>
+    <div class="scroll"><table id="t-matrix"></table></div>
+  </section>
+
+  <section>
+    <h2>Dateien</h2>
+    <p class="sub">Die 40 meistgeänderten Dateien, die es heute gibt. Unter dem Pfad: FUNCs, deren <span class="mono">realRef</span> auf die Datei zeigt.</p>
+    <div class="scroll"><table id="t-files"></table></div>
+  </section>
+
+  <section>
+    <h2>So wird gemessen</h2>
+    <dl id="defs"></dl>
+  </section>
+</main>
+<div id="tip" hidden></div>
+
+<script>
+const D = {"stand":"2026-11-25","seit":"2026-05-25","repos":[{"name":"graphcode","head":"738adb45","commits":614},{"name":"SM","head":"c241cd2","commits":308},{"name":"GVE","head":"0ebe1d3","commits":160}],"parameter":{"monate":6,"nachfassTage":14,"paretoTop":10},"units":[{"key":"graphcode:MOD-surface","changes":218,"fix":48,"crs":196,"added":10081,"reworked":1229,"mit":155,"fremdRepo":6,"gruppen":211,"partner":9,"loc":8392},{"key":"SM:MOD-contracts","changes":213,"fix":45,"crs":169,"added":12691,"reworked":1379,"mit":81,"fremdRepo":10,"gruppen":198,"partner":11,"loc":11352},{"key":"graphcode:MOD-loop","changes":194,"fix":66,"crs":161,"added":8962,"reworked":2328,"mit":115,"fremdRepo":3,"gruppen":180,"partner":10,"loc":2560},{"key":"graphcode:MOD-projections","changes":183,"fix":34,"crs":169,"added":9443,"reworked":808,"mit":136,"fremdRepo":7,"gruppen":173,"partner":13,"loc":7728},{"key":"GVE:src","changes":146,"fix":30,"crs":115,"added":6298,"reworked":763,"mit":41,"fremdRepo":3,"gruppen":144,"partner":5,"loc":4531},{"key":"graphcode:MOD-agent-surface","changes":141,"fix":28,"crs":127,"added":2795,"reworked":353,"mit":87,"fremdRepo":3,"gruppen":137,"partner":8,"loc":2645},{"key":"graphcode:MOD-dev-scripts","changes":135,"fix":18,"crs":115,"added":7716,"reworked":1165,"mit":79,"fremdRepo":1,"gruppen":127,"partner":8,"loc":4145},{"key":"graphcode:MOD-kernel","changes":115,"fix":18,"crs":109,"added":4755,"reworked":255,"mit":100,"fremdRepo":6,"gruppen":113,"partner":12,"loc":4848},{"key":"graphcode:MOD-kernel-measure","changes":74,"fix":15,"crs":71,"added":2001,"reworked":223,"mit":71,"fremdRepo":4,"gruppen":73,"partner":10,"loc":1258},{"key":"SM:packages/se-engine","changes":71,"fix":11,"crs":67,"added":2683,"reworked":125,"mit":50,"fremdRepo":4,"gruppen":69,"partner":10,"loc":3001},{"key":"SM:MOD-graph-api-core","changes":62,"fix":15,"crs":44,"added":2586,"reworked":71,"mit":33,"fremdRepo":8,"gruppen":62,"partner":11,"loc":4224},{"key":"graphcode:src","changes":44,"fix":6,"crs":41,"added":764,"reworked":106,"mit":43,"fremdRepo":1,"gruppen":44,"partner":8,"loc":569},{"key":"SM:packages/graphcode-client","changes":32,"fix":3,"crs":28,"added":1444,"reworked":220,"mit":23,"fremdRepo":6,"gruppen":30,"partner":7,"loc":854},{"key":"GVE:src/store","changes":25,"fix":1,"crs":23,"added":202,"reworked":24,"mit":23,"fremdRepo":0,"gruppen":25,"partner":4,"loc":115},{"key":"SM:MOD-se-steering","changes":22,"fix":5,"crs":16,"added":370,"reworked":52,"mit":19,"fremdRepo":2,"gruppen":20,"partner":7,"loc":0},{"key":"SM:packages/claude-plugin","changes":19,"fix":1,"crs":11,"added":233,"reworked":8,"mit":13,"fremdRepo":1,"gruppen":18,"partner":6,"loc":0},{"key":"GVE:MOD-renderer","changes":13,"fix":4,"crs":12,"added":835,"reworked":10,"mit":7,"fremdRepo":1,"gruppen":13,"partner":3,"loc":1005},{"key":"GVE:src/views","changes":13,"fix":0,"crs":9,"added":51,"reworked":1,"mit":13,"fremdRepo":0,"gruppen":13,"partner":2,"loc":41},{"key":"SM:packages/se-steering","changes":10,"fix":1,"crs":6,"added":272,"reworked":44,"mit":8,"fremdRepo":1,"gruppen":10,"partner":5,"loc":0},{"key":"GVE:packages/graph-edit-surface","changes":9,"fix":1,"crs":7,"added":1063,"reworked":9,"mit":5,"fremdRepo":0,"gruppen":9,"partner":3,"loc":1362},{"key":"graphcode:src/hooks","changes":5,"fix":0,"crs":4,"added":176,"reworked":53,"mit":5,"fremdRepo":0,"gruppen":5,"partner":7,"loc":0},{"key":"SM:packages/graph-api-express","changes":2,"fix":1,"crs":1,"added":58,"reworked":0,"mit":0,"fremdRepo":0,"gruppen":2,"partner":0,"loc":184},{"key":"SM:packages/graph-renderer","changes":2,"fix":0,"crs":1,"added":10,"reworked":0,"mit":2,"fremdRepo":1,"gruppen":2,"partner":1,"loc":47},{"key":"SM:packages/immo-services","changes":1,"fix":0,"crs":0,"added":0,"reworked":0,"mit":0,"fremdRepo":0,"gruppen":1,"partner":0,"loc":0},{"key":"SM:packages/linkedin-tools","changes":1,"fix":1,"crs":0,"added":0,"reworked":0,"mit":0,"fremdRepo":0,"gruppen":1,"partner":0,"loc":273},{"key":"SM:packages/graph-cypher-wasm","changes":1,"fix":0,"crs":1,"added":0,"reworked":0,"mit":1,"fremdRepo":1,"gruppen":1,"partner":0,"loc":0},{"key":"SM:packages/learning-core","changes":1,"fix":0,"crs":1,"added":117,"reworked":0,"mit":0,"fremdRepo":0,"gruppen":1,"partner":0,"loc":210},{"key":"SM:packages/graph-api-neo4j","changes":1,"fix":0,"crs":0,"added":0,"reworked":0,"mit":1,"fremdRepo":0,"gruppen":1,"partner":0,"loc":0},{"key":"GVE:bin","changes":1,"fix":0,"crs":1,"added":33,"reworked":0,"mit":1,"fremdRepo":0,"gruppen":1,"partner":0,"loc":42}],"files":[{"key":"SM:packages/contracts/src/se/index.ts","changes":133,"fix":17,"crs":107,"added":194,"reworked":99,"unit":"SM:MOD-contracts","loc":65,"funcs":[]},{"key":"SM:packages/contracts/src/se/grammar-snapshot.ts","changes":102,"fix":12,"crs":98,"added":771,"reworked":131,"unit":"SM:MOD-contracts","loc":506,"funcs":[]},{"key":"graphcode:src/loop/generate.ts","changes":85,"fix":26,"crs":80,"added":1699,"reworked":350,"unit":"graphcode:MOD-loop","loc":989,"funcs":["FUNC-generation-step"]},{"key":"SM:packages/contracts/src/se/rules.ts","changes":77,"fix":16,"crs":63,"added":2112,"reworked":220,"unit":"SM:MOD-contracts","loc":2101,"funcs":[]},{"key":"graphcode:src/projections/report.ts","changes":63,"fix":8,"crs":59,"added":1155,"reworked":308,"unit":"graphcode:MOD-projections","loc":599,"funcs":["FUNC-authoring-guide","FUNC-deduce-tests","FUNC-graph-help","FUNC-graph-readiness","FUNC-rules-tool"]},{"key":"graphcode:scripts/model-test-set.mjs","changes":60,"fix":9,"crs":58,"added":315,"reworked":25,"unit":"graphcode:MOD-dev-scripts","loc":290,"funcs":[]},{"key":"SM:packages/contracts/src/se/rule-help.ts","changes":58,"fix":7,"crs":57,"added":564,"reworked":65,"unit":"SM:MOD-contracts","loc":510,"funcs":[]},{"key":"graphcode:src/surface/write.ts","changes":53,"fix":6,"crs":49,"added":1124,"reworked":243,"unit":"graphcode:MOD-surface","loc":473,"funcs":["FUNC-graph-merge-tool","FUNC-graph-mutate-tool","FUNC-graph-reseed-tool"]},{"key":"SM:packages/contracts/src/se/readiness.ts","changes":48,"fix":1,"crs":39,"added":478,"reworked":86,"unit":"SM:MOD-contracts","loc":165,"funcs":[]},{"key":"SM:packages/se-engine/src/rule-classify.ts","changes":46,"fix":4,"crs":44,"added":273,"reworked":9,"unit":"SM:packages/se-engine","loc":275,"funcs":["FUNC-classify-rules"]},{"key":"graphcode:src/loop/suggest.ts","changes":45,"fix":5,"crs":43,"added":579,"reworked":99,"unit":"graphcode:MOD-loop","loc":411,"funcs":["FUNC-graph-generate-tool","FUNC-graph-suggest"]},{"key":"GVE:src/view-descriptors.mjs","changes":44,"fix":4,"crs":30,"added":419,"reworked":38,"unit":"GVE:src","loc":177,"funcs":[]},{"key":"graphcode:src/surface/mcp-server.ts","changes":37,"fix":10,"crs":33,"added":562,"reworked":99,"unit":"graphcode:MOD-surface","loc":353,"funcs":["FUNC-serve-stdio"]},{"key":"GVE:src/elk-routing.mjs","changes":35,"fix":7,"crs":28,"added":847,"reworked":96,"unit":"GVE:src","loc":138,"funcs":[]},{"key":"SM:packages/contracts/src/se/ontology.ts","changes":33,"fix":2,"crs":27,"added":387,"reworked":29,"unit":"SM:MOD-contracts","loc":496,"funcs":[]},{"key":"graphcode:src/surface/scaffold-templates.ts","changes":32,"fix":7,"crs":28,"added":729,"reworked":31,"unit":"graphcode:MOD-surface","loc":478,"funcs":[]},{"key":"GVE:src/behavior-flow.mjs","changes":31,"fix":7,"crs":26,"added":1051,"reworked":233,"unit":"GVE:src","loc":356,"funcs":[]},{"key":"graphcode:src/kernel/measure/steering-snapshot.ts","changes":30,"fix":9,"crs":29,"added":248,"reworked":51,"unit":"graphcode:MOD-kernel-measure","loc":144,"funcs":["FUNC-compute-steering-delta","FUNC-take-steering-snapshot"]},{"key":"graphcode:src/projections/help-content.ts","changes":30,"fix":3,"crs":28,"added":722,"reworked":69,"unit":"graphcode:MOD-projections","loc":329,"funcs":[]},{"key":"graphcode:src/kernel/harness.ts","changes":29,"fix":5,"crs":27,"added":809,"reworked":43,"unit":"graphcode:MOD-kernel","loc":408,"funcs":["FUNC-graph-expand","FUNC-graph-impact","FUNC-reseed","FUNC-resolve-tests-from-code"]},{"key":"graphcode:src/surface/tool-context.ts","changes":29,"fix":5,"crs":26,"added":616,"reworked":31,"unit":"graphcode:MOD-surface","loc":586,"funcs":["FUNC-tool-context"]},{"key":"graphcode:src/index.ts","changes":28,"fix":2,"crs":26,"added":310,"reworked":57,"unit":"graphcode:src","loc":177,"funcs":[]},{"key":"graphcode:.claude/commands/se-fmea.md","changes":26,"fix":7,"crs":24,"added":256,"reworked":38,"unit":"graphcode:MOD-agent-surface","loc":208,"funcs":["FUNC-se-fmea"]},{"key":"SM:packages/contracts/src/se/conformance-rules.ts","changes":26,"fix":3,"crs":20,"added":850,"reworked":29,"unit":"SM:MOD-contracts","loc":835,"funcs":[]},{"key":"SM:packages/contracts/scripts/check-grammar-version.mjs","changes":26,"fix":3,"crs":25,"added":494,"reworked":96,"unit":"SM:MOD-contracts","loc":417,"funcs":[]},{"key":"graphcode:.claude/commands/se/generate.md","changes":25,"fix":10,"crs":24,"added":75,"reworked":17,"unit":"graphcode:MOD-agent-surface","loc":49,"funcs":["FUNC-se-generate"]},{"key":"GVE:src/store/viewer-store.mjs","changes":25,"fix":1,"crs":23,"added":202,"reworked":24,"unit":"GVE:src/store","loc":115,"funcs":[]},{"key":"graphcode:src/surface/scaffold.ts","changes":23,"fix":7,"crs":22,"added":603,"reworked":7,"unit":"graphcode:MOD-surface","loc":649,"funcs":["FUNC-harness-cli","FUNC-sync-skills"]},{"key":"graphcode:src/kernel/conformance.ts","changes":22,"fix":4,"crs":19,"added":484,"reworked":7,"unit":"graphcode:MOD-kernel","loc":509,"funcs":["FUNC-check-code-conformance"]},{"key":"graphcode:.claude/commands/se/top-level.md","changes":22,"fix":2,"crs":18,"added":147,"reworked":12,"unit":"graphcode:MOD-agent-surface","loc":177,"funcs":["FUNC-se-top-level"]},{"key":"graphcode:src/surface/mcp-tools.ts","changes":22,"fix":3,"crs":19,"added":247,"reworked":43,"unit":"graphcode:MOD-surface","loc":203,"funcs":["FUNC-bind-tools"]},{"key":"SM:packages/se-engine/src/fix-templates.ts","changes":22,"fix":4,"crs":21,"added":761,"reworked":37,"unit":"SM:packages/se-engine","loc":823,"funcs":["FUNC-render-fix-template"]},{"key":"graphcode:src/projections/export.ts","changes":21,"fix":5,"crs":18,"added":444,"reworked":10,"unit":"graphcode:MOD-projections","loc":330,"funcs":["FUNC-graph-export-snapshot"]},{"key":"graphcode:src/surface/read.ts","changes":21,"fix":2,"crs":18,"added":578,"reworked":15,"unit":"graphcode:MOD-surface","loc":640,"funcs":["FUNC-read-tools"]},{"key":"GVE:src/net-layout.mjs","changes":20,"fix":3,"crs":20,"added":374,"reworked":108,"unit":"GVE:src","loc":333,"funcs":[]},{"key":"graphcode:src/cli.ts","changes":19,"fix":4,"crs":17,"added":372,"reworked":25,"unit":"graphcode:src","loc":345,"funcs":["FUNC-cli-dispatch"]},{"key":"graphcode:src/projections/graphcode.ts","changes":19,"fix":4,"crs":16,"added":561,"reworked":2,"unit":"graphcode:MOD-projections","loc":523,"funcs":[]},{"key":"graphcode:src/projections/metrics.ts","changes":19,"fix":1,"crs":19,"added":315,"reworked":52,"unit":"graphcode:MOD-projections","loc":177,"funcs":["FUNC-graph-metrics"]},{"key":"graphcode:src/projections/testreport.ts","changes":19,"fix":3,"crs":18,"added":332,"reworked":30,"unit":"graphcode:MOD-projections","loc":272,"funcs":["FUNC-test-ingest"]},{"key":"SM:packages/contracts/src/se/metric-rules.ts","changes":19,"fix":0,"crs":17,"added":748,"reworked":47,"unit":"SM:MOD-contracts","loc":570,"funcs":[]}],"pareto":[{"key":"SM:packages/contracts/src/se/index.ts#RULES_VERSION","changes":111,"fix":14,"crs":89,"added":111,"reworked":85,"file":"SM:packages/contracts/src/se/index.ts","symbol":"RULES_VERSION","funcs":[],"kumAnteil":0.018842301816329995},{"key":"SM:packages/contracts/src/se/grammar-snapshot.ts#GRAMMAR_SNAPSHOT","changes":102,"fix":12,"crs":98,"added":764,"reworked":131,"file":"SM:packages/contracts/src/se/grammar-snapshot.ts","symbol":"GRAMMAR_SNAPSHOT","funcs":[],"kumAnteil":0.03615684943133594},{"key":"graphcode:src/projections/report.ts#bindReportTools","changes":56,"fix":8,"crs":53,"added":801,"reworked":141,"file":"graphcode:src/projections/report.ts","symbol":"bindReportTools","funcs":[],"kumAnteil":0.045662875572907824},{"key":"SM:packages/contracts/src/se/rule-help.ts#RULE_HELP","changes":55,"fix":7,"crs":54,"added":509,"reworked":65,"file":"SM:packages/contracts/src/se/rule-help.ts","symbol":"RULE_HELP","funcs":[],"kumAnteil":0.05499915124766593},{"key":"graphcode:src/surface/write.ts#bindWriteTools","changes":41,"fix":4,"crs":38,"added":732,"reworked":196,"file":"graphcode:src/surface/write.ts","symbol":"bindWriteTools","funcs":[],"kumAnteil":0.06195892038703107},{"key":"graphcode:src/loop/suggest.ts#bindSuggestTools","changes":38,"fix":5,"crs":36,"added":322,"reworked":57,"file":"graphcode:src/loop/suggest.ts","symbol":"bindSuggestTools","funcs":[],"kumAnteil":0.06840943812595485},{"key":"graphcode:scripts/model-test-set.mjs#EXCLUDED","changes":38,"fix":3,"crs":37,"added":171,"reworked":25,"file":"graphcode:scripts/model-test-set.mjs","symbol":"EXCLUDED","funcs":[],"kumAnteil":0.07485995586487863},{"key":"graphcode:src/loop/generate.ts#generationStep","changes":37,"fix":9,"crs":33,"added":481,"reworked":83,"file":"graphcode:src/loop/generate.ts","symbol":"generationStep","funcs":["FUNC-generation-step"],"kumAnteil":0.08114072313698863},{"key":"SM:packages/se-engine/src/rule-classify.ts#CLASS_MAP","changes":36,"fix":4,"crs":35,"added":153,"reworked":6,"file":"SM:packages/se-engine/src/rule-classify.ts","symbol":"CLASS_MAP","funcs":[],"kumAnteil":0.08725173994228484},{"key":"SM:packages/contracts/src/se/index.ts#META_MODEL_VERSION","changes":36,"fix":2,"crs":24,"added":58,"reworked":4,"file":"SM:packages/contracts/src/se/index.ts","symbol":"META_MODEL_VERSION","funcs":[],"kumAnteil":0.09336275674758106}],"symbolChanges":5891,"symbolCount":2584,"matrix":{"units":["graphcode:MOD-surface","graphcode:MOD-projections","graphcode:MOD-loop","graphcode:MOD-kernel","graphcode:MOD-agent-surface","SM:MOD-contracts","graphcode:MOD-dev-scripts","graphcode:MOD-kernel-measure","SM:packages/se-engine","graphcode:src","GVE:src","SM:MOD-graph-api-core","SM:packages/graphcode-client","GVE:src/store","SM:MOD-se-steering","SM:packages/claude-plugin"],"cells":[[211,56,58,57,29,1,31,24,1,33,1,5,1,0,1,0],[56,173,39,44,41,2,40,36,2,26,0,3,5,0,2,1],[58,39,180,28,38,2,23,40,2,14,0,1,0,0,1,0],[57,44,28,113,11,3,30,36,2,19,1,3,2,0,1,0],[29,41,38,11,137,3,23,14,1,8,0,0,0,0,0,0],[1,2,2,3,3,198,1,2,46,0,1,21,19,0,15,11],[31,40,23,30,23,1,127,20,0,14,0,0,0,0,0,0],[24,36,40,36,14,2,20,73,2,11,0,1,1,0,1,0],[1,2,2,2,1,46,0,2,69,1,0,10,11,0,9,4],[33,26,14,19,8,0,14,11,1,44,0,1,0,0,1,0],[1,0,0,1,0,1,0,0,0,0,144,2,0,23,0,0],[5,3,1,3,0,21,0,1,10,1,2,62,5,0,5,7],[1,5,0,2,0,19,0,1,11,0,0,5,30,0,5,3],[0,0,0,0,0,0,0,0,0,0,23,0,0,25,0,0],[1,2,1,1,0,15,0,1,9,1,0,5,5,0,20,4],[0,1,0,0,0,11,0,0,4,0,0,7,3,0,4,18]]},"grenzen":{"ereignisse":3546,"ohneCr":380,"gruppen":986,"zeilen":75639,"modulebene":8524}};
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => n.toLocaleString('de-DE');
+const pct = (a, b) => (b ? Math.round((100 * a) / b) : null);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const splitKey = (k) => { const i = k.indexOf(':'); return [k.slice(0, i), k.slice(i + 1)]; };
+const short = (u) => u.replace(/^(MOD|FUNC)-/, '');
+const repoTag = (r) => `<span class="repo">${esc(r)}</span>`;
+const tip = $('tip');
+document.addEventListener('mousemove', (e) => {
+  const t = e.target.closest('[data-tip]');
+  if (!t) { tip.hidden = true; return; }
+  tip.innerHTML = t.dataset.tip; tip.hidden = false;
+  tip.style.left = Math.min(e.clientX + 12, innerWidth - tip.offsetWidth - 8) + 'px';
+  tip.style.top = e.clientY + 14 + 'px';
+});
+$('leg-rank').innerHTML = 'unauffällig ' + [1, 2, 3, 4, 5, 6].map((s) => `<i style="background:var(--c${s})"></i>`).join('') + ' auffällig';
+
+$('meta').textContent = `Stand ${D.stand}, Zeitraum ab ${D.seit} (${D.parameter.monate} Monate). ` +
+  D.repos.map((r) => `${r.name} ${fmt(r.commits)} Commits (${r.head})`).join(', ') + '. Gezählt ist nur Quellcode, ohne Tests, Doku und CHANGELOG.';
+
+// Messgrößen einer Zeile
+const metrics = [
+  { k: 'changes', l: 'Änderungen', v: (r) => r.changes, f: (v) => fmt(v), tip: 'Commits, die den Ort ändern' },
+  { k: 'na', l: 'Nacharbeit', v: (r) => pct(r.reworked, r.added), f: (v) => v + ' %', tip: 'Anteil geschriebener Zeilen, die ein anderer CR binnen ' + D.parameter.nachfassTage + ' Tagen wieder umschreibt' },
+  { k: 'fix', l: 'Fix-Anteil', v: (r) => pct(r.fix, r.changes), f: (v) => v + ' %', tip: 'Anteil der fix:-Commits' },
+  { k: 'crs', l: 'Themenbreite', v: (r) => r.crs, f: (v) => fmt(v), tip: 'verschiedene CRs am Ort' },
+  { k: 'mit', l: 'Mitänderung', v: (r) => pct(r.mit, r.gruppen), f: (v) => v + ' %', tip: 'Anteil der CRs, die zugleich eine andere Einheit ändern', unitOnly: true },
+  { k: 'partner', l: 'Partner', v: (r) => r.partner, f: (v) => fmt(v), tip: 'Einheiten, mit denen mindestens 2 CRs geteilt sind', unitOnly: true },
+  { k: 'loc', l: 'Zeilen heute', v: (r) => r.loc, f: (v) => fmt(v), tip: 'Zeilen der heutigen Dateien', plain: true },
+];
+const MIN = 10;
+function rankTable(el, rows, cols, label, state) {
+  const ranked = rows.filter((r) => r.changes >= MIN);
+  const level = {};
+  for (const c of cols) {
+    const vals = ranked.map(c.v).filter((v) => v != null).sort((a, b) => a - b);
+    level[c.k] = (v) => {
+      if (v == null || c.plain || !vals.length) return 0;
+      let i = 0; while (i < vals.length && vals[i] < v) i++;
+      return 1 + Math.min(5, Math.floor((i / vals.length) * 6));
+    };
+  }
+  const key = (r) => cols.find((c) => c.k === state.sort).v(r) ?? -1;
+  const sorted = [...rows].sort((a, b) => (b.changes >= MIN) - (a.changes >= MIN) || key(b) - key(a));
+  el.innerHTML = `<thead><tr><th>${label}</th>` + cols.map((c) => `<th><button data-k="${c.k}" class="${c.k === state.sort ? 'on' : ''}" data-tip="${esc(c.tip)}">${c.l}${c.k === state.sort ? ' ↓' : ''}</button></th>`).join('') + '</tr></thead><tbody>' +
+    sorted.map((r) => `<tr><td class="name">${state.name(r)}</td>` + cols.map((c) => {
+      const v = c.v(r);
+      if (v == null) return '<td class="v na">–</td>';
+      const lv = r.changes >= MIN ? level[c.k](v) : 0;
+      return `<td class="v${lv >= 4 ? ' dark' : ''}${lv === 0 && !c.plain ? ' na' : ''}" style="background:var(--c${lv === 0 ? 0 : lv})" data-tip="${esc(c.l)}: ${esc(c.f(v))}<br>${esc(c.tip)}">${c.f(v)}</td>`;
+    }).join('') + '</tr>').join('') + '</tbody>';
+  el.querySelectorAll('th button').forEach((b) => (b.onclick = () => { state.sort = b.dataset.k; rankTable(el, rows, cols, label, state); }));
+}
+
+rankTable($('t-units'), D.units, metrics, 'Einheit', {
+  sort: 'na',
+  name: (r) => { const [repo, u] = splitKey(r.key); return `${repoTag(repo)}<span class="f">${esc(short(u))}</span>`; },
+});
+rankTable($('t-files'), D.files, metrics.filter((m) => !m.unitOnly), 'Datei · FUNCs', {
+  sort: 'changes',
+  name: (r) => { const [repo, f] = splitKey(r.key); return `${repoTag(repo)}<span class="f">${esc(f)}</span><span class="fn">${r.funcs.length ? esc(r.funcs.map(short).join(', ')) : 'keine FUNC im Modell'}</span>`; },
+});
+
+// Pareto: Balken = Änderungen, Text = kumulierter Anteil an allen Funktionsänderungen
+{
+  const P = D.pareto, W = 900, rowH = 34, left = 330, right = 170, top = 22;
+  const max = Math.max(...P.map((p) => p.changes));
+  const x = (v) => (v / max) * (W - left - right - 44);
+  const H = top + P.length * rowH + 8;
+  const svg = $('pareto');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W); svg.style.maxWidth = '100%'; svg.style.height = 'auto';
+  let s = `<text x="${left}" y="12" class="t2">Änderungen</text><text x="${W - right + 12}" y="12" class="t2">kumuliert · Nacharbeit</text>`;
+  P.forEach((p, i) => {
+    const y = top + i * rowH;
+    const [repo, rest] = splitKey(p.file);
+    const name = p.symbol === '(Datei)' ? rest.split('/').pop() : p.symbol;
+    const sub = `${repo} · ${rest}${p.funcs.length ? ' · ' + p.funcs.map(short).join(', ') : ''}`;
+    const na = pct(p.reworked, p.added);
+    s += `<g data-tip="${esc(name)}<br>${esc(sub)}<br>${p.changes} Änderungen in ${p.crs} CRs · Nacharbeit ${na ?? '–'} %">` +
+      `<text x="${left - 10}" y="${y + 13}" text-anchor="end" class="mono" font-size="12">${esc(name.length > 34 ? name.slice(0, 33) + '…' : name)}</text>` +
+      `<text x="${left - 10}" y="${y + 27}" text-anchor="end" class="t2">${esc(sub.length > 52 ? '…' + sub.slice(-51) : sub)}</text>` +
+      `<rect x="${left}" y="${y + 4}" width="${Math.max(2, x(p.changes))}" height="20" rx="3" fill="var(--bar)"></rect>` +
+      `<text x="${left + x(p.changes) + 6}" y="${y + 18}" font-size="12">${p.changes}</text>` +
+      `<text x="${W - right + 12}" y="${y + 18}" font-size="12">${Math.round(p.kumAnteil * 100)} % · ${na ?? '–'} %</text></g>`;
+  });
+  svg.innerHTML = s;
+  const last = P[P.length - 1];
+  $('pareto-sub').textContent = `Die ${P.length} meistgeänderten Funktionen tragen ${Math.round(last.kumAnteil * 100)} % aller ${fmt(D.symbolChanges)} Symboländerungen (${fmt(D.symbolCount)} Symbole, die es heute gibt). Ein Symbol ist eine Definition auf oberster Ebene: Funktion, Klasse, Konstante, Typ. Ein Skill ist eine Datei.`;
+}
+
+// Mitänderungs-Matrix
+{
+  const { units, cells } = D.matrix;
+  const off = cells.flatMap((row, i) => row.filter((_, j) => j !== i));
+  const max = Math.max(1, ...off);
+  const lvl = (v) => (v <= 0 ? 0 : 1 + Math.min(5, Math.floor((v / max) * 6)));
+  $('leg-matrix').innerHTML = '0 ' + [1, 2, 3, 4, 5, 6].map((s) => `<i style="background:var(--c${s})"></i>`).join('') + ` ${max} geteilte CRs`;
+  const lab = (k) => { const [r, u] = splitKey(k); return `${r} · ${short(u)}`; };
+  $('t-matrix').innerHTML = '<thead><tr><th></th>' + units.map((u) => `<th class="mh">${esc(lab(u))}</th>`).join('') + '</tr></thead><tbody>' +
+    units.map((a, i) => `<tr><td class="name"><span class="f">${esc(lab(a))}</span></td>` + cells[i].map((v, j) => {
+      if (i === j) return `<td class="m diag" data-tip="${esc(lab(a))}: ${v} CRs">${v}</td>`;
+      const l = lvl(v);
+      return `<td class="m${l >= 4 ? ' dark' : ''}" style="background:var(--c${l})" data-tip="${esc(lab(a))} + ${esc(lab(units[j]))}: ${v} gemeinsame CRs">${v || ''}</td>`;
+    }).join('') + '</tr>').join('') + '</tbody>';
+}
+
+// Befunde aus den Daten
+{
+  const big = D.units.filter((u) => u.changes >= MIN && u.added >= 500);
+  const naTop = [...big].sort((a, b) => b.reworked / b.added - a.reworked / a.added)[0];
+  const naLow = [...big].sort((a, b) => a.reworked / a.added - b.reworked / b.added)[0];
+  const mitTop = [...big].sort((a, b) => b.mit / b.gruppen - a.mit / a.gruppen)[0];
+  const fileNa = D.files.filter((f) => f.added >= 150).sort((a, b) => b.reworked / b.added - a.reworked / a.added).slice(0, 3);
+  const p = D.pareto.slice(0, 3);
+  const lab = (k) => { const [r, u] = splitKey(k); return `${r} ${short(u)}`; };
+  const items = [
+    [`Nacharbeit am höchsten: ${lab(naTop.key)}`, `${pct(naTop.reworked, naTop.added)} % der geschriebenen Zeilen schreibt ein anderer CR binnen ${D.parameter.nachfassTage} Tagen wieder um. Zum Vergleich ${lab(naLow.key)}: ${pct(naLow.reworked, naLow.added)} %.`],
+    [`Dateien, deren Code nicht hält`, fileNa.map((f) => `${splitKey(f.key)[1].split('/').pop()} (${pct(f.reworked, f.added)} %)`).join(', ') + '.'],
+    [`Meistgeänderte Symbole`, p.map((x) => `${x.symbol} (${x.changes})`).join(', ') + '. Jeder neue Fall zieht hier eine Änderung nach sich.'],
+    [`Stärkste Kopplung: ${lab(mitTop.key)}`, `${pct(mitTop.mit, mitTop.gruppen)} % ihrer CRs ändern zugleich eine andere Einheit; ${mitTop.partner} feste Partner.`],
+  ];
+  $('findings').innerHTML = items.map(([h, t]) => `<div class="finding"><b>${esc(h)}</b><span>${esc(t)}</span></div>`).join('');
+}
+
+// Definitionen und Grenzen
+{
+  const g = D.grenzen;
+  const defs = [
+    ['Änderung', 'Ein Commit, der den Ort ändert; Merges zählen nicht. Umbenennungen sind auf den heutigen Pfad gezogen.'],
+    ['CR', 'Die erste CR-Nummer im Commit-Betreff. Ein CR mit Nummer aus einem anderen Repo verbindet beide Repos.'],
+    ['Nacharbeit', `Anteil der geschriebenen Zeilen, die ein anderer CR binnen ${D.parameter.nachfassTage} Tagen wieder entfernt oder umschreibt. Zeilen desselben CR und Zeilen ohne CR-Nummer zählen nicht. Leere Zeilen und reine Klammern zählen nicht.`],
+    ['Fix-Anteil', 'Anteil der Commits mit Typ fix:.'],
+    ['Themenbreite', 'Anzahl verschiedener CRs, die den Ort ändern.'],
+    ['Mitänderung', 'Anteil der CRs der Einheit, die zugleich eine andere Einheit ändern. Partner = Einheiten mit mindestens 2 gemeinsamen CRs.'],
+    ['Symbol', 'Definition auf oberster Ebene: function, class, const, let, type, interface, enum. Geänderte Zeilen zählen zum Symbol, das sie umschließt oder das sie definieren.'],
+    ['Grenzen', `${fmt(g.ohneCr)} von ${fmt(g.ereignisse)} Datei-Änderungen tragen keine CR-Nummer. ${fmt(g.modulebene)} von ${fmt(g.zeilen)} geschriebenen Zeilen liegen außerhalb eines Symbols (Importe, Kopfkommentare) und fehlen im Pareto. Einheiten ohne MOD-Pfad im Modell sind Verzeichnisse.`],
+  ];
+  $('defs').innerHTML = defs.map(([t, d]) => `<dt>${esc(t)}</dt><dd>${esc(d)}</dd>`).join('');
+}
+</script>

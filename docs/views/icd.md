@@ -236,7 +236,7 @@
 | `FLOW-get-edges-call` | `FUNC-agent-loop` | `FUNC-read-tools` |
 | `FLOW-get-node-call` | `FUNC-agent-loop` | `FUNC-read-tools` |
 | `FLOW-graph-delta` | `FUNC-mutate` | `FUNC-graph-store` |
-| `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-ein-adapter-je-akteur` · `FUNC-eingaenge-nur-aus` · `FUNC-grenze-nur-mit-schema` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` |
+| `FLOW-graph-snapshot-file` | `FUNC-graph-export-snapshot` | `ACTOR-auftraggeber` · `FUNC-aenderungs-heatmap` · `FUNC-ein-adapter-je-akteur` · `FUNC-eingaenge-nur-aus` · `FUNC-grenze-nur-mit-schema` · `FUNC-held-back-traces` · `FUNC-plan-code-lane` · `FUNC-seed-from-json` |
 | `FLOW-graph-state` | `FUNC-graph-store` | `FUNC-check-code-conformance` · `FUNC-graph-export-snapshot` · `FUNC-graph-generate-tool` · `FUNC-graph-merge-tool` · `FUNC-graph-metrics` · `FUNC-graph-mutate-tool` · `FUNC-graph-readiness` · `FUNC-graph-suggest` · `FUNC-health-endpoint` · `FUNC-import-code-verb` · `FUNC-merge-nodes` · `FUNC-mutate` · `FUNC-read-tools` · `FUNC-rules-tool` · `FUNC-test-ingest` |
 | `FLOW-graph-state-eval` | `FUNC-graph-store` | `FUNC-evaluate-rules` |
 | `FLOW-grenz-befund` | `FUNC-grenze-nur-mit-schema` | `FUNC-verify-lane-model` |
