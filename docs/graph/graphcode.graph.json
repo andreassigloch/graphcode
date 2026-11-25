@@ -291,7 +291,8 @@
       "id": "CR-GC-1032",
       "type": "CR",
       "name": "generate.ts nach Zuständigkeit teilen: Klauseln/Vorlagen, stepCore, generationStep — je Datei unter 500 Zeilen (Heatmap: MOD-loop 34 % Fixes)",
-      "description": "docs/cr/open/CR-GC-1032-generate-ts-nach-zusta-ndigkeit-teilen-k.md"
+      "description": "docs/cr/done/CR-GC-1032-generate-ts-nach-zusta-ndigkeit-teilen-k.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-1033",
@@ -42365,5 +42366,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1639
+  "graphVersion": 1640
 }
