@@ -47,3 +47,11 @@ Gelöschte Handfälle: `tests/tool-contract.test.ts` verlor zwei Gegenproben (�
 ## Umfang laut `graph_impact`
 
 `graph_impact(SCHEMA-mcp-tool)`: `TEST-tool-contract`, `TEST-werkzeug-register-typ`, `FLOW-mcp-tool`. `graph_impact(SCHEMA-mcp-tool-registry)`: acht FLOW, zwei TEST. Aufrufer von `MCPToolSchema.parse`: keiner außer `MCPToolRegistrySchema`; `MCPToolRegistrySchema.parse` steht in `bindToolsWithContext` (`mcp-tools.ts`), das Ergebnis wird nicht weiterverwendet.
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-037, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Darf ein Vertrag (Zod-Schema, das ein SCHEMA bindet) `z.custom`, `refine` oder `superRefine` enthalten? | Nein. In einem Vertrag gibt es kein `z.custom`, kein `refine`, kein `superRefine`; ein Vertragstest von Hand ist eine Umgehung. | Der Vertragstest-Generator liest sie nicht (Abschnitt „Befund", Entscheidung des Autors 2026-11-21) |

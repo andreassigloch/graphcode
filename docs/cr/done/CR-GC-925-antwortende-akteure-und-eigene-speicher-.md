@@ -110,3 +110,13 @@ Tests (`graph_tests`, 2):
 - tests/skill-irr-fremde-quellen.test.ts
 
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-037, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Gehört die Schnittstelle zu einem fremden System ins Modell? | Ja, auch wenn das System außerhalb des Umfangs liegt. Ein antwortender Dienst ist nie Auslöser und nie Senke; die Sichten zeigen die Rolle `answer` getrennt. | Ohne Fluss gibt es kein SCHEMA, und ohne SCHEMA ist die Schnittstelle nicht spezifiziert; `chain-roles.ts` leitet die Rolle `answer` ab (Abschnitt „Entscheidung des Autors (2026-11-13)") |
+| Wie modelliert man den Aufruf eines fremden Systems? | Das Modell folgt dem Code: Jede Funktion, die ein fremdes System ruft, bekommt ein Paar aus Anfrage (`async`) und Antwort (`sync`), je mit SCHEMA. Eine Adapter-Funktion gibt es nur, wenn der Code einen Adapter hat. | Eine Adapter-FUNC ohne Code beschreibt einen Aufruf, den es nicht gibt (Abschnitt „Ergebnis (2026-11-18)", Entscheidung des Autors 2026-11-18) |
+| Wie wird der Zugriff auf einen eigenen Speicher modelliert? | Als `sync`-Fluss mit SCHEMA zwischen zwei Funktionen; der Speicher ist kein Akteur. | Er ist Teil des Produkts (Abschnitt „Zielbild") |

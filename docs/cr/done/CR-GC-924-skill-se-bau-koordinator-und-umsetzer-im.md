@@ -84,3 +84,12 @@ CR-GC-922 (se-cdr) für den Rückweg der Rückfragen.
 ## Umfang laut `graph_impact`
 
 Kein Schnitt aus dem Modell: Der CR legt den Knoten `FUNC-se-bau` neu an und ändert keinen bestehenden. Nachbar zur Einordnung: `FUNC-se-plan` (gibt §10 ab, CR-GC-923). Die Kante vom CR-Knoten auf `FUNC-se-bau` entsteht mit dem Knoten.
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-037, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Was gilt im Bauauftrag ohne Mensch, wenn eine Frage offen ist? | Im Lauf ohne Mensch schreibt se:author-req die offene Frage als Annahme; der Koordinator nennt sie im Bericht. Der Umsetzer meldet weiter nur an den Koordinator. | FAQ `headless-keine-rueckfrage` geht vor (Abschnitt „Ergebnis (2026-11-18)", Entscheidung des Autors 2026-11-18) |
+| Wer schreibt im Bau das Modell und wer schließt den CR? | Nur der Koordinator (Hauptsitzung) schreibt das Modell und schließt den CR, erst nach dem Testlauf auf der Zielumgebung; der Umsetzer schreibt nicht am Modell und rollt nicht aus. | Im CR nicht genannt (Abschnitt „Zielbild") |

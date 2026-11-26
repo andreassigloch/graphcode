@@ -34,3 +34,11 @@ Modell: beide FLOW gelöscht (ein Batch, `dryRun` vorher, keine neue Regelverlet
 ## Nicht geändert, vorgelegt
 
 `FLOW-proxy-call` (Anfrage, `FUNC-host-proxy` an `FUNC-host-socket`) trägt `SCHEMA-mutate-command`, der Proxy reicht aber die Argumente jedes Werkzeugs durch. Gleiche Art wie die gestrichenen Flüsse; der Autor entscheidet.
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-037, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Bekommt der Proxy einen eigenen Antwortfluss mit SCHEMA? | Nein. Der Proxy ist Transport; die Antwort hat ihren Vertrag am Werkzeug. Beide Antwortflüsse entfallen, es gibt keinen Ersatzfluss. | Der Proxy reicht die rohe Antwort jedes Werkzeugs durch, je Werkzeug eine andere Form (Abschnitt „Entscheidung des Autors") |
