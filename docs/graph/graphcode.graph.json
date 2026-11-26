@@ -311,7 +311,8 @@
       "id": "CR-GC-1035",
       "type": "CR",
       "name": "graphcodes eigene Messdaten docs/messung nach graphanalyze",
-      "description": "docs/cr/open/CR-GC-1035-graphcodes-eigene-messdaten-docs-messung.md"
+      "description": "docs/cr/done/CR-GC-1035-graphcodes-eigene-messdaten-docs-messung.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-104",
@@ -42394,5 +42395,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1649
+  "graphVersion": 1650
 }

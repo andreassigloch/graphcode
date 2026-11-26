@@ -226,7 +226,7 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-1031` | done | Pre-push-Hook: PII-Filter und verbotene Pfade | `FUNC-push-check` · `MOD-dev-scripts` · `REQ-push-check-public` |
 | `CR-GC-1032` | done | generate.ts nach Zuständigkeit teilen: Klauseln/Vorlagen, stepCore, generationStep — je Datei unter 500 Zeilen (Heatmap: MOD-loop 34 % Fixes) | `FUNC-generation-step` |
 | `CR-GC-1034` | done | Modell-Testspur: Ausschlussliste aus gemessenen Lesezugriffen ableiten statt von Hand pflegen | `FUNC-verify-lane-model` |
-| `CR-GC-1035` | n/a | graphcodes eigene Messdaten docs/messung nach graphanalyze | `FUNC-push-check` · `REQ-push-check-public` |
+| `CR-GC-1035` | done | graphcodes eigene Messdaten docs/messung nach graphanalyze | `FUNC-push-check` · `REQ-push-check-public` |
 | `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-agent-surface` · `REQ-doc-export` |
 | `CR-GC-105` | done | Architektur-Verfeinerung | `MOD-surface` · `REQ-impact-based-testing` · `REQ-interface-change-escalation` · `REQ-small-model-viable` |
 | `CR-GC-106` | done | Interface-Schemas | `MOD-projections` · `REQ-interface-schema` |
