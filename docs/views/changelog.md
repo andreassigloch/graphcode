@@ -4,9 +4,9 @@
 
 # graphcode — Change Log
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 639 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 640 CR, gruppiert nach Milestone. Deterministisch generiert. Nie hand-maintained.
 
-Total: 639 CR · 628 done · 1 open.
+Total: 640 CR · 628 done · 1 open.
 
 ## `MS-1-specification` — M1: Spezifikation
 
@@ -259,6 +259,7 @@ Total: 639 CR · 628 done · 1 open.
 | `CR-GC-1034` | done | Modell-Testspur: Ausschlussliste aus gemessenen Lesezugriffen ableiten statt von Hand pflegen |
 | `CR-GC-1035` | done | graphcodes eigene Messdaten docs/messung nach graphanalyze |
 | `CR-GC-1036` | done | Änderungs-Heatmap als Analyse-Tool nach graphanalyze |
+| `CR-GC-1037` | n/a | Push-Prüfung sperrt sich an ihren eigenen Test-Beispielwerten |
 | `CR-GC-534` | done | crFiles fuer RC-07 liefern |
 | `CR-GC-535` | done | Pre-Commit faehrt verify:model bei Snapshot im Diff |
 | `CR-GC-540` | done | Modellzug nach der Format-E-Konsolidierung: SCHEMA-format-e und FUNC-encode neu binden (Lane graph, nach der Integration) |

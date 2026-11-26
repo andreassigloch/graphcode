@@ -24,6 +24,17 @@ import { join, dirname } from 'node:path';
 
 const REPO = process.cwd();
 
+/**
+ * Die Beispielwerte entstehen erst zur Laufzeit: Stünden sie wörtlich in dieser Datei, hielte die Push-Prüfung
+ * den Push dieser Datei selbst an. Eine Ausnahme in der Config ginge nicht — der Test kopiert die echte Config,
+ * die Ausnahme ließe dann seine eigenen Abbruch-Fälle durch.
+ */
+const MAIL = ['kunde.x', 'firma-y.de'].join('@');
+const STRASSE = ['Haupt', 'straße 12'].join('');
+const TELEFON = ['Tel.: 0711', '1234567'].join(' ');
+const IBAN = ['DE89', '3704', '0044', '0532', '0130', '00'].join(' ');
+const FIRMA = ['Muster Bau', 'GmbH'].join(' ');
+
 let root: string;
 let arbeit: string;
 
@@ -59,6 +70,10 @@ beforeEach(() => {
     mkdirSync(dirname(join(arbeit, f)), { recursive: true });
     copyFileSync(join(REPO, f), join(arbeit, f));
   }
+  // Die echte Config erlaubt die erfundenen Beispielwerte, die in älteren Commits dieses Tests wörtlich stehen
+  // (CR-GC-1037). Im Wegwerf-Repo gilt keine dieser Ausnahmen — sonst liefen die Abbruch-Fälle durch.
+  const cfgPfad = join(arbeit, 'scripts/push-pruefung.config.json');
+  writeFileSync(cfgPfad, JSON.stringify({ ...JSON.parse(readFileSync(cfgPfad, 'utf8')), erlaubteTreffer: [] }, null, 2));
   execFileSync('chmod', ['+x', join(arbeit, 'scripts/githooks/pre-push')]);
   git('config', 'core.hooksPath', 'scripts/githooks');
   git('add', 'scripts');
@@ -96,7 +111,7 @@ describe('TEST-push-check: pre-push-Hook (CR-GC-1031)', () => {
     commit('docs/messung/testauswahl.jsonl', '{"cr":"CR-GC-1","schlupf":0}\n');
     const sauber = push();
     expect(sauber.code, sauber.ausgabe).toBe(0);
-    commit('docs/messung/testauswahl.jsonl', '{"cr":"CR-GC-2","von":"kunde.x@firma-y.de"}\n');
+    commit('docs/messung/testauswahl.jsonl', `{"cr":"CR-GC-2","von":"${MAIL}"}\n`);
     const r = push();
     expect(r.code).toBe(1);
     expect(r.ausgabe).toContain('E-Mail-Adresse: docs/messung/testauswahl.jsonl');
@@ -110,11 +125,11 @@ describe('TEST-push-check: pre-push-Hook (CR-GC-1031)', () => {
   });
 
   it.each([
-    ['Postadresse', 'Treffpunkt Hauptstraße 12 im Hof'],
-    ['E-Mail-Adresse', 'Rückfragen an kunde.x@firma-y.de'],
-    ['Telefonnummer', 'Tel.: 0711 1234567'],
-    ['IBAN', 'Konto DE89 3704 0044 0532 0130 00'],
-    ['Firma mit Rechtsform', 'Auftrag der Muster Bau GmbH'],
+    ['Postadresse', `Treffpunkt ${STRASSE} im Hof`],
+    ['E-Mail-Adresse', `Rückfragen an ${MAIL}`],
+    ['Telefonnummer', TELEFON],
+    ['IBAN', `Konto ${IBAN}`],
+    ['Firma mit Rechtsform', `Auftrag der ${FIRMA}`],
   ])('bricht bei %s in einer hinzugefügten Zeile ab', (art, zeile) => {
     commit('docs/notiz.md', `# Notiz\n\n${zeile}\n`);
     const r = push();
@@ -123,7 +138,7 @@ describe('TEST-push-check: pre-push-Hook (CR-GC-1031)', () => {
   });
 
   it('bricht bei einer E-Mail-Adresse in der Commit-Nachricht ab', () => {
-    commit('README.md', '# Projekt\n', 'docs: von kunde.x@firma-y.de gewuenscht');
+    commit('README.md', '# Projekt\n', `docs: von ${MAIL} gewuenscht`);
     const r = push();
     expect(r.code).toBe(1);
     expect(r.ausgabe).toContain('Commit-Nachricht');
@@ -132,11 +147,11 @@ describe('TEST-push-check: pre-push-Hook (CR-GC-1031)', () => {
   it('lässt einen Treffer durch, der ausdrücklich in erlaubteTreffer steht', () => {
     const cfgPfad = join(arbeit, 'scripts/push-pruefung.config.json');
     const cfg = JSON.parse(readFileSync(cfgPfad, 'utf8'));
-    cfg.erlaubteTreffer.push('kunde.x@firma-y.de');
+    cfg.erlaubteTreffer.push(MAIL);
     writeFileSync(cfgPfad, JSON.stringify(cfg, null, 2));
     git('add', 'scripts/push-pruefung.config.json');
     git('commit', '-q', '-m', 'chore: ausnahme');
-    commit('docs/notiz.md', 'Rückfragen an kunde.x@firma-y.de\n');
+    commit('docs/notiz.md', `Rückfragen an ${MAIL}\n`);
     const r = push();
     expect(r.code, r.ausgabe).toBe(0);
   });
