@@ -312,7 +312,8 @@
       "id": "CR-GC-1036",
       "type": "CR",
       "name": "Änderungs-Heatmap als Analyse-Tool nach graphanalyze",
-      "description": "docs/cr/open/CR-GC-1036-a-nderungs-heatmap-als-analyse-tool-nach.md"
+      "description": "docs/cr/done/CR-GC-1036-a-nderungs-heatmap-als-analyse-tool-nach.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-104",
@@ -42320,5 +42321,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1654
+  "graphVersion": 1655
 }
