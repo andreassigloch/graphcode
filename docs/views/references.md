@@ -200,6 +200,7 @@
 | `CR-GC-1031` | relation | `MOD-dev-scripts` |
 | `CR-GC-1031` | relation | `REQ-push-check-public` |
 | `CR-GC-1032` | relation | `FUNC-generation-step` |
+| `CR-GC-1034` | relation | `FUNC-verify-lane-model` |
 | `CR-GC-104` | relation | `MOD-agent-surface` |
 | `CR-GC-104` | relation | `MS-1-specification` |
 | `CR-GC-104` | relation | `REQ-doc-export` |

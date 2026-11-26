@@ -41,6 +41,7 @@
     "watch": "tsc --watch",
     "test": "vitest run",
     "verify:model": "node scripts/verify-model.mjs",
+    "verify:model:messen": "node scripts/model-test-set.measure.mjs",
     "verify:code": "node scripts/verify-code.mjs",
     "verify:full": "node scripts/verify-full.mjs",
     "messung": "node scripts/messung.mjs",

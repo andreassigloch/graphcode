@@ -91,25 +91,20 @@ fi
 #     Volle Spur, sobald irgendetwas Ausführbares oder die Abhängigkeiten im Spiel
 #     sind; Modell-Spur nur bei reinen Modell-/Doku-Änderungen. Alles Unbekannte
 #     zählt als volle Spur — ein Hook, der im Zweifel abkürzt, ist nutzlos.
+#     Welche Pfade zur Modell-Spur gehoeren, steht EINMAL in `isModelLanePath`
+#     (scripts/model-test-set.mjs, CR-GC-1034) — dieselbe Regel misst die Testmenge der Spur.
 staged=$(git diff --cached --name-only)
-reason=""
-while IFS= read -r f; do
-  [ -z "$f" ] && continue
-  case "$f" in
-    docs/graph/*|docs/views/*|docs/cr/*|docs/*.md|*.md) ;;
-    *) reason="$f"; break ;;
-  esac
-done <<< "$staged"
+reason=$(printf '%s\n' "$staged" | node "$(dirname "$0")/../model-test-set.mjs" --ausserhalb-der-spur) || reason="(Spurwahl fehlgeschlagen)"
 
 if [ -n "$reason" ]; then
-  # CR-GC-541 — dritte Spur CODE. $reason liegt ausserhalb von docs/, also leitet
+  # CR-GC-541 — dritte Spur CODE. $reason liegt ausserhalb der Modell-Spur, also leitet
   # `verify:code` aus dem gestagten Diff die Testmenge ab (code -> REQ -> TEST, dieselbe
   # Funktion, die graph_tests benutzt) und SAGT SIE AN. Gefahren wird sie hier so wenig
   # wie die volle Suite: die Begruendung aus CR-GC-399 gilt unveraendert — der Hook macht
   # die Wahl sichtbar, CI setzt sie durch. Ohne Build (dist/) gibt es keine Ableitung,
   # dann bleibt es bei der vollen Spur; eine verschwiegene Ableitung waere schlimmer als
   # keine.
-  echo "[pre-commit] $reason liegt ausserhalb von docs/ — Testmenge aus dem Modell:" >&2
+  echo "[pre-commit] $reason liegt ausserhalb der Modell-Spur — Testmenge aus dem Modell:" >&2
   if [ -f dist/projections/test-selection-audit.js ]; then
     if ! node scripts/verify-code.mjs --plan --staged >&2; then
       echo "[pre-commit]   Ableitung fehlgeschlagen -> Spur: VOLL, npm test" >&2
@@ -121,7 +116,7 @@ if [ -n "$reason" ]; then
   echo "[pre-commit]   Die volle Suite bleibt der Riegel: CI faehrt sie ohnehin, und nur" >&2
   echo "[pre-commit]   sie faengt die Clean-Machine-Fehler (Lock-Drift, unpubliziertes Peer)." >&2
 else
-  echo "[pre-commit] Spur: MODELL — nur docs/ im Diff." >&2
+  echo "[pre-commit] Spur: MODELL — nur Modell, Sichten, CRs und Markdown im Diff." >&2
   # CR-GC-535: ein SNAPSHOT im Diff wird nicht nur angesagt, sondern gefahren. Die
   # Modell-Spur ist deterministisch und lokal (~45 s) — die Clean-Machine-Klasse aus
   # CR-GC-399 trifft sie nicht. Anlass: 73a7b31 committete einen Snapshot, der seinen
@@ -135,7 +130,7 @@ else
       exit 1
     fi
   else
-    echo "[pre-commit]   -> npm run verify:model   (31 Dateien, ~45 s)" >&2
+    echo "[pre-commit]   -> npm run verify:model   (gemessene Menge, CR-GC-1034)" >&2
   fi
 fi
 exit 0

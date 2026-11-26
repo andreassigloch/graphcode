@@ -2160,7 +2160,7 @@ Verification ◀ `TEST-constraint-grenze-adapter` (unit) · satisfy ◀ `FUNC-ei
 
 > auch in: `FUNC-block-bedienung`
 
-Die npm-Spur verify:model: faehrt die feste Testmenge aus model-test-set.mjs und nennt jede ausgelassene Datei mit Grund. Der pre-commit-Hook faehrt sie bei einer reinen Modellaenderung. Beleg: scripts/verify-model.mjs.
+Die npm-Spur verify:model: faehrt die Tests, die beim Lauf Modell, Sichten, CRs oder Markdown lesen, gemessen in model-test-set.json, und nennt jede Ausnahme mit Grund. Der pre-commit-Hook faehrt sie bei einer reinen Modellaenderung. Beleg: scripts/verify-model.mjs.
 
 io ◀ `FLOW-adapter-befund` · `FLOW-cli-invocation` · `FLOW-eingangs-befund` · `FLOW-grenz-befund` · io ▶ `FLOW-lane-output-model` · allocate ▶ `MOD-dev-scripts`
 
@@ -9932,7 +9932,7 @@ Verification ◀ `TEST-test-schlupf` (unit) · satisfy ◀ `FUNC-verify-lane-ful
 
 > auch in: `FCHAIN-model-lane`
 
-Die npm-Spur verify:model: faehrt die feste Testmenge aus model-test-set.mjs und nennt jede ausgelassene Datei mit Grund. Der pre-commit-Hook faehrt sie bei einer reinen Modellaenderung. Beleg: scripts/verify-model.mjs.
+Die npm-Spur verify:model: faehrt die Tests, die beim Lauf Modell, Sichten, CRs oder Markdown lesen, gemessen in model-test-set.json, und nennt jede Ausnahme mit Grund. Der pre-commit-Hook faehrt sie bei einer reinen Modellaenderung. Beleg: scripts/verify-model.mjs.
 
 io ◀ `FLOW-adapter-befund` · `FLOW-cli-invocation` · `FLOW-eingangs-befund` · `FLOW-grenz-befund` · io ▶ `FLOW-lane-output-model` · allocate ▶ `MOD-dev-scripts`
 
@@ -16664,7 +16664,7 @@ verify ▶ `REQ-verify-code-plan-nennt-spur` · testRefs: `tests/verify-code-pla
 
 #### 3.4.194  `TEST-verify-model-set` — Modell-Testmenge vollstaendig
 
-Prueft, dass model-test-set.mjs jede Testdatei unter tests/ entweder enthaelt oder mit Grund auslaesst.
+Prueft, dass jede Testdatei unter tests/ mit ihrem heutigen Inhalt gemessen ist, dass jede Ausnahme ein gemessener Leser mit Grund ist und dass kein Test der Spur den Repo-Store oeffnet.
 
 verify ▶ `REQ-model-lane-fixed-set` · `REQ-testspur-passt-zum-diff` · testRefs: `tests/verify-model.completeness.test.ts`
 

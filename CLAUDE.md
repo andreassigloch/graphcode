@@ -123,7 +123,7 @@ These invariants are **enforced** — no prose-trust, no re-documenting as a rul
 
   | Lane | Verb | When | Scope |
   |---|---|---|---|
-  | MODELL | `npm run verify:model` | only `docs/` in the diff | the fixed set in `scripts/model-test-set.mjs` (~46 files, ~45 s), kept complete by `tests/verify-model.completeness.test.ts` |
+  | MODELL | `npm run verify:model` | only model, views, CRs or Markdown in the diff (`isModelLanePath`; skill texts under `.claude/` are CODE) | the tests that measurably read those files (`npm run verify:model:messen` writes `scripts/model-test-set.json`; a new or changed test turns `tests/verify-model.completeness.test.ts` red until measured) |
   | CODE | `npm run verify:code` | source files changed | derived per changeset from the committed snapshot via `impactedTests()` — the same function `graph_tests` uses |
   | VOLL | `npm run verify:full <CR>` · `npm test` | before closing a CR (until 10 CRs without Schlupf), before publish, in CI | the whole suite — the only lane that catches the clean-machine class |
 

@@ -1,0 +1,1134 @@
+{
+  "hinweis": "Erzeugt von scripts/model-test-set.measure.mjs (CR-GC-1034). Nicht von Hand ändern.",
+  "dateien": {
+    "tests/aenderungs-heatmap.test.ts": {
+      "hash": "545f02d88a2c7aaf",
+      "liest": []
+    },
+    "tests/aenderungsmeldung.test.ts": {
+      "hash": "4a61c49981d33b2e",
+      "liest": []
+    },
+    "tests/apply-commands.kinds.test.ts": {
+      "hash": "d8418e75dc154646",
+      "liest": []
+    },
+    "tests/arch.optimization-dry-run.spike.test.ts": {
+      "hash": "7c4e006d2da8c80e",
+      "liest": []
+    },
+    "tests/attributvertraege.test.ts": {
+      "hash": "348e91b45ec21d47",
+      "liest": [
+        "docs/cr/done",
+        "docs/cr/open"
+      ]
+    },
+    "tests/audit.code-state.test.ts": {
+      "hash": "e7fedd696515dab4",
+      "liest": []
+    },
+    "tests/audit.origin.test.ts": {
+      "hash": "234cf4f312529782",
+      "liest": []
+    },
+    "tests/audit.retention.test.ts": {
+      "hash": "92a3b5680edd26eb",
+      "liest": []
+    },
+    "tests/audit.rules-passed.test.ts": {
+      "hash": "177316181517be49",
+      "liest": []
+    },
+    "tests/audit.skill-und-feuerbild.test.ts": {
+      "hash": "5169cbb375ad551a",
+      "liest": []
+    },
+    "tests/audit.stats.test.ts": {
+      "hash": "c608f1634e08a417",
+      "liest": []
+    },
+    "tests/audit.trail-projection.test.ts": {
+      "hash": "2c0f5aa9be4e5ddd",
+      "liest": []
+    },
+    "tests/auto-export.shutdown-flush.test.ts": {
+      "hash": "c4511bb1e1f33bc9",
+      "liest": []
+    },
+    "tests/auto-export.test.ts": {
+      "hash": "bbd4eb3bc472fe8c",
+      "liest": []
+    },
+    "tests/bootstrap.test.ts": {
+      "hash": "4c43b85c47b100d1",
+      "liest": []
+    },
+    "tests/call-edges.test.ts": {
+      "hash": "6297a1852cd7ed4b",
+      "liest": []
+    },
+    "tests/channel-model.test.ts": {
+      "hash": "dc855960422eccef",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/channel-rank.test.ts": {
+      "hash": "6c87c050162bc1e3",
+      "liest": []
+    },
+    "tests/claims.conformance.test.ts": {
+      "hash": "65e752b5f56ee38b",
+      "liest": [
+        "README.md",
+        "docs/articles/00-intro.md",
+        "docs/articles/01-structure-and-llm-needs.md",
+        "docs/articles/02-vorgaben-als-modell.md",
+        "docs/articles/03-graphcode-harness-goal-and-concept.md",
+        "docs/articles/04-the-graphcode-story.md",
+        "docs/articles/05-the-advisory-roundtrip.md",
+        "docs/articles/07-the-scoring-landscape.md",
+        "docs/articles/08-glossary.md",
+        "docs/articles/09-the-systems-engineer-view.md"
+      ]
+    },
+    "tests/claude-md-cr-knoten.test.ts": {
+      "hash": "56950d2c4a1d72a9",
+      "liest": [
+        "CLAUDE.md"
+      ]
+    },
+    "tests/claude-md.toolsearch.test.ts": {
+      "hash": "801f21bcdea490bb",
+      "liest": [
+        "CLAUDE.md"
+      ]
+    },
+    "tests/cli-args.test.ts": {
+      "hash": "2e6b108ea8849298",
+      "liest": []
+    },
+    "tests/cli.scaffold.test.ts": {
+      "hash": "48759193984d23f0",
+      "liest": []
+    },
+    "tests/codec.roundtrip.test.ts": {
+      "hash": "d1940cd80bb5084c",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/codec.validation.test.ts": {
+      "hash": "3904e14be0f0ae36",
+      "liest": []
+    },
+    "tests/commit-pruefung.test.ts": {
+      "hash": "f777b3e3a21ccac2",
+      "liest": []
+    },
+    "tests/config-nachziehen.test.ts": {
+      "hash": "23e5b76aa6f4d1db",
+      "liest": []
+    },
+    "tests/config.test.ts": {
+      "hash": "964e243258b85867",
+      "liest": []
+    },
+    "tests/conformance.test.ts": {
+      "hash": "a6757e9cd9f2f206",
+      "liest": [
+        "docs/cr/done",
+        "docs/cr/open",
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/conformance.wrapped-symbols.test.ts": {
+      "hash": "dc5481424fe15caa",
+      "liest": [
+        "docs/cr/done",
+        "docs/cr/open",
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/constraint-ein-schreibweg.test.ts": {
+      "hash": "a905aa608f4e3061",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/constraint-grenze-adapter.test.ts": {
+      "hash": "793448c0bb8d39af",
+      "liest": []
+    },
+    "tests/contract.live-event.test.ts": {
+      "hash": "42b2429ca473ea86",
+      "liest": []
+    },
+    "tests/contracts.kernel.test.ts": {
+      "hash": "7287b6e43ce6dd32",
+      "liest": []
+    },
+    "tests/contracts.surface.test.ts": {
+      "hash": "04e1de8794b1b9a5",
+      "liest": []
+    },
+    "tests/cr-done-kein-open-kopf.test.ts": {
+      "hash": "14f0b1025987d430",
+      "liest": [
+        "docs/cr/done",
+        "docs/cr/done/* (836 Dateien)"
+      ]
+    },
+    "tests/cr-messung.test.ts": {
+      "hash": "ae3d2de15ae40641",
+      "liest": []
+    },
+    "tests/decision-texts.test.ts": {
+      "hash": "4250769e35c2c7a2",
+      "liest": []
+    },
+    "tests/distribution.test.ts": {
+      "hash": "6cba80ccc156f085",
+      "liest": [
+        "README.md"
+      ]
+    },
+    "tests/engpass-ein-leser.test.ts": {
+      "hash": "3c01b1911daa2f83",
+      "liest": []
+    },
+    "tests/evaluation.near-duplicate.test.ts": {
+      "hash": "188ace5bbdedb6c6",
+      "liest": []
+    },
+    "tests/evaluation.reconciliation.test.ts": {
+      "hash": "0d9e9da2315f836d",
+      "liest": [
+        "docs/cr/done",
+        "docs/cr/open",
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/evaluation.rule-catalog.test.ts": {
+      "hash": "33efdeb36e9ee777",
+      "liest": []
+    },
+    "tests/export-graph-guard.test.ts": {
+      "hash": "689bb8e97ba16c94",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/export.realref-materialize.test.ts": {
+      "hash": "fbd44fe5b5095ea0",
+      "liest": []
+    },
+    "tests/export.testref-materialize.test.ts": {
+      "hash": "fb9fdfe9ce054d44",
+      "liest": []
+    },
+    "tests/exporter.test.ts": {
+      "hash": "da945c342ce2f814",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/flow-contracts.test.ts": {
+      "hash": "504c44bfc958c6d2",
+      "liest": []
+    },
+    "tests/flow-vertraege.test.ts": {
+      "hash": "9660a1ab75b33715",
+      "liest": []
+    },
+    "tests/focus-set.test.ts": {
+      "hash": "4038638f2e79ffc1",
+      "liest": []
+    },
+    "tests/gate.io02-blocks.test.ts": {
+      "hash": "9a2f226fd55411a0",
+      "liest": []
+    },
+    "tests/gate.modelfree.test.ts": {
+      "hash": "d61c6e7956c41c3e",
+      "liest": []
+    },
+    "tests/gate.single-door.test.ts": {
+      "hash": "387e3cfb0740bd97",
+      "liest": []
+    },
+    "tests/gate.urteilt-und-speichert.test.ts": {
+      "hash": "121072f15bc2a553",
+      "liest": []
+    },
+    "tests/generate.statemachine.test.ts": {
+      "hash": "99665be8c29f4ca0",
+      "liest": []
+    },
+    "tests/generate.stufen.test.ts": {
+      "hash": "166a5d613151f2b9",
+      "liest": []
+    },
+    "tests/generate.task.test.ts": {
+      "hash": "b7a363cba0718643",
+      "liest": []
+    },
+    "tests/generate.test.ts": {
+      "hash": "1c6f4b3eda90229c",
+      "liest": []
+    },
+    "tests/git-env-isolation.test.ts": {
+      "hash": "f3de060f26ea84cd",
+      "liest": []
+    },
+    "tests/graph-integrity.test.ts": {
+      "hash": "8c59910779e3e6e2",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/graph-store.test.ts": {
+      "hash": "e53be9638dd18750",
+      "liest": []
+    },
+    "tests/graph-timetravel.test.ts": {
+      "hash": "dd39923c856f1722",
+      "liest": []
+    },
+    "tests/gve-autostart.test.ts": {
+      "hash": "d5de192de4483de2",
+      "liest": []
+    },
+    "tests/gve-supervision.test.ts": {
+      "hash": "9f35333a54d8c3fd",
+      "liest": []
+    },
+    "tests/harness-handle.test.ts": {
+      "hash": "fb58c5d30dce9ade",
+      "liest": []
+    },
+    "tests/harness.fit-advisory.test.ts": {
+      "hash": "77a997f43b964051",
+      "liest": []
+    },
+    "tests/harness.gate.test.ts": {
+      "hash": "0cb325f2f67358b7",
+      "liest": []
+    },
+    "tests/harness.import-invariant.test.ts": {
+      "hash": "e2d2e8d72159c809",
+      "liest": []
+    },
+    "tests/harness.import-rejected-traces.test.ts": {
+      "hash": "ed6c1ff7f537a3a7",
+      "liest": []
+    },
+    "tests/harness.import-sys-anchor.test.ts": {
+      "hash": "8a93e268552e8644",
+      "liest": []
+    },
+    "tests/harness.import.test.ts": {
+      "hash": "2ce87755f42ef438",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/help-content.test.ts": {
+      "hash": "ed37cca13bbb915b",
+      "liest": []
+    },
+    "tests/help.test.ts": {
+      "hash": "4a6d8f9aaa6578f0",
+      "liest": []
+    },
+    "tests/hooks.deny-headless-question.test.ts": {
+      "hash": "d955b34cf4400039",
+      "liest": []
+    },
+    "tests/hooks.deny-stale-read.test.ts": {
+      "hash": "0e04c2ee3ef608c8",
+      "liest": []
+    },
+    "tests/hooks.extension-points.test.ts": {
+      "hash": "14aa7351dfe619b6",
+      "liest": []
+    },
+    "tests/hooks.inject-graph-slice.test.ts": {
+      "hash": "14c29b8d012fac88",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/hooks.learning-emit.test.ts": {
+      "hash": "9d266b12b14ee89b",
+      "liest": []
+    },
+    "tests/hooks.live-view.test.ts": {
+      "hash": "df7d4a03af7fa204",
+      "liest": []
+    },
+    "tests/hooks.prompt-relay.test.ts": {
+      "hash": "69a692b3e2319532",
+      "liest": []
+    },
+    "tests/host-ende-sichtbar.test.ts": {
+      "hash": "06e4e1515f5be731",
+      "liest": []
+    },
+    "tests/host-shim.test.ts": {
+      "hash": "911d2cb60e76332e",
+      "liest": []
+    },
+    "tests/host.bridge-attach.test.ts": {
+      "hash": "404f8f81065c1e4f",
+      "liest": []
+    },
+    "tests/host.bridge.test.ts": {
+      "hash": "a9d689fad59bec2d",
+      "liest": []
+    },
+    "tests/import-boundaries.test.ts": {
+      "hash": "4b44c25b82445f16",
+      "liest": []
+    },
+    "tests/import-code-befund-element.test.ts": {
+      "hash": "7c4a27673c3d6d2d",
+      "liest": []
+    },
+    "tests/import-code-umbenennung.test.ts": {
+      "hash": "7d4a331a6048e60f",
+      "liest": []
+    },
+    "tests/import-code-verb.test.ts": {
+      "hash": "028ea3a64cb65c1a",
+      "liest": []
+    },
+    "tests/init-verb.test.ts": {
+      "hash": "60ced8ba1ceca94d",
+      "liest": []
+    },
+    "tests/intent-anchors-internal.test.ts": {
+      "hash": "a11bf4a84fb93724",
+      "liest": []
+    },
+    "tests/intent-anchors.wortart.test.ts": {
+      "hash": "45aa3dc7e630d4a8",
+      "liest": []
+    },
+    "tests/knowledge-binding.test.ts": {
+      "hash": "2dd5d9a37e53294d",
+      "liest": []
+    },
+    "tests/kongruenz.test.ts": {
+      "hash": "e9df41efb4dc0755",
+      "liest": []
+    },
+    "tests/list-elements.search.test.ts": {
+      "hash": "ec95713786d31a1f",
+      "liest": []
+    },
+    "tests/live-feed.test.ts": {
+      "hash": "de8dff51f0411214",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/lockfile-sync.test.ts": {
+      "hash": "8a329c051771dc29",
+      "liest": []
+    },
+    "tests/mcp.agent-agnostic.test.ts": {
+      "hash": "da6dafea987ccc26",
+      "liest": []
+    },
+    "tests/mcp.authoring-guide.test.ts": {
+      "hash": "6318b27f24e80c13",
+      "liest": []
+    },
+    "tests/mcp.compact-serialization.test.ts": {
+      "hash": "a476abc00239471d",
+      "liest": []
+    },
+    "tests/mcp.context.test.ts": {
+      "hash": "7e15f31d73d504e3",
+      "liest": []
+    },
+    "tests/mcp.export-guard.test.ts": {
+      "hash": "729796dbd1bc1a75",
+      "liest": []
+    },
+    "tests/mcp.export.test.ts": {
+      "hash": "64fbe6b974c3dbed",
+      "liest": []
+    },
+    "tests/mcp.first-step.test.ts": {
+      "hash": "d6c8e23dca2cbb8b",
+      "liest": []
+    },
+    "tests/mcp.help.test.ts": {
+      "hash": "2324c6e939bef512",
+      "liest": []
+    },
+    "tests/mcp.impact.test.ts": {
+      "hash": "fe9fc809d3f4381f",
+      "liest": [
+        "docs/cr/done",
+        "docs/cr/open",
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/mcp.member-name.test.ts": {
+      "hash": "0d497e4358fd8c7c",
+      "liest": []
+    },
+    "tests/mcp.merge.test.ts": {
+      "hash": "7a061fccbb7414f4",
+      "liest": []
+    },
+    "tests/mcp.mutate-answer.test.ts": {
+      "hash": "55e6fbe1eb4d5ec6",
+      "liest": []
+    },
+    "tests/mcp.mutate-input.test.ts": {
+      "hash": "9c9595cc879ef238",
+      "liest": []
+    },
+    "tests/mcp.mutate-next-step.test.ts": {
+      "hash": "ab1e56f4eef007fd",
+      "liest": []
+    },
+    "tests/mcp.mutate-violation-grouping.test.ts": {
+      "hash": "49437be5962c9264",
+      "liest": []
+    },
+    "tests/mcp.mutate-violations.test.ts": {
+      "hash": "c8df52cfa296f379",
+      "liest": []
+    },
+    "tests/mcp.occ.test.ts": {
+      "hash": "197413e81febbcaf",
+      "liest": []
+    },
+    "tests/mcp.read-format.test.ts": {
+      "hash": "0e8f671a5dfee58d",
+      "liest": []
+    },
+    "tests/mcp.readiness.test.ts": {
+      "hash": "c6e2c32da188ebc7",
+      "liest": []
+    },
+    "tests/mcp.realize.test.ts": {
+      "hash": "1911064252a95860",
+      "liest": []
+    },
+    "tests/mcp.reseed.test.ts": {
+      "hash": "bf3258092d36161e",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/mcp.silent-advisories.test.ts": {
+      "hash": "e63602a5102d03fc",
+      "liest": []
+    },
+    "tests/mcp.stdio-server.test.ts": {
+      "hash": "97e0878ce44f8326",
+      "liest": []
+    },
+    "tests/mcp.suggest.test.ts": {
+      "hash": "c927764ce1e58e44",
+      "liest": []
+    },
+    "tests/mcp.symmetry.test.ts": {
+      "hash": "02c8451119f72490",
+      "liest": []
+    },
+    "tests/mcp.tests-deduction.test.ts": {
+      "hash": "86bba4ad072090db",
+      "liest": []
+    },
+    "tests/mcp.tests-operational.test.ts": {
+      "hash": "21fa4f4e61468e8b",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/mcp.violation-context.test.ts": {
+      "hash": "c19d5b3eb2fee2e3",
+      "liest": []
+    },
+    "tests/messung.test.ts": {
+      "hash": "6f0fbdd667b50a53",
+      "liest": [
+        "docs/graphcode_leitlinie.md"
+      ]
+    },
+    "tests/metrics.test.ts": {
+      "hash": "c0656a68a50753d3",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/migrate-req-kinds.test.ts": {
+      "hash": "827f552e7c67a105",
+      "liest": []
+    },
+    "tests/mutate-violations-leser.test.ts": {
+      "hash": "8d8c2b46581578e6",
+      "liest": []
+    },
+    "tests/mutate.edge-only-batch.test.ts": {
+      "hash": "3371dfa1054e90ed",
+      "liest": []
+    },
+    "tests/mutate.formate-binding.test.ts": {
+      "hash": "395bf384140fa521",
+      "liest": []
+    },
+    "tests/mutate.formate-name.test.ts": {
+      "hash": "d62843c157b0e196",
+      "liest": []
+    },
+    "tests/mutate.formate-ops.test.ts": {
+      "hash": "ceb74179470c6a16",
+      "liest": []
+    },
+    "tests/mutate.merge-dedupe.test.ts": {
+      "hash": "333103e510f489c9",
+      "liest": []
+    },
+    "tests/mutate.schema-guard.test.ts": {
+      "hash": "4b350413be1d88b1",
+      "liest": []
+    },
+    "tests/mvp-e2e.test.ts": {
+      "hash": "38bc83bf8a89cbfb",
+      "liest": []
+    },
+    "tests/nd-similarity.test.ts": {
+      "hash": "d85b5f8026670f12",
+      "liest": []
+    },
+    "tests/no-default-policy-when-judging.test.ts": {
+      "hash": "da3f3b5509d7a6c3",
+      "liest": []
+    },
+    "tests/opencode-plugin.test.ts": {
+      "hash": "3ccb8882cecbfd43",
+      "liest": []
+    },
+    "tests/operations-log.integration.test.ts": {
+      "hash": "d4afbc2c54419bab",
+      "liest": []
+    },
+    "tests/panels.test.ts": {
+      "hash": "2d28a58bf5a435b2",
+      "liest": []
+    },
+    "tests/perf.advisory-roundtrip.spike.test.ts": {
+      "hash": "e1f14ebfbf0554d1",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/perf.batch-seed.test.ts": {
+      "hash": "6a80300b2c30604b",
+      "liest": []
+    },
+    "tests/policy-herkunft.test.ts": {
+      "hash": "dc4650bfff592905",
+      "liest": []
+    },
+    "tests/push-pruefung.test.ts": {
+      "hash": "590f42afbedb1dcb",
+      "liest": []
+    },
+    "tests/randbreiten.test.ts": {
+      "hash": "55b788948ef2d500",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/rc04.erzeuger-parst-loop-projections.test.ts": {
+      "hash": "9280b8f90e678c91",
+      "liest": []
+    },
+    "tests/rc04.kern-erzeuger-parst.test.ts": {
+      "hash": "ea97f7b4be09b1e2",
+      "liest": []
+    },
+    "tests/rc04.surface-erzeuger-parst.test.ts": {
+      "hash": "9caeae72d7076c6b",
+      "liest": []
+    },
+    "tests/read-tools.scope.test.ts": {
+      "hash": "77caf4047e279f26",
+      "liest": []
+    },
+    "tests/readiness-conformance-skip.test.ts": {
+      "hash": "fc2f6edb0dad7940",
+      "liest": [
+        "docs/cr/done",
+        "docs/cr/open",
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/readiness.altbestand.test.ts": {
+      "hash": "b46a7047790c8fd9",
+      "liest": []
+    },
+    "tests/readiness.completeness.test.ts": {
+      "hash": "485f203228f2d357",
+      "liest": []
+    },
+    "tests/readiness.erzeuger-parst.test.ts": {
+      "hash": "fd511ab11fc1e2f4",
+      "liest": []
+    },
+    "tests/readiness.model.test.ts": {
+      "hash": "692bee70b9f91e73",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/readiness.ontology-sync.test.ts": {
+      "hash": "8bce0e3d6327c2fe",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/readiness.steer.test.ts": {
+      "hash": "170cae838283ae00",
+      "liest": [
+        "docs/cr/done",
+        "docs/cr/open",
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/render-verb.test.ts": {
+      "hash": "282abdac6bd0ab6d",
+      "liest": []
+    },
+    "tests/repo-lifecycle.integration.test.ts": {
+      "hash": "cec8ec828b1c61bd",
+      "liest": []
+    },
+    "tests/repository-style.spike.test.ts": {
+      "hash": "3e49072d1b673c06",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/retro-kpi.test.ts": {
+      "hash": "6087e604c7e5a592",
+      "liest": []
+    },
+    "tests/retro-verlauf.test.ts": {
+      "hash": "01d81faf93615adf",
+      "liest": []
+    },
+    "tests/rewind.test.ts": {
+      "hash": "6ed928f3db9424d5",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/rig-measured.test.ts": {
+      "hash": "f89837b2364cf8a9",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/schema-guard.test.ts": {
+      "hash": "94c71f8a44367a69",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/schema-parse-at-interface.test.ts": {
+      "hash": "9d39b599b90fed43",
+      "liest": []
+    },
+    "tests/se-author-uc.test.ts": {
+      "hash": "a51c0b045caada78",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/se-plan-r21-offen.test.ts": {
+      "hash": "6ff0e2876819a153",
+      "liest": []
+    },
+    "tests/se-plan.groups.test.ts": {
+      "hash": "98064605a0b8c366",
+      "liest": []
+    },
+    "tests/se-plan.ordering.test.ts": {
+      "hash": "f59755650648a79f",
+      "liest": []
+    },
+    "tests/security.path-containment.test.ts": {
+      "hash": "ea6fa538c2344449",
+      "liest": []
+    },
+    "tests/session-lifecycle.test.ts": {
+      "hash": "5bb6a42f85fd2ff5",
+      "liest": []
+    },
+    "tests/sitzung-kpi.test.ts": {
+      "hash": "cb17643b4c352437",
+      "liest": []
+    },
+    "tests/skill-authoring-gate.test.ts": {
+      "hash": "40aaa5e47cb5fe06",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/skill-bau.test.ts": {
+      "hash": "c6655fc066d56fe0",
+      "liest": []
+    },
+    "tests/skill-cdr.test.ts": {
+      "hash": "6e29f2cc0777d1de",
+      "liest": []
+    },
+    "tests/skill-constraints.test.ts": {
+      "hash": "43c59752c3ca5a30",
+      "liest": []
+    },
+    "tests/skill-cr-ueber-aise.test.ts": {
+      "hash": "5eaca2edde08b232",
+      "liest": []
+    },
+    "tests/skill-faq-angleich.test.ts": {
+      "hash": "1cd2637f1f36a3a3",
+      "liest": []
+    },
+    "tests/skill-faq-ergaenzung.test.ts": {
+      "hash": "7e6b0ff031b91576",
+      "liest": []
+    },
+    "tests/skill-fmea-orte.test.ts": {
+      "hash": "7c3d4fd603ecc442",
+      "liest": []
+    },
+    "tests/skill-import-code-recovery.test.ts": {
+      "hash": "a4d4ee515f21c94e",
+      "liest": []
+    },
+    "tests/skill-import-code.test.ts": {
+      "hash": "4984675e8735b87c",
+      "liest": []
+    },
+    "tests/skill-import-doc-modell.test.ts": {
+      "hash": "07897bc54dd0f143",
+      "liest": []
+    },
+    "tests/skill-irr-fremde-quellen.test.ts": {
+      "hash": "ef6f80813b9c3b20",
+      "liest": []
+    },
+    "tests/skill-keine-eigene-rechnung.test.ts": {
+      "hash": "8767dc7d27954bce",
+      "liest": []
+    },
+    "tests/skill-kinds-werte.test.ts": {
+      "hash": "3b6ef02ea9da119d",
+      "liest": []
+    },
+    "tests/skill-laufzeit-antwortweg.test.ts": {
+      "hash": "dcc00620c62eb49b",
+      "liest": []
+    },
+    "tests/skill-modulebene-felder.test.ts": {
+      "hash": "65dd8f6a42326bad",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/skill-nennt-parameter.test.ts": {
+      "hash": "b7b41d767a4e6e08",
+      "liest": []
+    },
+    "tests/skill-optimize-vorlage.test.ts": {
+      "hash": "450483fef74e636d",
+      "liest": []
+    },
+    "tests/skill-red-first.test.ts": {
+      "hash": "128591aba6ab1e88",
+      "liest": []
+    },
+    "tests/skill-report-measured.test.ts": {
+      "hash": "f1bb05e55175b313",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/skill-rule-ids.test.ts": {
+      "hash": "fe8f4adbbc94796f",
+      "liest": []
+    },
+    "tests/skill-se-help.test.ts": {
+      "hash": "80deed6b77306720",
+      "liest": []
+    },
+    "tests/skill-se-plan-dateigrenze.test.ts": {
+      "hash": "53b35179e35df0a8",
+      "liest": []
+    },
+    "tests/skill-top-level-ausloeser.test.ts": {
+      "hash": "506a4fbfd24575bc",
+      "liest": []
+    },
+    "tests/skill-vorbereitung-felder.test.ts": {
+      "hash": "95d3e556d2d238ca",
+      "liest": []
+    },
+    "tests/skill-wortlaut-angleich.test.ts": {
+      "hash": "bb59e78e5519ae04",
+      "liest": []
+    },
+    "tests/skill-zugangsliste.test.ts": {
+      "hash": "ccf84e0fa536ac52",
+      "liest": []
+    },
+    "tests/skills.mcp-conformance.test.ts": {
+      "hash": "294fd9f5afb0be49",
+      "liest": []
+    },
+    "tests/smoke.create-harness.test.ts": {
+      "hash": "67dd757f7ee36e7a",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/snapshot-drift.test.ts": {
+      "hash": "634ea7460b938b75",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/stagnation.test.ts": {
+      "hash": "8df8e19aa032f6d2",
+      "liest": []
+    },
+    "tests/status.test.ts": {
+      "hash": "3e24476055a420dc",
+      "liest": []
+    },
+    "tests/steer-optimum.test.ts": {
+      "hash": "94f103999d248899",
+      "liest": []
+    },
+    "tests/steering-snapshot.test.ts": {
+      "hash": "ee11ab75d86c336f",
+      "liest": []
+    },
+    "tests/steering.artifact-coupling.test.ts": {
+      "hash": "3bb82aa41838eae6",
+      "liest": []
+    },
+    "tests/steering.convergence-witness.spike.test.ts": {
+      "hash": "1ddcf14cf4b3e6ea",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/steering.divergence-two-profiles.test.ts": {
+      "hash": "1ca782d8bdc47682",
+      "liest": []
+    },
+    "tests/steering.measurement-path.test.ts": {
+      "hash": "58fdca51c704ca4a",
+      "liest": []
+    },
+    "tests/steering.process-ratchet.test.ts": {
+      "hash": "e3d2b10523dd8f39",
+      "liest": []
+    },
+    "tests/steering.steer-causality.test.ts": {
+      "hash": "e0542f70ed9471b0",
+      "liest": []
+    },
+    "tests/store-lock.test.ts": {
+      "hash": "ee5d4bb72c76de73",
+      "liest": []
+    },
+    "tests/store-recovery.test.ts": {
+      "hash": "b5991708dd9f4827",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/suggest.add-node.test.ts": {
+      "hash": "b510498917ff6f13",
+      "liest": []
+    },
+    "tests/suggest.merge.test.ts": {
+      "hash": "0196d9d681bdc081",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/suggest.ranks-the-delivered-edit.test.ts": {
+      "hash": "4673f018319f4768",
+      "liest": []
+    },
+    "tests/suggest.rehang.test.ts": {
+      "hash": "8858967687551989",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/systemmodell-in-bildern.katalog.test.ts": {
+      "hash": "5e5fc9ea8b304561",
+      "liest": []
+    },
+    "tests/target-profile.test.ts": {
+      "hash": "580687d05cc265b8",
+      "liest": []
+    },
+    "tests/task-analysen.test.ts": {
+      "hash": "087b3f2aa4a64e89",
+      "liest": []
+    },
+    "tests/test-schlupf.test.ts": {
+      "hash": "6871d2461f77d88c",
+      "liest": []
+    },
+    "tests/test-selection.audit.test.ts": {
+      "hash": "b90cb4cd9a13565b",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/test-von-hand.test.ts": {
+      "hash": "cf8466d7e78ee04e",
+      "liest": []
+    },
+    "tests/testreport.kopf-bindung.test.ts": {
+      "hash": "4a0fa30bb5696116",
+      "liest": []
+    },
+    "tests/testreport.ruecknahme.test.ts": {
+      "hash": "15e3eefed85d0571",
+      "liest": []
+    },
+    "tests/testreport.test.ts": {
+      "hash": "d89b25819120f627",
+      "liest": []
+    },
+    "tests/tool-context.test.ts": {
+      "hash": "9b3c849d4781026b",
+      "liest": []
+    },
+    "tests/tool-contract.test.ts": {
+      "hash": "6a874fc867685d3a",
+      "liest": []
+    },
+    "tests/tool-description-params.test.ts": {
+      "hash": "c11e3df4991b9566",
+      "liest": []
+    },
+    "tests/trajectory-stamps.test.ts": {
+      "hash": "d0b5b45c802c42c5",
+      "liest": []
+    },
+    "tests/trajectory.feed-anchor.test.ts": {
+      "hash": "d1824d1fff224ca3",
+      "liest": []
+    },
+    "tests/typbindung.test.ts": {
+      "hash": "230feb33841860d7",
+      "liest": [
+        "docs/cr/done",
+        "docs/cr/open",
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/umbau-ausloeser.test.ts": {
+      "hash": "a2a4589b266361b1",
+      "liest": []
+    },
+    "tests/upgrade.test.ts": {
+      "hash": "0b2e7f66e29b0829",
+      "liest": []
+    },
+    "tests/verify-code-plan.test.ts": {
+      "hash": "34864390a10bd500",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/verify-model.completeness.test.ts": {
+      "hash": "0e5de2222814960f",
+      "liest": []
+    },
+    "tests/verlauf.test.ts": {
+      "hash": "7a2e9469398c6178",
+      "liest": []
+    },
+    "tests/vertrag-ausdruck.test.ts": {
+      "hash": "088e0382491d3d8b",
+      "liest": []
+    },
+    "tests/vertragstest.test.ts": {
+      "hash": "2915cd6c6c4011ab",
+      "liest": []
+    },
+    "tests/view-fmea.test.ts": {
+      "hash": "69a3dce51d59fecf",
+      "liest": []
+    },
+    "tests/views.auditor.test.ts": {
+      "hash": "2fe7befe15fb662a",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/views.conformance.test.ts": {
+      "hash": "77b64564ad27ef8e",
+      "liest": []
+    },
+    "tests/views.no-fork.test.ts": {
+      "hash": "2b8199c04c0198bb",
+      "liest": []
+    },
+    "tests/vorspann.test.ts": {
+      "hash": "a6da23ec6348b307",
+      "liest": []
+    },
+    "tests/werkzeug-eingang-geparst.test.ts": {
+      "hash": "58456e1bcb9b5a48",
+      "liest": []
+    },
+    "tests/werkzeug-register-typ.test.ts": {
+      "hash": "31864473222a2b54",
+      "liest": []
+    },
+    "tests/whitebox-messung.test.ts": {
+      "hash": "4e938ed3b0f6f0e9",
+      "liest": [
+        "docs/graph/graphcode.graph.json"
+      ]
+    },
+    "tests/work-order.test.ts": {
+      "hash": "3fe4fcc1f358ba43",
+      "liest": []
+    },
+    "tests/working-set.spezlauf.test.ts": {
+      "hash": "f732e429217d0b3c",
+      "liest": []
+    },
+    "tests/working-set.test.ts": {
+      "hash": "b340431add329269",
+      "liest": []
+    },
+    "tests/zug-kennzahlen-danach.test.ts": {
+      "hash": "ab3e05abd3d9853a",
+      "liest": []
+    }
+  }
+}

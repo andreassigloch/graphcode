@@ -1,292 +1,79 @@
 /**
- * Die Testmenge einer MODELLÄNDERUNG (CR-GC-399) — SSOT für `npm run verify:model`
- * UND für den Vollständigkeits-Test, der verhindert, dass sie still veraltet.
+ * Die Testmenge einer MODELLÄNDERUNG (CR-GC-399) — SSOT für `npm run verify:model`, für die
+ * Spurwahl im pre-commit und für den Vollständigkeits-Test.
  *
- * Anlass: eine Sitzung mit sechs vollen Suite-Läufen (~41 Minuten) für Änderungen,
- * die keine einzige Quelldatei angefasst haben. `graph_tests` löst das nicht — es
- * leitet aus einem CODE-Changeset ab (code → REQ → TEST); eine reine Graph-Mutation
- * hat keinen Code-Changeset und damit keine Ableitung.
+ * Anlass: eine Sitzung mit sechs vollen Suite-Läufen (~41 Minuten) für Änderungen, die keine
+ * einzige Quelldatei angefasst haben. `graph_tests` löst das nicht — es leitet aus einem
+ * CODE-Changeset ab (code → REQ → TEST); eine reine Graph-Mutation hat keinen Code-Changeset.
  *
- * Ein Test gehört in die Menge, wenn er die committete SSOT liest ODER gegen die
- * Regel-/Ontologie-Konstanten prüft. Genau dieses Kriterium steht als `MODEL_TEST_PATTERNS`
- * hier und wird vom Vollständigkeits-Test auf `tests/` angewandt — die Liste kann
- * deshalb nicht auseinanderlaufen, ohne dass ein Test rot wird.
+ * Seit CR-GC-1034 GEMESSEN statt von Hand gepflegt. Ein Test gehört in die Spur, wenn er beim Lauf
+ * eine Datei liest, deren Änderung die Spur auslöst (`isModelLanePath`). Das misst
+ * `model-test-set.measure.mjs` mit einem Lese-Protokoll je Testdatei und schreibt es nach
+ * `model-test-set.json`. Vorher entschieden Textmuster (`docs/graph`, `RULES_VERSION`) und eine
+ * Liste von 31 Ausschlüssen; die Messung fand 22 Tests in der Spur, die nichts davon lesen, und
+ * 10 Leser der SSOT, die fehlten.
  *
  * @author andreas@siglochconsulting
  */
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 
-/** Was einen Test modellrelevant macht. Ein Kriterium, zwei Anwender. */
-export const MODEL_TEST_PATTERNS = [
-  /docs\/graph/,
-  // CR-GC-401 hat die Luecke gezeigt: `join(REPO, 'docs', 'graph', 'x.graph.json')`
-  // baut den Pfad SEGMENTIERT — der Literal-String `docs/graph` kommt nie vor. Sechs
-  // Testdateien sind so durch das erste Muster gefallen, eine davon (die Job-Scheibe)
-  // ist bei der naechsten Modellaenderung prompt rot geworden, waehrend `verify:model`
-  // 243/243 gruen meldete. Der Dateiname ist die robustere Spur als der Verzeichnispfad.
-  /graph\.json/,
-  /RULES_VERSION|ONTOLOGY_VERSION|V3_RULES|SE_DESCRIPTOR\.rules/,
-];
-
-export function isModelRelevant(source) {
-  return MODEL_TEST_PATTERNS.some((p) => p.test(source));
+/**
+ * Welche Pfade die Spur MODELL auslösen — die eine Definition für Hook und Messung.
+ * Modell, Sichten, CRs und Markdown. NICHT `.claude/`: dort liegen die Skill-Texte, und rund 40
+ * Tests prüfen sie (Regel-IDs, Wortlaut, Werkzeugnamen). Ein Skill-Commit geht in die Spur CODE.
+ */
+export function isModelLanePath(rel) {
+  if (rel.startsWith('.claude/')) return false;
+  return /^docs\/(graph|views|cr)\//.test(rel) || rel.endsWith('.md');
 }
 
-/** Die Menge, die `verify:model` fährt. */
-export const INCLUDED = [
-  // CR-GC-767: faehrt `graph_metrics` auf der committeten SSOT und vergleicht jede FCHAIN mit dem
-  // direkten Aufruf von `chainMetrics` — eine Kette, die der Store anders liest als die Datei, macht
-  // ihn rot, also gehoert er in die Spur.
-  'tests/metrics.test.ts',
-  // CR-GC-679: liest die S1-Zeile der Leitlinie §9.4 und haelt `S1` in scripts/messung.mjs gleich —
-  // eine reine Doku-Aenderung an S1 macht ihn rot, also gehoert er in die Spur.
-  'tests/messung.test.ts',
-  // CR-GC-926: haelt die Zahlen und Versionen der Seite docs/project/systemmodell-in-bildern.html
-  // gegen den Katalog — eine reine Doku-Aenderung an der Seite macht ihn rot, also gehoert er in die Spur.
-  'tests/systemmodell-in-bildern.katalog.test.ts',
-  // CR-GC-591: liest die committete SSOT und verlangt Rang, Zeitpunkt und Treiber an jedem
-  // FLOW-channel-* — eine Modellaenderung an den Kanaelen macht ihn rot, also gehoert er in die Spur.
-  'tests/channel-model.test.ts',
-  // CR-GC-490: haengt an der LEGALITAET von `FUNC -allocate-> MOD` und an `realRef` — faehrt
-  // dafuer einen echten Gate-Zug. Eine Meta-Modell-Aenderung an diesem Pattern macht ihn rot,
-  // also gehoert er in die Spur.
-  'tests/work-order.test.ts',
-  // CR-GC-530: haengt an der LEGALITAET von `ACTOR -io-> UC` (seit CR-SM-266 D1 kein Pattern) —
-  // bekommt diese Kante ein Pattern zurueck oder faellt `compose` weg, wird er rot.
-  'tests/harness.import-rejected-traces.test.ts',
-  // CR-GC-489: seedet die echte docs/graph/graphcode.graph.json und prueft an ihr, dass eine
-  // RC-Regel nie zugleich ausgewertet UND ausgelassen ist — eine Modellaenderung kann ihn
-  // sehr wohl rot machen, also gehoert er in die Spur.
-  'tests/readiness-conformance-skip.test.ts',
-  'tests/audit.rules-passed.test.ts',
-  'tests/auto-export.shutdown-flush.test.ts',
-  'tests/auto-export.test.ts',
-  'tests/codec.roundtrip.test.ts',
-  'tests/conformance.test.ts',
-  'tests/conformance.wrapped-symbols.test.ts',
-  // CR-GC-442: hält fest, dass ND ausgewertet wird UND außerhalb von
-  // `SE_DESCRIPTOR.rules` bleibt — ein contracts-Bump, der ND ins Gate legt, muss
-  // hier auffallen und nicht erst an einer blockierten Mutation.
-  'tests/evaluation.near-duplicate.test.ts',
-  'tests/evaluation.reconciliation.test.ts',
-  // CR-GC-428: prüft die Differenz der beiden Regelkataloge gegen ALL_RULE_DEFS —
-  // ein contracts-Bump, der eine Regel nur ins Steering legt, muss hier auffallen.
-  'tests/evaluation.rule-catalog.test.ts',
-  'tests/export-graph-guard.test.ts',
-  'tests/exporter.test.ts',
-  'tests/gate.single-door.test.ts',
-  'tests/graph-integrity.test.ts',
-  'tests/graph-timetravel.test.ts',
-  'tests/harness.import-sys-anchor.test.ts',
-  'tests/harness.import.test.ts',
-  'tests/help-content.test.ts',
-  'tests/help.test.ts',
-  'tests/host.bridge.test.ts',
-  'tests/mcp.export-guard.test.ts',
-  'tests/mcp.export.test.ts',
-  'tests/mcp.impact.test.ts',
-  'tests/mcp.tests-operational.test.ts',
-  'tests/mvp-e2e.test.ts',
-  'tests/nd-similarity.test.ts',
-  // CR-GC-629: haelt die Randbreiten-Verteilung ueber die erreichbaren Familiengraphen. Den
-  // eingefrorenen Korpus pinnt er, den LIVE-Graphen prueft er auf Grundgesamtheit (FUNC-Zahl,
-  // Whiteboxen) — eine Modellaenderung, die graphcodes compose-Baum abraeumt, macht ihn rot.
-  // Genau dafuer gehoert er in die Spur; er liest nur Dateien und braucht keine Sekunde.
-  'tests/randbreiten.test.ts',
-  'tests/readiness.model.test.ts',
-  // CR-GC-537: misst den Steuerungsraum an der echten SSOT. Die Terme haengen an den
-  // Container-/Randbreiten des Modells (RD-04/BW-02/R-04/CR-01/MT-02) — eine Modelländerung
-  // verschiebt `worst` und `measured` unmittelbar, also gehoert er in die Spur.
-  'tests/readiness.steer.test.ts',
-  'tests/readiness.ontology-sync.test.ts',
-  'tests/rewind.test.ts',
-  'tests/se-author-uc.test.ts',
-  'tests/security.path-containment.test.ts',
-  'tests/smoke.create-harness.test.ts',
-  // CR-GC-435: misst am Repo-Graphen, ob mindestens ein Arch-Vorschlag anwendbar
-  // ist (Umhängen via retire) — eine Modelländerung an den Allokationen ändert
-  // genau diesen Befund.
-  'tests/suggest.rehang.test.ts',
-  // CR-GC-444: zählt am Repo-Graphen die anwendbaren MERGE-Vorschläge. Werden FLOWs
-  // konsolidiert oder Verträge umgehängt, ändert sich genau diese Zahl.
-  'tests/suggest.merge.test.ts',
-  'tests/views.auditor.test.ts',
-  'tests/views.no-fork.test.ts',
-  'tests/verify-model.completeness.test.ts',
-  // Nachtrag CR-GC-401: diese fuenf bauen den SSOT-Pfad segmentiert und sind dem
-  // ersten Muster entkommen. `hooks.inject-graph-slice` haelt eine Ground-Truth-Liste
-  // realer uids und faellt bei jeder Loeschung — genau der Fall, den die Spur decken muss.
-  'tests/hooks.inject-graph-slice.test.ts',
-  'tests/mcp.member-name.test.ts',
-  'tests/schema-guard.test.ts',
-  // CR-GC-796: baut einen Store aus der committeten SSOT, beschaedigt die Datei und erwartet beim
-  // Oeffnen den Neuaufbau mit der Knotenzahl des Snapshots — liest die SSOT, also gehoert er in die Spur.
-  'tests/store-recovery.test.ts',
-  // CR-GC-931: kopiert die committete SSOT in ein Temp-Repo, baut daraus den Store und erwartet beim Start
-  // die Meldung, wenn der Snapshot nach dem Export geaendert wurde — liest die SSOT, also gehoert er in die Spur.
-  'tests/snapshot-drift.test.ts',
-  // CR-GC-488: seit der Umstellung von der Momentaufnahme auf die INVARIANTE gehoert dieser
-  // Spike in die Spur. Er haelt fest, dass jeder Produzent von `FLOW-graph-state` im Modell
-  // auch im Code einen Schreibpfad hat — eine Modellaenderung, die einen Leser als Schreiber
-  // eintraegt, muss hier auffallen. Vorher pinnte er „17 Produzenten, 8 falsch" und wurde bei
-  // jeder Modellaenderung rot, ohne dass etwas kaputt war.
-  'tests/repository-style.spike.test.ts',
-  // CR-GC-541: pinnt die abgeleitete Testmenge einer CODE-Aenderung bitgenau gegen den
-  // Handschnitt aus CR-GC-536. Wandert im Modell eine satisfy-/verify-Kante um codec
-  // herum, aendert sich genau diese Menge — eine Modellaenderung kann ihn rot machen,
-  // also gehoert er in die Spur.
-  'tests/test-selection.audit.test.ts',
-  'tests/skill-authoring-gate.test.ts',
-  'tests/skill-report-measured.test.ts',
-  // CR-GC-851: der erste Constraint (Ein Schreibweg). Liest die committete SSOT und prueft die
-  // Eingaenge von FUNC-graph-store — ein Zug am Modell, der einen siebten Fluss anlegt, macht ihn
-  // rot, ohne dass sich Code aendert. Genau dafuer gehoert er in die Spur (Weg A, CR-GC-804).
-  'tests/constraint-ein-schreibweg.test.ts',
-  // CR-GC-930: liest die Koepfe der CRs in docs/cr/done — ein reiner docs-Commit kann ihn rot machen,
-  // und nur diese Spur laeuft im pre-commit.
-  'tests/cr-done-kein-open-kopf.test.ts',
-];
+/** Fingerabdruck einer Testdatei — ändert sie sich, ist ihre Messung veraltet. */
+export function hashOf(source) {
+  return createHash('sha256').update(source).digest('hex').slice(0, 16);
+}
+
+export const MEASUREMENT_FILE = fileURLToPath(new URL('./model-test-set.json', import.meta.url));
+
+/** Die Messung: je Testdatei Fingerabdruck und die gelesenen Pfade der Spur. */
+export const MEASUREMENT = JSON.parse(readFileSync(MEASUREMENT_FILE, 'utf8'));
 
 /**
- * Bewusst NICHT gefahren — jeder Eintrag mit Grund, damit ein Ausschluss eine
- * Entscheidung bleibt und nicht zu einer stillen Lücke wird.
+ * Leser, die die Spur trotzdem NICHT fährt — jeder Eintrag mit Grund. Nur für Tests, die eine
+ * Spur-Datei lesen, aber durch eine Änderung an ihr nicht rot werden können.
  */
-export const EXCLUDED = {
-  'tests/aenderungs-heatmap.test.ts':
-    'CR-GC-1028: nennt `docs/graph/r.graph.json` nur als Config-Pfad eines TEMP-Repos ohne Graph-Datei.\n' +
-    'graphcodes eigene SSOT liest er nie — eine Modellaenderung kann ihn nicht rot machen (Spur CODE).',
-  'tests/vertragstest.test.ts':
-    'CR-GC-962: schreibt einen eigenen Snapshot nach docs/graph/ eines TEMP-Repos und erzeugt daraus Vertragstests.\n' +
-    'graphcodes eigene SSOT liest er nie — eine Modellaenderung kann ihn nicht rot machen (Spur CODE).',
-  'tests/verlauf.test.ts':
-    'CR-GC-946: nennt `docs/graph/` nur als PFAD, unter dem der Test drei eigene Staende in ein TEMP-Repo\n' +
-    'committet und den Verlauf darueber rechnet. graphcodes eigene SSOT liest er nie — eine Modellaenderung\n' +
-    'kann ihn nicht rot machen; eine Aenderung an der Verlaufsrechnung sehr wohl (Spur CODE).',
-  'tests/render-verb.test.ts':
-    'CR-GC-909: schreibt einen eigenen Snapshot (docs/graph/paketstation.graph.json) in ein Wegwerf-Repo und rendert\n' +
-    'ihn. Die committete SSOT liest er nicht; rot wird er nur durch Code am Renderer oder am Verb (Spur CODE).',
-  'tests/arch.optimization-dry-run.spike.test.ts':
-    'CR-GC-1023: misst gegen eine eingefrorene Kopie des Modells (tests/fixtures/arch-dry-run.graph.json, mit\n' +
-    'Pruefsumme), nicht gegen die SSOT. Eine Modellaenderung kann ihn nicht rot machen; Code und Regeln sehr wohl (Spur CODE).',
-  'tests/live-feed.test.ts':
-    'CR-GC-809: liest die SSOT nur als grosse Eingabe fuer die Format-E-Rundreise. Sie prueft den Codec, nicht das\n' +
-    'Modell — eine Modellaenderung kann sie nur rot machen, wenn der Codec einen neuen Wert nicht traegt (Spur CODE).',
-  'tests/commit-pruefung.test.ts':
-    'CR-GC-848: schreibt einen eigenen Snapshot (docs/graph/wegwerf.graph.json) in ein Wegwerf-Repo und committet\n' +
-    'dort ueber den echten Hook. graphcodes eigene SSOT liest er nie — eine Modellaenderung kann ihn nicht rot\n' +
-    'machen; eine Aenderung an Hook oder Commit-Pruefung sehr wohl (Spur CODE).',
-  'tests/mcp.mutate-next-step.test.ts':
-    'Vorschlag an den Nutzer (CR-GC-729..734): liest die Regel-Saetze aus den contracts und ein eingefrorenes\n' +
-    'Fremdmodell (tests/fixtures/todo-local-v9.graph.json), nie graphcodes eigene SSOT — eine Modellaenderung\n' +
-    'kann ihn nicht rot machen; eine Aenderung an next-step.ts sehr wohl (Spur CODE).',
-  'tests/contracts.kernel.test.ts':
-    'CR-GC-719: nennt `docs/graph/` nur als PFAD, unter dem der Test eine eigene formfremde bzw.\n' +
-    'vertragstreue SSOT-Datei in ein TEMP-Repo schreibt (SCHEMA-ontology-json). graphcodes eigene SSOT\n' +
-    'liest er nie — eine Modellaenderung kann ihn nicht rot machen; eine Aenderung am Vertrag sehr wohl.',
-  'tests/aenderungsmeldung.test.ts':
-    'CR-GC-800: nennt `docs/graph/` nur als PFAD, unter dem der Test einen eigenen Snapshot in ein TEMP-Repo\n' +
-    'schreibt, den ein echter Host einliest. graphcodes eigene SSOT liest er nie — eine Modellaenderung kann\n' +
-    'ihn nicht rot machen; eine Aenderung an der Rueckmeldung der Spur sehr wohl (Spur CODE).',
-  'tests/attributvertraege.test.ts':
-    'CR-GC-643: prueft das Leseverhalten von Code (graph_tests, Verifikationsbericht, Code-Fakten) auf einem Wegwerf-Store — eine Code-Aenderung bricht es, kein Modell-Zug. Der Modellteil (RC-09 am committeten Modell) steht in conformance.test.ts.',
-  'tests/retro-kpi.test.ts':
-    'CR-GC-639: die Fixture nennt `docs/graph/` und `docs/views/` als PFAD-Zeichenketten in einem\n' +
-    'gestellten Sitzungsprotokoll — genau diese Lesezugriffe muss KPI 1 als Doc-Read erkennen. Die\n' +
-    'SSOT selbst liest der Test nie; eine Modellaenderung kann ihn nicht rot machen.',
-  'tests/retro-verlauf.test.ts':
-    'CR-GC-914: nennt `docs/graph/` nur als PFAD, unter dem der Test drei eigene Staende in ein TEMP-Repo\n' +
-    'committet und ueber verlaufFuerRepo (dist) misst. graphcodes eigene SSOT liest er nie — eine Modellaenderung\n' +
-    'kann ihn nicht rot machen; eine Aenderung an retro-kpi oder am Verlauf sehr wohl (Spur CODE).',
-  'tests/cr-messung.test.ts':
-    'CR-GC-639: legt ein TEMP-Repo mit docs/cr/open → done und ein Temp-Protokoll an und faehrt den\n' +
-    'post-commit-Messpfad. Daher der Treffer auf `docs/cr`. graphcodes eigene SSOT liest er nie — eine\n' +
-    'Modellaenderung kann ihn nicht rot machen; eine Aenderung an der Zaehlung sehr wohl.',
-  'tests/skill-rule-ids.test.ts':
-    'Smeagol (CR-GC-571/602): prueft Skill- und Prompt-TEXTE gegen den Regelkatalog und die\n' +
-    'Eigentuemer-Spalte (contracts). Liest weder graphcodes Modell noch dessen SSOT; der Treffer ist\n' +
-    'der Regelkatalog. Eine Modellaenderung kann ihn nicht rot machen; eine neue Regel-ID im Skill\n' +
-    'oder eine Klausel an einer Task-Regel sehr wohl.',
-  'tests/skill-modulebene-felder.test.ts':
-    'CR-GC-824: prueft den Skill-Text gegen Regelkatalog, Werkzeug-Registry und die Vertraege in contracts.\n' +
-    'Die SSOT oeffnet er nur, um die Registry zu binden; deren Namen haengen nicht am Modell. Eine\n' +
-    'Modellaenderung kann ihn nicht rot machen; eine Aenderung am Skill-Text oder an der Registry sehr wohl.',
-  'tests/cli.scaffold.test.ts':
-    'Scaffold-Verben (init | update | remove) gegen ein TEMP-Repo. Seit CR-GC-612 prueft er, dass\n' +
-    'GRAPHCODE.md die Rohdateien als AUSGABEN benennt — daher der Treffer auf `docs/graph/`. Gelesen\n' +
-    'wird graphcodes eigene SSOT nicht: die Datei entsteht im Temp-Verzeichnis. Eine Modellaenderung\n' +
-    'kann ihn nicht rot machen; eine Aenderung am ausgelieferten Text sehr wohl.',
-  'tests/vorspann.test.ts':
-    'CR-GC-612: misst GRAPHCODE.md und die Laengen der Werkzeugbeschreibungen gegen den\n' +
-    'Regelkatalog. Der Treffer ist der KATALOG, nie graphcodes eigene SSOT — eine Modellaenderung\n' +
-    'kann ihn nicht rot machen; ein Werkzeug, das sich wieder selbst erklaert, sehr wohl.',
-  'tests/git-env-isolation.test.ts':
-    'CR-GC-626: prueft, dass ein Testlauf die git-Umgebung seines Aufrufers nicht erbt. Der\n' +
-    'Treffer ist der DATEINAME im Befundtext (`docs/graph/fremd-anlage.graph.json`), nicht der\n' +
-    'Inhalt der SSOT — der Test liest keinen Graphen. Eine Modellaenderung kann ihn nicht rot\n' +
-    'machen; eine weggefallene setupFiles-Zeile sehr wohl.',
-  'tests/policy-herkunft.test.ts':
-    'CR-GC-629: prueft die HERKUNFT der Urteilsschwellen — Config gegen den contracts-Startwert,\n' +
-    'Policy-Stempel der Messaufbauten, Schwellenbehauptungen in Skilltexten. Der Treffer ist das\n' +
-    'GOLDEN EINES RIG-KORPUS als Fixture fuer `openMeasured`, nie graphcodes eigene SSOT. Eine\n' +
-    'Aenderung an graphcodes Modell kann ihn nicht rot machen; ein gewandertes Budget ohne Marke\n' +
-    'oder eine nackte Schwelle im Skilltext sehr wohl.',
-  'tests/read-tools.scope.test.ts':
-    'CR-GC-613: misst die ANTWORTGROESSEN der Lesewerkzeuge gegen das GOLDEN EINES RIG-KORPUS\n' +
-    '(`beispielgraphen/sigllm-v98.graph.json`), nie graphcodes eigene SSOT. Eine\n' +
-    'Aenderung an graphcodes Modell kann ihn nicht rot machen; eine am Schnitt der Lesewerkzeuge\n' +
-    'oder am Format-E-Serialisierer sehr wohl.',
-  'tests/working-set.spezlauf.test.ts':
-    'CR-GC-689: misst den Umfang-Ausweis der Lesewerkzeuge nach einem Zug ueber das GANZE GOLDEN\n' +
-    'EINES RIG-KORPUS (`sigllm-v98`), nie graphcodes eigene SSOT. Eine Aenderung an graphcodes\n' +
-    'Modell kann ihn nicht rot machen; eine am Ausweis (`Umfang`) sehr wohl.',
-  'tests/steer-optimum.test.ts':
-    'CR-GC-608: liest den sigllm-Golden als Eingabe fuer das Fertig-Kriterium der Steuerregeln — Maschinen-Test, kein Modell-TEST',
-  'tests/generate.task.test.ts':
-    'Task-Modus der Zustandsmaschine (CR-GC-601). Der Treffer ist das GOLDEN EINES RIG-KORPUS, nie\n' +
-    'graphcodes eigene SSOT. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an\n' +
-    'der Eigentuemer-Spalte oder am Task-Fokus sehr wohl.',
-  'tests/generate.stufen.test.ts':
-    'Eigenschaftstest der Fensterwahl nach Stufe und des Kaltstarts aus den Existenz-Regeln (CR-GC-749).\n' +
-    'Der Treffer ist das GOLDEN EINES RIG-KORPUS und zwei eingefrorene Referenzlaeufe unter beispielgraphen/,\n' +
-    'nie graphcodes eigene SSOT. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an der Fensterwahl\n' +
-    'oder an Stufe und Rolle im Regelkatalog sehr wohl.',
-  'tests/generate.statemachine.test.ts':
-    'Eigenschaftstest der Zustandsmaschine (CR-GC-593). Der Treffer ist das GOLDEN EINES RIG-KORPUS\n' +
-    'und zwei eingefrorene Referenzlaeufe unter beispielgraphen/, nie graphcodes eigene SSOT: geprueft wird done ⇔ kein Fokus\n' +
-    'ueber fremde Graphen. Eine Aenderung an graphcodes Modell kann ihn nicht rot machen; eine an\n' +
-    'der Fokuswahl oder am Regelkatalog sehr wohl.',
-  'tests/flow-contracts.test.ts':
-    'Fluss-Vertraege (CR-GC-426/535). Der Treffer ist ein FIXTURE-DATEINAME: der Hook-Teil\n' +
-    'legt `docs/graph/x.graph.json` mit LEEREM Inhalt in einem Wegwerf-Repo an und prueft,\n' +
-    'ob `pre-commit` den Pfad als Snapshot erkennt. Geprueft wird die Pfaderkennung, nie\n' +
-    'Modellinhalt — die committete SSOT liest er nicht. Eine Modellaenderung kann ihn nicht\n' +
-    'rot machen.',
-  'tests/no-default-policy-when-judging.test.ts':
-    'Waechter (CR-GC-492). Baut keinen Harness und liest keinen Graphen — er SCANNT die\n' +
-    'Testdateien nach der Kombination "Handaufbau + echte Repo-Wurzel + urteilende Flaeche".\n' +
-    'Eine Modellaenderung kann ihn nicht rot machen; eine neue Testdatei sehr wohl.',
-  'tests/rig-measured.test.ts':
-    'Messaufbau-Test (CR-GC-491). Beruehrt die Regel-/Ontologie-Konstanten nur als ' +
-    'STEMPELFELD: assertiert wird ihre FORM (`/^\\d+\\.\\d+\\.\\d+$/`), nie ein Wert. ' +
-    'Der Graph ist eine synthetische Zwei-Knoten-Fixture, nicht die committete SSOT — ' +
-    'eine Modellaenderung kann ihn nicht rot machen. Was er prueft, ist die Verdrahtung ' +
-    '(Config-Herkunft, Store/Lock, Blindheitsausgang), und die haengt an keinem Modellinhalt.',
-  'tests/steering.convergence-witness.spike.test.ts':
-    'Konvergenz-Zeugen-Spike (CR-GC-407). Liest die SSOT nur als realistisch grosses ' +
-    'Fixture (degradierte Kopie in einem Temp-Store); assertiert werden Zeugen-/Archiv-' +
-    'Eigenschaften der Sequenzen, kein Modellinhalt — keine uid-Pins, eine ' +
-    'Modellaenderung kann ihn nicht sinnvoll rot machen. Kostet allein ~5 s Gate-Lauf.',
+export const AUSNAHMEN = {
+  'tests/distribution.test.ts':
+    'CR-GC-1034: liest README.md nur als Inhalt des Pakets (`npm pack`); welcher Text darin steht, macht ihn nicht rot. ' +
+    'Er baut dist/ neu (`npm run build`) und nimmt es parallel laufenden Tests unter den Fuessen weg ' +
+    '(gemessen: whitebox-messung „Failed to load url dist/index.js"). Publish-Pruefung, faehrt die volle Suite.',
   'tests/perf.advisory-roundtrip.spike.test.ts':
-    'Perf-Spike. Liest die SSOT nur noch für einen Datenpunkt, der seit CR-GC-400 ' +
-    'NICHT mehr assertiert; die Assertion hängt an einem modellunabhängigen Eingang ' +
-    'fester Größe. Eine Modelländerung kann ihn also nicht rot machen — er kostet ' +
-    'aber allein 45 s, mehr als die gesamte restliche Menge.',
+    'Perf-Spike. Liest die SSOT nur noch für einen Datenpunkt, der seit CR-GC-400 NICHT mehr assertiert; die ' +
+    'Assertion hängt an einem modellunabhängigen Eingang fester Größe. Kostet allein 45 s, mehr als die übrige Spur.',
+  'tests/steering.convergence-witness.spike.test.ts':
+    'Konvergenz-Zeugen-Spike (CR-GC-407). Liest die SSOT nur als realistisch grosses Fixture (degradierte Kopie in ' +
+    'einem Temp-Store); assertiert werden Zeugen-/Archiv-Eigenschaften der Sequenzen, keine uid-Pins.',
 };
 
+/** Die Menge, die `verify:model` fährt: gemessene Leser ohne Ausnahmen. */
+export const INCLUDED = Object.entries(MEASUREMENT.dateien)
+  .filter(([file, m]) => m.liest.length > 0 && !(file in AUSNAHMEN))
+  .map(([file]) => file)
+  .sort();
+
 /**
- * Parallelität: `vitest.config.ts` fährt die Suite seriell (Kuzu = ein Schreiber
- * pro Store). Für DIESE Menge ist parallel nachweislich sicher — jeder Test, der
- * das echte Repo als repoRoot benutzt, übergibt ein eigenes `lockDir` und öffnet
- * damit NIE den Repo-Store. Das ist keine Annahme: der Vollständigkeits-Test
- * prüft es je Datei. Ohne Parallelität sind es 141 s, mit 45 s.
+ * Parallelität: `vitest.config.ts` fährt die Suite seriell (Kuzu = ein Schreiber pro Store). Für
+ * DIESE Menge ist parallel sicher, solange jeder Test, der das echte Repo als repoRoot benutzt, ein
+ * eigenes `lockDir` übergibt. Der Vollständigkeits-Test prüft es je Datei.
  */
 export const FILE_PARALLELISM = true;
+
+// Spurwahl des pre-commit: gestagte Pfade auf stdin, Ausgabe der erste Pfad AUSSERHALB der Spur.
+if (process.argv[1] === fileURLToPath(import.meta.url) && process.argv[2] === '--ausserhalb-der-spur') {
+  const first = readFileSync(0, 'utf8')
+    .split('\n')
+    .filter(Boolean)
+    .find((p) => !isModelLanePath(p));
+  if (first) process.stdout.write(first + '\n');
+}
