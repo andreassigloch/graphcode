@@ -147,7 +147,7 @@
 | `REQ-metrics-risk-scope` | ✓ | ✓ passed | `TEST-graph-metrics` |
 | `REQ-model-exchange-post` | ✓ | ✓ passed | `TEST-doc-export` · `TEST-import-code-verb` |
 | `REQ-model-exchange-pre` | ✓ | ✓ passed | `TEST-import-code-verb` |
-| `REQ-model-lane-fixed-set` | ✓ | ✓ passed | `TEST-verify-model-set` |
+| `REQ-model-lane-fixed-set` | ✓ | ✗ failed | `TEST-verify-model-set` |
 | `REQ-modell-befragen` | ✓ | ✓ passed | `TEST-sitzung-kpi` |
 | `REQ-modellaustausch` | ✓ | ✓ passed | `TEST-doc-export` · `TEST-import-invariant` |
 | `REQ-modulebene-reads-and-separates` | ✓ | ✓ passed | `TEST-modulebene-reads-and-separates` |
@@ -288,7 +288,7 @@
 | `REQ-testref-materialized` | ✓ | ✓ passed | `TEST-realref-materialize` · `TEST-testref-materialize` |
 | `REQ-tests-aufloesen` | ✓ | ✓ passed | `TEST-test-runnable-binding` |
 | `REQ-tests-aus-changeset` | ✓ | ✓ passed | `TEST-graph-tests-operational` |
-| `REQ-testspur-passt-zum-diff` | ✓ | ✓ passed | `TEST-selective-test-audit` · `TEST-verify-model-set` |
+| `REQ-testspur-passt-zum-diff` | ✓ | ✗ failed | `TEST-selective-test-audit` · `TEST-verify-model-set` |
 | `REQ-thresholds-from-config` | ✓ | ✓ passed | `TEST-target-profile` · `TEST-thresholds-from-config` |
 | `REQ-token-efficiency` | ✓ | ⚠ 3/4 passed | `TEST-audit-trail-projection` · `TEST-mutate-violations` · `TEST-token-efficiency` · `TEST-working-set-spezlauf` |
 | `REQ-tool-input-parsed-once` | ✓ | ✓ passed | `TEST-werkzeug-eingang-geparst` |
@@ -322,7 +322,7 @@
 | `REQ-zugangsliste-vor-bau` | ✓ | ✓ passed | `TEST-skill-zugangsliste` |
 
 Coverage: 312/312 REQ mit verify-Kante (100%) · 0 offen (R-01).
-Belegt: 274/312 REQ bestanden (88%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
+Belegt: 272/312 REQ bestanden (87%) — eine Kante ist kein Nachweis; ein REQ zählt hier erst, wenn JEDER verifizierende TEST ein `testResult: passed` trägt (Rückweg: `graph_test_ingest`, CR-GC-327).
 
 ## Integrationsabdeckung (rolled-up)
 
