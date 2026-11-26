@@ -32,3 +32,9 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 ## Vorbestand
 
 - graphanalyze `tests/rig-interaktiv.test.ts`: 2 Fälle rot (`todo-skill-warnungsfrei`, `todo-hand-skill-wf`). Ursache: `start.md` dieser Rig-Aufgaben trägt den Wortlaut des Skills `se:close-violations` vor CR-GC-942/945/949 (2026-11-15). Die Commits dieses CR berühren weder `rig/` noch den Test (`git diff 19f5d9a HEAD -- rig tests/rig-interaktiv.test.ts` leer). Item ITEM-2026-1711.
+
+## Läufe
+
+- `verify:code`: Spur CODE, 84 Testdateien grün.
+- `verify:full`: 8870 Tests grün, Schlupf 0.
+- graphanalyze `npm test`: Heatmap-Test 7/7 grün; 2 rote Fälle sind Vorbestand (siehe oben).
