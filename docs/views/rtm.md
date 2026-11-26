@@ -4,7 +4,7 @@
 
 # graphcode — Requirements Traceability Matrix (RTM)
 
-> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 312 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
+> GENERATED from `docs/graph/graphcode.graph.json` (SSOT). 311 REQ rows, nach Ebene gruppiert, innerhalb sortiert nach uid. Deterministisch generiert.
 
 
 ### System (SYS.2) — 70 REQ
@@ -82,12 +82,11 @@
 | `REQ-versioned-cache` | `TEST-cache` | `MOD-surface` | — |
 | `REQ-werkzeuge-wirken-im-repo` | `TEST-mcp-stdio-server` · `TEST-werkzeug-eingang-geparst` | — | — |
 
-### funktional (SWE.1 · HWE.1) — 209 REQ
+### funktional (SWE.1 · HWE.1) — 208 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-advisory-roundtrip-latency` | `TEST-advisory-roundtrip-latency` | `FCHAIN-advisory-roundtrip` | — |
-| `REQ-aenderungs-hotspots` | `TEST-aenderungs-heatmap` | `FUNC-aenderungs-heatmap` | `MOD-dev-scripts` |
 | `REQ-agent-loop-executes-skill` | `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` | `FUNC-agent-loop` | `MOD-agent-surface` |
 | `REQ-analyse-artefakt-vor-stempel` | `TEST-task-analysen` | — | — |
 | `REQ-analyse-zaehlt-mit-auftrag` | `TEST-task-analysen` | `FUNC-generation-step` | `MOD-loop` |
@@ -367,12 +366,11 @@
 | `REQ-volllauf-nennt-folge` | `TEST-test-schlupf` | `FUNC-verify-lane-full` | `MOD-dev-scripts` |
 | `REQ-volllauf-schreibt-schlupf` | `TEST-test-schlupf` | `FUNC-measure-test-schlupf` | `MOD-projections` |
 
-### Entwurf (SWE.3 · HWE.2) — 231 REQ
+### Entwurf (SWE.3 · HWE.2) — 230 REQ
 
 | REQ | verify (TEST) | satisfy (FUNC) | allocate (MOD) |
 |---|---|---|---|
 | `REQ-advisory-vor-nach` | `TEST-fit-advisory` | `FUNC-fit-advisory` | `MOD-kernel-measure` |
-| `REQ-aenderungs-hotspots` | `TEST-aenderungs-heatmap` | `FUNC-aenderungs-heatmap` | `MOD-dev-scripts` |
 | `REQ-agent-agnostic` | `TEST-agent-agnostic` | `MOD-surface` | — |
 | `REQ-agent-loop-executes-skill` | `TEST-agent-loop-executes-skill` · `TEST-skills-mcp` | `FUNC-agent-loop` | `MOD-agent-surface` |
 | `REQ-analyse-zaehlt-mit-auftrag` | `TEST-task-analysen` | `FUNC-generation-step` | `MOD-loop` |

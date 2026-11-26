@@ -184,10 +184,7 @@
 | `CR-GC-1027` | relation | `SCHEMA-typbindung-eingabe` |
 | `CR-GC-1027` | relation | `SCHEMA-typbindung-ergebnis` |
 | `CR-GC-1027` | relation | `SCHEMA-typbindung-optionen` |
-| `CR-GC-1028` | relation | `FUNC-aenderungs-heatmap` |
 | `CR-GC-1028` | relation | `MOD-dev-scripts` |
-| `CR-GC-1028` | relation | `REQ-aenderungs-hotspots` |
-| `CR-GC-1029` | relation | `FUNC-aenderungs-heatmap` |
 | `CR-GC-103` | relation | `FUNC-decode` |
 | `CR-GC-103` | relation | `MOD-projections` |
 | `CR-GC-103` | relation | `MS-2-coding-vv` |
@@ -203,6 +200,7 @@
 | `CR-GC-1034` | relation | `FUNC-verify-lane-model` |
 | `CR-GC-1035` | relation | `FUNC-push-check` |
 | `CR-GC-1035` | relation | `REQ-push-check-public` |
+| `CR-GC-1036` | relation | `MOD-dev-scripts` |
 | `CR-GC-104` | relation | `MOD-agent-surface` |
 | `CR-GC-104` | relation | `MS-1-specification` |
 | `CR-GC-104` | relation | `REQ-doc-export` |
@@ -2525,7 +2523,6 @@
 | `FLOW-graph-delta` | io | `FUNC-graph-store` |
 | `FLOW-graph-delta` | relation | `SCHEMA-graph-delta` |
 | `FLOW-graph-snapshot-file` | io | `ACTOR-auftraggeber` |
-| `FLOW-graph-snapshot-file` | io | `FUNC-aenderungs-heatmap` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-ein-adapter-je-akteur` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-eingaenge-nur-aus` |
 | `FLOW-graph-snapshot-file` | io | `FUNC-grenze-nur-mit-schema` |
@@ -2966,8 +2963,6 @@
 | `FUNC-aenderung-melden` | io | `FLOW-meldung` |
 | `FUNC-aenderung-melden` | io | `FLOW-test-ingest-call` |
 | `FUNC-aenderung-melden` | satisfy | `REQ-spur-meldet-zurueck` |
-| `FUNC-aenderungs-heatmap` | allocate | `MOD-dev-scripts` |
-| `FUNC-aenderungs-heatmap` | satisfy | `REQ-aenderungs-hotspots` |
 | `FUNC-agent-loop` | allocate | `MOD-agent-surface` |
 | `FUNC-agent-loop` | io | `FLOW-audit-stats-call` |
 | `FUNC-agent-loop` | io | `FLOW-audit-trail-call` |
@@ -3062,7 +3057,6 @@
 | `FUNC-block-autorieren` | compose | `FUNC-se-top-level` |
 | `FUNC-block-autorieren` | compose | `FUNC-se-umbau` |
 | `FUNC-block-bedienung` | compose | `FUNC-aenderung-melden` |
-| `FUNC-block-bedienung` | compose | `FUNC-aenderungs-heatmap` |
 | `FUNC-block-bedienung` | compose | `FUNC-cli-dispatch` |
 | `FUNC-block-bedienung` | compose | `FUNC-collect-status` |
 | `FUNC-block-bedienung` | compose | `FUNC-commit-check` |
@@ -3856,7 +3850,6 @@
 | `REQ-one-gate-per-repo` | compose | `REQ-gate-only-writes` |
 | `REQ-plan-gruppen` | compose | `REQ-cr-gruppen-rechnen` |
 | `REQ-plan-gruppen` | compose | `REQ-se-plan-nennt-gruppen` |
-| `REQ-quality-metric` | compose | `REQ-aenderungs-hotspots` |
 | `REQ-real-health-check` | compose | `REQ-health-antwortet-stand` |
 | `REQ-reduced-llm` | compose | `REQ-advisory-roundtrip-latency` |
 | `REQ-reduced-llm` | compose | `REQ-analyse-artefakt-vor-stempel` |
@@ -3996,7 +3989,6 @@
 | `SYS-graphcode` | satisfy | `REQ-structure-driven` |
 | `TEST-abstraction` | verify | `REQ-abstraction` |
 | `TEST-advisory-roundtrip-latency` | verify | `REQ-advisory-roundtrip-latency` |
-| `TEST-aenderungs-heatmap` | verify | `REQ-aenderungs-hotspots` |
 | `TEST-agent-agnostic` | verify | `REQ-agent-agnostic` |
 | `TEST-agent-loop-executes-skill` | verify | `REQ-agent-loop-executes-skill` |
 | `TEST-applied-suggestion-moves-target` | verify | `REQ-applied-suggestion-moves-target` |

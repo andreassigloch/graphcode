@@ -220,13 +220,13 @@ Lücke steht deshalb hier, statt verschwiegen zu werden. —
 | `CR-GC-1025` | done | Aufrufvertrag als ein Objekt: crGroups, impactedTests, zugBericht weichen vom Anfrage-SCHEMA ab (aus CR-GC-1024) | `FUNC-cr-groups` · `FUNC-select-tests` |
 | `CR-GC-1026` | done | Typbindung je FUNC gegen Anfrage- und Antwort-SCHEMA als Prüfung, Richtung aus der Wirkkette, Altlast als Ratsche (aus CR-GC-1024) | `MOD-projections` · `MOD-surface` |
 | `CR-GC-1027` | done | Typbindung in die CI: erzeugte bindungen.ts, Altlast 41 FUNC, Gleichstand-Test, Modellknoten (Teil 2 aus CR-GC-1026) | `FUNC-erzeuge-typbindung` · `FUNC-typbindung-verb` · `REQ-typbindung` · `REQ-typbindung-regeln` |
-| `CR-GC-1028` | done | Änderungs-Heatmap: Nacharbeit, Themenbreite, Mitänderung über graphcode, SM und GVE | `FUNC-aenderungs-heatmap` · `MOD-dev-scripts` · `REQ-aenderungs-hotspots` |
-| `CR-GC-1029` | done | Änderungs-Heatmap schärfen: Tool-Definitionen als eigene Symbole, Commits ohne CR-Nummer nach ITEM und Release einordnen | `FUNC-aenderungs-heatmap` |
+| `CR-GC-1028` | done | Änderungs-Heatmap: Nacharbeit, Themenbreite, Mitänderung über graphcode, SM und GVE | `MOD-dev-scripts` |
 | `CR-GC-103` | done | Format-E Codec | `FUNC-decode` · `MOD-projections` · `REQ-codec-validation` · `REQ-deterministic-serialization` · `REQ-formatE-diff-dialect` · `REQ-formatE-parity` · `REQ-roundtrip-conformance` |
 | `CR-GC-1031` | done | Pre-push-Hook: PII-Filter und verbotene Pfade | `FUNC-push-check` · `MOD-dev-scripts` · `REQ-push-check-public` |
 | `CR-GC-1032` | done | generate.ts nach Zuständigkeit teilen: Klauseln/Vorlagen, stepCore, generationStep — je Datei unter 500 Zeilen (Heatmap: MOD-loop 34 % Fixes) | `FUNC-generation-step` |
 | `CR-GC-1034` | done | Modell-Testspur: Ausschlussliste aus gemessenen Lesezugriffen ableiten statt von Hand pflegen | `FUNC-verify-lane-model` |
 | `CR-GC-1035` | done | graphcodes eigene Messdaten docs/messung nach graphanalyze | `FUNC-push-check` · `REQ-push-check-public` |
+| `CR-GC-1036` | n/a | Änderungs-Heatmap als Analyse-Tool nach graphanalyze | `MOD-dev-scripts` |
 | `CR-GC-104` | done | Skills/Prompts-Modul | `MOD-agent-surface` · `REQ-doc-export` |
 | `CR-GC-105` | done | Architektur-Verfeinerung | `MOD-surface` · `REQ-impact-based-testing` · `REQ-interface-change-escalation` · `REQ-small-model-viable` |
 | `CR-GC-106` | done | Interface-Schemas | `MOD-projections` · `REQ-interface-schema` |

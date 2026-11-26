@@ -3,7 +3,7 @@
  *
  * Abgetrennt aus `generate.ts`: hier steht, WAS der Schritt dem Agenten sagt (Gate-Protokoll,
  * Regel-Klauseln, Vorlagen je Stufe, Handoff) und WELCHE Anleitung er nennt. Wann welcher Text
- * gilt, entscheidet `generate-step-core.ts`. Gemessen (Änderungs-Heatmap, CR-GC-1029): Text und
+ * gilt, entscheidet `generate-step-core.ts`. Gemessen (Änderungs-Heatmap, CR-GC-1029, heute in graphanalyze): Text und
  * Logik änderten sich in getrennten Commits; getrennt bleibt jede Datei unter 500 Zeilen.
  */
 import { RULE_HELP, TASK_ENTRY, type RuleTask } from '@sigloch/contracts/se';

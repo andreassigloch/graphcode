@@ -1,10 +1,6 @@
 {
   "hinweis": "Erzeugt von scripts/model-test-set.measure.mjs (CR-GC-1034). Nicht von Hand ändern.",
   "dateien": {
-    "tests/aenderungs-heatmap.test.ts": {
-      "hash": "545f02d88a2c7aaf",
-      "liest": []
-    },
     "tests/aenderungsmeldung.test.ts": {
       "hash": "4a61c49981d33b2e",
       "liest": []

@@ -11,7 +11,6 @@
 | uid | type | name |
 |---|---|---|
 | `FUNC-aenderung-melden` | FUNC | Aenderung melden |
-| `FUNC-aenderungs-heatmap` | FUNC | Änderungs-Hotspots messen |
 | `FUNC-agent-loop` | FUNC | Agent-Ablaufsteuerung |
 | `FUNC-apply-reseed` | FUNC | applyReseed |
 | `FUNC-arch-fitness` | FUNC | metrics(graph, layer arch) |
@@ -166,7 +165,6 @@
 | function | module |
 |---|---|
 | `FUNC-aenderung-melden` | `MOD-dev-scripts` |
-| `FUNC-aenderungs-heatmap` | `MOD-dev-scripts` |
 | `FUNC-agent-loop` | `MOD-agent-surface` |
 | `FUNC-apply-reseed` | `MOD-kernel` |
 | `FUNC-arch-fitness` | `MOD-kernel-measure` |
