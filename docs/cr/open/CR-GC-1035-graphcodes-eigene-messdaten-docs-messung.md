@@ -30,3 +30,9 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 - Push-Prüfung: `erlaubtePfade` = `kennzahlen.md`, `testauswahl.jsonl`; `erlaubtePfade` hebt nur noch die Pfadregel auf (vorher auch die PII-Prüfung). Neuer Testfall, Gegenprobe mit alter Logik rot.
 - `.gitignore`: `scripts/spike-*`.
 - Nicht hier: das Heatmap-Tool samt Ausgabe `docs/messung/aenderungs-heatmap.html` (eigener CR); bis dahin blockt die Push-Prüfung.
+
+## Läufe
+
+- `verify:code`: Spur CODE, 47 Testdateien grün.
+- `verify:full` 1. Lauf: 1 rot außerhalb der Auswahl (Schlupf): `tests/verify-model.completeness.test.ts`, weil die zwei geänderten Testdateien nicht mit `npm run verify:model:messen` vermessen waren (Regel aus CR-GC-1034). Nachgeholt in 52cff6c0.
+- `verify:full` 2. Lauf: 8877 Tests grün, Schlupf 0.
