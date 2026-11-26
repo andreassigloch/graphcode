@@ -12018,7 +12018,7 @@ io ◀ `FLOW-cli-invocation` · io ▶ — · allocate ▶ `MOD-dev-scripts`
 
 ###### `REQ-push-check-public` — Push ins oeffentliche Repo ohne verbotenen Pfad und ohne personenbezogene Daten
 
-Ein Push bricht ab, sobald der Stand eines gepushten Commits eine Datei auf einem Pfad aus verbotenePfade der Config traegt (Spikes, eigene Messungen ausser stand.*, Gespraechsprotokolle, interne Notizen) oder eine hinzugefuegte Zeile oder Commit-Nachricht eine Postadresse, E-Mail-Adresse, Telefonnummer, IBAN oder einen Firmennamen mit Rechtsform enthaelt; die Meldung nennt Art und Datei. Ein Push ohne Befund und ein Treffer aus erlaubteTreffer gehen durch. (CR-GC-1031)
+Ein Push bricht ab, sobald der Stand eines gepushten Commits eine Datei auf einem Pfad aus verbotenePfade der Config traegt (Spikes, eigene Messungen ausser stand.*, Gespraechsprotokolle, interne Notizen) oder eine hinzugefuegte Zeile oder Commit-Nachricht eine Postadresse, E-Mail-Adresse, Telefonnummer, IBAN oder einen Firmennamen mit Rechtsform enthaelt; die Meldung nennt Art und Datei. Ein Push ohne Befund geht durch. Ausnahmen stehen nur in der Config: ein Pfad aus erlaubtePfade hebt nur die Pfadregel auf, die PII-Pruefung gilt dort weiter; ein Treffer aus erlaubteTreffer geht durch. (CR-GC-1031, CR-GC-1035)
 
 priority: must · status: n/a · kinds: functional
 
@@ -16202,7 +16202,7 @@ verify ▶ `REQ-published-counts-match-code` · testRefs: `tests/claims.conforma
 
 #### 3.4.117  `TEST-push-check` — Push-Pruefung am Wegwerf-Repo
 
-Abnahme der Datei tests/push-pruefung.test.ts: ein Wegwerf-Repo mit Bare-Remote und echtem git push ueber den echten Hook. Abbruch bei Spike (auch in aelterem Commit des Pushs), eigener Messung, Gespraechsprotokoll, je einem PII-Merkmal in einer Zeile und einer E-Mail in der Commit-Nachricht; Durchlass bei sauberem Commit, bei docs/messung/stand.md und bei einem Treffer aus erlaubteTreffer. (CR-GC-1031)
+Abnahme der Datei tests/push-pruefung.test.ts: ein Wegwerf-Repo mit Bare-Remote und echtem git push ueber den echten Hook. Abbruch bei Spike (auch in aelterem Commit des Pushs), eigener Messung, Gespraechsprotokoll, je einem PII-Merkmal in einer Zeile, einer E-Mail in der Commit-Nachricht und einer E-Mail in einer Datei aus erlaubtePfade; Durchlass bei sauberem Commit, bei docs/messung/stand.md, bei einer sauberen Datei aus erlaubtePfade und bei einem Treffer aus erlaubteTreffer. (CR-GC-1031, CR-GC-1035)
 
 verify ▶ `REQ-push-check-public` · testRefs: `tests/push-pruefung.test.ts`
 

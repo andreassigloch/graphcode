@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Spike (Konzept „Modell- vs. Realisierungsarchitektur", docs/graphcode_architektur_konzept.md) —
+// Messung T-O1, entstanden als Spike (Konzept „Modell- vs. Realisierungsarchitektur", docs/graphcode_architektur_konzept.md) —
 // lassen sich die acht Kettenkennzahlen auf den realen Familie-Graphen HEUTE deterministisch
 // berechnen, und sagen sie etwas, was R⁶ nicht schon sagt?
 //
@@ -20,7 +20,7 @@
 // nicht traegt: die Zerfallsursache je Nebenkomponente, der Blast-Radius, die Korrelation gegen R⁶.
 //
 // Nur lesend: JSON-SSOT, kein Store, kein Gate, kein Write.
-// Usage: node scripts/spike-kettenkennzahlen.mjs [--json]
+// Usage: node scripts/kettenkennzahlen.mjs [--json]
 // @author andreas@siglochconsulting
 import { readFileSync, existsSync } from 'node:fs';
 import { metrics } from '@sigloch/se-engine';
@@ -147,7 +147,7 @@ export function messeKorpus() {
   return report;
 }
 
-if (process.argv[1]?.endsWith('spike-kettenkennzahlen.mjs')) {
+if (process.argv[1]?.endsWith('kettenkennzahlen.mjs')) {
   const { pos, neg, posOk, negOk } = kontrolle();
   const report = messeKorpus();
   const ok = report.filter((r) => !r.skipped && r.measurable >= 2);

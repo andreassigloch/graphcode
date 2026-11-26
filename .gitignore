@@ -27,6 +27,7 @@ docs/**/spike/
 docs/**/spikes/
 docs/**/SPIKE-*
 docs/archive/*gespraech*
+scripts/spike-*
 docs/SPEC.md
 docs/RECOMMENDATIONS.md
 

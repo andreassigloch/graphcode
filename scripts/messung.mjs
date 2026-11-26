@@ -217,8 +217,8 @@ async function erhebe() {
   if (wb.urteil === 'nicht erhoben') throw new Error(`messung T-E2: nicht erhoben — ${wb.wert}`);
   zeile('T-E2', '100 % der geänderten Knoten in W bei |W|/|G| ≤ 0,05 (jüngste 10 CR-Commits)', wb.wert, wb.urteil);
 
-  // T-O1: Kontrolle und Familie-Korpus aus dem Spike, gerechnet von `chainMetrics` (contracts).
-  const { kontrolle, messeKorpus } = await import(join(REPO, 'scripts', 'spike-kettenkennzahlen.mjs'));
+  // T-O1: Kontrolle und Familie-Korpus aus scripts/kettenkennzahlen.mjs, gerechnet von `chainMetrics` (contracts).
+  const { kontrolle, messeKorpus } = await import(join(REPO, 'scripts', 'kettenkennzahlen.mjs'));
   const k = kontrolle();
   const korpus = messeKorpus().filter((x) => !x.skipped);
   const o1 = urteilT_O1({

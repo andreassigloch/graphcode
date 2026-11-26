@@ -9,7 +9,10 @@
     "^CLAUDE\\.local\\.md$",
     "(^|/)\\.env(\\.local)?$"
   ],
-  "erlaubtePfade": [],
+  "erlaubtePfade": [
+    "docs/messung/kennzahlen.md",
+    "docs/messung/testauswahl.jsonl"
+  ],
   "erlaubteTreffer": [
     "noreply@anthropic.com",
     "a@b.de"

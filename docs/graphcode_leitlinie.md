@@ -382,12 +382,12 @@ Readiness trennt die Arme nicht.
 
 | Test | Frage | Aufbau | Kriterium |
 |---|---|---|---|
-| **T-O1** Kettenkennzahlen | Lassen sich die acht Kennzahlen deterministisch richtig rechnen? | `graph_metrics` (`chains`, Rechnung in contracts); `scripts/spike-kettenkennzahlen.mjs`, Referenzkette „Zahlung auslösen" | Referenzkette reproduziert; ≥ 90 % der Ketten auswertbar |
+| **T-O1** Kettenkennzahlen | Lassen sich die acht Kennzahlen deterministisch richtig rechnen? | `graph_metrics` (`chains`, Rechnung in contracts); `scripts/kettenkennzahlen.mjs`, Referenzkette „Zahlung auslösen" | Referenzkette reproduziert; ≥ 90 % der Ketten auswertbar |
 | **T-O2** Profil auf der Kette | Wird jede profilierte FCHAIN bewertet und diagnostiziert? | NFR-REQ an FCHAIN; Antwortweg aus `graph_metrics` (`answerPath`, CR-SM-408); Skill `se-laufzeit` (CR-GC-783) | 100 % der profilierten FCHAINs bewertet; jede Verletzung mit treibendem Knoten |
 | **T-O3** Degradationsschutz | Hält ein Optimierungszug die Invarianten? | Skill `se:optimize` Version 3: Trockenlauf durchs Gate, Kennzahlen davor und danach (`metricsAfter`, CR-GC-785, CR-GC-790); Prognose im CR | jede REQ behält `satisfy`; Schwellen halten; Prognose erfüllt |
 | **T-O4** Vorzeichen der Architekturkennzahl | Rankt die Kennzahl bekannt bessere Zustände höher? | `scripts/known-answer-set.mjs`; graphanalyze `rig/moneyflow-struktur` | Known-Answer-Set richtig gerankt |
 | **T-O5** Umbauzüge | Verbessert ein Umbauzug den Schnitt messbar? | `tests/arch.optimization-dry-run.spike.test.ts` | Modularität Q und Innenanteil steigen |
-| **T-O6** Parallele Pfade finden | Findet das System Duplikate zum Zusammenlegen? | `scripts/spike-nd-known-answer.mjs`, `scripts/spike-engpass-known-answer.mjs` | ≥ 6 von 7 bekannten Paaren gefunden |
+| **T-O6** Parallele Pfade finden | Findet das System Duplikate zum Zusammenlegen? | Known-Answer-Spikes `spike-nd-known-answer`, `spike-engpass-known-answer` (privates Messarchiv) | ≥ 6 von 7 bekannten Paaren gefunden |
 | **T-O7** Inhaltliche Analysen | Sind IRR/FMEA gelaufen und in Modell und Code wirksam? | Skills `se-irr`, `se-fmea`; Prüfliste im Rig | jeder Befund als REQ/TEST oder benannte Ausnahme; Risiken als Prüffragen am Code |
 | **T-O8** Güte des Modells | Ist das Modell vor der Analyse vorbereitet? | Bewertbarkeit und Träger je Risiko aus `graph_metrics` (CR-SM-407); Skill `se-vorbereitung` (CR-GC-784); offene Kette hält PDR (CR-SM-409) | 100 % der Ketten bewertbar; jedes Risiko hat einen Träger; Träger ist eine Funktion oder die Gegenmaßnahme ist als quer geltend benannt |
 

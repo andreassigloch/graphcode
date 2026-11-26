@@ -8,7 +8,8 @@
  *   2. wenn eine hinzugefügte Zeile der gepushten Commits personenbezogene Daten trägt: Postadresse (Straße mit Hausnummer),
  *      E-Mail-Adresse, Telefonnummer, IBAN oder einen Firmennamen mit Rechtsform.
  * Ein Kunden- oder Personenname ohne solches Merkmal ist mit Mustern nicht erkennbar; das deckt die Prüfung nicht.
- * Eine Ausnahme steht ausdrücklich in der Config (`erlaubtePfade`, `erlaubteTreffer`), nie im geprüften Text.
+ * Eine Ausnahme steht ausdrücklich in der Config, nie im geprüften Text: `erlaubtePfade` hebt nur die Pfadregel auf
+ * (die PII-Prüfung gilt dort weiter), `erlaubteTreffer` einen einzelnen PII-Treffer.
  *
  * Aufruf durch git: `pre-push <remote> <url>`, auf stdin je Ref `<lokal-ref> <lokal-sha> <remote-ref> <remote-sha>`.
  * Exit 0 = durchlassen, Exit 1 = Abbruch mit Liste der Befunde.
@@ -56,7 +57,7 @@ export function piiTreffer(diff, config) {
       datei = zeile.startsWith('+++ b/') ? zeile.slice(6) : null;
       continue;
     }
-    if (!datei || !zeile.startsWith('+') || config.erlaubtePfade.has(datei)) continue;
+    if (!datei || !zeile.startsWith('+')) continue;
     const text = zeile.slice(1);
     for (const { art, re } of PII_MUSTER) {
       for (const m of text.matchAll(re)) {

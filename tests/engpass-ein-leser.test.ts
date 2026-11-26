@@ -60,7 +60,7 @@ const ENGPAESSE = [
  * Kommentare raus, bevor gezaehlt wird — sonst misst der Test die Doku statt des Codes.
  * Gemessener Anlass: beim ERSTEN Lauf meldete er `tool-context.ts`, und der Treffer war ein
  * Kommentar, der die geloeschte Konstruktion beschreibt. (Dieselbe Lehre wie in
- * `scripts/spike-nd-known-answer.mjs`.)
+ * `spike-nd-known-answer`, privates Messarchiv.)
  */
 const ohneKommentare = (s: string): string => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
 

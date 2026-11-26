@@ -288,7 +288,7 @@ Was offen ist, steht nicht mehr hier:
 
 ## Spike-Befund (25.09.2026)
 
-`scripts/spike-kettenkennzahlen.mjs`, nur lesend, auf den exportierten SSOTs von 12 Familie-Graphen
+`scripts/kettenkennzahlen.mjs`, nur lesend, auf den exportierten SSOTs von 12 Familie-Graphen
 (10 mit FCHAINs, 76 Ketten).
 
 - **Berechenbar:** Positivkontrolle („Zahlung auslösen") und Gegenprobe (Schleife + Ast) liefern die

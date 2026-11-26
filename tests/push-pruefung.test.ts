@@ -12,6 +12,7 @@
  *   PII        Postadresse, E-Mail, Telefon, IBAN, Firma mit Rechtsform je in einer Zeile — Abbruch, Art genannt
  *   Nachricht  E-Mail-Adresse nur in der Commit-Nachricht — Abbruch
  *   Ausnahme   derselbe Treffer, ausdrücklich in `erlaubteTreffer` — geht durch
+ *   erlaubter Pfad  docs/messung/testauswahl.jsonl geht durch, mit E-Mail-Adresse darin nicht (CR-GC-1035)
  *
  * @author andreas@siglochconsulting
  */
@@ -89,6 +90,16 @@ describe('TEST-push-check: pre-push-Hook (CR-GC-1031)', () => {
     const r = push();
     expect(r.code).toBe(1);
     expect(r.ausgabe).toContain('docs/messung/lauf.md');
+  });
+
+  it('lässt einen Pfad aus erlaubtePfade durch, prüft ihn aber weiter auf PII', () => {
+    commit('docs/messung/testauswahl.jsonl', '{"cr":"CR-GC-1","schlupf":0}\n');
+    const sauber = push();
+    expect(sauber.code, sauber.ausgabe).toBe(0);
+    commit('docs/messung/testauswahl.jsonl', '{"cr":"CR-GC-2","von":"kunde.x@firma-y.de"}\n');
+    const r = push();
+    expect(r.code).toBe(1);
+    expect(r.ausgabe).toContain('E-Mail-Adresse: docs/messung/testauswahl.jsonl');
   });
 
   it('bricht bei einem Gesprächsprotokoll ab', () => {
