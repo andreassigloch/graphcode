@@ -304,7 +304,8 @@
       "id": "CR-GC-1034",
       "type": "CR",
       "name": "Modell-Testspur: Ausschlussliste aus gemessenen Lesezugriffen ableiten statt von Hand pflegen",
-      "description": "docs/cr/open/CR-GC-1034-modell-testspur-ausschlussliste-aus-geme.md"
+      "description": "docs/cr/done/CR-GC-1034-modell-testspur-ausschlussliste-aus-geme.md",
+      "status": "done"
     },
     {
       "id": "CR-GC-104",
@@ -42377,5 +42378,5 @@
       "type": "compose"
     }
   ],
-  "graphVersion": 1643
+  "graphVersion": 1644
 }
