@@ -107,3 +107,11 @@ Nebenbefunde) gehen in einen neuen CR.
 
 `npm run verify:full CR-GC-918` am 2026-11-17: 231 von 231 Dateien, 1914 von 1914 Tests gruen, Schlupf 0.
 
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-036, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Wie viele Erfüller hat eine Anforderung? | Genau einen. Kann keine Funktion sie allein erfüllen, wird sie zerlegt; geht das nicht, ist sie eine NFR oder eine Mischung. | Entscheidung des Autors 2026-11-12 (Abschnitt „Bezug"); Regel RD-06 misst das |

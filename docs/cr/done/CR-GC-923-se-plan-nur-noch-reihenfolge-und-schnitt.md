@@ -79,3 +79,15 @@ Tests (`graph_tests`, 5):
 - tests/task-analysen.test.ts
 
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-036, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Was tut se-plan? | Nur Reihenfolge und Schnitt. Er stellt keine Fragen, schreibt kein REQ und kein TEST und startet keinen Bau. | Review und Bau-Skill fehlten, se-plan füllte beide Lücken nebenbei (Abschnitte „Root Cause" und „Zielbild") |
+| Wohin gehören die Fragen zu Altbestand, Zielumgebung und Ort der geteilten Verträge? | In se-conops, als Betriebsbelange. | Abschnitt „Zielbild" Punkt 2 |
+| Was tut se-plan bei fehlendem Test oder Lücke der Spezifikation? | Er stoppt: bei fehlendem Test Verweis auf se:author-req, bei einer Lücke zurück zu se-cdr. Voraussetzung ist, dass se-cdr keine offene Frage meldet. | Abschnitt „Zielbild" Punkte 1, 3 und 5 |
+| Gibt es eine Baustufe „Contracts" im Plan? | Nein. Das Zod-Schema gehört zur Spezifikation; der Plan beginnt bei den Blattfunktionen. | Abschnitt „Zielbild" Punkt 4 |
+| Wohin gehören Agenten starten, zusammenführen, ausrollen? | In den Skill se-bau, nicht in se-plan. | Abschnitt „Zielbild" Punkt 6 |

@@ -116,3 +116,15 @@ _(vor der Arbeit fuellen — sonst ist der Umfang geraten)_
 - `graph_impact(<uid>)` je Knoten am Umfang: welche `satisfy`, `io`, `compose` haengen daran?
 - `graph_tests({changeSet})`: die Testspur, statt der vollen Suite.
 - Beim Entfernen: `/se-umbau` fuehrt die Reihenfolge.
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-036, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Wo steht das Zod-Schema der Flüsse einer Funktion im Ablauf? | Es ist der letzte Schritt der Spezifikation, nicht die erste Stufe des Baus. Anforderung, Test und Zod-Schema bilden zusammen die Spezifikation; der Umsetzer schreibt nur den Rumpf. | Entscheidung des Autors (Abschnitt „Entscheidung des Autors (2026-11-13)") |
+| Wann bekommen SCHEMA ihr Zod-Schema und den `realRef`? | Je Blattfunktion, sobald ihre Anforderungen und Tests stehen. Danach ist die Funktion baureif. Nur an Blattfunktionen, weil die Zerlegung höhere Flüsse noch ändert. | Entscheidung des Autors (Abschnitt „Entscheidung des Autors (2026-11-13)") |
+| Steht eine Feldliste als Text im Modell, bevor das Schema existiert? | Nein, kein Zwischenschritt mit einer Feldliste im Modell. | Verweis auf CR-GC-454 (Abschnitt „Entscheidung des Autors (2026-11-13)") |
+| Wer prüft die Baureife? | se-cdr (CR-GC-922); die Stufe „Contracts" in se-plan entfällt (CR-GC-923). | Entscheidung des Autors 2026-11-18 (Abschnitt „Ergebnis der Prüfung (2026-11-18)") |
+| Ab wann existiert das Vertragspaket? | Ab Stufe 0. | Entscheidung des Autors, Voraussetzung (Abschnitt „Entscheidung des Autors (2026-11-13)", Punkt 5) |

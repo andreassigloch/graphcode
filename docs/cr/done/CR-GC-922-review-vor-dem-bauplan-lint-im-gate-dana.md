@@ -105,3 +105,16 @@ CR-SM-437. CR-GC-917 ist geschlossen; seine Bedingung steht in Zielbild Punkt 1.
 ## Umfang laut `graph_impact`
 
 Kein Schnitt aus dem Modell: Der CR legt den Knoten `FUNC-se-cdr` neu an und ändert keinen bestehenden. Nachbarn zur Einordnung: `FUNC-se-irr` (läuft davor), `FUNC-se-plan` (läuft danach). Die Kante vom CR-Knoten auf `FUNC-se-cdr` entsteht mit dem Knoten.
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-036, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Was zählt beim Stopp von se-cdr? | Nur Befunde bis Stufe 8 an den Blattfunktionen im Review, ihren Flüssen und SCHEMA. Marke CDR ist Stufe 8; RC-08 liegt auf Stufe 12 und steht nur in der Bedingung „baureif". | Entscheidung des Autors 2026-11-18 (Abschnitt „Ergebnis (2026-11-18)") |
+| Was tut se-cdr im Lauf ohne Mensch? | Die FAQ `headless-keine-rueckfrage` geht vor: se:author-req schreibt jede offene Frage als Annahme. | Entscheidung des Autors 2026-11-18 (Abschnitt „Ergebnis (2026-11-18)") |
+| Wann ist eine Blattfunktion baureif? | Wenn jedes SCHEMA an ihren Flüssen einen `realRef` auf ein Zod-Schema trägt (R-26, RC-08) und die Liste der Fragen aus dem Review leer ist. | Zielbild Punkt 1 und 5 (Abschnitt „Zielbild") |
+| Darf der Review-Agent ins Modell schreiben? | Nein. Der Autor beantwortet die Fragen, se:author-req schreibt sie. | Zielbild Punkt 3 (Abschnitt „Zielbild") |
+| Was geschieht mit einer Frage, die nur eine Messung klärt? | Sie wird ein Versuch vor dem Plan. | Im CR nicht genannt (Abschnitt „Zielbild", Punkt 4) |
+| Was entscheidet der Umsetzer im Bau? | Nichts, was das Verhalten ändert. Jede Frage an den Auftraggeber im Bau ist ein Befund gegen das Review. | Grenze zwischen Spezifikation und Bau (Abschnitt „Zielbild") |

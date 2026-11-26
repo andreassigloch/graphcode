@@ -77,3 +77,11 @@ Vertragstest des Befund-Schemas. `tests/skill-constraints.test.ts` prüft, dass 
 **Lauf:** `type-check` und `build` grün; `verify:code` 4 Dateien, 34 Tests grün; `verify:full CR-GC-913`: 1926 von
 1929 grün. Rot: `skill-kinds-werte` (Pfad im Worktree enthält `/.claude/` zweimal, Scan findet 0 Skills) und
 `live-feed` (relativer Pfad `../graph-view-edit` fehlt im Worktree), beide Worktree-Artefakte; ein dritter Timeout (60 s).
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-036, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Wie zählt ein Fluss zwischen zwei Kind-Modulen bei `grenzeNurMitSchema`? | Er ist ein Grenzfluss wie jeder andere und braucht ein Schema aus der Liste. Die Liste `zwischenKindern` ist gestrichen. | Der Autor wählte die weitere Lesart (Hinweis „Ersetzt (2026-11-19)" und Abschnitt „Ergebnis (2026-11-18)", Verweis CR-GC-956) |

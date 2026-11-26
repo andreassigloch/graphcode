@@ -173,3 +173,12 @@ sich mit `REQ-merge-ohne-konflikt` (beide unter `REQ-auto-persist-merge`) — Du
 
 
 `npm run verify:full CR-GC-919` am 2026-11-17: 231 von 231 Dateien, 1914 von 1914 Tests gruen, Schlupf 0.
+
+## Entscheidungen
+
+_Nachtrag 2026-11-26 (CR-AB-036, aise-bok): Der Abschnitt fehlte beim Schließen. Übertragen aus dem Text oben; der Text oben bleibt unverändert._
+
+| Frage | Festlegung | Begründung |
+|---|---|---|
+| Welche Kette gilt für Anforderungen von der Systemebene bis zur Funktion? | Immer die volle Kette SYS.1 → SYS.2 → SWE.1. Eine REQ unter SYS oder UC, die eine tiefere FUNC oder ein tieferes MOD erfüllt, bekommt eine Kind-REQ an der Grenze des Erfüllers. Ist die Eltern-REQ selbst zu tief formuliert, wandert sie als Ganzes nach unten. | Entscheidung des Autors 2026-11-12 (Abschnitt „Bezug"); Regel RD-07 misst den Ebenensprung |
+| Welche Erfüller sind auf der Systemebene zulässig? | SYS, FCHAIN, MOD der obersten Ebene und Blatt-FUNC der obersten Ebene. | SYS.3.BP4: Systemanforderung zum Architekturelement (Abschnitt „Befund") |
