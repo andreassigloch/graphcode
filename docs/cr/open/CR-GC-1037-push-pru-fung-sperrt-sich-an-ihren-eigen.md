@@ -33,3 +33,4 @@ _(nur Festlegungen, die ueber diesen CR hinaus gelten. Wendet der CR nur die FAQ
 
 - Prüfung über die Testdatei selbst: 0 Treffer. Test 12/12 grün.
 - Trockenlauf `refs/heads/master HEAD … origin/master` durch `scripts/push-pruefung.mjs origin`: Exit 0, keine Befunde.
+- `verify:code`: 46 Testdateien grün. `verify:full`: 8870 Tests grün, Schlupf 0.
